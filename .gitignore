@@ -1,0 +1,27 @@
+*.psess
+*.aps
+*.vsp
+*.log
+*.err
+*.wrn
+*.suo
+*.sdf
+*.user
+*.i
+*.vspscc
+*.opensdf
+*.opendb
+*.ipch
+*.cache
+*.tlog
+*.lastbuildstate
+*.ilk
+ARM
+"Generated Files"
+Bin
+ipch
+Debug
+Profile
+Release
+x64
+/wiki

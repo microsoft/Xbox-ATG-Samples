@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Assets">
+      <UniqueIdentifier>fa5e4e28-fb89-4c14-9295-017714dc16f9</UniqueIdentifier>
+      <Extensions>bmp;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Filter Include="Assets\FPSRoom">
+      <UniqueIdentifier>{32f25e5b-b27e-46b1-a91c-5508065bfa7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\RTSMap">
+      <UniqueIdentifier>{89490c62-3dda-441f-92db-00b0c96208e5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="DeviceResources.cpp" />
+    <ClCompile Include="MouseCursor.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="StepTimer.h" />
+    <ClInclude Include="DeviceResources.h" />
+    <ClInclude Include="MouseCursor.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\background_flat.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\green_tile.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\green_tile_border.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Logo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SmallLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\WideLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-140.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-180.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\ABox001LightingMap.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\ACeilingLightingMap.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\AFloortLightingMap.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\AWallsLightingMap.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\Ceiling.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\Cement.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\clouds.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\Pillar.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\RTSMap\LabelBase.dds">
+      <Filter>Assets\RTSMap</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\RTSMap\Labels.dds">
+      <Filter>Assets\RTSMap</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\RTSMap\Map3DColor.dds">
+      <Filter>Assets\RTSMap</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MouseCursor_TemporaryKey.pfx" />
+    <None Include="..\..\..\Media\Meshes\FPSRoom\FPSRoom.sdkmesh">
+      <Filter>Assets\FPSRoom</Filter>
+    </None>
+    <None Include="..\..\..\Media\Meshes\RTSMap\3DRTSMap.sdkmesh">
+      <Filter>Assets\RTSMap</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_22.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_24.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_34.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\Courier_36.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="MouseCursor_Readme.docx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ImageContentTask Include="Assets\FPSRooom\Ceiling.png">
+      <Filter>Assets</Filter>
+    </ImageContentTask>
+    <ImageContentTask Include="Assets\FPSRooom\Cement.png">
+      <Filter>Assets</Filter>
+    </ImageContentTask>
+  </ItemGroup>
+</Project>
