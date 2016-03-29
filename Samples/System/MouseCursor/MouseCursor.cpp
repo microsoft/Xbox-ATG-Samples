@@ -49,24 +49,10 @@ void Sample::Initialize( IUnknown* window, int width, int height, DXGI_MODE_ROTA
 
 }
 
+#pragma region Frame Update
 // Executes basic render loop.
 void Sample::Tick()
 {
-    // In clip cursor mode implement screen scrolling when the mouse is near the edge of the screen
-    if ( m_isClipCursor )
-    { 
-        if ( m_screenLocation.X < 20.f )
-            MoveRight( -25.f );
-        
-        else if ( m_screenLocation.X > m_deviceResources->GetOutputSize().right - m_deviceResources->GetOutputSize().left - 20.f )
-            MoveRight( 25.f );
-
-        if ( m_screenLocation.Y < 20.f )
-            MoveForward( 25.f );
-        else if ( m_screenLocation.Y > m_deviceResources->GetOutputSize().bottom - m_deviceResources->GetOutputSize().top - 20.f )
-            MoveForward( -25.f );
-    }
-    
     m_timer.Tick( [ & ] ()
     {
         Update( m_timer );
@@ -78,8 +64,28 @@ void Sample::Tick()
 // Updates the world.
 void Sample::Update( DX::StepTimer const&)
 {
-}
+    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
 
+    // In clip cursor mode implement screen scrolling when the mouse is near the edge of the screen
+    if (m_isClipCursor)
+    {
+        if (m_screenLocation.X < 20.f)
+            MoveRight(-25.f);
+
+        else if (m_screenLocation.X > m_deviceResources->GetOutputSize().right - m_deviceResources->GetOutputSize().left - 20.f)
+            MoveRight(25.f);
+
+        if (m_screenLocation.Y < 20.f)
+            MoveForward(25.f);
+        else if (m_screenLocation.Y > m_deviceResources->GetOutputSize().bottom - m_deviceResources->GetOutputSize().top - 20.f)
+            MoveForward(-25.f);
+    }
+
+    PIXEndEvent();
+}
+#pragma endregion
+
+#pragma region Frame Render
 // Draws the scene.
 void Sample::Render()
 {
@@ -91,6 +97,9 @@ void Sample::Render()
     }
 
     Clear();
+
+    auto context = m_deviceResources->GetD3DDeviceContext();
+    PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Render");
 
     m_spriteBatch->Begin();
 
@@ -153,14 +162,17 @@ void Sample::Render()
 
     m_spriteBatch->End();
 
+    PIXEndEvent(context);
     m_deviceResources->Present();
 }
 
 // Helper method to clear the back buffers.
 void Sample::Clear()
 {
-    // Clear the views
     auto context = m_deviceResources->GetD3DDeviceContext();
+    PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Clear");
+
+    // Clear the views
     auto renderTarget = m_deviceResources->GetBackBufferRenderTargetView();
     auto depthStencil = m_deviceResources->GetDepthStencilView();
 
@@ -172,9 +184,11 @@ void Sample::Clear()
     auto viewport = m_deviceResources->GetScreenViewport();
     context->RSSetViewports(1, &viewport);
 
+    PIXEndEvent(context);
 }
+#pragma endregion
 
-
+#pragma region Message Handlers
 // Message handlers
 void Sample::OnActivated()
 {
@@ -216,7 +230,9 @@ void Sample::GetDefaultSize( int& width, int& height ) const
     width = 1280;
     height = 720;
 }
+#pragma endregion
 
+#pragma region Direct3D Resources
 // These are the resources that depend on the device.
 void Sample::CreateDeviceDependentResources()
 {
@@ -321,6 +337,7 @@ void Sample::OnDeviceRestored()
 
     CreateWindowSizeDependentResources();
 }
+#pragma endregion
 
 // Update the pointer location in clip cursor mode
 void Sample::UpdatePointer( Windows::Foundation::Point screen )

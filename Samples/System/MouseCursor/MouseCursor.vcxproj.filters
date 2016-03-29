@@ -11,18 +11,27 @@
     <Filter Include="Assets\RTSMap">
       <UniqueIdentifier>{89490c62-3dda-441f-92db-00b0c96208e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{01e6a2e8-2055-423a-814c-026d380b802e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="DeviceResources.cpp" />
     <ClCompile Include="MouseCursor.cpp" />
+    <ClCompile Include="DeviceResources.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="StepTimer.h" />
-    <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="MouseCursor.h" />
+    <ClInclude Include="DeviceResources.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="StepTimer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\background_flat.png">
@@ -85,6 +94,9 @@
     <Image Include="..\..\..\Media\Meshes\RTSMap\Map3DColor.dds">
       <Filter>Assets\RTSMap</Filter>
     </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -109,7 +121,7 @@
     <None Include="..\..\..\Media\Fonts\Courier_36.spritefont">
       <Filter>Assets</Filter>
     </None>
-    <None Include="MouseCursor_Readme.docx" />
+    <None Include="Readme.docx" />
   </ItemGroup>
   <ItemGroup>
     <ImageContentTask Include="Assets\FPSRooom\Ceiling.png">

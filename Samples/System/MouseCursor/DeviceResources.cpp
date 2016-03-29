@@ -33,6 +33,17 @@ namespace
         return SUCCEEDED(hr);
     }
 #endif
+
+    inline DXGI_FORMAT NoSRGB(DXGI_FORMAT fmt)
+    {
+        switch (fmt)
+        {
+        case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:   return DXGI_FORMAT_R8G8B8A8_UNORM;
+        case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:   return DXGI_FORMAT_B8G8R8A8_UNORM;
+        case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB:   return DXGI_FORMAT_B8G8R8X8_UNORM;
+        default:                                return fmt;
+        }
+    }
 };
 
 // Constants used to calculate screen rotations
@@ -232,6 +243,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
     // Determine the render target size in pixels.
     UINT backBufferWidth = std::max<UINT>(m_outputSize.right - m_outputSize.left, 1);
     UINT backBufferHeight = std::max<UINT>(m_outputSize.bottom - m_outputSize.top, 1);
+    DXGI_FORMAT backBufferFormat = NoSRGB(m_backBufferFormat);
 
     if (m_swapChain)
     {
@@ -240,7 +252,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
             m_backBufferCount,
             backBufferWidth,
             backBufferHeight,
-            m_backBufferFormat,
+            backBufferFormat,
             0
             );
 
@@ -280,7 +292,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
         DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
         swapChainDesc.Width = backBufferWidth;
         swapChainDesc.Height = backBufferHeight;
-        swapChainDesc.Format = m_backBufferFormat;
+        swapChainDesc.Format = backBufferFormat;
         swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         swapChainDesc.BufferCount = m_backBufferCount;
         swapChainDesc.SampleDesc.Count = 1;
@@ -333,9 +345,10 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
     ComPtr<ID3D11Texture2D> backBuffer;
     DX::ThrowIfFailed(m_swapChain->GetBuffer(0, IID_PPV_ARGS(backBuffer.GetAddressOf())));
 
+    CD3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc(D3D11_RTV_DIMENSION_TEXTURE2D, m_backBufferFormat);
     DX::ThrowIfFailed(m_d3dDevice->CreateRenderTargetView(
         backBuffer.Get(),
-        nullptr,
+        &renderTargetViewDesc,
         m_d3dRenderTargetView.ReleaseAndGetAddressOf()
         ));
 
@@ -536,7 +549,18 @@ void DX::DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter)
     *ppAdapter = nullptr;
 
     ComPtr<IDXGIFactory2> dxgiFactory;
+#ifdef _DEBUG
+    UINT creationFlags = 0;
+
+    if (SdkLayersAvailable())
+    {
+        creationFlags |= DXGI_CREATE_FACTORY_DEBUG;
+    }
+
+    DX::ThrowIfFailed(CreateDXGIFactory2(creationFlags, IID_PPV_ARGS(dxgiFactory.GetAddressOf())));
+#else
     DX::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(dxgiFactory.GetAddressOf())));
+#endif
 
     ComPtr<IDXGIAdapter1> adapter;
     for (UINT adapterIndex = 0; DXGI_ERROR_NOT_FOUND != dxgiFactory->EnumAdapters1(adapterIndex, adapter.ReleaseAndGetAddressOf()); adapterIndex++)

@@ -39,6 +39,7 @@
     <WindowsTargetPlatformMinVersion>10.0.10586.0</WindowsTargetPlatformMinVersion>
     <EnableDotNetNativeCompatibleProfile>true</EnableDotNetNativeCompatibleProfile>
     <UapDefaultAssetScale>100</UapDefaultAssetScale>
+    <AppxBundlePlatforms>neutral</AppxBundlePlatforms>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -111,7 +112,6 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK\Inc;$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
       <FloatingPointModel>Fast</FloatingPointModel>
@@ -127,7 +127,6 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK\Inc;$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
       <FloatingPointModel>Fast</FloatingPointModel>
@@ -143,7 +142,6 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK\Inc;$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
       <FloatingPointModel>Fast</FloatingPointModel>
@@ -160,7 +158,6 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK\Inc;$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
       <FloatingPointModel>Fast</FloatingPointModel>
@@ -177,7 +174,6 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK\Inc;$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
       <FloatingPointModel>Fast</FloatingPointModel>
@@ -193,7 +189,6 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK\Inc;$(IntermediateOutputPath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>Level4</WarningLevel>
       <FloatingPointModel>Fast</FloatingPointModel>
@@ -270,8 +265,8 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</DeploymentContent>
     </None>
-    <None Include="MouseCursor_Readme.docx" />
     <None Include="MouseCursor_TemporaryKey.pfx" />
+    <None Include="Readme.docx" />
   </ItemGroup>
   <ItemGroup>
     <ImageContentTask Include="Assets\FPSRooom\Ceiling.png" />
@@ -296,6 +291,7 @@
     <Image Include="Assets\SplashScreen.scale-140.png" />
     <Image Include="Assets\SplashScreen.scale-180.png" />
     <Image Include="Assets\WideLogo.png" />
+    <Image Include="Assets\StoreLogo.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Kits\DirectXTK\DirectXTK_Windows10.vcxproj">
