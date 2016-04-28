@@ -28,7 +28,8 @@ Sample::Sample() :
     m_pSourceVoice(nullptr),
     m_currentFile(0)
 {
-    m_deviceResources = std::make_unique<DX::DeviceResources>();
+    // Renders only 2D, so no need for a depth buffer.
+    m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_UNKNOWN);
     m_deviceResources->RegisterDeviceNotify(this);
 }
 
@@ -39,9 +40,6 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
 
     m_keyboard = std::make_unique<Keyboard>();
     m_keyboard->SetWindow(reinterpret_cast<ABI::Windows::UI::Core::ICoreWindow*>(window));
-
-    m_mouse = std::make_unique<Mouse>();
-    m_mouse->SetWindow(reinterpret_cast<ABI::Windows::UI::Core::ICoreWindow*>(window));
 
     m_deviceResources->SetWindow(window, width, height, rotation);
 
@@ -157,7 +155,10 @@ void Sample::Render()
 
     PIXEndEvent(context);
 
+    // Show the new frame.
+    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Present");
     m_deviceResources->Present();
+    PIXEndEvent();
 }
 
 // Helper method to clear the back buffers.
@@ -168,12 +169,10 @@ void Sample::Clear()
 
     // Clear the views
     auto renderTarget = m_deviceResources->GetBackBufferRenderTargetView();
-    auto depthStencil = m_deviceResources->GetDepthStencilView();
 
     // Don't need to clear color as the sample draws a fullscreen image background
-    context->ClearDepthStencilView(depthStencil, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    context->OMSetRenderTargets(1, &renderTarget, depthStencil);
+    context->OMSetRenderTargets(1, &renderTarget, nullptr);
 
     // Set the viewport.
     auto viewport = m_deviceResources->GetScreenViewport();
@@ -256,6 +255,7 @@ void Sample::OnDeviceLost()
 {
     m_spriteBatch.reset();
     m_font.reset();
+    m_background.Reset();
 }
 
 void Sample::OnDeviceRestored()

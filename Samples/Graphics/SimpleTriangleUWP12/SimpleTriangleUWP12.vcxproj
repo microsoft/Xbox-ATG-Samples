@@ -212,6 +212,7 @@
     </FXCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h" />
     <ClInclude Include="..\..\..\Kits\ATGTK\ReadData.h" />
     <ClInclude Include="SimpleTriangleUWP12.h" />
     <ClInclude Include="pch.h" />

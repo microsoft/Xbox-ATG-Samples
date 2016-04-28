@@ -7,6 +7,8 @@
 
 #include "pch.h"
 #include "SystemInfo.h"
+
+#include "ATGColors.h"
 #include "ControllerFont.h"
 
 using namespace DirectX;
@@ -28,13 +30,13 @@ namespace
     {
         XMVECTOR size = font->MeasureString(text);
         XMFLOAT2 pos(mid - XMVectorGetX(size)*scale, y);
-        font->DrawString(batch, text, pos, Colors::White, 0.f, Vector2::Zero, scale);
+        font->DrawString(batch, text, pos, ATG::Colors::Blue, 0.f, Vector2::Zero, scale);
     }
 
     inline float DrawStringRight(SpriteBatch* batch, SpriteFont* font, const wchar_t* text, float mid, float y, float scale)
     {
         XMFLOAT2 pos(mid, y);
-        font->DrawString(batch, text, pos, Colors::White, 0.f, Vector2::Zero, scale);
+        font->DrawString(batch, text, pos, ATG::Colors::White, 0.f, Vector2::Zero, scale);
         return font->GetLineSpacing()*scale;
     }
 }
@@ -44,7 +46,8 @@ Sample::Sample() :
     m_current(0),
     m_gamepadPresent(false)
 {
-    m_deviceResources = std::make_unique<DX::DeviceResources>();
+    // Renders only 2D, so no need for a depth buffer.
+    m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_UNKNOWN);
     m_deviceResources->RegisterDeviceNotify(this);
 }
 
@@ -157,14 +160,14 @@ void Sample::Render()
 
     float y = float(safeRect.top);
 
-    XMFLOAT2 pos(float(safeRect.left), float(safeRect.bottom));
+    XMFLOAT2 pos(float(safeRect.left), float(safeRect.bottom) - m_smallFont->GetLineSpacing());
     if (m_gamepadPresent)
     {
-        DX::DrawControllerString(m_batch.get(), m_smallFont.get(), m_ctrlFont.get(), L"Use [A], [B], or [DPad] to cycle pages", pos, Colors::Gray, m_scale);
+        DX::DrawControllerString(m_batch.get(), m_smallFont.get(), m_ctrlFont.get(), L"Use [A], [B], or [DPad] to cycle pages", pos, ATG::Colors::LightGrey, m_scale);
     }
     else
     {
-        m_smallFont->DrawString(m_batch.get(), L"Use Left/Right to cycle pages", pos, Colors::Gray, 0, Vector2::Zero, m_scale);
+        m_smallFont->DrawString(m_batch.get(), L"Use Left/Right to cycle pages", pos, ATG::Colors::LightGrey, 0, Vector2::Zero, m_scale);
     }
 
     float spacer = XMVectorGetX(m_smallFont->MeasureString(L"X")*m_scale);
@@ -176,7 +179,7 @@ void Sample::Render()
     {
     case InfoPage::SYSTEMINFO:
         {
-            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"GetNativeSystemInfo", mid, y, Colors::Yellow, m_scale);
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"GetNativeSystemInfo", mid, y, ATG::Colors::LightGrey, m_scale);
 
             SYSTEM_INFO info = {};
             GetNativeSystemInfo(&info);
@@ -229,7 +232,7 @@ void Sample::Render()
 
     case InfoPage::GETPROCESSINFO:
         {
-            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"GetProcessInformation", mid, y, Colors::Yellow, m_scale);
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"GetProcessInformation", mid, y, ATG::Colors::LightGrey, m_scale);
 
             APP_MEMORY_INFORMATION info = {};
             if (GetProcessInformation(GetCurrentProcess(), ProcessAppMemoryInfo, &info, sizeof(info)))
@@ -240,19 +243,19 @@ void Sample::Render()
                 auto tc = static_cast<uint32_t>(info.TotalCommitUsage / (1024 * 1024));
 
                 wchar_t buff[128] = { 0 };
-                swprintf_s(buff, L"%u (MB)", ac);
+                swprintf_s(buff, L"%u (MiB)", ac);
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"AvailableCommit", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
 
-                swprintf_s(buff, L"%u (MB)", pc);
+                swprintf_s(buff, L"%u (MiB)", pc);
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"PrivateCommitUsage", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
 
-                swprintf_s(buff, L"%u (MB)", ppc);
+                swprintf_s(buff, L"%u (MiB)", ppc);
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"PeakPrivateCommitUsage", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
 
-                swprintf_s(buff, L"%u (MB)", tc);
+                swprintf_s(buff, L"%u (MiB)", tc);
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"TotalCommitUsage", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
             }
@@ -261,7 +264,7 @@ void Sample::Render()
 
     case InfoPage::ANALYTICSINFO:
         {
-            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"AnalyticsInfo", mid, y, Colors::Yellow, m_scale);
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"AnalyticsInfo", mid, y, ATG::Colors::LightGrey, m_scale);
 
             auto versionInfo = Windows::System::Profile::AnalyticsInfo::VersionInfo;
 
@@ -283,7 +286,7 @@ void Sample::Render()
 
     case InfoPage::APICONTRACT:
         {
-            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"IsApiContractPresent", mid, y, Colors::Yellow, m_scale);
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"IsApiContractPresent", mid, y, ATG::Colors::LightGrey, m_scale);
 
             using namespace Windows::Foundation::Metadata;
 
@@ -308,7 +311,7 @@ void Sample::Render()
 
     case InfoPage::CPUSETS:
         {
-            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"GetSystemCpuSetInformation", mid, y, Colors::Yellow, m_scale);
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"GetSystemCpuSetInformation", mid, y, ATG::Colors::LightGrey, m_scale);
 
             ULONG retsize = 0;
             (void)GetSystemCpuSetInformation(nullptr, 0, &retsize, GetCurrentProcess(), 0);
@@ -408,7 +411,7 @@ void Sample::Render()
                 if (moreThanOneGroup)
                 {
                     y += m_smallFont->GetLineSpacing() * m_scale;
-                    y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"Note more than one group found; ignored extra groups!", mid, y, Colors::Red, m_scale);
+                    y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"Note more than one group found; ignored extra groups!", mid, y, ATG::Colors::Orange, m_scale);
                 }
             }
         }
@@ -416,9 +419,9 @@ void Sample::Render()
 
     case InfoPage::DXGI:
         {
-            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"DXGI", mid, y, Colors::Yellow, m_scale);
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"DXGI", mid, y, ATG::Colors::LightGrey, m_scale);
 
-            y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"DXGI_OUTPUT_DESC", mid, y, Colors::White, m_scale);
+            y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"DXGI_OUTPUT_DESC", mid, y, ATG::Colors::OffWhite, m_scale);
 
             ComPtr<IDXGIOutput> output;
             if (SUCCEEDED(m_deviceResources->GetSwapChain()->GetContainingOutput(output.GetAddressOf())))
@@ -446,7 +449,7 @@ void Sample::Render()
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Rotation", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), rotation, right, y, m_scale) * 1.25f;
 
-                y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"DXGI_ADAPTER_DESC", mid, y, Colors::White, m_scale);
+                y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"DXGI_ADAPTER_DESC", mid, y, ATG::Colors::OffWhite, m_scale);
 
                 ComPtr<IDXGIAdapter> adapter;
                 if (SUCCEEDED(output->GetParent(IID_PPV_ARGS(adapter.GetAddressOf()))))
@@ -469,15 +472,15 @@ void Sample::Render()
                     auto dsm = static_cast<uint32_t>(adapterDesc.DedicatedSystemMemory / (1024 * 1024));
                     auto ssm = static_cast<uint32_t>(adapterDesc.SharedSystemMemory / (1024 * 1024));
 
-                    swprintf_s(buff, L"%u (MB)", dvm);
+                    swprintf_s(buff, L"%u (MiB)", dvm);
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DedicatedVideoMemory", left, y, m_scale);
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
 
-                    swprintf_s(buff, L"%u (MB)", dsm);
+                    swprintf_s(buff, L"%u (MiB)", dsm);
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DedicatedSystemMemory", left, y, m_scale);
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
 
-                    swprintf_s(buff, L"%u (MB)", ssm);
+                    swprintf_s(buff, L"%u (MiB)", ssm);
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"SharedSystemMemory", left, y, m_scale);
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
                 }
@@ -487,7 +490,7 @@ void Sample::Render()
 
     case InfoPage::DIRECT3D11_1:
         {
-            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 11.1", mid, y, Colors::Yellow, m_scale);
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 11.1", mid, y, ATG::Colors::LightGrey, m_scale);
 
             const wchar_t* featLevel = L"Unknown";
             switch (m_deviceResources->GetDeviceFeatureLevel())
@@ -554,7 +557,7 @@ void Sample::Render()
 
     case InfoPage::DIRECT3D11_2:
         {
-            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 11.2", mid, y, Colors::Yellow, m_scale);
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 11.2", mid, y, ATG::Colors::LightGrey, m_scale);
 
             auto device = m_deviceResources->GetD3DDevice();
 
@@ -587,7 +590,7 @@ void Sample::Render()
 
     case InfoPage::DIRECT3D11_3:
     {
-        y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 11.3", mid, y, Colors::Yellow, m_scale);
+        y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 11.3", mid, y, ATG::Colors::LightGrey, m_scale);
 
         auto device = m_deviceResources->GetD3DDevice();
 
@@ -638,7 +641,11 @@ void Sample::Render()
     m_batch->End();
 
     PIXEndEvent(context);
+
+    // Show the new frame.
+    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Present");
     m_deviceResources->Present();
+    PIXEndEvent();
 }
 
 // Helper method to clear the back buffers.
@@ -649,12 +656,10 @@ void Sample::Clear()
 
     // Clear the views
     auto renderTarget = m_deviceResources->GetBackBufferRenderTargetView();
-    auto depthStencil = m_deviceResources->GetDepthStencilView();
 
-    context->ClearRenderTargetView(renderTarget, Colors::CornflowerBlue);
-    context->ClearDepthStencilView(depthStencil, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    // Don't need to clear render target since we drawing image to fill screen
 
-    context->OMSetRenderTargets(1, &renderTarget, depthStencil);
+    context->OMSetRenderTargets(1, &renderTarget, nullptr);
 
     // Set the viewport.
     auto viewport = m_deviceResources->GetScreenViewport();
@@ -721,7 +726,7 @@ void Sample::CreateDeviceDependentResources()
 
     m_smallFont = std::make_unique<SpriteFont>(device, L"SegoeUI_18.spritefont");
     m_largeFont = std::make_unique<SpriteFont>(device, L"SegoeUI_36.spritefont");
-    m_ctrlFont = std::make_unique<SpriteFont>(device, L"XboxOneController.spritefont");
+    m_ctrlFont = std::make_unique<SpriteFont>(device, L"XboxOneControllerLegendSmall.spritefont");
 
     DX::ThrowIfFailed(CreateDDSTextureFromFile(device, L"ATGSampleBackground.DDS", nullptr, m_background.ReleaseAndGetAddressOf()));
 }

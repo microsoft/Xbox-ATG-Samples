@@ -8,6 +8,7 @@
 #include "pch.h"
 #include "SimpleTriangleUWP12.h"
 
+#include "ATGColors.h"
 #include "ReadData.h"
 
 using namespace DirectX;
@@ -27,7 +28,8 @@ namespace
 
 Sample::Sample()
 {
-    m_deviceResources = std::make_unique<DX::DeviceResources>();
+    // Use gamma-correct rendering.
+    m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM_SRGB);
     m_deviceResources->RegisterDeviceNotify(this);
 }
 
@@ -113,10 +115,16 @@ void Sample::Render()
     // Set necessary state.
     commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     commandList->IASetVertexBuffers(0, 1, &m_vertexBufferView);
+
+    // Draw triangle.
     commandList->DrawInstanced(3, 1, 0, 0);
 
     PIXEndEvent(commandList);
+
+    // Show the new frame.
+    PIXBeginEvent(m_deviceResources->GetCommandQueue(), PIX_COLOR_DEFAULT, L"Present");
     m_deviceResources->Present();
+    PIXEndEvent(m_deviceResources->GetCommandQueue());
 }
 
 // Helper method to clear the back buffers.
@@ -130,7 +138,10 @@ void Sample::Clear()
     auto dsvDescriptor = m_deviceResources->GetDepthStencilView();
 
     commandList->OMSetRenderTargets(1, &rtvDescriptor, FALSE, &dsvDescriptor);
-    commandList->ClearRenderTargetView(rtvDescriptor, Colors::CornflowerBlue, 0, nullptr);
+
+    // Use linear clear color for gamma-correct rendering.
+    commandList->ClearRenderTargetView(rtvDescriptor, ATG::ColorsLinear::Background, 0, nullptr);
+
     commandList->ClearDepthStencilView(dsvDescriptor, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
     // Set the viewport and scissor rect.
@@ -233,7 +244,7 @@ void Sample::CreateDeviceDependentResources()
         device->CreateGraphicsPipelineState(&psoDesc,
             IID_PPV_ARGS(m_pipelineState.ReleaseAndGetAddressOf())));
 
-    // Create vertex buffer
+    // Create vertex buffer.
     {
         static const Vertex s_vertexData[3] =
         {

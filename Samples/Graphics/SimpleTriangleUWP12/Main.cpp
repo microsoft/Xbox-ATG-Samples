@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // Main.cpp
 //
-// Entry point for universal Windows app.
+// Entry point for Universal Windows Platform (UWP) app.
 //
 // Advanced Technology Group (ATG)
 // Copyright (C) Microsoft Corporation. All rights reserved.
@@ -152,17 +152,15 @@ protected:
         ApplicationView::PreferredLaunchWindowingMode = ApplicationViewWindowingMode::PreferredLaunchViewSize;
         // Change to ApplicationViewWindowingMode::FullScreen to default to full screen
 
-        auto desiredSize = Size( ConvertPixelsToDips( w ),
-                                 ConvertPixelsToDips( h ) ); 
+        auto desiredSize = Size(ConvertPixelsToDips(w), ConvertPixelsToDips(h));;
 
         ApplicationView::PreferredLaunchViewSize = desiredSize;
 
         auto view = ApplicationView::GetForCurrentView();
 
-        auto minSize = Size( ConvertPixelsToDips( 320 ),
-                             ConvertPixelsToDips( 200 ) );
+        auto minSize = Size(ConvertPixelsToDips(320), ConvertPixelsToDips(200));
 
-        view->SetPreferredMinSize( minSize );
+        view->SetPreferredMinSize(minSize);
 
         CoreWindow::GetForCurrentThread()->Activate();
 

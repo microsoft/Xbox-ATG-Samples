@@ -8,6 +8,7 @@
 #include "pch.h"
 #include "SimpleTriangleUWP.h"
 
+#include "ATGColors.h"
 #include "ReadData.h"
 
 using namespace DirectX;
@@ -25,7 +26,8 @@ namespace
 
 Sample::Sample()
 {
-    m_deviceResources = std::make_unique<DX::DeviceResources>();
+    // Use gamma-correct rendering.
+    m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM_SRGB);
     m_deviceResources->RegisterDeviceNotify(this);
 }
 
@@ -97,7 +99,7 @@ void Sample::Render()
     auto context = m_deviceResources->GetD3DDeviceContext();
     PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Render");
 
-    // Set input assembler state
+    // Set input assembler state.
     context->IASetInputLayout(m_spInputLayout.Get());
 
     UINT strides = sizeof(Vertex);
@@ -105,16 +107,20 @@ void Sample::Render()
     context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     context->IASetVertexBuffers(0, 1, m_spVertexBuffer.GetAddressOf(), &strides, &offsets);
 
-    // Set shaders
+    // Set shaders.
     context->VSSetShader(m_spVertexShader.Get(), nullptr, 0);
     context->GSSetShader(nullptr, nullptr, 0);
     context->PSSetShader(m_spPixelShader.Get(), nullptr, 0);
 
-    // Draw triangle
+    // Draw triangle.
     context->Draw(3, 0);
 
     PIXEndEvent(context);
+
+    // Show the new frame.
+    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Present");
     m_deviceResources->Present();
+    PIXEndEvent();
 }
 
 // Helper method to clear the back buffers.
@@ -123,11 +129,13 @@ void Sample::Clear()
     auto context = m_deviceResources->GetD3DDeviceContext();
     PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Clear");
 
-    // Clear the views
+    // Clear the views.
     auto renderTarget = m_deviceResources->GetBackBufferRenderTargetView();
     auto depthStencil = m_deviceResources->GetDepthStencilView();
 
-    context->ClearRenderTargetView(renderTarget, Colors::CornflowerBlue);
+    // Use linear clear color for gamma-correct rendering.
+    context->ClearRenderTargetView(renderTarget, ATG::ColorsLinear::Background);
+
     context->ClearDepthStencilView(depthStencil, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     context->OMSetRenderTargets(1, &renderTarget, depthStencil);
@@ -190,7 +198,7 @@ void Sample::CreateDeviceDependentResources()
 {
     auto device = m_deviceResources->GetD3DDevice();
 
-    // Load and create shaders
+    // Load and create shaders.
     auto vertexShaderBlob = DX::ReadData(L"VertexShader.cso");
 
     DX::ThrowIfFailed(
@@ -203,7 +211,7 @@ void Sample::CreateDeviceDependentResources()
         device->CreatePixelShader(pixelShaderBlob.data(), pixelShaderBlob.size(),
             nullptr, m_spPixelShader.ReleaseAndGetAddressOf()));
 
-    // Create input layout
+    // Create input layout.
     static const D3D11_INPUT_ELEMENT_DESC s_inputElementDesc[2] =
     {
         { "SV_Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA,  0 },
@@ -215,7 +223,7 @@ void Sample::CreateDeviceDependentResources()
             vertexShaderBlob.data(), vertexShaderBlob.size(),
             m_spInputLayout.ReleaseAndGetAddressOf()));
 
-    // Create vertex buffer
+    // Create vertex buffer.
     static const Vertex s_vertexData[3] =
     {
         { { 0.0f,   0.5f,  0.5f, 1.0f },{ 1.0f, 0.0f, 0.0f, 1.0f } },  // Top / Red

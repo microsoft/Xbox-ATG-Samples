@@ -62,7 +62,6 @@ private:
     // Input devices.
     std::unique_ptr<DirectX::GamePad>       m_gamePad;
     std::unique_ptr<DirectX::Keyboard>      m_keyboard;
-    std::unique_ptr<DirectX::Mouse>         m_mouse;
 
     // Render objects.
     std::unique_ptr<DirectX::SpriteBatch>   m_spriteBatch;

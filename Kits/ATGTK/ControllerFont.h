@@ -25,12 +25,12 @@ namespace DX
         DPad = L'!',
         RightThumb = L'\"',
         View = L'#',
-        Guide = L'$',
+        Nexus = L'$',
         Menu = L'%',
         XButton = L'&',
-        YButton = L'\'',
-        BButton = L'(',
-        AButton = L')',
+        AButton = L'\'',
+        YButton = L'(',
+        BButton = L')',
         RightShoulder = L'*',
         RightTrigger = L'+',
         LeftTrigger = L',',
@@ -97,9 +97,9 @@ namespace DX
                     {
                         *button = static_cast<wchar_t>(ControllerFont::Menu);
                     }
-                    else if (_wcsicmp(strBuffer, L"[Guide]") == 0)
+                    else if (_wcsicmp(strBuffer, L"[Nexus]") == 0)
                     {
-                        *button = static_cast<wchar_t>(ControllerFont::Guide);
+                        *button = static_cast<wchar_t>(ControllerFont::Nexus);
                     }
                     else if (_wcsicmp(strBuffer, L"[RThumb]") == 0)
                     {

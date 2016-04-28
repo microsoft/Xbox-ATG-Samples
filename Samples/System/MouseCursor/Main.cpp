@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // Main.cpp
 //
-// Entry point for universal Windows app.
+// Entry point for Universal Windows Platform (UWP) app.
 //
 // Initialize the mouse cursor object and implements the event handling for
 // necessary mouse cursor events to implement clip cursor or relative mouse mode.

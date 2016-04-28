@@ -21,6 +21,7 @@
 #include <fstream>
 #include <vector>
 
+
 namespace DX
 {
     inline std::vector<uint8_t> ReadData(_In_z_ const wchar_t* name)

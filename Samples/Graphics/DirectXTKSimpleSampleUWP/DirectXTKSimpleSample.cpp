@@ -183,7 +183,11 @@ void Sample::Render()
     PIXEndEvent(context);
 
     PIXEndEvent(context);
+
+    // Show the new frame.
+    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Present");
     m_deviceResources->Present();
+    PIXEndEvent();
 }
 
 // Helper method to clear the back buffers.
