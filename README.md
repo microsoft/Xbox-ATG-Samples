@@ -8,6 +8,7 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
  * ``Audio``
  * ``Graphics``
  * ``System``
+ * ``Tools``
 
 # Requirements
 
