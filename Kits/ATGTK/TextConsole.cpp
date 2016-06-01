@@ -217,6 +217,16 @@ void TextConsole::RestoreDevice(ID3D11DeviceContext* context, const wchar_t* fon
     m_font->SetDefaultCharacter(L' ');
 }
 
+
+void TextConsole::SetRotation(DXGI_MODE_ROTATION rotation)
+{
+    if (m_batch)
+    {
+        m_batch->SetRotation(rotation);
+    }
+}
+
+
 void TextConsole::ProcessString(const wchar_t* str)
 {
     if (!m_lines)
@@ -331,7 +341,7 @@ void TextConsoleImage::RestoreDevice(ID3D11DeviceContext* context, const wchar_t
     ComPtr<ID3D11Device> device;
     context->GetDevice(device.GetAddressOf());
 
-    WCHAR ext[_MAX_EXT];
+    wchar_t ext[_MAX_EXT];
     _wsplitpath_s(image, nullptr, 0, nullptr, 0, nullptr, 0, ext, _MAX_EXT);
 
     if (_wcsicmp(ext, L".dds") == 0)

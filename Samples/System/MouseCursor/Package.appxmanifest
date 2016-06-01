@@ -8,14 +8,14 @@
 
   <Identity
     Name="3a50f0d0-133e-42de-a016-152c2f3b1b91"
-    Publisher="CN=Microsoft"
+    Publisher="CN=Publisher"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="3a50f0d0-133e-42de-a016-152c2f3b1b91" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>MouseCursor</DisplayName>
-    <PublisherDisplayName>Microsoft ATG</PublisherDisplayName>
+    <PublisherDisplayName>Xbox Advanced Technology Group</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

@@ -113,6 +113,27 @@ void Sample::Update(DX::StepTimer const& /*timer*/)
     auto kb = m_keyboard->GetState();
     m_keyboardButtons.Update(kb);
 
+    if (kb.A)
+    {
+        ULONG size;
+        HANDLE curProc = GetCurrentProcess();
+        (void)GetSystemCpuSetInformation(nullptr, 0, &size, curProc, 0);
+
+        std::unique_ptr<uint8_t[]> buffer(new uint8_t[size]);
+
+        PSYSTEM_CPU_SET_INFORMATION cpuSets = reinterpret_cast<PSYSTEM_CPU_SET_INFORMATION>(buffer.get());
+        GetSystemCpuSetInformation(cpuSets, size, &size, GetCurrentProcess(), 0);
+        
+        size_t count = 0;
+        while (size > 0)
+        {
+            size -= cpuSets[count].Size;
+            ++count;
+        }
+
+        ReportCPUInformation(cpuSets, count);
+    }
+
     if (kb.Escape)
     {
         Windows::ApplicationModel::Core::CoreApplication::Exit();
@@ -275,13 +296,25 @@ void Sample::ReportCPUInformation(SYSTEM_CPU_SET_INFORMATION* cpuSetInfo, size_t
     for (size_t i = 0; i < count; ++i)
     {
         wchar_t buffer[1024] = { L'\0' };
-        swprintf_s(buffer, 1024, L"CPU ID: %i\n\tGroup: %i\n\tLogical index: %i\n\tCore index: %i\n\tCache ID: %i\n\tNUMA ID: %i\n",
+        swprintf_s(buffer, 1024, L"CPU ID: %i\n\tGroup: %i"
+            "\n\tLogical index: %i\n\tCore index: %i\n\tCache ID: %i"
+            "\n\tNUMA ID: %i\n\tEfficiency class: %i\n\tAll flags: %i"
+            "\n\tAllocated: %i\n\tAllocated to target: %i"
+            "\n\tParked: %i\n\tRealtime: %i\n\tReserved flags: %i\n\tReserved: %i\n",
             cpuSetInfo[i].CpuSet.Id,                    // Unique ID for every CPU core. This is the value to use with SetProcessDefaultCpuSets
             cpuSetInfo[i].CpuSet.Group,                 // Some PCs (mostly servers) have groups of CPU cores
             cpuSetInfo[i].CpuSet.LogicalProcessorIndex, // Index of the logical core of the CPU, relative to this CPU group
             cpuSetInfo[i].CpuSet.CoreIndex,             // Index of the home core any logical core is associated with, relative to this CPU group 
             cpuSetInfo[i].CpuSet.LastLevelCacheIndex,   // ID of the memory cache this core uses, relative to this CPU group
-            cpuSetInfo[i].CpuSet.NumaNodeIndex);        // ID of the NUMA group for this core, relative to this CPU group
+            cpuSetInfo[i].CpuSet.NumaNodeIndex,         // ID of the NUMA group for this core, relative to this CPU group
+            cpuSetInfo[i].CpuSet.EfficiencyClass,
+            cpuSetInfo[i].CpuSet.AllFlags,
+            cpuSetInfo[i].CpuSet.Allocated,
+            cpuSetInfo[i].CpuSet.AllocatedToTargetProcess,
+            cpuSetInfo[i].CpuSet.Parked,
+            cpuSetInfo[i].CpuSet.RealTime,
+            cpuSetInfo[i].CpuSet.ReservedFlags,
+            cpuSetInfo[i].CpuSet.Reserved);
 
         OutputDebugString(buffer);
     }
@@ -325,6 +358,44 @@ void Sample::OrganizeCPUSets(SYSTEM_CPU_SET_INFORMATION* cpuSetInfo, size_t coun
                 // There are multiple logical cores on one physical core so the CPU is using hyperthreading.
                 m_hyperThreading = HyperThreadedState::HyperThreaded;
                 cpus->second.push_back(cpuSetInfo[i]);
+            }
+        }
+    }
+
+    {
+        unsigned long retsize = 0;
+        (void)GetSystemCpuSetInformation(nullptr, 0, &retsize,
+            GetCurrentProcess(), 0);
+
+        std::unique_ptr<uint8_t[]> data(new uint8_t[retsize]);
+        if (!GetSystemCpuSetInformation(
+            reinterpret_cast<PSYSTEM_CPU_SET_INFORMATION>(data.get()),
+            retsize, &retsize, GetCurrentProcess(), 0))
+        {
+            // Error!
+        }
+
+        unsigned long count2 = retsize / sizeof(SYSTEM_CPU_SET_INFORMATION);
+        bool sharedcache = false;
+
+        std::map<unsigned char, std::vector<SYSTEM_CPU_SET_INFORMATION>> cachemap;
+        for (size_t i = 0; i < count2; ++i)
+        {
+            auto cpuset = reinterpret_cast<PSYSTEM_CPU_SET_INFORMATION>(data.get())[i];
+            if (cpuset.Type == CPU_SET_INFORMATION_TYPE::CpuSetInformation)
+            {
+                if (cachemap.find(cpuset.CpuSet.LastLevelCacheIndex) == cachemap.end())
+                {
+                    std::pair<unsigned char, std::vector<SYSTEM_CPU_SET_INFORMATION>> newvalue;
+                    newvalue.first = cpuset.CpuSet.LastLevelCacheIndex;
+                    newvalue.second.push_back(cpuset);
+                    cachemap.insert(newvalue);
+                }
+                else
+                {
+                    sharedcache = true;
+                    cachemap[cpuset.CpuSet.LastLevelCacheIndex].push_back(cpuset);
+                }
             }
         }
     }

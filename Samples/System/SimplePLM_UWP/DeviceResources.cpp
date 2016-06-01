@@ -212,8 +212,7 @@ void DX::DeviceResources::CreateDeviceResources()
             {
                 D3D11_MESSAGE_ID_SETPRIVATEDATA_CHANGINGPARAMS,
             };
-            D3D11_INFO_QUEUE_FILTER filter;
-            memset(&filter, 0, sizeof(filter));
+            D3D11_INFO_QUEUE_FILTER filter = {};
             filter.DenyList.NumIDs = _countof(hide);
             filter.DenyList.pIDList = hide;
             d3dInfoQueue->AddStorageFilterEntries(&filter);
@@ -297,7 +296,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
         swapChainDesc.BufferCount = m_backBufferCount;
         swapChainDesc.SampleDesc.Count = 1;
         swapChainDesc.SampleDesc.Quality = 0;
-        swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
+        swapChainDesc.Scaling = DXGI_SCALING_ASPECT_RATIO_STRETCH;
         swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
         swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
 
@@ -581,7 +580,7 @@ void DX::DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter)
         }
 
 #ifdef _DEBUG
-        WCHAR buff[256] = {};
+        wchar_t buff[256] = {};
         swprintf_s(buff, L"Direct3D Adapter (%u): VID:%04X, PID:%04X - %ls\n", adapterIndex, desc.VendorId, desc.DeviceId, desc.Description);
         OutputDebugStringW(buff);
 #endif

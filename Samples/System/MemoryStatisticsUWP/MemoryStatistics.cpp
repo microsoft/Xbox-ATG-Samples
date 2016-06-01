@@ -12,6 +12,7 @@
 #include "ControllerFont.h"
 
 using namespace DirectX;
+using namespace DirectX::SimpleMath;
 
 using Microsoft::WRL::ComPtr;
 
@@ -162,12 +163,12 @@ void Sample::Render()
 
     for (auto & teapot : m_teapots)
     {
-        auto world = SimpleMath::Matrix::CreateRotationY(teapot.m_lifeFrameCount++ / 100.f);
+        auto world = Matrix::CreateRotationY(teapot.m_lifeFrameCount++ / 100.f);
         teapot.m_teapot->Draw(world * teapot.m_location, m_view, m_projection);
     }
 
     auto rect = m_deviceResources->GetOutputSize();
-    auto safeRect = SimpleMath::Viewport::ComputeTitleSafeArea(rect.right, rect.bottom);
+    auto safeRect = Viewport::ComputeTitleSafeArea(rect.right, rect.bottom);
 
     XMFLOAT2 pos(float(safeRect.left), float(safeRect.top));
 
@@ -320,9 +321,11 @@ void Sample::CreateDeviceDependentResources()
 // Allocate all memory resources that change on a window SizeChanged event.
 void Sample::CreateWindowSizeDependentResources()
 {
-    m_at = SimpleMath::Vector3(0.f, 0.f, -0.1f);
-    m_eye = SimpleMath::Vector3(0.0f, 0.0f, 0.0f);
-    m_view = SimpleMath::Matrix::CreateLookAt(m_eye, m_at, SimpleMath::Vector3::UnitY);
+    m_batch->SetRotation(m_deviceResources->GetRotation());
+
+    m_at = Vector3(0.f, 0.f, -0.1f);
+    m_eye = Vector3(0.0f, 0.0f, 0.0f);
+    m_view = Matrix::CreateLookAt(m_eye, m_at, Vector3::UnitY);
 
     auto size = m_deviceResources->GetOutputSize();
     float aspectRatio = float(size.right) / float(size.bottom);
@@ -335,12 +338,14 @@ void Sample::CreateWindowSizeDependentResources()
         fovAngleY *= 2.0f;
     }
 
-    m_projection = SimpleMath::Matrix::CreatePerspectiveFieldOfView(
+    Matrix projection = Matrix::CreatePerspectiveFieldOfView(
         fovAngleY,
         aspectRatio,
         0.01f,
         100.0f
         );
+
+    m_projection = projection * m_deviceResources->GetOrientationTransform3D();
 }
 
 void Sample::OnDeviceLost()
@@ -371,7 +376,7 @@ void Sample::CreateNewTeapot()
 
     TeapotData teapot;
     teapot.m_lifeFrameCount = 0;
-    teapot.m_location = SimpleMath::Matrix::CreateTranslation(FloatRand(-4.f, 4.f), FloatRand(-4.f, 4.f), FloatRand(-8.f, -4.f));
+    teapot.m_location = Matrix::CreateTranslation(FloatRand(-4.f, 4.f), FloatRand(-4.f, 4.f), FloatRand(-8.f, -4.f));
 
     m_teapots.push_back(teapot);
     m_teapots.back().m_teapot = DirectX::GeometricPrimitive::CreateTeapot(context);

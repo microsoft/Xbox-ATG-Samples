@@ -6,11 +6,11 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 * ``Media`` contains media files used by the samples
 * ``Samples``
  * ``Audio``
- * ``Graphics``
+ * ``IntroGraphics``
  * ``System``
  * ``Tools``
 
 # Requirements
 
 * Windows 10 November 2015
-* Visual Studio 2015 Update 1 with the Windows 10 SDK (10586)
+* Visual Studio 2015 Update 2 with the Windows 10 SDK (10586)

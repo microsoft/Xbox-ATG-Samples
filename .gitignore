@@ -16,6 +16,7 @@
 *.tlog
 *.lastbuildstate
 *.ilk
+*.VC.db
 ARM
 "Generated Files"
 Bin

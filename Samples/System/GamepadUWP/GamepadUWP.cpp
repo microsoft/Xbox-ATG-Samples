@@ -327,6 +327,7 @@ void Sample::CreateDeviceDependentResources()
 // Allocate all memory resources that change on a window SizeChanged event.
 void Sample::CreateWindowSizeDependentResources()
 {
+    m_spriteBatch->SetRotation(m_deviceResources->GetRotation());
 }
 
 void Sample::OnDeviceLost()

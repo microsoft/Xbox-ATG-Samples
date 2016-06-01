@@ -277,6 +277,8 @@ void Sample::CreateWindowSizeDependentResources()
 		m_console->WriteLine(m_logCache.back()->Data());
 		m_logCache.pop_back();
 	}
+
+    m_console->SetRotation(m_deviceResources->GetRotation());
 }
 
 void Sample::OnDeviceLost()

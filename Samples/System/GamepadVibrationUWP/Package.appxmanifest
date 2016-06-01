@@ -8,14 +8,14 @@
 
   <Identity
     Name="1925a86d-2d74-41f8-a578-4434dc8d9a68"
-    Publisher="CN=jeball"
+    Publisher="CN=Publisher"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="1925a86d-2d74-41f8-a578-4434dc8d9a68" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>GamepadVibrationUWP</DisplayName>
-    <PublisherDisplayName>jeball</PublisherDisplayName>
+    <PublisherDisplayName>Xbox Advanced Technology Group</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

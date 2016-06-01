@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="7f617ea0-15d4-40f1-91d2-ae558c151b81" Publisher="CN=shammond" Version="1.0.0.0" />
+  <Identity Name="7f617ea0-15d4-40f1-91d2-ae558c151b81" Publisher="CN=Publisher" Version="1.0.0.0" />
   <mp:PhoneIdentity PhoneProductId="7f617ea0-15d4-40f1-91d2-ae558c151b81" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>errorlookup</DisplayName>
-    <PublisherDisplayName>shammond</PublisherDisplayName>
+    <PublisherDisplayName>Xbox Advanced Technology Group</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>

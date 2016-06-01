@@ -8,14 +8,14 @@
 
   <Identity
     Name="3dcfb32d-527b-4a40-ba39-fbc97aefdb7c"
-    Publisher="CN=chuckw"
+    Publisher="CN=Publisher"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="3dcfb32d-527b-4a40-ba39-fbc97aefdb7c" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>SystemInfo</DisplayName>
-    <PublisherDisplayName>chuckw</PublisherDisplayName>
+    <PublisherDisplayName>Xbox Advanced Technology Group</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="837095eb-2514-4f2b-b80f-0352512344b5" Publisher="CN=shammond" Version="1.0.0.0" />
+  <Identity Name="837095eb-2514-4f2b-b80f-0352512344b5" Publisher="CN=Publisher" Version="1.0.0.0" />
   <mp:PhoneIdentity PhoneProductId="837095eb-2514-4f2b-b80f-0352512344b5" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>MemoryStatistics</DisplayName>
-    <PublisherDisplayName>ATG</PublisherDisplayName>
+    <PublisherDisplayName>Xbox Advanced Technology Group</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>

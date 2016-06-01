@@ -8,14 +8,14 @@
 
   <Identity
     Name="dc51ac37-863f-4690-9683-12f74c4ca7e6"
-    Publisher="CN=chuckw"
+    Publisher="CN=Publisher"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="dc51ac37-863f-4690-9683-12f74c4ca7e6" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>SimplePlaySound</DisplayName>
-    <PublisherDisplayName>chuckw</PublisherDisplayName>
+    <PublisherDisplayName>Xbox Advanced Technology Group</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

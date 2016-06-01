@@ -46,7 +46,7 @@ public:
     HANDLE GetGraphicsMutex() { return m_graphicsMutex;  }
     void SetWorldMatrix(DirectX::SimpleMath::Matrix& matrix) { m_world = matrix; }
     DirectX::AudioEngine* GetAudioEngine() { return m_audioEngine.get(); }
-    static const WCHAR* g_graphicsMutexName;
+    static const wchar_t* g_graphicsMutexName;
 
     bool CpuIsUsingHyperthreading() { return m_hyperThreading == HyperThreadedState::HyperThreaded;  }
 
