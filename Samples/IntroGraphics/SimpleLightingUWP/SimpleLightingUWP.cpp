@@ -34,10 +34,11 @@ namespace
 
 	static_assert((sizeof(ConstantBuffer) % 16) == 0, "Constant buffer must always be 16-byte aligned");
 }
+
 Sample::Sample() :
 	m_curRotationAngleRad(0.0f)
 {
-    m_deviceResources = std::make_unique<DX::DeviceResources>();
+    m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM_SRGB);
     m_deviceResources->RegisterDeviceNotify(this);
 }
 
@@ -417,10 +418,10 @@ void Sample::CreateDeviceDependentResources()
 	XMStoreFloat4x4(&m_worldMatrix, XMMatrixIdentity());
 
 	// Initialize the view matrix
-	static const XMVECTORF32 eye = { 0.0f, 4.0f, -10.0f, 0.0f };
-	static const XMVECTORF32 at = { 0.0f, 1.0f, 0.0f, 0.0f };
-	static const XMVECTORF32 up = { 0.0f, 1.0f, 0.0f, 0.0 };
-	XMStoreFloat4x4(&m_viewMatrix, XMMatrixLookAtLH(eye, at, up));
+	static const XMVECTORF32 c_eye = { 0.0f, 4.0f, -10.0f, 0.0f };
+	static const XMVECTORF32 c_at = { 0.0f, 1.0f, 0.0f, 0.0f };
+	static const XMVECTORF32 c_up = { 0.0f, 1.0f, 0.0f, 0.0 };
+	XMStoreFloat4x4(&m_viewMatrix, XMMatrixLookAtLH(c_eye, c_at, c_up));
 
 	// Initialize the lighting parameters
 	m_lightDirs[0] = XMFLOAT4(-0.577f, 0.577f, -0.577f, 1.0f);

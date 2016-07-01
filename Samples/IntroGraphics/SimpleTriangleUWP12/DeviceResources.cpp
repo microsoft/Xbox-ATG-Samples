@@ -217,6 +217,10 @@ void DX::DeviceResources::CreateDeviceResources()
     m_fenceValues[m_backBufferIndex]++;
 
     m_fenceEvent.Attach(CreateEvent(nullptr, FALSE, FALSE, nullptr));
+    if (!m_fenceEvent.IsValid())
+    {
+        throw std::exception("CreateEvent");
+    }
 }
 
 // These resources need to be recreated every time the window size is changed.

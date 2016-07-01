@@ -244,7 +244,7 @@ void XM_CALLCONV Sample::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR or
 
     for (size_t i = 0; i <= ydivs; i++)
     {
-        FLOAT fPercent = float(i) / float(ydivs);
+        float fPercent = float(i) / float(ydivs);
         fPercent = (fPercent * 2.0f) - 1.0f;
         XMVECTOR vScale = XMVectorScale(yAxis, fPercent);
         vScale = XMVectorAdd(vScale, origin);

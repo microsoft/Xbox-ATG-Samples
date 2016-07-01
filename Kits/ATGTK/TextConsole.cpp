@@ -160,8 +160,8 @@ void TextConsole::SetWindow(const RECT& layout)
     float lineSpacing = m_font->GetLineSpacing();
     unsigned int rows = std::max<unsigned int>(1, static_cast<unsigned int>(float(layout.bottom - layout.top) / lineSpacing));
 
-    auto charSize = m_font->MeasureString(L"M");
-    unsigned int columns = std::max<unsigned int>(1, static_cast<unsigned int>(float(layout.right - layout.left) / XMVectorGetX(charSize)));
+    RECT fontLayout = m_font->MeasureDrawBounds(L"X", XMFLOAT2(0,0));
+    unsigned int columns = std::max<unsigned int>(1, static_cast<unsigned int>(float(layout.right - layout.left) / float(fontLayout.right - fontLayout.left)));
 
     std::unique_ptr<wchar_t[]> buffer(new wchar_t[(columns + 1) * rows]);
     memset(buffer.get(), 0, sizeof(wchar_t) * (columns + 1) * rows);

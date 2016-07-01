@@ -11,7 +11,7 @@
 //--------------------------------------------------------------------------------------
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
-cbuffer ConstantBuffer : register( b0 )
+cbuffer Constants : register( b0 )
 {
 	float4x4 mWorld;
 	float4x4 mView;

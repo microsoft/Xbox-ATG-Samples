@@ -49,13 +49,13 @@
     dcl_texcoord1 v1  // vin<4,5,6>
     dcl_texcoord2 v2  // vin<7,8>
 
-#line 67 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 67 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     dp3 r0.x, v1, c11
     dp3 r0.y, v1, c12
     dp3 r0.z, v1, c13
     nrm r1.xyz, r0  // ::worldNormal<0,1,2>
 
-#line 36 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 36 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp3 r0.x, -c4, r1  // ::dotL<0>
 
 #line 39
@@ -67,15 +67,15 @@
     mov r2.xyz, c2  // Parameters::DiffuseColor<0,1,2>
     mad oT0.xyz, r0, r2, c3  // ::VSEnvMapOneLight<0,1,2>
 
-#line 71 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 71 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     dp4 oPos.z, v0, c16  // ::VSEnvMapOneLight<15>
 
-#line 14 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 14 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c7
     max r0.x, r0.x, c18.x
     min oT1.w, r0.x, c18.y  // ::VSEnvMapOneLight<7>
 
-#line 65 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 65 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     dp4 r0.x, v0, c8  // ::pos_ws<0>
     dp4 r0.y, v0, c9  // ::pos_ws<1>
     dp4 r0.z, v0, c10  // ::pos_ws<2>
@@ -96,10 +96,10 @@
     mad oPos.xy, r0.z, c0, r0  // ::VSEnvMapOneLight<13,14>
     mov oPos.w, r0.z  // ::VSEnvMapOneLight<16>
 
-#line 46 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 46 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mov oT0.w, c2.w  // ::VSEnvMapOneLight<3>
 
-#line 77 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 77 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     mov oT1.xyz, c1.x  // ::VSEnvMapOneLight<4,5,6>
 
 #line 104
@@ -153,17 +153,17 @@ ret
 
 const BYTE EnvironmentMapEffect_VSEnvMapOneLight[] =
 {
-     68,  88,  66,  67,  47, 235, 
-    109, 205, 132,  61,  37, 148, 
-     58, 201, 166, 220, 219, 218, 
-     33, 237,   1,   0,   0,   0, 
-    136,  13,   0,   0,   4,   0, 
+     68,  88,  66,  67, 239, 158, 
+    103, 125, 117, 198, 247, 206, 
+    224, 147,  46, 147,  50, 147, 
+     61, 168,   1,   0,   0,   0, 
+    148,  13,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
-     84,   8,   0,   0, 112,  12, 
-      0,   0, 228,  12,   0,   0, 
-     65, 111, 110,  57,  28,   8, 
-      0,   0,  28,   8,   0,   0, 
-      0,   2, 254, 255, 184,   7, 
+     96,   8,   0,   0, 124,  12, 
+      0,   0, 240,  12,   0,   0, 
+     65, 111, 110,  57,  40,   8, 
+      0,   0,  40,   8,   0,   0, 
+      0,   2, 254, 255, 196,   7, 
       0,   0, 100,   0,   0,   0, 
       5,   0,  36,   0,   0,   0, 
      96,   0,   0,   0,  96,   0, 
@@ -180,14 +180,14 @@ const BYTE EnvironmentMapEffect_VSEnvMapOneLight[] =
       7,   0,  11,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   2, 254, 255, 254, 255, 
-    104,   1,  68,  66,  85,  71, 
+    107,   1,  68,  66,  85,  71, 
      40,   0,   0,   0, 116,   5, 
       0,   0,   0,   0,   0,   0, 
       3,   0,   0,   0,  12,   1, 
       0,   0,  34,   0,   0,   0, 
      24,   1,   0,   0,  10,   0, 
       0,   0, 172,   4,   0,   0, 
-     92,   2,   0,   0,  67,  58, 
+     92,   2,   0,   0,  68,  58, 
      92,  65,  84,  71,  32,  83, 
      97, 109, 112, 108, 101,  32, 
      68, 101, 118, 101, 108, 111, 
@@ -201,7 +201,7 @@ const BYTE EnvironmentMapEffect_VSEnvMapOneLight[] =
     118, 105, 114, 111, 110, 109, 
     101, 110, 116,  77,  97, 112, 
      69, 102, 102, 101,  99, 116, 
-     46, 102, 120,   0,  67,  58, 
+     46, 102, 120,   0,  68,  58, 
      92,  65,  84,  71,  32,  83, 
      97, 109, 112, 108, 101,  32, 
      68, 101, 118, 101, 108, 111, 
@@ -213,7 +213,7 @@ const BYTE EnvironmentMapEffect_VSEnvMapOneLight[] =
      99,  92,  83, 104,  97, 100, 
     101, 114, 115,  92,  76, 105, 
     103, 104, 116, 105, 110, 103, 
-     46, 102, 120, 104,   0,  67, 
+     46, 102, 120, 104,   0,  68, 
      58,  92,  65,  84,  71,  32, 
      83,  97, 109, 112, 108, 101, 
      32,  68, 101, 118, 101, 108, 
@@ -228,51 +228,51 @@ const BYTE EnvironmentMapEffect_VSEnvMapOneLight[] =
     102, 120, 104,   0,  40,   0, 
       0,   0, 124,   0,   0,   0, 
     197,   0,   0,   0,   0,   0, 
-    255, 255, 168,   5,   0,   0, 
-      0,   0, 255, 255, 192,   5, 
+    255, 255, 180,   5,   0,   0, 
+      0,   0, 255, 255, 204,   5, 
       0,   0,   0,   0, 255, 255, 
-    204,   5,   0,   0,   0,   0, 
-    255, 255, 216,   5,   0,   0, 
-     67,   0,   0,   0, 228,   5, 
+    216,   5,   0,   0,   0,   0, 
+    255, 255, 228,   5,   0,   0, 
+     67,   0,   0,   0, 240,   5, 
       0,   0,  67,   0,   0,   0, 
-    244,   5,   0,   0,  67,   0, 
-      0,   0,   4,   6,   0,   0, 
-     67,   0,   0,   0,  20,   6, 
+      0,   6,   0,   0,  67,   0, 
+      0,   0,  16,   6,   0,   0, 
+     67,   0,   0,   0,  32,   6, 
       0,   0,  36,   0,   1,   0, 
-     32,   6,   0,   0,  39,   0, 
-      1,   0,  48,   6,   0,   0, 
-     41,   0,   1,   0,  64,   6, 
+     44,   6,   0,   0,  39,   0, 
+      1,   0,  60,   6,   0,   0, 
+     41,   0,   1,   0,  76,   6, 
       0,   0,  46,   0,   1,   0, 
-     80,   6,   0,   0,  46,   0, 
-      1,   0,  96,   6,   0,   0, 
-     46,   0,   1,   0, 108,   6, 
+     92,   6,   0,   0,  46,   0, 
+      1,   0, 108,   6,   0,   0, 
+     46,   0,   1,   0, 120,   6, 
       0,   0,  71,   0,   0,   0, 
-    128,   6,   0,   0,  14,   0, 
-      2,   0, 144,   6,   0,   0, 
-     14,   0,   2,   0, 160,   6, 
+    140,   6,   0,   0,  14,   0, 
+      2,   0, 156,   6,   0,   0, 
+     14,   0,   2,   0, 172,   6, 
       0,   0,  14,   0,   2,   0, 
-    176,   6,   0,   0,  65,   0, 
-      0,   0, 192,   6,   0,   0, 
-     65,   0,   0,   0, 208,   6, 
+    188,   6,   0,   0,  65,   0, 
+      0,   0, 204,   6,   0,   0, 
+     65,   0,   0,   0, 220,   6, 
       0,   0,  65,   0,   0,   0, 
-    224,   6,   0,   0,  66,   0, 
-      0,   0, 240,   6,   0,   0, 
-     66,   0,   0,   0,   0,   7, 
+    236,   6,   0,   0,  66,   0, 
+      0,   0, 252,   6,   0,   0, 
+     66,   0,   0,   0,  12,   7, 
       0,   0,  81,   0,   0,   0, 
-     12,   7,   0,   0,  81,   0, 
-      0,   0,  28,   7,   0,   0, 
-     81,   0,   0,   0,  44,   7, 
+     24,   7,   0,   0,  81,   0, 
+      0,   0,  40,   7,   0,   0, 
+     81,   0,   0,   0,  56,   7, 
       0,   0,  71,   0,   0,   0, 
-     64,   7,   0,   0,  71,   0, 
-      0,   0,  80,   7,   0,   0, 
-     71,   0,   0,   0,  96,   7, 
+     76,   7,   0,   0,  71,   0, 
+      0,   0,  92,   7,   0,   0, 
+     71,   0,   0,   0, 108,   7, 
       0,   0, 102,   0,   0,   0, 
-    112,   7,   0,   0, 102,   0, 
-      0,   0, 132,   7,   0,   0, 
-     46,   0,   1,   0, 144,   7, 
+    124,   7,   0,   0, 102,   0, 
+      0,   0, 144,   7,   0,   0, 
+     46,   0,   1,   0, 156,   7, 
       0,   0,  77,   0,   0,   0, 
-    156,   7,   0,   0, 104,   0, 
-      0,   0, 168,   7,   0,   0, 
+    168,   7,   0,   0, 104,   0, 
+      0,   0, 180,   7,   0,   0, 
      80,  97, 114,  97, 109, 101, 
     116, 101, 114, 115,   0,  68, 
     105, 102, 102, 117, 115, 101, 
@@ -420,7 +420,9 @@ const BYTE EnvironmentMapEffect_VSEnvMapOneLight[] =
     104,  97, 100, 101, 114,  32, 
      67, 111, 109, 112, 105, 108, 
     101, 114,  32,  49,  48,  46, 
-     49,   0,  81,   0,   0,   5, 
+     48,  46,  49,  48,  48,  49, 
+     49,  46,  49,  54,  51,  56, 
+     52,   0,  81,   0,   0,   5, 
      18,   0,  15, 160,   0,   0, 
       0,   0,   0,   0, 128,  63, 
       0,   0,   0,   0,   0,   0, 

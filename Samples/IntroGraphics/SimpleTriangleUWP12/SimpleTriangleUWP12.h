@@ -62,6 +62,9 @@ private:
     std::unique_ptr<DirectX::Keyboard>          m_keyboard;
     std::unique_ptr<DirectX::Mouse>             m_mouse;
 
+    // DirectXTK objects.
+    std::unique_ptr<DirectX::GraphicsMemory>    m_graphicsMemory;
+
     // Direct3D 12 objects
     Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
     Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pipelineState;

@@ -1,0 +1,111 @@
+//--------------------------------------------------------------------------------------
+// SimpleBezier.h
+//
+// Advanced Technology Group (ATG)
+// Copyright (C) Microsoft Corporation. All rights reserved.
+//--------------------------------------------------------------------------------------
+
+#pragma once
+
+#include "DeviceResources.h"
+#include "StepTimer.h"
+
+
+// A basic sample implementation that creates a D3D12 device and
+// provides a render loop.
+class Sample : public DX::IDeviceNotify
+{
+public:
+
+    Sample();
+
+    // Initialization and management
+    void Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATION rotation);
+
+    // Basic render loop
+    void Tick();
+    void Render();
+
+    // Rendering helpers
+    void Clear();
+
+    // IDeviceNotify
+    virtual void OnDeviceLost() override;
+    virtual void OnDeviceRestored() override;
+
+    // Messages
+    void OnActivated();
+    void OnDeactivated();
+    void OnSuspending();
+    void OnResuming();
+    void OnWindowSizeChanged(int width, int height, DXGI_MODE_ROTATION rotation);
+    void ValidateDevice();
+
+    // Properties
+    void GetDefaultSize( int& width, int& height ) const;
+
+private:
+
+    void Update(DX::StepTimer const& timer);
+
+    void CreateDeviceDependentResources();
+    void CreateShaders();
+    void CreateWindowSizeDependentResources();
+    
+    // Device resources
+    std::unique_ptr<DX::DeviceResources>        m_deviceResources;
+
+    // Rendering loop timer
+    DX::StepTimer                               m_timer;
+
+    // Input devices
+    std::unique_ptr<DirectX::GamePad>           m_gamePad;
+    std::unique_ptr<DirectX::Keyboard>          m_keyboard;
+
+    DirectX::GamePad::ButtonStateTracker        m_gamePadButtons;
+    DirectX::Keyboard::KeyboardStateTracker     m_keyboardButtons;
+
+    // DirectXTK objects
+    std::unique_ptr<DirectX::GraphicsMemory>    m_graphicsMemory;
+
+    // Sample objects
+    struct ConstantBuffer
+    {
+        DirectX::XMFLOAT4X4 viewProjectionMatrix;
+        DirectX::XMFLOAT3   cameraWorldPos;
+        float               tessellationFactor;
+    };
+
+    enum class PartitionMode
+    {
+        PartitionInteger,
+        PartitionFractionalEven,
+        PartitionFractionalOdd
+    };
+
+    static const size_t c_numPixelShaders = 2;
+    static const size_t c_numHullShaders = 3;
+
+    Microsoft::WRL::ComPtr<ID3D12RootSignature>     m_rootSignature;
+    Microsoft::WRL::ComPtr<ID3D12PipelineState>     m_PSOs[c_numPixelShaders][c_numHullShaders];
+
+    std::unique_ptr<DirectX::DescriptorHeap>        m_resourceDescriptors;
+
+    D3D12_VERTEX_BUFFER_VIEW                        m_controlPointVBView;
+    Microsoft::WRL::ComPtr<ID3D12Resource>          m_controlPointVB;     // Control points for mesh
+    Microsoft::WRL::ComPtr<ID3D12Resource>          m_cbPerFrame;
+    ConstantBuffer*                                 m_mappedConstantData;
+
+    // Index in the root parameter table
+    static const UINT                               c_rootParameterCB = 0;
+
+    // Control variables
+    float                                           m_subdivs;
+    bool                                            m_drawWires;
+    PartitionMode                                   m_partitionMode;
+
+    DirectX::XMFLOAT4X4                             m_worldMatrix;
+    DirectX::XMFLOAT4X4                             m_viewMatrix;
+    DirectX::XMFLOAT4X4                             m_projectionMatrix;
+    DirectX::XMFLOAT3                               m_cameraEye;
+};

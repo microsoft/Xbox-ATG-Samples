@@ -51,7 +51,7 @@
     dcl_texcoord2 v2  // vin<7,8>
     dcl_texcoord3 v3  // vin<9,10,11,12>
 
-#line 57 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 57 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 r0.x, v0, c9  // ::pos_ws<0>
     dp4 r0.y, v0, c10  // ::pos_ws<1>
     dp4 r0.z, v0, c11  // ::pos_ws<2>
@@ -87,26 +87,26 @@
     mov r1.xyz, c1  // Parameters::DiffuseColor<0,1,2>
     mad r0.xyz, r0, r1, c2  // ::result<0,1,2>
 
-#line 257 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 257 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT0.xyz, r0, v3  // ::VSBasicOneLightTxVc<0,1,2>
 
-#line 63 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 63 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 oPos.z, v0, c17  // ::VSBasicOneLightTxVc<12>
 
-#line 14 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 14 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c8
     max r0.x, r0.x, c19.x
     min oT1.w, r0.x, c19.y  // ::VSBasicOneLightTxVc<7>
 
-#line 257 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 257 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT0.w, v3.w, c1.w  // ::VSBasicOneLightTxVc<3>
 
-#line 63 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 63 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 r0.x, v0, c15  // ::vout<0>
     dp4 r0.y, v0, c16  // ::vout<1>
     dp4 r0.z, v0, c18  // ::vout<3>
 
-#line 249 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 249 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicOneLightTxVc<10,11>
     mov oPos.w, r0.z  // ::VSBasicOneLightTxVc<13>
 
@@ -169,17 +169,17 @@ ret
 
 const BYTE BasicEffect_VSBasicOneLightTxVc[] =
 {
-     68,  88,  66,  67, 151,  80, 
-    197,  35,  22, 212, 204, 240, 
-     24, 227, 137, 220,  42,  70, 
-    119,  97,   1,   0,   0,   0, 
-    248,  15,   0,   0,   4,   0, 
+     68,  88,  66,  67, 145,  67, 
+    128, 118, 193, 195, 146, 208, 
+     43,  93, 115,  43,  72, 134, 
+     83,   3,   1,   0,   0,   0, 
+      4,  16,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
-    224,   9,   0,   0, 216,  14, 
-      0,   0, 108,  15,   0,   0, 
-     65, 111, 110,  57, 168,   9, 
-      0,   0, 168,   9,   0,   0, 
-      0,   2, 254, 255,  56,   9, 
+    236,   9,   0,   0, 228,  14, 
+      0,   0, 120,  15,   0,   0, 
+     65, 111, 110,  57, 180,   9, 
+      0,   0, 180,   9,   0,   0, 
+      0,   2, 254, 255,  68,   9, 
       0,   0, 112,   0,   0,   0, 
       6,   0,  36,   0,   0,   0, 
     108,   0,   0,   0, 108,   0, 
@@ -198,14 +198,14 @@ const BYTE BasicEffect_VSBasicOneLightTxVc[] =
       7,   0,  12,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   2, 254, 255, 254, 255, 
-    181,   1,  68,  66,  85,  71, 
+    184,   1,  68,  66,  85,  71, 
      40,   0,   0,   0, 168,   6, 
       0,   0,   0,   0,   0,   0, 
       3,   0,   0,   0,   4,   1, 
       0,   0,  39,   0,   0,   0, 
      16,   1,   0,   0,  14,   0, 
       0,   0, 144,   5,   0,   0, 
-    124,   2,   0,   0,  67,  58, 
+    124,   2,   0,   0,  68,  58, 
      92,  65,  84,  71,  32,  83, 
      97, 109, 112, 108, 101,  32, 
      68, 101, 118, 101, 108, 111, 
@@ -217,7 +217,7 @@ const BYTE BasicEffect_VSBasicOneLightTxVc[] =
      99,  92,  83, 104,  97, 100, 
     101, 114, 115,  92,  76, 105, 
     103, 104, 116, 105, 110, 103, 
-     46, 102, 120, 104,   0,  67, 
+     46, 102, 120, 104,   0,  68, 
      58,  92,  65,  84,  71,  32, 
      83,  97, 109, 112, 108, 101, 
      32,  68, 101, 118, 101, 108, 
@@ -230,7 +230,7 @@ const BYTE BasicEffect_VSBasicOneLightTxVc[] =
     100, 101, 114, 115,  92,  66, 
      97, 115, 105,  99,  69, 102, 
     102, 101,  99, 116,  46, 102, 
-    120,   0,  67,  58,  92,  65, 
+    120,   0,  68,  58,  92,  65, 
      84,  71,  32,  83,  97, 109, 
     112, 108, 101,  32,  68, 101, 
     118, 101, 108, 111, 112, 109, 
@@ -245,57 +245,57 @@ const BYTE BasicEffect_VSBasicOneLightTxVc[] =
       0, 171,  40,   0,   0,   0, 
     113,   0,   0,   0, 188,   0, 
       0,   0,   0,   0, 255, 255, 
-    220,   6,   0,   0,   0,   0, 
-    255, 255, 244,   6,   0,   0, 
-      0,   0, 255, 255,   0,   7, 
+    232,   6,   0,   0,   0,   0, 
+    255, 255,   0,   7,   0,   0, 
+      0,   0, 255, 255,  12,   7, 
       0,   0,   0,   0, 255, 255, 
-     12,   7,   0,   0,   0,   0, 
-    255, 255,  24,   7,   0,   0, 
-     57,   0,   0,   0,  36,   7, 
+     24,   7,   0,   0,   0,   0, 
+    255, 255,  36,   7,   0,   0, 
+     57,   0,   0,   0,  48,   7, 
       0,   0,  57,   0,   0,   0, 
-     52,   7,   0,   0,  57,   0, 
-      0,   0,  68,   7,   0,   0, 
-     58,   0,   0,   0,  84,   7, 
+     64,   7,   0,   0,  57,   0, 
+      0,   0,  80,   7,   0,   0, 
+     58,   0,   0,   0,  96,   7, 
       0,   0,  58,   0,   0,   0, 
-    100,   7,   0,   0,  33,   0, 
-      0,   0, 112,   7,   0,   0, 
-     33,   0,   0,   0, 128,   7, 
+    112,   7,   0,   0,  33,   0, 
+      0,   0, 124,   7,   0,   0, 
+     33,   0,   0,   0, 140,   7, 
       0,   0,  59,   0,   0,   0, 
-    140,   7,   0,   0,  59,   0, 
-      0,   0, 156,   7,   0,   0, 
-     59,   0,   0,   0, 172,   7, 
+    152,   7,   0,   0,  59,   0, 
+      0,   0, 168,   7,   0,   0, 
+     59,   0,   0,   0, 184,   7, 
       0,   0,  59,   0,   0,   0, 
-    188,   7,   0,   0,  37,   0, 
-      0,   0, 200,   7,   0,   0, 
-     36,   0,   0,   0, 216,   7, 
+    200,   7,   0,   0,  37,   0, 
+      0,   0, 212,   7,   0,   0, 
+     36,   0,   0,   0, 228,   7, 
       0,   0,  42,   0,   0,   0, 
-    232,   7,   0,   0,  39,   0, 
-      0,   0, 248,   7,   0,   0, 
-     41,   0,   0,   0,   8,   8, 
+    244,   7,   0,   0,  39,   0, 
+      0,   0,   4,   8,   0,   0, 
+     41,   0,   0,   0,  20,   8, 
       0,   0,  42,   0,   0,   0, 
-     24,   8,   0,   0,  47,   0, 
-      0,   0,  40,   8,   0,   0, 
-     47,   0,   0,   0,  56,   8, 
+     36,   8,   0,   0,  47,   0, 
+      0,   0,  52,   8,   0,   0, 
+     47,   0,   0,   0,  68,   8, 
       0,   0,  46,   0,   0,   0, 
-     72,   8,   0,   0,  46,   0, 
-      0,   0,  88,   8,   0,   0, 
-     46,   0,   0,   0, 100,   8, 
+     84,   8,   0,   0,  46,   0, 
+      0,   0, 100,   8,   0,   0, 
+     46,   0,   0,   0, 112,   8, 
       0,   0,   1,   1,   1,   0, 
-    120,   8,   0,   0,  63,   0, 
-      0,   0, 136,   8,   0,   0, 
-     14,   0,   2,   0, 152,   8, 
+    132,   8,   0,   0,  63,   0, 
+      0,   0, 148,   8,   0,   0, 
+     14,   0,   2,   0, 164,   8, 
       0,   0,  14,   0,   2,   0, 
-    168,   8,   0,   0,  14,   0, 
-      2,   0, 184,   8,   0,   0, 
-      1,   1,   1,   0, 200,   8, 
+    180,   8,   0,   0,  14,   0, 
+      2,   0, 196,   8,   0,   0, 
+      1,   1,   1,   0, 212,   8, 
       0,   0,  63,   0,   0,   0, 
-    216,   8,   0,   0,  63,   0, 
-      0,   0, 232,   8,   0,   0, 
-     63,   0,   0,   0, 248,   8, 
+    228,   8,   0,   0,  63,   0, 
+      0,   0, 244,   8,   0,   0, 
+     63,   0,   0,   0,   4,   9, 
       0,   0, 249,   0,   1,   0, 
-      8,   9,   0,   0, 249,   0, 
-      1,   0,  28,   9,   0,   0, 
-      0,   1,   1,   0,  40,   9, 
+     20,   9,   0,   0, 249,   0, 
+      1,   0,  40,   9,   0,   0, 
+      0,   1,   1,   0,  52,   9, 
       0,   0,  80,  97, 114,  97, 
     109, 101, 116, 101, 114, 115, 
       0,  68, 105, 102, 102, 117, 
@@ -489,7 +489,9 @@ const BYTE BasicEffect_VSBasicOneLightTxVc[] =
      32,  83, 104,  97, 100, 101, 
     114,  32,  67, 111, 109, 112, 
     105, 108, 101, 114,  32,  49, 
-     48,  46,  49,   0,  81,   0, 
+     48,  46,  48,  46,  49,  48, 
+     48,  49,  49,  46,  49,  54, 
+     51,  56,  52,   0,  81,   0, 
       0,   5,  19,   0,  15, 160, 
       0,   0,   0,   0,   0,   0, 
     128,  63,   0,   0,   0,   0, 

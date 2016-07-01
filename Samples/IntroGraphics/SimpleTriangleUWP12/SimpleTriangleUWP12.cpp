@@ -124,6 +124,7 @@ void Sample::Render()
     // Show the new frame.
     PIXBeginEvent(m_deviceResources->GetCommandQueue(), PIX_COLOR_DEFAULT, L"Present");
     m_deviceResources->Present();
+    m_graphicsMemory->Commit(m_deviceResources->GetCommandQueue());
     PIXEndEvent(m_deviceResources->GetCommandQueue());
 }
 
@@ -199,6 +200,8 @@ void Sample::GetDefaultSize(int& width, int& height) const
 void Sample::CreateDeviceDependentResources()
 {
     auto device = m_deviceResources->GetD3DDevice();
+
+    m_graphicsMemory = std::make_unique<GraphicsMemory>(device);
 
     // Create an empty root signature.
     {
@@ -293,6 +296,7 @@ void Sample::OnDeviceLost()
     m_vertexBuffer.Reset();
     m_pipelineState.Reset();
     m_rootSignature.Reset();
+    m_graphicsMemory.reset();
 }
 
 void Sample::OnDeviceRestored()

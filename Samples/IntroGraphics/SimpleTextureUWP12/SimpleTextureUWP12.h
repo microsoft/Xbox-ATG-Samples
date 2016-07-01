@@ -61,6 +61,9 @@ private:
     std::unique_ptr<DirectX::GamePad>       m_gamePad;
     std::unique_ptr<DirectX::Keyboard>      m_keyboard;
 
+    // DirectXTK objects.
+    std::unique_ptr<DirectX::GraphicsMemory>        m_graphicsMemory;
+
     // Direct3D 12 objects
     Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>    m_srvHeap;
     Microsoft::WRL::ComPtr<ID3D12RootSignature>     m_rootSignature;

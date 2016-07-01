@@ -46,18 +46,18 @@
     dcl_texcoord2 v2  // vin<6,7>
     dcl_texcoord3 v3  // vin<8,9,10,11>
 
-#line 43 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 43 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 oPos.z, v0, c4  // ::VSDualTextureVcNoFog<10>
 
-#line 88 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\DualTextureEffect.fx"
+#line 88 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\DualTextureEffect.fx"
     mul oT0, v3, c1  // ::VSDualTextureVcNoFog<0,1,2,3>
 
-#line 43 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 43 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c2  // ::vout<0>
     dp4 r0.y, v0, c3  // ::vout<1>
     dp4 r0.z, v0, c5  // ::vout<3>
 
-#line 79 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\DualTextureEffect.fx"
+#line 79 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\DualTextureEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSDualTextureVcNoFog<8,9>
     mov oPos.w, r0.z  // ::VSDualTextureVcNoFog<11>
 
@@ -89,17 +89,17 @@ ret
 
 const BYTE DualTextureEffect_VSDualTextureVcNoFog[] =
 {
-     68,  88,  66,  67,  48,  59, 
-    151, 148, 181, 214, 129, 185, 
-     85,  40, 102, 178, 177, 247, 
-     49, 227,   1,   0,   0,   0, 
-     36,   7,   0,   0,   4,   0, 
+     68,  88,  66,  67,  83,  34, 
+    138,  82,  24, 200, 234, 134, 
+    143, 249,   9, 117,  84, 240, 
+     49, 183,   1,   0,   0,   0, 
+     48,   7,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
-    188,   4,   0,   0,  12,   6, 
-      0,   0, 152,   6,   0,   0, 
-     65, 111, 110,  57, 132,   4, 
-      0,   0, 132,   4,   0,   0, 
-      0,   2, 254, 255,  68,   4, 
+    200,   4,   0,   0,  24,   6, 
+      0,   0, 164,   6,   0,   0, 
+     65, 111, 110,  57, 144,   4, 
+      0,   0, 144,   4,   0,   0, 
+      0,   2, 254, 255,  80,   4, 
       0,   0,  64,   0,   0,   0, 
       2,   0,  36,   0,   0,   0, 
      60,   0,   0,   0,  60,   0, 
@@ -110,14 +110,14 @@ const BYTE DualTextureEffect_VSDualTextureVcNoFog[] =
       4,   0,   2,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   2, 254, 255, 254, 255, 
-    224,   0,  68,  66,  85,  71, 
+    227,   0,  68,  66,  85,  71, 
      40,   0,   0,   0,  84,   3, 
       0,   0,   0,   0,   0,   0, 
       2,   0,   0,   0, 192,   0, 
       0,   0,  13,   0,   0,   0, 
     200,   0,   0,   0,   3,   0, 
       0,   0,  24,   3,   0,   0, 
-     48,   1,   0,   0,  67,  58, 
+     48,   1,   0,   0,  68,  58, 
      92,  65,  84,  71,  32,  83, 
      97, 109, 112, 108, 101,  32, 
      68, 101, 118, 101, 108, 111, 
@@ -129,7 +129,7 @@ const BYTE DualTextureEffect_VSDualTextureVcNoFog[] =
      99,  92,  83, 104,  97, 100, 
     101, 114, 115,  92,  67, 111, 
     109, 109, 111, 110,  46, 102, 
-    120, 104,   0,  67,  58,  92, 
+    120, 104,   0,  68,  58,  92, 
      65,  84,  71,  32,  83,  97, 
     109, 112, 108, 101,  32,  68, 
     101, 118, 101, 108, 111, 112, 
@@ -145,23 +145,23 @@ const BYTE DualTextureEffect_VSDualTextureVcNoFog[] =
      99, 116,  46, 102, 120,   0, 
      40,   0,   0,   0, 111,   0, 
       0,   0,   0,   0, 255, 255, 
-    136,   3,   0,   0,   0,   0, 
-    255, 255, 148,   3,   0,   0, 
-      0,   0, 255, 255, 160,   3, 
+    148,   3,   0,   0,   0,   0, 
+    255, 255, 160,   3,   0,   0, 
+      0,   0, 255, 255, 172,   3, 
       0,   0,   0,   0, 255, 255, 
-    172,   3,   0,   0,  43,   0, 
-      0,   0, 184,   3,   0,   0, 
-     88,   0,   1,   0, 200,   3, 
+    184,   3,   0,   0,  43,   0, 
+      0,   0, 196,   3,   0,   0, 
+     88,   0,   1,   0, 212,   3, 
       0,   0,  43,   0,   0,   0, 
-    216,   3,   0,   0,  43,   0, 
-      0,   0, 232,   3,   0,   0, 
-     43,   0,   0,   0, 248,   3, 
+    228,   3,   0,   0,  43,   0, 
+      0,   0, 244,   3,   0,   0, 
+     43,   0,   0,   0,   4,   4, 
       0,   0,  79,   0,   1,   0, 
-      8,   4,   0,   0,  79,   0, 
-      1,   0,  28,   4,   0,   0, 
-     86,   0,   1,   0,  40,   4, 
+     20,   4,   0,   0,  79,   0, 
+      1,   0,  40,   4,   0,   0, 
+     86,   0,   1,   0,  52,   4, 
       0,   0,  86,   0,   1,   0, 
-     52,   4,   0,   0,  86,  83, 
+     64,   4,   0,   0,  86,  83, 
      68, 117,  97, 108,  84, 101, 
     120, 116, 117, 114, 101,  86, 
      99,  78, 111,  70, 111, 103, 
@@ -259,7 +259,9 @@ const BYTE DualTextureEffect_VSDualTextureVcNoFog[] =
      32,  83, 104,  97, 100, 101, 
     114,  32,  67, 111, 109, 112, 
     105, 108, 101, 114,  32,  49, 
-     48,  46,  49,   0,  31,   0, 
+     48,  46,  48,  46,  49,  48, 
+     48,  49,  49,  46,  49,  54, 
+     51,  56,  52,   0,  31,   0, 
       0,   2,   5,   0,   0, 128, 
       0,   0,  15, 144,  31,   0, 
       0,   2,   5,   0,   1, 128, 

@@ -40,18 +40,18 @@
     dcl_texcoord v0  // vin<0,1,2,3>
     dcl_texcoord1 v1  // vin<4,5,6,7>
 
-#line 43 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 43 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 oPos.z, v0, c4  // ::VSBasicVcNoFog<6>
 
-#line 89 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 89 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT0, v1, c1  // ::VSBasicVcNoFog<0,1,2,3>
 
-#line 43 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 43 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c2  // ::vout<0>
     dp4 r0.y, v0, c3  // ::vout<1>
     dp4 r0.z, v0, c5  // ::vout<3>
 
-#line 82 "C:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 82 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicVcNoFog<4,5>
     mov oPos.w, r0.z  // ::VSBasicVcNoFog<7>
 
@@ -73,17 +73,17 @@ ret
 
 const BYTE BasicEffect_VSBasicVcNoFog[] =
 {
-     68,  88,  66,  67, 114,  65, 
-      2,  27, 167,  13, 188, 197, 
-    210, 128,  13, 198, 110, 181, 
-     26, 207,   1,   0,   0,   0, 
-    136,   5,   0,   0,   4,   0, 
+     68,  88,  66,  67, 118, 186, 
+    204, 183, 153, 192, 108, 157, 
+    160, 150, 243,  26,  75, 106, 
+    171, 221,   1,   0,   0,   0, 
+    148,   5,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
-    232,   3,   0,   0, 224,   4, 
-      0,   0,  52,   5,   0,   0, 
-     65, 111, 110,  57, 176,   3, 
-      0,   0, 176,   3,   0,   0, 
-      0,   2, 254, 255, 112,   3, 
+    244,   3,   0,   0, 236,   4, 
+      0,   0,  64,   5,   0,   0, 
+     65, 111, 110,  57, 188,   3, 
+      0,   0, 188,   3,   0,   0, 
+      0,   2, 254, 255, 124,   3, 
       0,   0,  64,   0,   0,   0, 
       2,   0,  36,   0,   0,   0, 
      60,   0,   0,   0,  60,   0, 
@@ -94,14 +94,14 @@ const BYTE BasicEffect_VSBasicVcNoFog[] =
       4,   0,   2,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   2, 254, 255, 254, 255, 
-    183,   0,  68,  66,  85,  71, 
+    186,   0,  68,  66,  85,  71, 
      40,   0,   0,   0, 176,   2, 
       0,   0,   0,   0,   0,   0, 
       2,   0,   0,   0, 188,   0, 
       0,   0,   9,   0,   0,   0, 
     196,   0,   0,   0,   3,   0, 
       0,   0, 116,   2,   0,   0, 
-     12,   1,   0,   0,  67,  58, 
+     12,   1,   0,   0,  68,  58, 
      92,  65,  84,  71,  32,  83, 
      97, 109, 112, 108, 101,  32, 
      68, 101, 118, 101, 108, 111, 
@@ -113,7 +113,7 @@ const BYTE BasicEffect_VSBasicVcNoFog[] =
      99,  92,  83, 104,  97, 100, 
     101, 114, 115,  92,  67, 111, 
     109, 109, 111, 110,  46, 102, 
-    120, 104,   0,  67,  58,  92, 
+    120, 104,   0,  68,  58,  92, 
      65,  84,  71,  32,  83,  97, 
     109, 112, 108, 101,  32,  68, 
     101, 118, 101, 108, 111, 112, 
@@ -128,18 +128,18 @@ const BYTE BasicEffect_VSBasicVcNoFog[] =
      99, 116,  46, 102, 120,   0, 
     171, 171,  40,   0,   0,   0, 
     111,   0,   0,   0,   0,   0, 
-    255, 255, 228,   2,   0,   0, 
-      0,   0, 255, 255, 240,   2, 
+    255, 255, 240,   2,   0,   0, 
+      0,   0, 255, 255, 252,   2, 
       0,   0,  43,   0,   0,   0, 
-    252,   2,   0,   0,  89,   0, 
-      1,   0,  12,   3,   0,   0, 
-     43,   0,   0,   0,  28,   3, 
+      8,   3,   0,   0,  89,   0, 
+      1,   0,  24,   3,   0,   0, 
+     43,   0,   0,   0,  40,   3, 
       0,   0,  43,   0,   0,   0, 
-     44,   3,   0,   0,  43,   0, 
-      0,   0,  60,   3,   0,   0, 
-     82,   0,   1,   0,  76,   3, 
+     56,   3,   0,   0,  43,   0, 
+      0,   0,  72,   3,   0,   0, 
+     82,   0,   1,   0,  88,   3, 
       0,   0,  82,   0,   1,   0, 
-     96,   3,   0,   0,  86,  83, 
+    108,   3,   0,   0,  86,  83, 
      66,  97, 115, 105,  99,  86, 
      99,  78, 111,  70, 111, 103, 
       0,  68, 105, 102, 102, 117, 
@@ -216,7 +216,9 @@ const BYTE BasicEffect_VSBasicVcNoFog[] =
     104,  97, 100, 101, 114,  32, 
      67, 111, 109, 112, 105, 108, 
     101, 114,  32,  49,  48,  46, 
-     49,   0,  31,   0,   0,   2, 
+     48,  46,  49,  48,  48,  49, 
+     49,  46,  49,  54,  51,  56, 
+     52,   0,  31,   0,   0,   2, 
       5,   0,   0, 128,   0,   0, 
      15, 144,  31,   0,   0,   2, 
       5,   0,   1, 128,   1,   0, 
