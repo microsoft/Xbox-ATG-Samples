@@ -516,8 +516,6 @@ void Sample::CreateDeviceDependentResources()
 
     // Create vertex buffers with per-instance data.
     {
-        // We create two that we ping-pong between, so we can update one while the GPU is 
-        // consuming the other.
         CD3D11_BUFFER_DESC bufferDesc(sizeof(Instance) * c_maxInstances, D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
         bufferDesc.StructureByteStride = sizeof(Instance);
 

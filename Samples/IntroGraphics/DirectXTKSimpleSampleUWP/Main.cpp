@@ -113,6 +113,8 @@ public:
 
         m_sample->Initialize(reinterpret_cast<IUnknown*>(window),
                            outputWidth, outputHeight, rotation );
+
+        Mouse::SetDpi(m_DPI);
     }
 
     virtual void Load(Platform::String^ entryPoint)
@@ -240,6 +242,8 @@ protected:
         m_DPI = sender->LogicalDpi;
 
         HandleWindowSizeChanged();
+
+        Mouse::SetDpi(m_DPI);
     }
 
     void OnOrientationChanged(DisplayInformation^ sender, Object^ args)

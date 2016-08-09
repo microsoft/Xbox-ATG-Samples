@@ -60,7 +60,6 @@ private:
     // Input devices.
     std::unique_ptr<DirectX::GamePad>       m_gamePad;
     std::unique_ptr<DirectX::Keyboard>      m_keyboard;
-    std::unique_ptr<DirectX::Mouse>         m_mouse;
 
     DirectX::GamePad::ButtonStateTracker    m_gamePadButtons;
     DirectX::Keyboard::KeyboardStateTracker m_keyboardButtons;
@@ -78,6 +77,7 @@ private:
     {
         SYSTEMINFO = 0,
         GETPROCESSINFO,
+        GLOBALMEMORYSTATUS,
         ANALYTICSINFO,
         APICONTRACT,
         CPUSETS,
@@ -85,6 +85,8 @@ private:
         DIRECT3D11_1,
         DIRECT3D11_2,
         DIRECT3D11_3,
+        DIRECT3D11_4,
+        DIRECT3D12,
         MAX,
     };
 

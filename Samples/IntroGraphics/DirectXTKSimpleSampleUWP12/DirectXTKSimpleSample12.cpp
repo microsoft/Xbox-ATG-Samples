@@ -172,8 +172,8 @@ void Sample::Render()
     DrawGrid(xaxis, yaxis, g_XMZero, 20, 20, Colors::Gray);
 
     // Set the descriptor heaps
-    ID3D12DescriptorHeap* heaps[] = { m_resourceDescriptors->Heap() };
-    commandList->SetDescriptorHeaps(1, heaps);
+    ID3D12DescriptorHeap* heaps[] = { m_resourceDescriptors->Heap(), m_states->Heap() };
+    commandList->SetDescriptorHeaps(_countof(heaps), heaps);
 
     // Draw sprite
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Draw sprite");
@@ -200,8 +200,8 @@ void Sample::Render()
     XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(XM_PI / 2.f, 0.f, -XM_PI / 2.f);
     local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
     Model::UpdateEffectMatrices(m_modelEffects, local, m_view, m_projection);
-    heaps[0] = m_modelResources->DescriptorHeap();
-    commandList->SetDescriptorHeaps(1, heaps);
+    heaps[0] = m_modelResources->Heap();
+    commandList->SetDescriptorHeaps(_countof(heaps), heaps);
     m_model->Draw(commandList, m_modelEffects.begin());
     PIXEndEvent(commandList);
 
@@ -341,6 +341,8 @@ void Sample::CreateDeviceDependentResources()
 
     m_graphicsMemory = std::make_unique<GraphicsMemory>(device);
 
+    m_states = std::make_unique<CommonStates>(device);
+
     m_resourceDescriptors = std::make_unique<DescriptorHeap>(device,
         D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
         D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
@@ -375,10 +377,10 @@ void Sample::CreateDeviceDependentResources()
         {
             EffectPipelineStateDescription pd(
                 &VertexPositionColor::InputLayout,
-                &CommonStates::Opaque,
-                &CommonStates::DepthNone,
-                &CommonStates::CullNone,
-                &rtState,
+                CommonStates::Opaque,
+                CommonStates::DepthNone,
+                CommonStates::CullNone,
+                rtState,
                 D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
 
             m_lineEffect = std::make_unique<BasicEffect>(device, EffectFlags::VertexColor, pd);
@@ -387,33 +389,40 @@ void Sample::CreateDeviceDependentResources()
         {
             EffectPipelineStateDescription pd(
                 &GeometricPrimitive::VertexType::InputLayout,
-                &CommonStates::Opaque,
-                &CommonStates::DepthDefault,
-                &CommonStates::CullNone,
-                &rtState);
+                CommonStates::Opaque,
+                CommonStates::DepthDefault,
+                CommonStates::CullNone,
+                rtState);
 
             m_shapeEffect = std::make_unique<BasicEffect>(device, EffectFlags::PerPixelLighting | EffectFlags::Texture, pd);
             m_shapeEffect->EnableDefaultLighting();
-            m_shapeEffect->SetTexture(m_resourceDescriptors->GetGpuHandle(Descriptors::SeaFloor));
+            m_shapeEffect->SetTexture(m_resourceDescriptors->GetGpuHandle(Descriptors::SeaFloor), m_states->AnisotropicWrap());
         }
 
         {
-            SpriteBatchPipelineStateDescription pd(&rtState);
+            SpriteBatchPipelineStateDescription pd(rtState);
 
-            m_sprites = std::make_unique<SpriteBatch>(device, resourceUpload, &pd);
+            m_sprites = std::make_unique<SpriteBatch>(device, resourceUpload, pd);
         }
 
-        m_modelResources = m_model->LoadTextures(device, resourceUpload, L"Assets\\Cathedral");
+        m_modelResources = m_model->LoadTextures(device, resourceUpload, L"assets\\");
 
         {
             EffectPipelineStateDescription psd(
-                &VertexPositionNormalColorTexture::InputLayout,
-                &CommonStates::Opaque,
-                &CommonStates::DepthDefault,
-                &CommonStates::CullNone,
-                &rtState);
+                nullptr,
+                CommonStates::Opaque,
+                CommonStates::DepthDefault,
+                CommonStates::CullClockwise,    // Using RH coordinates, and SDKMESH is in LH coordiantes
+                rtState);
 
-            m_modelEffects = m_model->CreateEffects(psd, m_modelResources->DescriptorHeap(), 0);
+            EffectPipelineStateDescription alphapsd(
+                nullptr,
+                CommonStates::NonPremultiplied, // Using straight alpha
+                CommonStates::DepthRead,
+                CommonStates::CullClockwise,    // Using RH coordinates, and SDKMESH is in LH coordiantes
+                rtState);
+
+            m_modelEffects = m_model->CreateEffects(psd, alphapsd, m_modelResources->Heap(), m_states->Heap());
         }
 
         m_font = std::make_unique<SpriteFont>(device, resourceUpload,
@@ -488,6 +497,7 @@ void Sample::OnDeviceLost()
     m_modelResources.reset();
     m_sprites.reset();
     m_resourceDescriptors.reset();
+    m_states.reset();
     m_graphicsMemory.reset();
 }
 

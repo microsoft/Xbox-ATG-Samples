@@ -60,7 +60,6 @@
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SimpleTextureUWP_TemporaryKey.pfx" />
     <None Include="Readme.docx" />
   </ItemGroup>
   <ItemGroup>

@@ -50,18 +50,21 @@ public:
     enum RootParameterIndex
     {
         Texture1SRV,
+        Texture1Sampler,
         Texture2SRV,
+        Texture2Sampler,
         ConstantBuffer,
         RootParameterCount
     };
 
-    bool vertexColorEnabled;
     EffectColor color;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture1;
+    D3D12_GPU_DESCRIPTOR_HANDLE texture1Sampler;
     D3D12_GPU_DESCRIPTOR_HANDLE texture2;
+    D3D12_GPU_DESCRIPTOR_HANDLE texture2Sampler;
 
-    int GetCurrentPipelineStatePermutation() const;
+    int GetPipelineStatePermutation(bool vertexColorEnabled) const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -131,8 +134,12 @@ SharedResourcePool<ID3D12Device*, EffectBase<DualTextureEffectTraits>::DeviceRes
 
 
 // Constructor.
-DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int flags, const EffectPipelineStateDescription& pipelineDescription)
-    : EffectBase(device)
+DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
+    : EffectBase(device),
+    texture1{},
+    texture1Sampler{},
+    texture2{},
+    texture2Sampler{}
 {
     static_assert(_countof(EffectBase<DualTextureEffectTraits>::VertexShaderIndices) == DualTextureEffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(_countof(EffectBase<DualTextureEffectTraits>::VertexShaderBytecode) == DualTextureEffectTraits::VertexShaderCount, "array/max mismatch");
@@ -146,38 +153,51 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int flags, const Effect
             D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
-        CD3DX12_STATIC_SAMPLER_DESC samplers[2];
-        samplers[0] = CD3DX12_STATIC_SAMPLER_DESC(0);
-        samplers[1] = CD3DX12_STATIC_SAMPLER_DESC(1);
-
         CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
         // Texture 1
-        CD3DX12_DESCRIPTOR_RANGE descriptorRange1;
-        descriptorRange1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-        rootParameters[RootParameterIndex::Texture1SRV].InitAsDescriptorTable(1, &descriptorRange1);
+        CD3DX12_DESCRIPTOR_RANGE texture1Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+        CD3DX12_DESCRIPTOR_RANGE texture1SamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+        rootParameters[RootParameterIndex::Texture1SRV].InitAsDescriptorTable(1, &texture1Range);
+        rootParameters[RootParameterIndex::Texture1Sampler].InitAsDescriptorTable(1, &texture1SamplerRange);
         
         // Texture 2
-        CD3DX12_DESCRIPTOR_RANGE descriptorRange2;
-        descriptorRange2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
-        rootParameters[RootParameterIndex::Texture2SRV].InitAsDescriptorTable(1, &descriptorRange2);
+        CD3DX12_DESCRIPTOR_RANGE texture2Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+        CD3DX12_DESCRIPTOR_RANGE texture2SamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 1);
+        rootParameters[RootParameterIndex::Texture2SRV].InitAsDescriptorTable(1, &texture2Range);
+        rootParameters[RootParameterIndex::Texture2Sampler].InitAsDescriptorTable(1, &texture2SamplerRange);
 
         // Create the root signature
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
-        rsigDesc.Init(_countof(rootParameters), rootParameters, _countof(samplers), samplers, rootSignatureFlags);
+        rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
         ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
     }
 
     // Validate flags & state
-    fog.enabled = (flags & EffectFlags::Fog) != 0;
-    vertexColorEnabled = (flags & EffectFlags::VertexColor) != 0;
+    fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
+
+    if (effectFlags & EffectFlags::PerPixelLightingBit)
+    {
+        DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::PerPixelLighting\n");
+        throw std::invalid_argument("DualTextureEffect");
+    }
+    else if (effectFlags & EffectFlags::Lighting)
+    {
+        DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::Lighting\n");
+        throw std::invalid_argument("DualTextureEffect");
+    }
 
     {   // Create pipeline state
-        int sp = GetCurrentPipelineStatePermutation();
+        int sp = GetPipelineStatePermutation(
+            (effectFlags & EffectFlags::VertexColor) != 0);
+        assert(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
+
         int vi = EffectBase<DualTextureEffectTraits>::VertexShaderIndices[sp];
+        assert(vi >= 0 && vi < DualTextureEffectTraits::VertexShaderCount);
         int pi = EffectBase<DualTextureEffectTraits>::PixelShaderIndices[sp];
+        assert(pi >= 0 && pi < DualTextureEffectTraits::PixelShaderCount);
 
         EffectBase::CreatePipelineState(
             mRootSignature.Get(),
@@ -194,7 +214,7 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int flags, const Effect
 }
 
 
-int DualTextureEffect::Impl::GetCurrentPipelineStatePermutation() const
+int DualTextureEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled) const
 {
     int permutation = 0;
 
@@ -228,8 +248,25 @@ void DualTextureEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
     // Set the root signature
     commandList->SetGraphicsRootSignature(mRootSignature.Get());
+
+    // Set the textures
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
+    if (!texture1.ptr || !texture2.ptr)
+    {
+        DebugTrace("Missing texture(s) for DualTextureEffect (texture1 %llu, texture2 %llu)\n", texture1.ptr, texture2.ptr);
+        throw std::exception("DualTextureEffect");
+    }
+    if (!texture1Sampler.ptr || !texture2Sampler.ptr)
+    {
+        DebugTrace("Missing sampler(s) for DualTextureEffect (samplers1 %llu, samplers2 %llu)\n", texture2Sampler.ptr, texture2Sampler.ptr);
+        throw std::exception("DualTextureEffect");
+    }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture1SRV, texture1);
+    commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture1Sampler, texture1Sampler);
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture2SRV, texture2);
+    commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::Texture2Sampler, texture2Sampler);
+
+    // Set constants
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, GetConstantBufferGpuAddress());
 
     // Set the pipeline state
@@ -265,11 +302,14 @@ DualTextureEffect::~DualTextureEffect()
 }
 
 
+// IEffect methods
 void DualTextureEffect::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
     pImpl->Apply(commandList);
 }
 
+
+// Camera settings
 void XM_CALLCONV DualTextureEffect::SetWorld(FXMMATRIX value)
 {
     pImpl->matrices.world = value;
@@ -294,6 +334,17 @@ void XM_CALLCONV DualTextureEffect::SetProjection(FXMMATRIX value)
 }
 
 
+void XM_CALLCONV DualTextureEffect::SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection)
+{
+    pImpl->matrices.world = world;
+    pImpl->matrices.view = view;
+    pImpl->matrices.projection = projection;
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::WorldInverseTranspose | EffectDirtyFlags::EyePosition | EffectDirtyFlags::FogVector;
+}
+
+
+// Material settings
 void XM_CALLCONV DualTextureEffect::SetDiffuseColor(FXMVECTOR value)
 {
     pImpl->color.diffuseColor = value;
@@ -309,6 +360,17 @@ void DualTextureEffect::SetAlpha(float value)
     pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
 }
 
+
+void XM_CALLCONV DualTextureEffect::SetColorAndAlpha(FXMVECTOR value)
+{
+    pImpl->color.diffuseColor = value;
+    pImpl->color.alpha = XMVectorGetW(value);
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
+}
+
+
+// Fog settings.
 void DualTextureEffect::SetFogStart(float value)
 {
     pImpl->fog.start = value;
@@ -333,12 +395,16 @@ void XM_CALLCONV DualTextureEffect::SetFogColor(FXMVECTOR value)
 }
 
 
-void DualTextureEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
+// Texture settings.
+void DualTextureEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture1 = srvDescriptor;
+    pImpl->texture1Sampler = samplerDescriptor;
 }
 
-void DualTextureEffect::SetTexture2(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
+
+void DualTextureEffect::SetTexture2(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture2 = srvDescriptor;
+    pImpl->texture2Sampler = samplerDescriptor;
 }

@@ -25,6 +25,19 @@ using namespace SimpleMath;
 
 namespace
 {
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+    enum Descriptors
+    {
+        Segoe18 = 0,
+        Segoe22,
+        Segoe36,
+        CircleTex,
+        GamepadTex,
+        BackgroundTex,
+        Count,
+    };
+#endif
+
     enum HelpFonts
     {
         SEGOE_UI_18PT = 0,
@@ -172,7 +185,12 @@ struct ATG::Help::CalloutBox
         if (type == CalloutType::LINE_TO_ANCHOR)
         {
             // callout circle is 12x12 so -6 from x and y to get top left coordinates
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+            batch->Draw(help.m_descriptorHeap->GetGpuHandle(Descriptors::CircleTex), help.m_circleTexSize,
+                Vector2(calloutLine.x - 6, calloutLine.y - 6));
+#elif defined(__d3d11_h__) || defined(__d3d11_x_h__)
             batch->Draw(help.m_circleTex.Get(), Vector2(calloutLine.x - 6, calloutLine.y - 6));
+#endif
         }
 
         SpriteFont* spriteFont = help.m_spriteFonts[font].get();
@@ -724,6 +742,57 @@ ATG::Help::~Help()
     }
 }
 
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+void ATG::Help::Render(ID3D12GraphicsCommandList* commandList)
+{
+    // Set the descriptor heaps
+    ID3D12DescriptorHeap* descriptorHeaps[] =
+    {
+        m_descriptorHeap->Heap()
+    };
+    commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+
+    D3D12_VIEWPORT vp1{ 0.0f, 0.0f, static_cast<float>(m_screenSize.right), static_cast<float>(m_screenSize.bottom),
+        D3D12_MIN_DEPTH, D3D12_MAX_DEPTH };
+    
+    m_spriteBatch->SetViewport(vp1);
+    m_spriteBatch->Begin(commandList, SpriteSortMode_Immediate);
+
+    // Draw background image
+    m_spriteBatch->Draw(m_descriptorHeap->GetGpuHandle(Descriptors::BackgroundTex), m_backgroundTexSize, m_screenSize);
+
+    // Draw gamepad controller
+    m_spriteBatch->Draw(m_descriptorHeap->GetGpuHandle(Descriptors::GamepadTex), m_gamepadTexSize, m_screenSize);
+
+    m_spriteBatch->End();
+
+    D3D12_VIEWPORT vp2{ 0.0f, 0.f, 1920.f, 1080.f, D3D12_MIN_DEPTH, D3D12_MAX_DEPTH };
+    m_spriteBatch->SetViewport(vp2);
+    m_spriteBatch->Begin(commandList, SpriteSortMode_Deferred);
+
+    // Process sprites
+    for (size_t j = 0; j < m_calloutCount; ++j)
+    {
+        m_callouts[j].Render(*this, m_spriteBatch.get());
+    }
+
+    m_spriteBatch->End();
+
+    XMMATRIX proj = XMMatrixOrthographicOffCenterRH(0.f, 1920.f, 1080.f, 0.f, 0.f, 1.f);
+    m_lineEffect->SetProjection(proj);
+    
+    m_lineEffect->Apply(commandList);
+
+    m_primBatch->Begin(commandList);
+
+    for (size_t j = 0; j < m_calloutCount; ++j)
+    {
+        m_callouts[j].Render(m_primBatch.get());
+    }
+
+    m_primBatch->End();
+}
+#elif defined(__d3d11_h__) || defined(__d3d11_x_h__)
 void ATG::Help::Render()
 {
     CD3D11_VIEWPORT vp1(0.0f, 0.0f, static_cast<float>(m_screenSize.right), static_cast<float>(m_screenSize.bottom));
@@ -769,11 +838,11 @@ void ATG::Help::Render()
 
     m_primBatch->End();
 }
+#endif
 
 void ATG::Help::ReleaseDevice()
 {
     m_spriteBatch.reset();
-    m_states.reset();
     m_primBatch.reset();
     m_lineEffect.reset();
 
@@ -782,13 +851,71 @@ void ATG::Help::ReleaseDevice()
         m_spriteFonts[i].reset();
     }
 
-    m_lineLayout.Reset();
     m_circleTex.Reset();
     m_gamepadTex.Reset();
     m_backgroundTex.Reset();
+
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+    m_descriptorHeap.reset();
+#elif defined(__d3d11_h__) || defined(__d3d11_x_h__)
+    m_states.reset();
+    m_lineLayout.Reset();
     m_context.Reset();
+#endif
 }
 
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+void ATG::Help::RestoreDevice(ID3D12Device* device, ResourceUploadBatch& uploadBatch, const RenderTargetState& rtState)
+{
+    m_descriptorHeap = std::make_unique<DescriptorHeap>(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, Descriptors::Count);
+    
+    SpriteBatchPipelineStateDescription sbPsoDesc(rtState, &CommonStates::AlphaBlend);    
+    m_spriteBatch = std::make_unique<SpriteBatch>(device, uploadBatch, sbPsoDesc);
+
+    m_primBatch = std::make_unique<PrimitiveBatch<VertexPositionColor>>(device);
+        
+    EffectPipelineStateDescription fxPsoDesc(&VertexPositionColor::InputLayout, CommonStates::Opaque,
+        CommonStates::DepthNone, CommonStates::CullNone, rtState, D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
+    m_lineEffect = std::make_unique<BasicEffect>(device, EffectFlags::VertexColor, fxPsoDesc);
+
+#if !defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP)
+    wchar_t buff[MAX_PATH];
+    DX::FindMediaFile(buff, MAX_PATH, L"Media//Fonts//SegoeUI_18.spritefont");
+    m_spriteFonts[SEGOE_UI_18PT] = std::make_unique<SpriteFont>(device, uploadBatch, buff, m_descriptorHeap->GetCpuHandle(Descriptors::Segoe18), m_descriptorHeap->GetGpuHandle(Descriptors::Segoe18));
+
+    DX::FindMediaFile(buff, MAX_PATH, L"Media//Fonts//SegoeUI_22.spritefont");
+    m_spriteFonts[SEGOE_UI_22PT] = std::make_unique<SpriteFont>(device, uploadBatch, buff, m_descriptorHeap->GetCpuHandle(Descriptors::Segoe22), m_descriptorHeap->GetGpuHandle(Descriptors::Segoe22));
+
+    DX::FindMediaFile(buff, MAX_PATH, L"Media//Fonts//SegoeUI_36.spritefont");
+    m_spriteFonts[SEGOE_UI_36PT] = std::make_unique<SpriteFont>(device, uploadBatch, buff, m_descriptorHeap->GetCpuHandle(Descriptors::Segoe36), m_descriptorHeap->GetGpuHandle(Descriptors::Segoe36));
+
+    DX::FindMediaFile(buff, MAX_PATH, L"Media//Textures//callout_circle.dds");
+    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, buff, 0, D3D12_RESOURCE_FLAG_NONE, m_linearColors, false, m_circleTex.ReleaseAndGetAddressOf()));
+
+    DX::FindMediaFile(buff, MAX_PATH, L"Media//Textures//gamepad.dds");
+    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, buff, 0, D3D12_RESOURCE_FLAG_NONE, m_linearColors, false, m_gamepadTex.ReleaseAndGetAddressOf()));
+
+    DX::FindMediaFile(buff, MAX_PATH, L"Media//Textures//ATGSampleBackground.DDS");
+    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, buff, 0, D3D12_RESOURCE_FLAG_NONE, m_linearColors, false, m_backgroundTex.ReleaseAndGetAddressOf()));
+#else
+    m_spriteFonts[SEGOE_UI_18PT] = std::make_unique<SpriteFont>(device, uploadBatch, L"SegoeUI_18.spritefont", m_descriptorHeap->GetCpuHandle(Descriptors::Segoe18), m_descriptorHeap->GetGpuHandle(Descriptors::Segoe18));
+    m_spriteFonts[SEGOE_UI_22PT] = std::make_unique<SpriteFont>(device, uploadBatch, L"SegoeUI_22.spritefont", m_descriptorHeap->GetCpuHandle(Descriptors::Segoe22), m_descriptorHeap->GetGpuHandle(Descriptors::Segoe22));
+    m_spriteFonts[SEGOE_UI_36PT] = std::make_unique<SpriteFont>(device, uploadBatch, L"SegoeUI_36.spritefont", m_descriptorHeap->GetCpuHandle(Descriptors::Segoe36), m_descriptorHeap->GetGpuHandle(Descriptors::Segoe36));
+
+    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, L"callout_circle.dds", 0, D3D12_RESOURCE_FLAG_NONE, m_linearColors, false, m_circleTex.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, L"gamepad.dds", 0, D3D12_RESOURCE_FLAG_NONE, m_linearColors, false, m_gamepadTex.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, L"ATGSampleBackground.DDS", 0, D3D12_RESOURCE_FLAG_NONE, m_linearColors, false, m_backgroundTex.ReleaseAndGetAddressOf()));
+#endif
+
+    DirectX::CreateShaderResourceView(device, m_circleTex.Get(), m_descriptorHeap->GetCpuHandle(Descriptors::CircleTex), false);
+    DirectX::CreateShaderResourceView(device, m_gamepadTex.Get(), m_descriptorHeap->GetCpuHandle(Descriptors::GamepadTex), false);
+    DirectX::CreateShaderResourceView(device, m_backgroundTex.Get(), m_descriptorHeap->GetCpuHandle(Descriptors::BackgroundTex), false);
+
+    m_circleTexSize = XMUINT2(uint32_t(m_circleTex->GetDesc().Width), uint32_t(m_circleTex->GetDesc().Height));
+    m_gamepadTexSize = XMUINT2(uint32_t(m_gamepadTex->GetDesc().Width), uint32_t(m_gamepadTex->GetDesc().Height));
+    m_backgroundTexSize = XMUINT2(uint32_t(m_backgroundTex->GetDesc().Width), uint32_t(m_backgroundTex->GetDesc().Height));
+}
+#elif defined(__d3d11_h__) || defined(__d3d11_x_h__)
 void ATG::Help::RestoreDevice(ID3D11DeviceContext* context)
 {
     m_context = context;
@@ -847,6 +974,7 @@ void ATG::Help::RestoreDevice(ID3D11DeviceContext* context)
     DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device.Get(), L"ATGSampleBackground.DDS", 0, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, m_linearColors, nullptr, m_backgroundTex.ReleaseAndGetAddressOf()));
 #endif
 }
+#endif
 
 void ATG::Help::SetWindow(const RECT& output)
 {

@@ -60,7 +60,6 @@
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SimpleLightingUWP_TemporaryKey.pfx" />
     <None Include="Readme.docx" />
     <none Include="SimpleLighting.hlsli">
       <Filter>Shaders</Filter>

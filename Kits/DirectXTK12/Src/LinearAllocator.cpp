@@ -49,7 +49,7 @@ LinearAllocatorPage::LinearAllocatorPage()
     , mGpuAddress {}
     , mOffset(0)
     , mSize(0)
-    , mRefCount(0)
+    , mRefCount(1)
 {
 }
 
@@ -62,6 +62,17 @@ size_t LinearAllocatorPage::Suballocate(_In_ size_t size, _In_ size_t alignment)
 #endif
     mOffset = offset + size;
     return offset;
+}
+
+void LinearAllocatorPage::Release()
+{
+    assert(mRefCount > 0); 
+
+    if (mRefCount.fetch_sub(1) == 1)
+    {
+        mUploadResource->Unmap(0, nullptr);
+        delete this;
+    }
 }
 
 LinearAllocator::LinearAllocator(
@@ -150,7 +161,8 @@ void LinearAllocator::FenceCommittedPages(_In_ ID3D12CommandQueue* commandQueue)
         // Disconnect from the list
         page->pPrevPage = nullptr;
 
-        if (page->RefCount() == 0)
+        // This implies the allocator is the only remaining reference to the page, and therefore the memory is ready for re-use.
+        if (page->RefCount() == 1)
         {
             // Signal the fence
             numReady++;
@@ -439,8 +451,7 @@ void LinearAllocator::FreePages( LinearAllocatorPage* page )
     {
         LinearAllocatorPage* nextPage = page->pNextPage;
 
-        page->mUploadResource->Unmap( 0, nullptr );
-        delete page;
+        page->Release();
 
         page = nextPage;
         m_totalPages--;
@@ -472,7 +483,7 @@ void LinearAllocator::ValidatePageLists()
 void LinearAllocator::SetDebugName(const char* name)
 {
     wchar_t wname[MAX_PATH] = {};
-    int result = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, name, (int) strlen(name), wname, MAX_PATH);
+    int result = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, name, static_cast<int>(strlen(name)), wname, MAX_PATH);
     if ( result > 0 )
     {
         SetDebugName(wname);

@@ -34,8 +34,8 @@
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <AppContainerApplication>true</AppContainerApplication>
     <ApplicationType>Windows Store</ApplicationType>
-    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
-    <WindowsTargetPlatformMinVersion>10.0.10240.0</WindowsTargetPlatformMinVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.10586.0</WindowsTargetPlatformMinVersion>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -96,9 +96,8 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup>
-    <PackageCertificateKeyFile>SimpleBezier_TemporaryKey.pfx</PackageCertificateKeyFile>
+  <PropertyGroup Label="UserMacros">
+    <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <Link>
@@ -212,6 +211,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h" />
+    <ClInclude Include="..\..\..\Kits\ATGTK\ControllerHelp.h" />
     <ClInclude Include="..\..\..\Kits\ATGTK\ReadData.h" />
     <ClInclude Include="SimpleBezier.h" />
     <ClInclude Include="pch.h" />
@@ -220,6 +220,7 @@
     <ClInclude Include="d3dx12.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Kits\ATGTK\ControllerHelp.cpp" />
     <ClCompile Include="SimpleBezier.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="DeviceResources.cpp" />
@@ -236,11 +237,22 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_22.spritefont">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_36.spritefont">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="Assets\SimpleBezier.hlsli" />
     <None Include="Readme.docx" />
-    <None Include="SimpleBezier_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\Media\Textures\ATGSampleBackground.DDS" />
+    <Image Include="..\..\..\Media\Textures\callout_circle.dds" />
+    <Image Include="..\..\..\Media\Textures\gamepad.dds" />
     <Image Include="Assets\Logo.png" />
     <Image Include="Assets\SmallLogo.png" />
     <Image Include="Assets\SplashScreen.png" />

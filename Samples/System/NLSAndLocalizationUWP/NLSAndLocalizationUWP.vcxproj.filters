@@ -107,7 +107,6 @@
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="NLSAndLocalizationUWP_TemporaryKey.pfx" />
     <None Include="Assets\Resources\de-DE.resources">
       <Filter>de-DE</Filter>
     </None>

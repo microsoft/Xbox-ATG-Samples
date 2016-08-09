@@ -31,14 +31,15 @@ using namespace DirectX;
 // ModelMeshPart
 //--------------------------------------------------------------------------------------
 
-ModelMeshPart::ModelMeshPart() :
+ModelMeshPart::ModelMeshPart(uint32_t partIndex) :
+    partIndex(partIndex),
+    materialIndex(0),
     indexCount(0),
     startIndex(0),
     vertexOffset(0),
     vertexStride(0),
     primitiveType(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
-    indexFormat(DXGI_FORMAT_R16_UINT),
-    isAlpha(false)
+    indexFormat(DXGI_FORMAT_R16_UINT)
 {
 }
 
@@ -54,12 +55,12 @@ void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList) const
     D3D12_VERTEX_BUFFER_VIEW vbv;
     vbv.BufferLocation = vertexBuffer.GpuAddress();
     vbv.StrideInBytes = vertexStride;
-    vbv.SizeInBytes = (UINT)vertexBuffer.Size();
+    vbv.SizeInBytes = static_cast<UINT>(vertexBuffer.Size());
     commandList->IASetVertexBuffers(0, 1, &vbv);
 
     D3D12_INDEX_BUFFER_VIEW ibv;
     ibv.BufferLocation = indexBuffer.GpuAddress();
-    ibv.SizeInBytes = (UINT)indexBuffer.Size();
+    ibv.SizeInBytes = static_cast<UINT>(indexBuffer.Size());
     ibv.Format = indexFormat;
     commandList->IASetIndexBuffer(&ibv);
 
@@ -67,6 +68,7 @@ void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList) const
 
     commandList->DrawIndexedInstanced( indexCount, 1, startIndex, vertexOffset, 0 );
 }
+
 
 _Use_decl_annotations_
 void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const ModelMeshPart::Collection& meshParts)
@@ -107,9 +109,7 @@ void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const 
 // ModelMesh
 //--------------------------------------------------------------------------------------
 
-ModelMesh::ModelMesh() :
-    ccw(true),
-    pmalpha(true)
+ModelMesh::ModelMesh()
 {
 }
 
@@ -123,26 +123,31 @@ void __cdecl ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList) 
 {
     ModelMeshPart::DrawMeshParts(commandList, opaqueMeshParts);
 }
+
 void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList) const
 {
     ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts);
 }
+
 
 // Draw the mesh with an effect
 void __cdecl ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect) const
 {
     ModelMeshPart::DrawMeshParts(commandList, opaqueMeshParts, effect);
 }
+
 void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, _In_ IEffect* effect) const
 {
     ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts, effect);
 }
+
 
 // Draw the mesh with a callback for each mesh part
 void __cdecl ModelMesh::DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const
 {
     ModelMeshPart::DrawMeshParts(commandList, opaqueMeshParts, callback);
 }
+
 void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, ModelMeshPart::DrawCallback callback) const
 {
     ModelMeshPart::DrawMeshParts(commandList, alphaMeshParts, callback);
@@ -163,19 +168,22 @@ Model::~Model()
 
 
 // Load texture resources
-void Model::LoadTextures(_In_ IEffectTextureFactory& texFactory, _In_opt_ int destinationDescriptorOffset)
+int Model::LoadTextures(IEffectTextureFactory& texFactory, int destinationDescriptorOffset)
 {
     for (size_t i = 0; i < textureNames.size(); ++i)
     {
-        texFactory.CreateTexture(textureNames[i].c_str(), destinationDescriptorOffset + (int) i);
+        texFactory.CreateTexture(textureNames[i].c_str(), destinationDescriptorOffset + static_cast<int>(i));
     }
+
+    return static_cast<int>(textureNames.size());
 }
 
 
 // Load texture resources (helper function)
-std::unique_ptr<EffectTextureFactory> Model::LoadTextures(_In_ ID3D12Device* device, _Inout_ ResourceUploadBatch& resourceUploadBatch, _In_opt_z_ const wchar_t* texturesPath, _In_opt_ D3D12_DESCRIPTOR_HEAP_FLAGS flags)
+_Use_decl_annotations_
+std::unique_ptr<EffectTextureFactory> Model::LoadTextures(ID3D12Device* device, ResourceUploadBatch& resourceUploadBatch, const wchar_t* texturesPath, D3D12_DESCRIPTOR_HEAP_FLAGS flags)
 {
-    if (textureNames.size() == 0)
+    if (textureNames.empty())
         return nullptr;
 
     std::unique_ptr<EffectTextureFactory> texFactory = std::make_unique<EffectTextureFactory>(
@@ -196,12 +204,37 @@ std::unique_ptr<EffectTextureFactory> Model::LoadTextures(_In_ ID3D12Device* dev
 
 // Create effects for each mesh piece
 std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
-    _In_ IEffectFactory& fxFactory, 
-    _In_ const EffectPipelineStateDescription& pipelineState,
-    _In_opt_ int descriptorOffset)
+    IEffectFactory& fxFactory, 
+    const EffectPipelineStateDescription& opaquePipelineState,
+    const EffectPipelineStateDescription& alphaPipelineState, 
+    int textureDescriptorOffset,
+    int samplerDescriptorOffset)
 {
+    if (materials.empty())
+    {
+        DebugTrace("ERROR: Model has no material information to create effects!\n");
+        throw std::exception("CreateEffects");
+    }
+
     std::vector<std::shared_ptr<IEffect>> effects;
-    effects.reserve(materials.size());
+
+    // Count the number of parts
+    uint32_t partCount = 0;
+    for (const auto& mesh : meshes)
+    {
+        for (const auto& part : mesh->opaqueMeshParts)
+            partCount = std::max(part->partIndex + 1, partCount);
+        for (const auto& part : mesh->alphaMeshParts)
+            partCount = std::max(part->partIndex + 1, partCount);
+    }
+
+    if (partCount == 0)
+        return std::move(effects);
+
+    // Create an array of effects for each part. We need to have an effect per part because the part's vertex layout
+    // combines with the material spec to create a unique effect. We rely on the EffectFactory to de-duplicate if it
+    // wants to.
+    effects.resize(partCount);
 
     for (const auto& mesh : meshes)
     {
@@ -214,7 +247,10 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
             if (part->materialIndex == ~0ull)
                 continue;
 
-            effects.push_back(CreateEffectForMeshPart(fxFactory, pipelineState, descriptorOffset, part.get()));
+            // If this fires, you have multiple parts with the same unique ID
+            assert(effects[part->partIndex] == nullptr);
+
+            effects[part->partIndex] = std::move(CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset, part.get()));
         }
 
         for (const auto& part : mesh->alphaMeshParts)
@@ -224,7 +260,10 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
             if (part->materialIndex == ~0ull)
                 continue;
 
-            effects.push_back(CreateEffectForMeshPart(fxFactory, pipelineState, descriptorOffset, part.get()));
+            // If this fires, you have multiple parts with the same unique ID
+            assert(effects[part->partIndex] == nullptr);
+
+            effects[part->partIndex] = std::move(CreateEffectForMeshPart(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset, part.get()));
         }
     }
 
@@ -232,11 +271,14 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
 }
 
 // Creates an effect for a mesh part
+_Use_decl_annotations_
 std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
-    _In_ IEffectFactory& fxFactory, 
-    _In_ const EffectPipelineStateDescription& pipelineState,
-    _In_opt_ int descriptorOffset,
-    _In_ const ModelMeshPart* part) const
+    IEffectFactory& fxFactory, 
+    const EffectPipelineStateDescription& opaquePipelineState,
+    const EffectPipelineStateDescription& alphaPipelineState, 
+    int textureDescriptorOffset,
+    int samplerDescriptorOffset,
+    const ModelMeshPart* part) const
 {
     assert(part->materialIndex < materials.size());
 
@@ -246,17 +288,21 @@ std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
     il.NumElements = (uint32_t) part->vbDecl->size();
     il.pInputElementDescs = part->vbDecl->data();
 
-    return fxFactory.CreateEffect(m, pipelineState, il, descriptorOffset);
+    return fxFactory.CreateEffect(m, opaquePipelineState, alphaPipelineState, il, textureDescriptorOffset, samplerDescriptorOffset);
 }
 
 // Create effects for each mesh piece with the default factory
+_Use_decl_annotations_
 std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
-    _In_ const EffectPipelineStateDescription& pipelineState,
-    _In_ ID3D12DescriptorHeap* gpuVisibleTextureDescriptorHeap, 
-    _In_opt_ int descriptorOffset)
+    const EffectPipelineStateDescription& opaquePipelineState,
+    const EffectPipelineStateDescription& alphaPipelineState,
+    ID3D12DescriptorHeap* textureDescriptorHeap, 
+    ID3D12DescriptorHeap* samplerDescriptorHeap,
+    int textureDescriptorOffset,
+    int samplerDescriptorOffset)
 {
-    EffectFactory fxFactory(gpuVisibleTextureDescriptorHeap);
-    return CreateEffects(fxFactory, pipelineState, descriptorOffset);
+    EffectFactory fxFactory(textureDescriptorHeap, samplerDescriptorHeap);
+    return CreateEffects(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset);
 }
 
 // Updates effect matrices (if applicable)
@@ -269,11 +315,9 @@ void XM_CALLCONV Model::UpdateEffectMatrices(
     for (auto& fx : effectList)
     {
         IEffectMatrices* matFx = dynamic_cast<IEffectMatrices*>(fx.get());
-        if (matFx != nullptr)
+        if (matFx)
         {
-            matFx->SetWorld(world);
-            matFx->SetView(view);
-            matFx->SetProjection(proj);
+            matFx->SetMatrices(world, view, proj);
         }
     }
 }

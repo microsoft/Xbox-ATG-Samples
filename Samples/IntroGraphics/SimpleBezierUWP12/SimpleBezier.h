@@ -9,6 +9,7 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
+#include "ControllerHelp.h"
 
 
 // A basic sample implementation that creates a D3D12 device and
@@ -108,4 +109,7 @@ private:
     DirectX::XMFLOAT4X4                             m_viewMatrix;
     DirectX::XMFLOAT4X4                             m_projectionMatrix;
     DirectX::XMFLOAT3                               m_cameraEye;
+
+    std::unique_ptr<ATG::Help>                      m_help;
+    bool                                            m_showHelp;
 };

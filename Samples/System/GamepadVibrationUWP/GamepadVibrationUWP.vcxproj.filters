@@ -60,7 +60,6 @@
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="GamepadVibrationUWP_TemporaryKey.pfx" />
     <None Include="Readme.docx" />
     <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
       <Filter>Assets</Filter>

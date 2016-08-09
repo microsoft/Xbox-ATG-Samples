@@ -1,6 +1,8 @@
 ﻿//
 // DeviceResources.h - A wrapper for the Direct3D 11 device and swapchain
 //
+// Updated with additional debug message supressions, and co-creates a Direct3D 12 device for the adapter
+//
 
 #pragma once
 
@@ -37,6 +39,7 @@ namespace DX
         DXGI_MODE_ROTATION GetRotation() const { return m_rotation; }
 
         // Direct3D Accessors.
+        ID3D12Device*           GetD3DDevice12() const                { return m_d3dDevice12.Get(); }
         ID3D11Device2*          GetD3DDevice() const                  { return m_d3dDevice.Get(); }
         ID3D11DeviceContext2*   GetD3DDeviceContext() const           { return m_d3dContext.Get(); }
         IDXGISwapChain3*        GetSwapChain() const                  { return m_swapChain.Get(); }
@@ -56,6 +59,8 @@ namespace DX
         Microsoft::WRL::ComPtr<ID3D11Device3>           m_d3dDevice;
         Microsoft::WRL::ComPtr<ID3D11DeviceContext2>    m_d3dContext;
         Microsoft::WRL::ComPtr<IDXGISwapChain3>         m_swapChain;
+
+        Microsoft::WRL::ComPtr<ID3D12Device>            m_d3dDevice12;
 
         // Direct3D rendering objects. Required for 3D.
         Microsoft::WRL::ComPtr<ID3D11RenderTargetView>	m_d3dRenderTargetView;

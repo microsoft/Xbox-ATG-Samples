@@ -2,6 +2,8 @@
 // DeviceResources.cpp - A wrapper for the Direct3D 11 device and swapchain
 //                       (requires DirectX 11.3 Runtime)
 //
+// Updated with additional debug message supressions, and co-creates a Direct3D 12 device for the adapter
+//
 
 
 #include "pch.h"
@@ -211,6 +213,8 @@ void DX::DeviceResources::CreateDeviceResources()
             D3D11_MESSAGE_ID hide[] =
             {
                 D3D11_MESSAGE_ID_SETPRIVATEDATA_CHANGINGPARAMS,
+                D3D11_MESSAGE_ID_DEVICE_CHECKFEATURESUPPORT_UNRECOGNIZED_FEATURE,
+                D3D11_MESSAGE_ID_DEVICE_CHECKFEATURESUPPORT_INVALIDARG_RETURN,
             };
             D3D11_INFO_QUEUE_FILTER filter = {};
             filter.DenyList.NumIDs = _countof(hide);
@@ -222,6 +226,40 @@ void DX::DeviceResources::CreateDeviceResources()
 
     DX::ThrowIfFailed(device.As(&m_d3dDevice));
     DX::ThrowIfFailed(context.As(&m_d3dContext));
+
+    // Try creating Direct3D 12 device for same adapter
+    ComPtr<IDXGIDevice3> dxgiDevice;
+    if (SUCCEEDED(m_d3dDevice.As(&dxgiDevice)))
+    {
+        ComPtr<IDXGIAdapter> dxgiAdapter;
+        if (SUCCEEDED(dxgiDevice->GetAdapter(dxgiAdapter.GetAddressOf())))
+        {
+            ComPtr<IDXGIFactory4> dxgiFactory;
+            if (SUCCEEDED(dxgiAdapter->GetParent(IID_PPV_ARGS(dxgiFactory.GetAddressOf()))))
+            {
+                if (adapter)
+                {
+                    if (FAILED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(m_d3dDevice12.GetAddressOf()))))
+                    {
+                        m_d3dDevice12.Reset();
+                    }
+                }
+#if !defined(NDEBUG)
+                else
+                {
+                    ComPtr<IDXGIAdapter> warpAdapter;
+                    if (SUCCEEDED(dxgiFactory->EnumWarpAdapter(IID_PPV_ARGS(warpAdapter.GetAddressOf()))))
+                    {
+                        if (FAILED(D3D12CreateDevice(warpAdapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(m_d3dDevice12.GetAddressOf()))))
+                        {
+                            m_d3dDevice12.Reset();
+                        }
+                    }
+                }
+#endif
+            }
+        }
+    }
 }
 
 // These resources need to be recreated every time the window size is changed.
@@ -474,6 +512,8 @@ void DX::DeviceResources::HandleDeviceLost()
     {
         m_deviceNotify->OnDeviceLost();
     }
+
+    m_d3dDevice12.Reset();
 
     m_d3dDepthStencilView.Reset();
     m_d3dRenderTargetView.Reset();

@@ -4,14 +4,15 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-June 30, 2016
+August 4, 2016
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for 
 writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32 desktop
 applications for Windows 10, and Xbox One exclusive apps.
 
 This code is designed to build with Visual Studio 2015. It is recommended that you
-make use of VS 2015 Update 3 and Windows 10 (November 2015) or later.
+make use of VS 2015 Update 3, Windows Tools 1.4.1., and the
+Windows 10 Anniversary Update (14393).
 
 Inc\
     Public Header Files (in the DirectX C++ namespace):
@@ -92,6 +93,39 @@ COMPARISONS TO DIRECTX 11 VERSION
 ---------------
 RELEASE HISTORY
 ---------------
+
+August 4, 2016
+    GraphicsMemory fix for robustness during cleanup
+    Regenerated shaders using Windows 10 Anniversary Update SDK (14393)
+
+August 2, 2016
+    Updated for VS 2015 Update 3 and Windows 10 SDK (14393)
+
+August 1, 2016
+    Model effects array is now indexed by part rather than by material
+    GamePad capabilities information updated for Universal Windows and Xbox One platforms
+    Specular falloff lighting computation fix in shaders
+
+July 18, 2016
+    *breaking changes* to CommonStates, DescriptorHeap, Effects, Model,
+        EffectPipelineStateDescription, and SpriteBatchPipelineStateDescription
+    - added texture sampler control to Effects and SpriteBatch
+    - fixed Model control of blend and rasterizer state
+    - fixed problems with PerPixelLighting control (EffectFactory defaults to per-pixel lighting)
+    - fixed control of weights-per-vertex optimization for SkinnedEffect
+    - removed unnecesary "one-light" shader permutations
+    - fixed bug in AlphaTestEfect implementation
+    - improved debug messages for misconfigured effects
+    NormalMapEffect for normal-map with optional specular map rendering
+    EnvironmentMapEffect now supports per-pixel lighting
+    Effects updated with SetMatrices and SetColorAndAlpha methods
+    GraphicsMemory support for SharedGraphicsResource shared_ptr style smart-pointer
+    PrimitiveBatch fix for DrawQuad
+    ScreenGrab handles resource state transition
+    SimpleMath: improved interop with DirectXMath constants
+    WICTextureLoader module LoadWICTexture* methods
+    Fixed bugs with GenerateMips for sRGB and BGRA formats
+    Code cleanup
 
 June 30, 2016
     Original release

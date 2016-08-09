@@ -35,7 +35,6 @@
 
 #include "GamePad.h"
 #include "Keyboard.h"
-#include "Mouse.h"
 
 namespace DX
 {

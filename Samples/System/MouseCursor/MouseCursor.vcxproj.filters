@@ -102,7 +102,6 @@
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="MouseCursor_TemporaryKey.pfx" />
     <None Include="..\..\..\Media\Meshes\FPSRoom\FPSRoom.sdkmesh">
       <Filter>Assets\FPSRoom</Filter>
     </None>

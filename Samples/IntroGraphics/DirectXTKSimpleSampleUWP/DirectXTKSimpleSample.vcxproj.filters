@@ -57,7 +57,6 @@
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DirectXTKSimpleSample_TemporaryKey.pfx" />
     <None Include="..\..\..\Media\Sounds\ADPCMdroid.xwb">
       <Filter>Assets</Filter>
     </None>

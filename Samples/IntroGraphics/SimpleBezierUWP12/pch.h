@@ -36,7 +36,6 @@
 #include "GamePad.h"
 #include "GraphicsMemory.h"
 #include "Keyboard.h"
-#include "Mouse.h"
 #include "DirectXHelpers.h"
 #include "DescriptorHeap.h"
 

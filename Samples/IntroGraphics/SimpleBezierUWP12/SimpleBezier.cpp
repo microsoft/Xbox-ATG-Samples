@@ -19,6 +19,21 @@ using Microsoft::WRL::ComPtr;
 // Global variables
 namespace
 {
+    // Help menu text
+    const wchar_t* c_sampleTitle = L"Simple Bezier Sample";
+    const wchar_t* c_sampleDescription = L"Demonstrates how to create hull and domain shaders to draw a\ntessellated Bezier surface representing a Mobius strip.";
+    const ATG::HelpButtonAssignment c_helpButtons[] = {
+        { ATG::HelpID::MENU_BUTTON,      L"Show/Hide Help" },
+        { ATG::HelpID::VIEW_BUTTON,      L"Exit" },
+        { ATG::HelpID::LEFT_STICK,       L"Rotate Camera" },
+        { ATG::HelpID::LEFT_TRIGGER,     L"Decrease Subdivisions" },
+        { ATG::HelpID::RIGHT_TRIGGER,    L"Increase Subdivisions" },
+        { ATG::HelpID::Y_BUTTON,         L"Toggle Wireframe" },
+        { ATG::HelpID::A_BUTTON,         L"Fractional Partitioning (Even)" },
+        { ATG::HelpID::B_BUTTON,         L"Fractional Partitioning (Odd)" },
+        { ATG::HelpID::X_BUTTON,         L"Integer Partitioning" },
+    };
+
     // Min and max divisions of the patch per side for the slider control.
     const float c_minDivs = 4;
     const float c_maxDivs = 16;
@@ -116,10 +131,13 @@ Sample::Sample()
     , m_drawWires(c_defaultWireframeRendering)
     , m_partitionMode(PartitionMode::PartitionInteger)
     , m_mappedConstantData(nullptr)
+    , m_showHelp(false)
 {
     // Use gamma-correct rendering.
     m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM_SRGB);
     m_deviceResources->RegisterDeviceNotify(this);
+
+    m_help = std::make_unique<ATG::Help>(c_sampleTitle, c_sampleDescription, c_helpButtons, _countof(c_helpButtons), true);
 }
 
 // Initialize the Direct3D resources required to run.
@@ -169,12 +187,20 @@ void Sample::Update(DX::StepTimer const&)
     auto kb = m_keyboard->GetState();
     m_keyboardButtons.Update(kb);
 
-    if (m_keyboardButtons.IsKeyPressed(Keyboard::Escape) || pad.IsViewPressed())
+    if ((!m_showHelp && m_keyboardButtons.IsKeyPressed(Keyboard::Escape)) || pad.IsViewPressed())
     {
         Windows::ApplicationModel::Core::CoreApplication::Exit();
     }
 
-    if (m_keyboardButtons.IsKeyPressed(Keyboard::W) || m_gamePadButtons.y == GamePad::ButtonStateTracker::PRESSED)
+    if (m_keyboardButtons.IsKeyPressed(Keyboard::F1) || m_gamePadButtons.menu == GamePad::ButtonStateTracker::PRESSED)
+    {
+        m_showHelp = !m_showHelp;
+    }
+    else if (m_showHelp && (m_keyboardButtons.IsKeyPressed(Keyboard::Escape) || m_gamePadButtons.b == GamePad::ButtonStateTracker::PRESSED))
+    {
+        m_showHelp = false;
+    }
+    else if (m_keyboardButtons.IsKeyPressed(Keyboard::W) || m_gamePadButtons.y == GamePad::ButtonStateTracker::PRESSED)
     {
         m_drawWires = !m_drawWires;
     }
@@ -189,7 +215,7 @@ void Sample::Update(DX::StepTimer const&)
         m_partitionMode = PartitionMode::PartitionFractionalEven;
     }
     else if (m_keyboardButtons.IsKeyPressed(Keyboard::D3) || m_keyboardButtons.IsKeyPressed(Keyboard::NumPad3) ||
-         m_gamePadButtons.b == GamePad::ButtonStateTracker::PRESSED)
+        (!m_showHelp && m_gamePadButtons.b == GamePad::ButtonStateTracker::PRESSED))
     {
         m_partitionMode = PartitionMode::PartitionFractionalOdd;
     }
@@ -249,35 +275,42 @@ void Sample::Render()
     auto commandList = m_deviceResources->GetCommandList();
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Render");
 
-    //Set appropriate pipeline state.
-    commandList->SetPipelineState(m_PSOs[m_drawWires ? 1 : 0][(int)m_partitionMode].Get());
-
-    // Set root signature and descriptor heaps.
-    commandList->SetGraphicsRootSignature(m_rootSignature.Get());
-    ID3D12DescriptorHeap* heaps[] = { m_resourceDescriptors->Heap() };
-    commandList->SetDescriptorHeaps(_countof(heaps), heaps);
-
-    // Calculate world-view-projection matrix.
-    XMMATRIX view = XMLoadFloat4x4(&m_viewMatrix);
-    XMMATRIX projection = XMLoadFloat4x4(&m_projectionMatrix);
-    XMMATRIX viewProjectionMatrix = XMMatrixMultiply(view, projection);
-
-    // Update per-frame variables.
-    if (m_mappedConstantData != nullptr)
+    if (m_showHelp)
     {
-        XMStoreFloat4x4(&m_mappedConstantData->viewProjectionMatrix, viewProjectionMatrix);
-        m_mappedConstantData->cameraWorldPos = m_cameraEye;
-        m_mappedConstantData->tessellationFactor = (float)m_subdivs;
+        m_help->Render(commandList);
     }
+    else
+    {
+        //Set appropriate pipeline state.
+        commandList->SetPipelineState(m_PSOs[m_drawWires ? 1 : 0][(int)m_partitionMode].Get());
 
-    // Finalize dynamic constant buffer into descriptor heap.
-    commandList->SetGraphicsRootDescriptorTable(c_rootParameterCB, m_resourceDescriptors->GetGpuHandle(c_rootParameterCB));
+        // Set root signature and descriptor heaps.
+        commandList->SetGraphicsRootSignature(m_rootSignature.Get());
+        ID3D12DescriptorHeap* heaps[] = { m_resourceDescriptors->Heap() };
+        commandList->SetDescriptorHeaps(_countof(heaps), heaps);
 
-    commandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_16_CONTROL_POINT_PATCHLIST);
-    commandList->IASetVertexBuffers(0, 1, &m_controlPointVBView);
+        // Calculate world-view-projection matrix.
+        XMMATRIX view = XMLoadFloat4x4(&m_viewMatrix);
+        XMMATRIX projection = XMLoadFloat4x4(&m_projectionMatrix);
+        XMMATRIX viewProjectionMatrix = XMMatrixMultiply(view, projection);
 
-    // Draw the mesh
-    commandList->DrawInstanced(_countof(c_mobiusStrip), 1, 0, 0);
+        // Update per-frame variables.
+        if (m_mappedConstantData != nullptr)
+        {
+            XMStoreFloat4x4(&m_mappedConstantData->viewProjectionMatrix, viewProjectionMatrix);
+            m_mappedConstantData->cameraWorldPos = m_cameraEye;
+            m_mappedConstantData->tessellationFactor = (float)m_subdivs;
+        }
+
+        // Finalize dynamic constant buffer into descriptor heap.
+        commandList->SetGraphicsRootDescriptorTable(c_rootParameterCB, m_resourceDescriptors->GetGpuHandle(c_rootParameterCB));
+
+        commandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_16_CONTROL_POINT_PATCHLIST);
+        commandList->IASetVertexBuffers(0, 1, &m_controlPointVBView);
+
+        // Draw the mesh
+        commandList->DrawInstanced(_countof(c_mobiusStrip), 1, 0, 0);
+    }
 
     PIXEndEvent(commandList);
 
@@ -371,6 +404,19 @@ void Sample::CreateDeviceDependentResources()
     XMStoreFloat4x4(&m_worldMatrix, world);
     XMStoreFloat4x4(&m_viewMatrix, view);
     XMStoreFloat3(&m_cameraEye, c_cameraEye);
+
+    RenderTargetState rtState(m_deviceResources->GetBackBufferFormat(), m_deviceResources->GetDepthBufferFormat());
+
+    ResourceUploadBatch uploadBatch(device);
+    uploadBatch.Begin();
+
+    m_help->RestoreDevice(device, uploadBatch, rtState);
+
+    auto finish = uploadBatch.End(m_deviceResources->GetCommandQueue());
+
+    m_deviceResources->WaitForGpu();
+
+    finish.wait();
 }
 
 // Creates and initializes shaders and their data.
@@ -427,17 +473,16 @@ void Sample::CreateShaders()
     psoDesc.InputLayout.pInputElementDescs = c_inputElementDesc;
     psoDesc.InputLayout.NumElements = _countof(c_inputElementDesc);
     psoDesc.pRootSignature = m_rootSignature.Get();
-    psoDesc.VS = CD3DX12_SHADER_BYTECODE(vertexShaderBlob.data(), vertexShaderBlob.size());
-    psoDesc.DS = CD3DX12_SHADER_BYTECODE(domainShaderBlob.data(), domainShaderBlob.size());
+    psoDesc.VS = { vertexShaderBlob.data(), vertexShaderBlob.size() };
+    psoDesc.DS = { domainShaderBlob.data(), domainShaderBlob.size() };
     psoDesc.RasterizerState = RasterDesc;
-
     psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+    psoDesc.DSVFormat = m_deviceResources->GetDepthBufferFormat();
     psoDesc.SampleMask = UINT_MAX;
     psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_PATCH;
     psoDesc.NumRenderTargets = 1;
     psoDesc.RTVFormats[0] = m_deviceResources->GetBackBufferFormat();
-    psoDesc.DSVFormat = m_deviceResources->GetDepthBufferFormat();
     psoDesc.SampleDesc.Count = 1;
 
     // Enumerate PSOs.
@@ -445,11 +490,11 @@ void Sample::CreateShaders()
     for (uint8_t i = 0; i < c_numPixelShaders; i++)
     {
         psoDesc.RasterizerState.FillMode = fillModes[i];
-        psoDesc.PS = CD3DX12_SHADER_BYTECODE(pixelShaderBlobs[i].data(), pixelShaderBlobs[i].size());
+        psoDesc.PS = { pixelShaderBlobs[i].data(), pixelShaderBlobs[i].size() };
 
         for (uint8_t j = 0; j < c_numHullShaders; j++)
         {
-            psoDesc.HS = CD3DX12_SHADER_BYTECODE(hullShaderBlobs[j].data(), hullShaderBlobs[j].size());
+            psoDesc.HS = { hullShaderBlobs[j].data(), hullShaderBlobs[j].size() };
 
             DX::ThrowIfFailed(
                 device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(m_PSOs[i][j].ReleaseAndGetAddressOf())));
@@ -518,6 +563,8 @@ void Sample::CreateWindowSizeDependentResources()
     XMFLOAT4X4 orient = m_deviceResources->GetOrientationTransform3D();
 
     XMStoreFloat4x4(&m_projectionMatrix, projection * XMLoadFloat4x4(&orient));
+
+    m_help->SetWindow(size);
 }
 
 void Sample::OnDeviceLost()
@@ -537,6 +584,8 @@ void Sample::OnDeviceLost()
     m_controlPointVB.Reset();
     m_cbPerFrame.Reset();
     m_mappedConstantData = nullptr;
+
+    m_help->ReleaseDevice();
 }
 
 void Sample::OnDeviceRestored()

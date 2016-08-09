@@ -57,7 +57,6 @@
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="CPUSets_TemporaryKey.pfx" />
     <None Include="..\..\..\Media\Meshes\Horse\horse1054.sdkmesh">
       <Filter>Assets</Filter>
     </None>

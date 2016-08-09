@@ -13,7 +13,6 @@
 
 #include "pch.h"
 #include "EffectCommon.h"
-#include "VertexTypes.h"
 
 using namespace DirectX;
 
@@ -47,9 +46,9 @@ struct BasicEffectTraits
 {
     typedef BasicEffectConstants ConstantBufferType;
 
-    static const int VertexShaderCount = 20;
+    static const int VertexShaderCount = 16;
     static const int PixelShaderCount = 10;
-    static const int ShaderPermutationCount = 32;
+    static const int ShaderPermutationCount = 24;
 };
 
 
@@ -59,29 +58,23 @@ class BasicEffect::Impl : public EffectBase<BasicEffectTraits>
 public:
     Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription);
 
-    enum DescriptorIndex
-    {
-        Texture,
-        DescriptorCount
-    };
-
     enum RootParameterIndex
     {
         TextureSRV,
+        TextureSampler,
         ConstantBuffer,
         RootParameterCount
     };
 
     bool lightingEnabled;
-    bool preferPerPixelLighting;
-    bool vertexColorEnabled;
     bool textureEnabled;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
+    D3D12_GPU_DESCRIPTOR_HANDLE sampler;
 
     EffectLights lights;
 
-    int GetCurrentPipelineStatePermutation() const;
+    int GetPipelineStatePermutation(bool preferPerPixelLighting, bool vertexColorEnabled) const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -104,11 +97,6 @@ namespace
     #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicVertexLightingVc.inc"
     #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicVertexLightingTx.inc"
     #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicVertexLightingTxVc.inc"
-    
-    #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicOneLight.inc"
-    #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicOneLightVc.inc"
-    #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicOneLightTx.inc"
-    #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicOneLightTxVc.inc"
     
     #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicPixelLighting.inc"
     #include "Shaders/Compiled/XboxOneBasicEffect_VSBasicPixelLightingVc.inc"
@@ -141,11 +129,6 @@ namespace
     #include "Shaders/Compiled/BasicEffect_VSBasicVertexLightingVc.inc"
     #include "Shaders/Compiled/BasicEffect_VSBasicVertexLightingTx.inc"
     #include "Shaders/Compiled/BasicEffect_VSBasicVertexLightingTxVc.inc"
-    
-    #include "Shaders/Compiled/BasicEffect_VSBasicOneLight.inc"
-    #include "Shaders/Compiled/BasicEffect_VSBasicOneLightVc.inc"
-    #include "Shaders/Compiled/BasicEffect_VSBasicOneLightTx.inc"
-    #include "Shaders/Compiled/BasicEffect_VSBasicOneLightTxVc.inc"
     
     #include "Shaders/Compiled/BasicEffect_VSBasicPixelLighting.inc"
     #include "Shaders/Compiled/BasicEffect_VSBasicPixelLightingVc.inc"
@@ -184,11 +167,6 @@ const D3D12_SHADER_BYTECODE EffectBase<BasicEffectTraits>::VertexShaderBytecode[
     { BasicEffect_VSBasicVertexLightingTx,   sizeof(BasicEffect_VSBasicVertexLightingTx)   },
     { BasicEffect_VSBasicVertexLightingTxVc, sizeof(BasicEffect_VSBasicVertexLightingTxVc) },
     
-    { BasicEffect_VSBasicOneLight,           sizeof(BasicEffect_VSBasicOneLight)           },
-    { BasicEffect_VSBasicOneLightVc,         sizeof(BasicEffect_VSBasicOneLightVc)         },
-    { BasicEffect_VSBasicOneLightTx,         sizeof(BasicEffect_VSBasicOneLightTx)         },
-    { BasicEffect_VSBasicOneLightTxVc,       sizeof(BasicEffect_VSBasicOneLightTxVc)       },
-    
     { BasicEffect_VSBasicPixelLighting,      sizeof(BasicEffect_VSBasicPixelLighting)      },
     { BasicEffect_VSBasicPixelLightingVc,    sizeof(BasicEffect_VSBasicPixelLightingVc)    },
     { BasicEffect_VSBasicPixelLightingTx,    sizeof(BasicEffect_VSBasicPixelLightingTx)    },
@@ -216,23 +194,14 @@ const int EffectBase<BasicEffectTraits>::VertexShaderIndices[] =
     11,     // vertex lighting + texture + vertex color
     11,     // vertex lighting + texture + vertex color, no fog
     
-    12,     // one light
-    12,     // one light, no fog
-    13,     // one light + vertex color
-    13,     // one light + vertex color, no fog
-    14,     // one light + texture
-    14,     // one light + texture, no fog
-    15,     // one light + texture + vertex color
-    15,     // one light + texture + vertex color, no fog
-    
-    16,     // pixel lighting
-    16,     // pixel lighting, no fog
-    17,     // pixel lighting + vertex color
-    17,     // pixel lighting + vertex color, no fog
-    18,     // pixel lighting + texture
-    18,     // pixel lighting + texture, no fog
-    19,     // pixel lighting + texture + vertex color
-    19,     // pixel lighting + texture + vertex color, no fog
+    12,     // pixel lighting
+    12,     // pixel lighting, no fog
+    13,     // pixel lighting + vertex color
+    13,     // pixel lighting + vertex color, no fog
+    14,     // pixel lighting + texture
+    14,     // pixel lighting + texture, no fog
+    15,     // pixel lighting + texture + vertex color
+    15,     // pixel lighting + texture + vertex color, no fog
 };
 
 const D3D12_SHADER_BYTECODE EffectBase<BasicEffectTraits>::PixelShaderBytecode[] =
@@ -271,16 +240,7 @@ const int EffectBase<BasicEffectTraits>::PixelShaderIndices[] =
     7,      // vertex lighting + texture, no fog
     6,      // vertex lighting + texture + vertex color
     7,      // vertex lighting + texture + vertex color, no fog
-    
-    4,      // one light
-    5,      // one light, no fog
-    4,      // one light + vertex color
-    5,      // one light + vertex color, no fog
-    6,      // one light + texture
-    7,      // one light + texture, no fog
-    6,      // one light + texture + vertex color
-    7,      // one light + texture + vertex color, no fog
-    
+
     8,      // pixel lighting
     8,      // pixel lighting, no fog
     8,      // pixel lighting + vertex color
@@ -296,8 +256,10 @@ SharedResourcePool<ID3D12Device*, EffectBase<BasicEffectTraits>::DeviceResources
 
 
 // Constructor.
-BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int flags, const EffectPipelineStateDescription& pipelineDescription)
-  : EffectBase(device)
+BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
+    : EffectBase(device),
+    texture{},
+    sampler{}
 {
     static_assert( _countof(EffectBase<BasicEffectTraits>::VertexShaderIndices) == BasicEffectTraits::ShaderPermutationCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<BasicEffectTraits>::VertexShaderBytecode) == BasicEffectTraits::VertexShaderCount, "array/max mismatch" );
@@ -312,28 +274,32 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int flags, const EffectPipeli
         D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
         D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
-    CD3DX12_STATIC_SAMPLER_DESC sampler(0);
-    CD3DX12_DESCRIPTOR_RANGE descriptorRanges[DescriptorIndex::DescriptorCount];
-    descriptorRanges[DescriptorIndex::Texture].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+    CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+    CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+
     CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
-    rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(
-        _countof(descriptorRanges), 
-        descriptorRanges);
+    rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV); 
+    rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler); 
     rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+
     CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
-    rsigDesc.Init(_countof(rootParameters), rootParameters, 1, &sampler, rootSignatureFlags);
+    rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
     ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
 
-    fog.enabled = (flags & EffectFlags::Fog) != 0;
-    lightingEnabled = (flags & EffectFlags::Lighting) != 0;
-    preferPerPixelLighting = (flags & EffectFlags::PerPixelLighting) != 0;
-    vertexColorEnabled = (flags & EffectFlags::VertexColor) != 0;
-    textureEnabled = (flags & EffectFlags::Texture) != 0;
+    fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
+    lightingEnabled = (effectFlags & EffectFlags::Lighting) != 0;
+    textureEnabled = (effectFlags & EffectFlags::Texture) != 0;
    
-    int sp = GetCurrentPipelineStatePermutation();
+    int sp = GetPipelineStatePermutation(
+        (effectFlags & EffectFlags::PerPixelLightingBit) != 0,
+        (effectFlags & EffectFlags::VertexColor) != 0);
+    assert(sp >= 0 && sp < BasicEffectTraits::ShaderPermutationCount);
+
     int vi = EffectBase<BasicEffectTraits>::VertexShaderIndices[sp];
+    assert(vi >= 0 && vi < BasicEffectTraits::VertexShaderCount);
     int pi = EffectBase<BasicEffectTraits>::PixelShaderIndices[sp];
+    assert(pi >= 0 && pi < BasicEffectTraits::PixelShaderCount);
 
     EffectBase::CreatePipelineState(
         mRootSignature.Get(),
@@ -349,7 +315,7 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int flags, const EffectPipeli
 }
 
 
-int BasicEffect::Impl::GetCurrentPipelineStatePermutation() const
+int BasicEffect::Impl::GetPipelineStatePermutation(bool preferPerPixelLighting, bool vertexColorEnabled) const
 {
     int permutation = 0;
 
@@ -376,16 +342,10 @@ int BasicEffect::Impl::GetCurrentPipelineStatePermutation() const
         if (preferPerPixelLighting)
         {
             // Do lighting in the pixel shader.
-            permutation += 24;
-        }
-        else if (!lights.lightEnabled[1] && !lights.lightEnabled[2])
-        {
-            // Use the only-bother-with-the-first-light shader optimization.
             permutation += 16;
         }
         else
         {
-            // Compute all three lights in the vertex shader.
             permutation += 8;
         }
     }
@@ -407,11 +367,17 @@ void BasicEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     // Set the root signature
     commandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-    // Set the texture descriptors.
-    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the texture descriptor heap.
+    // Set the texture
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
     if (textureEnabled)
-    {    
+    {
+        if (!texture.ptr || !sampler.ptr)
+        {
+            DebugTrace("ERROR: Missing texture or sampler for BasicEffect (texture %llu, sampler %llu)\n", texture.ptr, sampler.ptr);
+            throw std::exception("BasicEffect");
+        }
         commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
+        commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSampler, sampler);
     }
 
     // Set constants
@@ -450,11 +416,14 @@ BasicEffect::~BasicEffect()
 }
 
 
+// IEffect methods
 void BasicEffect::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
     pImpl->Apply(commandList);
 }
 
+
+// Camera settings
 void XM_CALLCONV BasicEffect::SetWorld(FXMMATRIX value)
 {
     pImpl->matrices.world = value;
@@ -479,6 +448,17 @@ void XM_CALLCONV BasicEffect::SetProjection(FXMMATRIX value)
 }
 
 
+void XM_CALLCONV BasicEffect::SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection)
+{
+    pImpl->matrices.world = world;
+    pImpl->matrices.view = view;
+    pImpl->matrices.projection = projection;
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::WorldInverseTranspose | EffectDirtyFlags::EyePosition | EffectDirtyFlags::FogVector;
+}
+
+
+// Material settings
 void XM_CALLCONV BasicEffect::SetDiffuseColor(FXMVECTOR value)
 {
     pImpl->lights.diffuseColor = value;
@@ -512,6 +492,7 @@ void BasicEffect::SetSpecularPower(float value)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
+
 void BasicEffect::DisableSpecular()
 {
     // Set specular color to black, power to 1
@@ -522,6 +503,7 @@ void BasicEffect::DisableSpecular()
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
+
 void BasicEffect::SetAlpha(float value)
 {
     pImpl->lights.alpha = value;
@@ -529,6 +511,17 @@ void BasicEffect::SetAlpha(float value)
     pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
 }
 
+
+void XM_CALLCONV BasicEffect::SetColorAndAlpha(FXMVECTOR value)
+{
+    pImpl->lights.diffuseColor = value;
+    pImpl->lights.alpha = XMVectorGetW(value);
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
+}
+
+
+// Light settings
 void XM_CALLCONV BasicEffect::SetAmbientLightColor(FXMVECTOR value)
 {
     pImpl->lights.ambientLightColor = value;
@@ -570,6 +563,8 @@ void BasicEffect::EnableDefaultLighting()
     EffectLights::EnableDefaultLighting(this);
 }
 
+
+// Fog settings.
 void BasicEffect::SetFogStart(float value)
 {
     pImpl->fog.start = value;
@@ -593,9 +588,10 @@ void XM_CALLCONV BasicEffect::SetFogColor(FXMVECTOR value)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-void BasicEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
+
+// Texture settings.
+void BasicEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture = srvDescriptor;
+    pImpl->sampler = samplerDescriptor;
 }
-
-

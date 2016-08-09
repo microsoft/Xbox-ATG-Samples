@@ -71,6 +71,7 @@ private:
     // DirectXTK objects.
     std::unique_ptr<DirectX::GraphicsMemory>                                m_graphicsMemory;
     std::unique_ptr<DirectX::DescriptorHeap>                                m_resourceDescriptors;
+    std::unique_ptr<DirectX::CommonStates>                                  m_states;
     std::unique_ptr<DirectX::BasicEffect>                                   m_lineEffect;
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>  m_batch;
     std::unique_ptr<DirectX::BasicEffect>                                   m_shapeEffect;

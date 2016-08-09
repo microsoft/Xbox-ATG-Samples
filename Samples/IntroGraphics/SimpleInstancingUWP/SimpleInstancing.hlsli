@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // SimpleInstancing.hlsli
 //
-// Simple shaders demonstrating how to peform instanced drawing.
+// Simple shaders demonstrating how to perform instanced drawing.
 //
 // Advanced Technology Group (ATG)
 // Copyright (C) Microsoft Corporation. All rights reserved.

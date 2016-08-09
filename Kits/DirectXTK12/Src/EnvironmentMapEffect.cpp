@@ -50,9 +50,9 @@ struct EnvironmentMapEffectTraits
 {
     typedef EnvironmentMapEffectConstants ConstantBufferType;
 
-    static const int VertexShaderCount = 4;
-    static const int PixelShaderCount = 4;
-    static const int ShaderPermutationCount = 16;
+    static const int VertexShaderCount = 3;
+    static const int PixelShaderCount = 8;
+    static const int ShaderPermutationCount = 12;
 };
 
 
@@ -69,7 +69,9 @@ public:
     enum RootParameterIndex
     {
         TextureSRV,
+        TextureSampler,
         CubemapSRV,
+        CubemapSampler,
         ConstantBuffer,
         RootParameterCount
     };
@@ -77,9 +79,11 @@ public:
     EffectLights lights;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
+    D3D12_GPU_DESCRIPTOR_HANDLE textureSampler;
     D3D12_GPU_DESCRIPTOR_HANDLE environmentMap;
+    D3D12_GPU_DESCRIPTOR_HANDLE environmentMapSampler;
 
-    int GetCurrentShaderPermutation(bool fresnelEnabled, bool specularEnabled) const;
+    int GetPipelineStatePermutation(bool fresnelEnabled, bool specularEnabled, bool preferPerPixelLighting) const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -91,33 +95,38 @@ namespace
 #if defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMap.inc"
     #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapFresnel.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapOneLight.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapOneLightFresnel.inc"
+    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapPixelLighting.inc"
 
     #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMap.inc"
     #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapNoFog.inc"
     #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapSpecular.inc"
     #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapSpecularNoFog.inc"
+    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapPixelLighting.inc"
+    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapPixelLightingNoFog.inc"
+    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapPixelLightingFresnel.inc"
+    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog.inc"
 #else
     #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMap.inc"
     #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapFresnel.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapOneLight.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapOneLightFresnel.inc"
+    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapPixelLighting.inc"
 
     #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMap.inc"
     #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapNoFog.inc"
     #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapSpecular.inc"
     #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapSpecularNoFog.inc"
+    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapPixelLighting.inc"
+    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapPixelLightingNoFog.inc"
+    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapPixelLightingFresnel.inc"
+    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog.inc"
 #endif
 }
 
 
 const D3D12_SHADER_BYTECODE EffectBase<EnvironmentMapEffectTraits>::VertexShaderBytecode[] =
 {
-    { EnvironmentMapEffect_VSEnvMap,                sizeof(EnvironmentMapEffect_VSEnvMap)                },
-    { EnvironmentMapEffect_VSEnvMapFresnel,         sizeof(EnvironmentMapEffect_VSEnvMapFresnel)         },
-    { EnvironmentMapEffect_VSEnvMapOneLight,        sizeof(EnvironmentMapEffect_VSEnvMapOneLight)        },
-    { EnvironmentMapEffect_VSEnvMapOneLightFresnel, sizeof(EnvironmentMapEffect_VSEnvMapOneLightFresnel) },
+    { EnvironmentMapEffect_VSEnvMap,                sizeof(EnvironmentMapEffect_VSEnvMap)              },
+    { EnvironmentMapEffect_VSEnvMapFresnel,         sizeof(EnvironmentMapEffect_VSEnvMapFresnel)       },
+    { EnvironmentMapEffect_VSEnvMapPixelLighting,   sizeof(EnvironmentMapEffect_VSEnvMapPixelLighting) },
 };
 
 
@@ -132,24 +141,23 @@ const int EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[] =
     1,      // fresnel + specular
     1,      // fresnel + specular, no fog
 
-    2,      // one light
-    2,      // one light, no fog
-    3,      // one light, fresnel
-    3,      // one light, fresnel, no fog
-    2,      // one light, specular
-    2,      // one light, specular, no fog
-    3,      // one light, fresnel + specular
-    3,      // one light, fresnel + specular, no fog
-
+    2,      // pixel lighting
+    2,      // pixel lighting, no fog
+    2,      // pixel lighting, fresnel
+    2,      // pixel lighting, fresnel, no fog
 };
 
 
 const D3D12_SHADER_BYTECODE EffectBase<EnvironmentMapEffectTraits>::PixelShaderBytecode[] =
 {
-    { EnvironmentMapEffect_PSEnvMap,              sizeof(EnvironmentMapEffect_PSEnvMap)              },
-    { EnvironmentMapEffect_PSEnvMapNoFog,         sizeof(EnvironmentMapEffect_PSEnvMapNoFog)         },
-    { EnvironmentMapEffect_PSEnvMapSpecular,      sizeof(EnvironmentMapEffect_PSEnvMapSpecular)      },
-    { EnvironmentMapEffect_PSEnvMapSpecularNoFog, sizeof(EnvironmentMapEffect_PSEnvMapSpecularNoFog) },
+    { EnvironmentMapEffect_PSEnvMap,                          sizeof(EnvironmentMapEffect_PSEnvMap)                          },
+    { EnvironmentMapEffect_PSEnvMapNoFog,                     sizeof(EnvironmentMapEffect_PSEnvMapNoFog)                     },
+    { EnvironmentMapEffect_PSEnvMapSpecular,                  sizeof(EnvironmentMapEffect_PSEnvMapSpecular)                  },
+    { EnvironmentMapEffect_PSEnvMapSpecularNoFog,             sizeof(EnvironmentMapEffect_PSEnvMapSpecularNoFog)             },
+    { EnvironmentMapEffect_PSEnvMapPixelLighting,             sizeof(EnvironmentMapEffect_PSEnvMapPixelLighting)             },
+    { EnvironmentMapEffect_PSEnvMapPixelLightingNoFog,        sizeof(EnvironmentMapEffect_PSEnvMapPixelLightingNoFog)        },
+    { EnvironmentMapEffect_PSEnvMapPixelLightingFresnel,      sizeof(EnvironmentMapEffect_PSEnvMapPixelLightingFresnel)      },
+    { EnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog, sizeof(EnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog) },
 };
 
 
@@ -164,14 +172,10 @@ const int EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices[] =
     2,      // fresnel + specular
     3,      // fresnel + specular, no fog
 
-    0,      // one light
-    1,      // one light, no fog
-    0,      // one light, fresnel
-    1,      // one light, fresnel, no fog
-    2,      // one light, specular
-    3,      // one light, specular, no fog
-    2,      // one light, fresnel + specular
-    3,      // one light, fresnel + specular, no fog
+    4,      // per pixel lighting
+    5,      // per pixel lighting, no fog
+    6,      // per pixel lighting, fresnel
+    7,      // per pixel lighting, fresnel, no fog
 };
 
 
@@ -186,7 +190,11 @@ EnvironmentMapEffect::Impl::Impl(
     const EffectPipelineStateDescription& pipelineDescription, 
     bool fresnelEnabled, 
     bool specularEnabled)
-  : EffectBase(device)
+    : EffectBase(device),
+    texture{},
+    textureSampler{},
+    environmentMap{},
+    environmentMapSampler{}
 {
     static_assert( _countof(EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices) == EnvironmentMapEffectTraits::ShaderPermutationCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<EnvironmentMapEffectTraits>::VertexShaderBytecode) == EnvironmentMapEffectTraits::VertexShaderCount, "array/max mismatch" );
@@ -209,23 +217,31 @@ EnvironmentMapEffect::Impl::Impl(
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
         // Texture 1
-        CD3DX12_DESCRIPTOR_RANGE descriptorRange1;
-        descriptorRange1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-        rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &descriptorRange1);
+        CD3DX12_DESCRIPTOR_RANGE textureDescriptor(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+        CD3DX12_DESCRIPTOR_RANGE textureSamplerDescriptor(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+        rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureDescriptor);
+        rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSamplerDescriptor);
 
         // Texture 2
-        CD3DX12_DESCRIPTOR_RANGE descriptorRange2;
-        descriptorRange2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
-        rootParameters[RootParameterIndex::CubemapSRV].InitAsDescriptorTable(1, &descriptorRange2);
+        CD3DX12_DESCRIPTOR_RANGE cubemapDescriptor(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
+        CD3DX12_DESCRIPTOR_RANGE cubemapSamplerDescriptor(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 1);
+        rootParameters[RootParameterIndex::CubemapSRV].InitAsDescriptorTable(1, &cubemapDescriptor);
+        rootParameters[RootParameterIndex::CubemapSampler].InitAsDescriptorTable(1, &cubemapSamplerDescriptor);
 
         // Create the root signature
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
-        rsigDesc.Init(_countof(rootParameters), rootParameters, _countof(samplers), samplers, rootSignatureFlags);
+        rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
         ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
     }
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
+
+    if (effectFlags & EffectFlags::VertexColor)
+    {
+        DebugTrace("ERROR: EnvironmentMapEffect does not implement EffectFlags::VertexColor\n");
+        throw std::invalid_argument("EnvironmentMapEffect");
+    }
 
     constants.environmentMapAmount = 1;
     constants.fresnelFactor = 1;
@@ -235,9 +251,16 @@ EnvironmentMapEffect::Impl::Impl(
     lights.InitializeConstants(unwantedOutput[0], constants.lightDirection, constants.lightDiffuseColor, unwantedOutput);
 
     {   // Create pipeline state
-        int sp = GetCurrentShaderPermutation(fresnelEnabled, specularEnabled);
+        int sp = GetPipelineStatePermutation(
+            fresnelEnabled,
+            specularEnabled,
+            (effectFlags & EffectFlags::PerPixelLightingBit) != 0);
+
+        assert(sp >= 0 && sp < EnvironmentMapEffectTraits::ShaderPermutationCount);
         int vi = EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[sp];
+        assert(vi >= 0 && vi < EnvironmentMapEffectTraits::VertexShaderCount);
         int pi = EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices[sp];
+        assert(pi >= 0 && pi < EnvironmentMapEffectTraits::PixelShaderCount);
 
         EffectBase::CreatePipelineState(
             mRootSignature.Get(),
@@ -254,7 +277,7 @@ EnvironmentMapEffect::Impl::Impl(
 }
 
 
-int EnvironmentMapEffect::Impl::GetCurrentShaderPermutation(bool fresnelEnabled, bool specularEnabled) const
+int EnvironmentMapEffect::Impl::GetPipelineStatePermutation(bool fresnelEnabled, bool specularEnabled, bool preferPerPixelLighting) const
 {
     int permutation = 0;
 
@@ -264,21 +287,23 @@ int EnvironmentMapEffect::Impl::GetCurrentShaderPermutation(bool fresnelEnabled,
         permutation += 1;
     }
 
-    // Support fresnel or specular?
+    // Support fresnel?
     if (fresnelEnabled)
     {
         permutation += 2;
     }
 
-    if (specularEnabled)
-    {
-        permutation += 4;
-    }
-
-    // Use the only-bother-with-the-first-light shader optimization?
-    if (!lights.lightEnabled[1] && !lights.lightEnabled[2])
+    if (preferPerPixelLighting)
     {
         permutation += 8;
+    }
+    else
+    {
+        // Supporte specular?
+        if (specularEnabled)
+        {
+            permutation += 4;
+        }
     }
 
     return permutation;
@@ -299,9 +324,28 @@ void EnvironmentMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandLi
 
     // Set the resources and state
     commandList->SetGraphicsRootSignature(mRootSignature.Get());
+
+    // Set the textures
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
+    if (!texture.ptr || !environmentMap.ptr)
+    {
+        DebugTrace("ERROR: Missing texture(s) for EnvironmentMapEffect (texture %llu, environmentMap %llu)\n", texture.ptr, environmentMap.ptr);
+        throw std::exception("EnvironmentMapEffect");
+    }
+    if (!textureSampler.ptr || !environmentMapSampler.ptr)
+    {
+        DebugTrace("ERROR: Missing sampler(s) for EnvironmentMapEffect (sampler %llu, environmentMap %llu)\n", textureSampler.ptr, environmentMapSampler.ptr);
+        throw std::exception("EnvironmentMapEffect");
+    }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
+    commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSampler, textureSampler);
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::CubemapSRV, environmentMap);
+    commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::CubemapSampler, environmentMapSampler);
+
+    // Set constants
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, GetConstantBufferGpuAddress());
+
+    // Set the pipeline state
     commandList->SetPipelineState(EffectBase::mPipelineState.Get());
 }
 
@@ -339,6 +383,7 @@ EnvironmentMapEffect::~EnvironmentMapEffect()
 }
 
 
+// IEffect methods.
 void EnvironmentMapEffect::Apply(
     _In_ ID3D12GraphicsCommandList* cmdList)
 {
@@ -346,6 +391,7 @@ void EnvironmentMapEffect::Apply(
 }
 
 
+// Camera settings.
 void XM_CALLCONV EnvironmentMapEffect::SetWorld(FXMMATRIX value)
 {
     pImpl->matrices.world = value;
@@ -370,6 +416,17 @@ void XM_CALLCONV EnvironmentMapEffect::SetProjection(FXMMATRIX value)
 }
 
 
+void XM_CALLCONV EnvironmentMapEffect::SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection)
+{
+    pImpl->matrices.world = world;
+    pImpl->matrices.view = view;
+    pImpl->matrices.projection = projection;
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::WorldInverseTranspose | EffectDirtyFlags::EyePosition | EffectDirtyFlags::FogVector;
+}
+
+
+// Material settings.
 void XM_CALLCONV EnvironmentMapEffect::SetDiffuseColor(FXMVECTOR value)
 {
     pImpl->lights.diffuseColor = value;
@@ -394,6 +451,16 @@ void EnvironmentMapEffect::SetAlpha(float value)
 }
 
 
+void XM_CALLCONV EnvironmentMapEffect::SetColorAndAlpha(FXMVECTOR value)
+{
+    pImpl->lights.diffuseColor = value;
+    pImpl->lights.alpha = XMVectorGetW(value);
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
+}
+
+
+// Light settings.
 void XM_CALLCONV EnvironmentMapEffect::SetAmbientLightColor(FXMVECTOR value)
 {
     pImpl->lights.ambientLightColor = value;
@@ -438,6 +505,7 @@ void EnvironmentMapEffect::EnableDefaultLighting()
 }
 
 
+// Fog settings.
 void EnvironmentMapEffect::SetFogStart(float value)
 {
     pImpl->fog.start = value;
@@ -462,18 +530,22 @@ void XM_CALLCONV EnvironmentMapEffect::SetFogColor(FXMVECTOR value)
 }
 
 
-void EnvironmentMapEffect::SetTexture(_In_opt_ D3D12_GPU_DESCRIPTOR_HANDLE value)
+// Texture settings.
+void EnvironmentMapEffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE texture, D3D12_GPU_DESCRIPTOR_HANDLE sampler)
 {
-    pImpl->texture = value;
+    pImpl->texture = texture;
+    pImpl->textureSampler = sampler;
 }
 
 
-void EnvironmentMapEffect::SetEnvironmentMap(_In_opt_ D3D12_GPU_DESCRIPTOR_HANDLE value)
+void EnvironmentMapEffect::SetEnvironmentMap(D3D12_GPU_DESCRIPTOR_HANDLE texture, D3D12_GPU_DESCRIPTOR_HANDLE sampler)
 {
-    pImpl->environmentMap = value;
+    pImpl->environmentMap = texture;
+    pImpl->environmentMapSampler = sampler;
 }
 
 
+// Additional settings.
 void EnvironmentMapEffect::SetEnvironmentMapAmount(float value)
 {
     pImpl->constants.environmentMapAmount = value;

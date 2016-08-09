@@ -47,15 +47,10 @@ class AlphaTestEffect::Impl : public EffectBase<AlphaTestEffectTraits>
 public:
     Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, D3D12_COMPARISON_FUNC alphaFunction);
 
-    enum DescriptorIndex
-    {
-        Texture,
-        DescriptorCount
-    };
-
     enum RootParameterIndex
     {
         TextureSRV,
+        TextureSampler,
         ConstantBuffer,
         RootParameterCount
     };
@@ -63,12 +58,12 @@ public:
     D3D12_COMPARISON_FUNC mAlphaFunction;
     int referenceAlpha;
 
-    bool vertexColorEnabled;
     EffectColor color;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
+    D3D12_GPU_DESCRIPTOR_HANDLE textureSampler;
     
-    int GetCurrentPipelineStatePermutation() const;
+    int GetPipelineStatePermutation(bool vertexColorEnabled) const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -152,11 +147,12 @@ SharedResourcePool<ID3D12Device*, EffectBase<AlphaTestEffectTraits>::DeviceResou
 
 // Constructor.
 AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device, 
-    int flags, const EffectPipelineStateDescription& pipelineDescription, D3D12_COMPARISON_FUNC alphaFunction)
-  : EffectBase(device),
+    int effectFlags, const EffectPipelineStateDescription& pipelineDescription, D3D12_COMPARISON_FUNC alphaFunction)
+    : EffectBase(device),
     mAlphaFunction(alphaFunction),
     referenceAlpha(0),
-    vertexColorEnabled(false)
+    texture{},
+    textureSampler{}
 {
     static_assert( _countof(EffectBase<AlphaTestEffectTraits>::VertexShaderIndices) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode) == AlphaTestEffectTraits::VertexShaderCount, "array/max mismatch" );
@@ -169,30 +165,40 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
         D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
         D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
-    CD3DX12_STATIC_SAMPLER_DESC sampler(0);
-    CD3DX12_DESCRIPTOR_RANGE descriptorRanges[DescriptorIndex::DescriptorCount];
-    descriptorRanges[DescriptorIndex::Texture].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+    CD3DX12_DESCRIPTOR_RANGE textureRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+    CD3DX12_DESCRIPTOR_RANGE textureSamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+
     CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
-    rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(
-        _countof(descriptorRanges),
-        descriptorRanges);
+    rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureRange);
+    rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSamplerRange);
     rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+
     CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
-    rsigDesc.Init(_countof(rootParameters), rootParameters, 1, &sampler, rootSignatureFlags);
+    rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
     ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
 
-    fog.enabled = (flags & EffectFlags::Fog) != 0;
-    vertexColorEnabled = (flags & EffectFlags::VertexColor) != 0;
-  
-    // overridden alpha test state
-    D3D12_DEPTH_STENCIL_DESC override = *pipelineDescription.depthStencilDesc;
-    override.BackFace.StencilFunc = alphaFunction;
-    override.FrontFace.StencilFunc = alphaFunction;
+    fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
 
-    int sp = GetCurrentPipelineStatePermutation();
+    if (effectFlags & EffectFlags::PerPixelLightingBit)
+    {
+        DebugTrace("ERROR: AlphaTestEffect does not implement EffectFlags::PerPixelLighting\n");
+        throw std::invalid_argument("AlphaTestEffect");
+    }
+    else if (effectFlags & EffectFlags::Lighting)
+    {
+        DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::Lighting\n");
+        throw std::invalid_argument("AlphaTestEffect");
+    }
+  
+    int sp = GetPipelineStatePermutation(
+        (effectFlags & EffectFlags::VertexColor) != 0);
+    assert(sp >= 0 && sp < AlphaTestEffectTraits::ShaderPermutationCount);
+
     int vi = EffectBase<AlphaTestEffectTraits>::VertexShaderIndices[sp];
+    assert(vi >= 0 && vi < AlphaTestEffectTraits::VertexShaderCount);
     int pi = EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[sp];
+    assert(pi >= 0 && pi < AlphaTestEffectTraits::PixelShaderCount);
   
     EffectBase::CreatePipelineState(
         mRootSignature.Get(),
@@ -200,7 +206,7 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
         &EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode[vi],
         &EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode[pi],
         pipelineDescription.blendDesc,
-        &override,
+        pipelineDescription.depthStencilDesc,
         pipelineDescription.rasterizerDesc,
         pipelineDescription.renderTargetState,
         pipelineDescription.primitiveTopology,
@@ -208,7 +214,7 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
 }
 
 
-int AlphaTestEffect::Impl::GetCurrentPipelineStatePermutation() const
+int AlphaTestEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled) const
 {
     int permutation = 0;
 
@@ -327,8 +333,17 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     // Set the root signature
     commandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-    // Set the texture.
+    // Set the texture
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
+    if (!texture.ptr || !textureSampler.ptr)
+    {
+        DebugTrace("ERROR: Missing texture or sampler for AlphaTestEffect (texture %llu, sampler %llu)\n", texture.ptr, textureSampler.ptr);
+        throw std::exception("AlphaTestEffect");
+    }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
+    commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSampler, textureSampler);
+
+    // Set constants
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, GetConstantBufferGpuAddress());
 
     // Set the pipeline state
@@ -363,11 +378,14 @@ AlphaTestEffect::~AlphaTestEffect()
 }
 
 
+// IEffect methods
 void AlphaTestEffect::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
     pImpl->Apply(commandList);
 }
 
+
+// Camera settings
 void XM_CALLCONV AlphaTestEffect::SetWorld(FXMMATRIX value)
 {
     pImpl->matrices.world = value;
@@ -392,6 +410,17 @@ void XM_CALLCONV AlphaTestEffect::SetProjection(FXMMATRIX value)
 }
 
 
+void XM_CALLCONV AlphaTestEffect::SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection)
+{
+    pImpl->matrices.world = world;
+    pImpl->matrices.view = view;
+    pImpl->matrices.projection = projection;
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::WorldInverseTranspose | EffectDirtyFlags::EyePosition | EffectDirtyFlags::FogVector;
+}
+
+
+// Material settings
 void XM_CALLCONV AlphaTestEffect::SetDiffuseColor(FXMVECTOR value)
 {
     pImpl->color.diffuseColor = value;
@@ -407,6 +436,17 @@ void AlphaTestEffect::SetAlpha(float value)
     pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
 }
 
+
+void XM_CALLCONV AlphaTestEffect::SetColorAndAlpha(FXMVECTOR value)
+{
+    pImpl->color.diffuseColor = value;
+    pImpl->color.alpha = XMVectorGetW(value);
+
+    pImpl->dirtyFlags |= EffectDirtyFlags::MaterialColor;
+}
+
+
+// Fog settings.
 void AlphaTestEffect::SetFogStart(float value)
 {
     pImpl->fog.start = value;
@@ -430,10 +470,14 @@ void XM_CALLCONV AlphaTestEffect::SetFogColor(FXMVECTOR value)
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-void AlphaTestEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor)
+
+// Texture settings.
+void AlphaTestEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture = srvDescriptor;
+    pImpl->textureSampler = samplerDescriptor;
 }
+
 
 void AlphaTestEffect::SetReferenceAlpha(int value)
 {

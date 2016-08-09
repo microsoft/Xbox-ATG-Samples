@@ -43,7 +43,6 @@
 #include "DDSTextureLoader.h"
 #include "GamePad.h"
 #include "Keyboard.h"
-#include "Mouse.h"
 #include "SimpleMath.h"
 #include "SpriteBatch.h"
 #include "SpriteFont.h"

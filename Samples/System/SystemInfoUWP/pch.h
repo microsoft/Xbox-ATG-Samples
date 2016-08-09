@@ -14,8 +14,9 @@
 
 #include <wrl.h>
 
-#include <d3d11_3.h>
-#include <dxgi1_4.h>
+#include <d3d12.h>
+#include <d3d11_4.h>
+#include <dxgi1_5.h>
 #include <DirectXMath.h>
 #include <DirectXColors.h>
 
@@ -35,7 +36,6 @@
 #include "DDSTextureLoader.h"
 #include "GamePad.h"
 #include "Keyboard.h"
-#include "Mouse.h"
 #include "SimpleMath.h"
 #include "SpriteBatch.h"
 #include "SpriteFont.h"

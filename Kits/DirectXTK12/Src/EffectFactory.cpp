@@ -16,6 +16,7 @@
 #include "CommonStates.h"
 #include "DirectXHelpers.h"
 #include "PlatformHelpers.h"
+#include "DescriptorHeap.h"
 
 #include <mutex>
 
@@ -28,23 +29,38 @@ using Microsoft::WRL::ComPtr;
 class EffectFactory::Impl
 {
 public:
-    Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* heap)
+    Impl(_In_ ID3D12Device* device, _In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors)
         : device(device)
-        , mDescriptors(heap)
+        , mTextureDescriptors(nullptr)
+        , mSamplerDescriptors(nullptr)
+        , mUseNormalMapEffect(true)
+        , mEnablePerPixelLighting(true)
+        , mEnableFog(false)
         , mSharing(true)
     { 
+        if (textureDescriptors)
+            mTextureDescriptors = std::make_unique<DescriptorHeap>(textureDescriptors);
+        if (samplerDescriptors)
+            mSamplerDescriptors = std::make_unique<DescriptorHeap>(samplerDescriptors);
     }
 
     std::shared_ptr<IEffect> CreateEffect(
-        _In_ const EffectInfo& info, 
-        _In_ const EffectPipelineStateDescription& pipelineState,
-        _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
-        _In_opt_ int baseDescriptorOffset);
+        const EffectInfo& info, 
+        const EffectPipelineStateDescription& opaquePipelineState,
+        const EffectPipelineStateDescription& alphaPipelineState,
+        const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
+        int textureDescriptorOffset,
+        int samplerDescriptorOffset);
 
     void ReleaseCache();
     void SetSharing( bool enabled ) { mSharing = enabled; }
 
-    ComPtr<ID3D12DescriptorHeap> mDescriptors;
+    std::unique_ptr<DescriptorHeap> mTextureDescriptors;
+    std::unique_ptr<DescriptorHeap> mSamplerDescriptors;
+
+    bool mUseNormalMapEffect;
+    bool mEnablePerPixelLighting;
+    bool mEnableFog;
 
 private:
     ID3D12Device*                  device;
@@ -54,6 +70,7 @@ private:
     EffectCache  mEffectCache;
     EffectCache  mEffectCacheSkinning;
     EffectCache  mEffectCacheDualTexture;
+    EffectCache  mEffectCacheNormalMap;
 
     bool mSharing;
 
@@ -61,79 +78,76 @@ private:
 };
 
 
-_Use_decl_annotations_
 std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     const EffectInfo& info, 
-    const EffectPipelineStateDescription& pipelineState,
+    const EffectPipelineStateDescription& opaquePipelineState,
+    const EffectPipelineStateDescription& alphaPipelineState,
     const D3D12_INPUT_LAYOUT_DESC& inputLayoutDesc, 
-    int baseDescriptorOffset)
+    int textureDescriptorOffset,
+    int samplerDescriptorOffset)
 {
-    D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc = {};
-    CD3DX12_GPU_DESCRIPTOR_HANDLE textureDescriptorHeapGpuHandle = {};
-    CD3DX12_GPU_DESCRIPTOR_HANDLE endDescriptor = {};
-    int textureDescriptorHeapIncrement = 0;
-
-    // If we have descriptors, get some information about that
-    if (mDescriptors != nullptr)
+    // If textures are required, make sure we have a descriptor heap
+    if (mTextureDescriptors == nullptr && (info.diffuseTextureIndex != -1 || info.specularTextureIndex != -1 || info.normalTextureIndex != -1))
     {
-        descriptorHeapDesc = mDescriptors->GetDesc();
-
-        // Get the texture offsets and descriptor handles
-        textureDescriptorHeapIncrement = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-        textureDescriptorHeapGpuHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(
-            mDescriptors->GetGPUDescriptorHandleForHeapStart(),
-            baseDescriptorOffset, 
-            textureDescriptorHeapIncrement);
-
-        // For validation, get the last descriptor
-        endDescriptor = CD3DX12_GPU_DESCRIPTOR_HANDLE(
-            mDescriptors->GetGPUDescriptorHandleForHeapStart(), 
-            descriptorHeapDesc.NumDescriptors, 
-            textureDescriptorHeapIncrement);
+        DebugTrace("ERROR: EffectFactory created without texture descriptor heap with texture index set (diffuse %d, specular %d, normal %d)!\n",
+            info.diffuseTextureIndex, info.specularTextureIndex, info.normalTextureIndex);
+        throw std::exception("EffectFactory");
+    }
+    if (mSamplerDescriptors == nullptr && (info.samplerIndex != -1 || info.samplerIndex2 != -1))
+    {
+        DebugTrace("ERROR: EffectFactory created without sampler descriptor heap with sampler index set (samplerIndex %d, samplerIndex2 %d)!\n",
+            info.samplerIndex, info.samplerIndex2);
+        throw std::exception("EffectFactory");
     }
 
-    auto checkDescriptor = [endDescriptor] (D3D12_GPU_DESCRIPTOR_HANDLE handle)
+    // If we have descriptors, make sure we have both texture and sampler descriptors
+    if ((mTextureDescriptors == nullptr) != (mSamplerDescriptors == nullptr))
     {
-        if (handle.ptr >= endDescriptor.ptr)
-        {
-            throw std::exception("Out of descriptor heap space.");
-        }
-    };
+        DebugTrace("A texture or sampler descriptor heap was provided, but both are required.\n");
+        throw std::exception("EffectFactory");
+    }
+
+    // Validate the we have either both texture and sampler descriptors, or neither
+    if ((info.diffuseTextureIndex == -1) != (info.samplerIndex == -1))
+    {
+        DebugTrace("Material provides either a texture or sampler, but both are required.\n");
+        throw std::exception("EffectFactory");
+    }
+
+    int diffuseTextureIndex = (info.diffuseTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.diffuseTextureIndex + textureDescriptorOffset : -1;
+    int specularTextureIndex = (info.specularTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.specularTextureIndex + textureDescriptorOffset : -1;
+    int normalTextureIndex = (info.normalTextureIndex != -1 && mTextureDescriptors != nullptr) ? info.normalTextureIndex + textureDescriptorOffset : -1;
+    int samplerIndex = (info.samplerIndex != -1 && mSamplerDescriptors != nullptr) ? info.samplerIndex + samplerDescriptorOffset : -1;
+    int samplerIndex2 = (info.samplerIndex2 != -1 && mSamplerDescriptors != nullptr) ? info.samplerIndex2 + samplerDescriptorOffset : -1;
 
     // Modify base pipeline state
-    EffectPipelineStateDescription derivedPSD = pipelineState;
+    EffectPipelineStateDescription derivedPSD = (info.alphaValue < 1.0f) ? alphaPipelineState : opaquePipelineState;
+    derivedPSD.inputLayout = inputLayoutDesc;
 
-    // Input layout
-    derivedPSD.inputLayout = &inputLayoutDesc;
-
-    // Alpha state modification
-    if ( info.alphaValue < 1.0f )
-    {
-        derivedPSD.depthStencilDesc = &CommonStates::DepthRead;
-
-        if ( info.isPremultipliedAlpha )
-        {
-            derivedPSD.blendDesc = &CommonStates::AlphaBlend;
-        }
-        else
-        {
-            derivedPSD.blendDesc = &CommonStates::NonPremultiplied;
-        }
-    }
-
+    std::wstring cacheName;
     if ( info.enableSkinning )
     {
         // SkinnedEffect
+        int effectflags = (mEnablePerPixelLighting) ? EffectFlags::PerPixelLighting : EffectFlags::Lighting;
+
+        if (mEnableFog)
+        {
+            effectflags |= EffectFlags::Fog;
+        }
+
         if ( mSharing && !info.name.empty() )
         {
-            auto it = mEffectCacheSkinning.find( info.name );
+            uint32_t hash = derivedPSD.ComputeHash();
+            cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
+
+            auto it = mEffectCacheSkinning.find( cacheName );
             if ( mSharing && it != mEffectCacheSkinning.end() )
             {
                 return it->second;
             }
         }
 
-        std::shared_ptr<SkinnedEffect> effect = std::make_shared<SkinnedEffect>( device, EffectFlags::None, derivedPSD );
+        std::shared_ptr<SkinnedEffect> effect = std::make_shared<SkinnedEffect>( device, effectflags, derivedPSD );
 
         effect->EnableDefaultLighting();
 
@@ -161,20 +175,17 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effect->SetEmissiveColor( color );
         }
 
-        if ( mDescriptors != nullptr && info.textureIndex != -1 )
+        if (diffuseTextureIndex != -1)
         {
-            CD3DX12_GPU_DESCRIPTOR_HANDLE handle(
-                textureDescriptorHeapGpuHandle,
-                textureDescriptorHeapIncrement * info.textureIndex);
-
-            checkDescriptor(handle);
-            effect->SetTexture(handle);
+            effect->SetTexture(
+                mTextureDescriptors->GetGpuHandle(diffuseTextureIndex),
+                mSamplerDescriptors->GetGpuHandle(samplerIndex));
         }
 
         if ( mSharing && !info.name.empty() )
         {
             std::lock_guard<std::mutex> lock(mutex);
-            mEffectCacheSkinning.insert( EffectCache::value_type( info.name, effect ) );
+            mEffectCacheSkinning.insert( EffectCache::value_type( cacheName, effect ) );
         }
 
         return effect;
@@ -182,24 +193,31 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
     else if ( info.enableDualTexture )
     {
         // DualTextureEffect
+        int effectflags = EffectFlags::None;
+
+        if (mEnableFog)
+        {
+            effectflags |= EffectFlags::Fog;
+        }
+
         if ( mSharing && !info.name.empty() )
         {
-            auto it = mEffectCacheDualTexture.find( info.name );
+            uint32_t hash = derivedPSD.ComputeHash();
+            cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
+
+            auto it = mEffectCacheDualTexture.find( cacheName );
             if ( mSharing && it != mEffectCacheDualTexture.end() )
             {
                 return it->second;
             }
         }
 
-        // set effect flags for creation
-        int flags = EffectFlags::Lighting;
-
         if (info.perVertexColor)
         {
-            flags |= EffectFlags::VertexColor;
+            effectflags |= EffectFlags::VertexColor;
         }
 
-        std::shared_ptr<DualTextureEffect> effect = std::make_shared<DualTextureEffect>(device, flags, derivedPSD );
+        std::shared_ptr<DualTextureEffect> effect = std::make_shared<DualTextureEffect>(device, effectflags, derivedPSD );
 
         // Dual texture effect doesn't support lighting (usually it's lightmaps)
         effect->SetAlpha( info.alphaValue );
@@ -207,60 +225,150 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
         XMVECTOR color = XMLoadFloat3( &info.diffuseColor );
         effect->SetDiffuseColor( color );
 
-        if ( mDescriptors != nullptr && info.textureIndex != -1 )
+        if (diffuseTextureIndex != -1)
         {
-            CD3DX12_GPU_DESCRIPTOR_HANDLE handle(
-                textureDescriptorHeapGpuHandle,
-                textureDescriptorHeapIncrement * info.textureIndex);
-
-            checkDescriptor(handle);
-            effect->SetTexture(handle);
+            effect->SetTexture(
+                mTextureDescriptors->GetGpuHandle(diffuseTextureIndex),
+                mSamplerDescriptors->GetGpuHandle(samplerIndex));
         }
 
-        if ( mDescriptors != nullptr && info.textureIndex2 != -1 )
+        if (specularTextureIndex != -1)
         {
-            CD3DX12_GPU_DESCRIPTOR_HANDLE handle(
-                textureDescriptorHeapGpuHandle,
-                textureDescriptorHeapIncrement * info.textureIndex2);
+            if (samplerIndex2 == -1)
+            {
+                DebugTrace("Dual-texture requires a second sampler (specular %d)\n", specularTextureIndex);
+                throw std::exception("EffectFactory");
+            }
 
-            checkDescriptor(handle);
-            effect->SetTexture2(handle);
+            effect->SetTexture2(
+                mTextureDescriptors->GetGpuHandle(specularTextureIndex),
+                mSamplerDescriptors->GetGpuHandle(samplerIndex2));
         }
 
         if ( mSharing && !info.name.empty() )
         {
             std::lock_guard<std::mutex> lock(mutex);
-            mEffectCacheDualTexture.insert( EffectCache::value_type( info.name, effect ) );
+            mEffectCacheDualTexture.insert( EffectCache::value_type( cacheName, effect ) );
+        }
+
+        return effect;
+    }
+    else if (info.enableNormalMaps && mUseNormalMapEffect)
+    {
+        // NormalMapEffect
+        int effectflags = EffectFlags::None;
+
+        if (mEnableFog)
+        {
+            effectflags |= EffectFlags::Fog;
+        }
+
+        if (info.perVertexColor)
+        {
+            effectflags |= EffectFlags::VertexColor;
+        }
+
+        if (mSharing && !info.name.empty())
+        {
+            uint32_t hash = derivedPSD.ComputeHash();
+            cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
+            if (specularTextureIndex != -1)
+                cacheName += L"spec";
+
+            auto it = mEffectCacheNormalMap.find(cacheName);
+            if (mSharing && it != mEffectCacheNormalMap.end())
+            {
+                return it->second;
+            }
+        }
+
+        std::shared_ptr<NormalMapEffect> effect = std::make_shared<NormalMapEffect>(device, effectflags, derivedPSD, (specularTextureIndex != -1));
+
+        effect->EnableDefaultLighting();
+
+        effect->SetAlpha( info.alphaValue );
+
+        // NormalMap Effect does not have an ambient material color
+
+        XMVECTOR color = XMLoadFloat3(&info.diffuseColor);
+        effect->SetDiffuseColor(color);
+
+        if (info.specularColor.x != 0 || info.specularColor.y != 0 || info.specularColor.z != 0)
+        {
+            color = XMLoadFloat3(&info.specularColor);
+            effect->SetSpecularColor(color);
+            effect->SetSpecularPower(info.specularPower);
+        }
+        else
+        {
+            effect->DisableSpecular();
+        }
+
+        if (info.emissiveColor.x != 0 || info.emissiveColor.y != 0 || info.emissiveColor.z != 0)
+        {
+            color = XMLoadFloat3(&info.emissiveColor);
+            effect->SetEmissiveColor(color);
+        }
+
+        if (diffuseTextureIndex != -1)
+        {
+            effect->SetTexture(
+                mTextureDescriptors->GetGpuHandle(diffuseTextureIndex),
+                mSamplerDescriptors->GetGpuHandle(samplerIndex));
+        }
+
+        if (specularTextureIndex != -1)
+        {
+            effect->SetSpecularTexture(mTextureDescriptors->GetGpuHandle(specularTextureIndex));
+        }
+
+        if (normalTextureIndex != -1)
+        {
+            effect->SetNormalTexture(mTextureDescriptors->GetGpuHandle(normalTextureIndex));
+        }
+
+        if ( mSharing && !info.name.empty() )
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            mEffectCacheNormalMap.insert(EffectCache::value_type(cacheName, effect));
         }
 
         return effect;
     }
     else
     {
+        // set effect flags for creation
+        int effectflags = (mEnablePerPixelLighting) ? EffectFlags::PerPixelLighting : EffectFlags::Lighting;
+
+        if (mEnableFog)
+        {
+            effectflags |= EffectFlags::Fog;
+        }
+
+        if (info.perVertexColor)
+        {
+            effectflags |= EffectFlags::VertexColor;
+        }
+
+        if (diffuseTextureIndex != -1)
+        {
+            effectflags |= EffectFlags::Texture;
+        }
+
         // BasicEffect
         if ( mSharing && !info.name.empty() )
         {
-            auto it = mEffectCache.find( info.name );
+            uint32_t hash = derivedPSD.ComputeHash();
+            cacheName = std::to_wstring(effectflags) + info.name + std::to_wstring(hash);
+
+            auto it = mEffectCache.find( cacheName );
             if ( mSharing && it != mEffectCache.end() )
             {
                 return it->second;
             }
         }
-        
-        // set effect flags for creation
-        int flags = EffectFlags::Lighting;
 
-        if (info.perVertexColor)
-        {
-            flags |= EffectFlags::VertexColor;
-        }
-        
-        if (info.textureIndex != -1)
-        {
-            flags |= EffectFlags::Texture;
-        }
-
-        std::shared_ptr<BasicEffect> effect = std::make_shared<BasicEffect>( device, flags, derivedPSD );
+        std::shared_ptr<BasicEffect> effect = std::make_shared<BasicEffect>( device, effectflags, derivedPSD );
 
         effect->EnableDefaultLighting();
         
@@ -287,20 +395,17 @@ std::shared_ptr<IEffect> EffectFactory::Impl::CreateEffect(
             effect->SetEmissiveColor( color );
         }
 
-        if ( mDescriptors != nullptr && info.textureIndex != -1 )
+        if (diffuseTextureIndex != -1)
         {
-            CD3DX12_GPU_DESCRIPTOR_HANDLE handle(
-                textureDescriptorHeapGpuHandle,
-                textureDescriptorHeapIncrement * info.textureIndex);
-
-            checkDescriptor(handle);
-            effect->SetTexture(handle);
+            effect->SetTexture(
+                mTextureDescriptors->GetGpuHandle(diffuseTextureIndex),
+                mSamplerDescriptors->GetGpuHandle(samplerIndex));
         }
 
         if ( mSharing && !info.name.empty() )
         {
             std::lock_guard<std::mutex> lock(mutex);
-            mEffectCache.insert( EffectCache::value_type( info.name, effect ) );
+            mEffectCache.insert( EffectCache::value_type( cacheName, effect ) );
         }
 
         return effect;
@@ -313,6 +418,7 @@ void EffectFactory::Impl::ReleaseCache()
     mEffectCache.clear();
     mEffectCacheSkinning.clear();
     mEffectCacheDualTexture.clear();
+    mEffectCacheNormalMap.clear();
 }
 
 
@@ -323,33 +429,41 @@ void EffectFactory::Impl::ReleaseCache()
 
 EffectFactory::EffectFactory(_In_ ID3D12Device* device)
 {
-    pImpl = std::make_shared<Impl>(device, nullptr);
+    pImpl = std::make_shared<Impl>(device, nullptr, nullptr);
 }
 
-EffectFactory::EffectFactory(_In_ ID3D12DescriptorHeap* descriptors)
+EffectFactory::EffectFactory(_In_ ID3D12DescriptorHeap* textureDescriptors, _In_ ID3D12DescriptorHeap* samplerDescriptors)
 {
-    if (descriptors == nullptr)
+    if (textureDescriptors == nullptr)
     {
-        throw std::exception("Descriptor heap cannot be null of no device is provided. Use the alternative EffectFactory constructor instead.");
+        throw std::exception("Texture descriptor heap cannot be null if no device is provided. Use the alternative EffectFactory constructor instead.");
+    }
+    if (samplerDescriptors == nullptr)
+    {
+        throw std::exception("Descriptor heap cannot be null if no device is provided. Use the alternative EffectFactory constructor instead.");
     }
 
-    if (descriptors->GetDesc().Type != D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
+    if (textureDescriptors->GetDesc().Type != D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV)
     {
-        throw std::exception("EffectFactory::CreateEffect requires a CBV_SRV_UAV descriptor heap as input.");
+        throw std::exception("EffectFactory::CreateEffect requires a CBV_SRV_UAV descriptor heap for textureDescriptors.");
+    }
+    if (samplerDescriptors->GetDesc().Type != D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER)
+    {
+        throw std::exception("EffectFactory::CreateEffect requires a SAMPLER descriptor heap for samplerDescriptors.");
     }
 
     ComPtr<ID3D12Device> device;
 #if defined(_XBOX_ONE) && defined(_TITLE)
-    descriptors->GetDevice(IID_GRAPHICS_PPV_ARGS(device.GetAddressOf()));
+    textureDescriptors->GetDevice(IID_GRAPHICS_PPV_ARGS(device.GetAddressOf()));
 #else
-    HRESULT hresult = descriptors->GetDevice(IID_GRAPHICS_PPV_ARGS(device.GetAddressOf()));
+    HRESULT hresult = textureDescriptors->GetDevice(IID_GRAPHICS_PPV_ARGS(device.GetAddressOf()));
     if (FAILED(hresult))
     {
         throw com_exception(hresult);
     }
 #endif
 
-    pImpl = std::make_shared<Impl>(device.Get(), descriptors);
+    pImpl = std::make_shared<Impl>(device.Get(), textureDescriptors, samplerDescriptors);
 }
 
 EffectFactory::~EffectFactory()
@@ -368,14 +482,15 @@ EffectFactory& EffectFactory::operator= (EffectFactory&& moveFrom)
     return *this;
 }
 
-_Use_decl_annotations_
 std::shared_ptr<IEffect> EffectFactory::CreateEffect(
-    _In_ const EffectInfo& info, 
-    _In_ const EffectPipelineStateDescription& pipelineState,
-    _In_ const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
-    _In_opt_ int descriptorOffset)
+    const EffectInfo& info, 
+    const EffectPipelineStateDescription& opaquePipelineState,
+    const EffectPipelineStateDescription& alphaPipelineState,
+    const D3D12_INPUT_LAYOUT_DESC& inputLayout, 
+    int textureDescriptorOffset,
+    int samplerDescriptorOffset)
 {
-    return pImpl->CreateEffect(info, pipelineState, inputLayout, descriptorOffset);
+    return pImpl->CreateEffect(info, opaquePipelineState, alphaPipelineState, inputLayout, textureDescriptorOffset, samplerDescriptorOffset);
 }
 
 void EffectFactory::ReleaseCache()
@@ -386,4 +501,19 @@ void EffectFactory::ReleaseCache()
 void EffectFactory::SetSharing( bool enabled )
 {
     pImpl->SetSharing( enabled );
+}
+
+void EffectFactory::EnablePerPixelLighting(bool enabled)
+{
+    pImpl->mEnablePerPixelLighting = enabled;
+}
+
+void EffectFactory::EnableFogging(bool enabled)
+{
+    pImpl->mEnableFog = enabled;
+}
+
+void EffectFactory::EnableNormalMapEffect(bool enabled)
+{
+    pImpl->mUseNormalMapEffect = enabled;
 }

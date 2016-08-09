@@ -41,9 +41,6 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
     m_keyboard = std::make_unique<Keyboard>();
     m_keyboard->SetWindow(reinterpret_cast<ABI::Windows::UI::Core::ICoreWindow*>(window));
 
-    m_mouse = std::make_unique<Mouse>();
-    m_mouse->SetWindow(reinterpret_cast<ABI::Windows::UI::Core::ICoreWindow*>(window));
-
     m_deviceResources->SetWindow(window, width, height, rotation);
 
     m_deviceResources->CreateDeviceResources();
@@ -84,9 +81,6 @@ void Sample::Update(DX::StepTimer const&)
     {
         Windows::ApplicationModel::Core::CoreApplication::Exit();
     }
-
-    auto mouse = m_mouse->GetState();
-    mouse;
 
     PIXEndEvent();
 }
@@ -232,12 +226,13 @@ void Sample::CreateDeviceDependentResources()
     D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = {};
     psoDesc.InputLayout = { s_inputElementDesc, _countof(s_inputElementDesc) };
     psoDesc.pRootSignature = m_rootSignature.Get();
-    psoDesc.VS = CD3DX12_SHADER_BYTECODE(vertexShaderBlob.data(), vertexShaderBlob.size());
-    psoDesc.PS = CD3DX12_SHADER_BYTECODE(pixelShaderBlob.data(), pixelShaderBlob.size());
+    psoDesc.VS = { vertexShaderBlob.data(), vertexShaderBlob.size() };
+    psoDesc.PS = { pixelShaderBlob.data(), pixelShaderBlob.size() };
     psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
     psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
     psoDesc.DepthStencilState.DepthEnable = FALSE;
     psoDesc.DepthStencilState.StencilEnable = FALSE;
+    psoDesc.DSVFormat = m_deviceResources->GetDepthBufferFormat();
     psoDesc.SampleMask = UINT_MAX;
     psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     psoDesc.NumRenderTargets = 1;

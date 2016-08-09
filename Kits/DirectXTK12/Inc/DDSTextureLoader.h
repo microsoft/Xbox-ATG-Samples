@@ -47,10 +47,10 @@ namespace DirectX
     HRESULT __cdecl LoadDDSTextureFromMemory(
         _In_ ID3D12Device* d3dDevice,
         _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
-        _In_ size_t ddsDataSize,
+        size_t ddsDataSize,
         _Outptr_ ID3D12Resource** texture,
-        _Inout_ std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
-        _In_ size_t maxsize = 0,
+        std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
+        size_t maxsize = 0,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
 
@@ -58,30 +58,31 @@ namespace DirectX
         _In_ ID3D12Device* d3dDevice,
         _In_z_ const wchar_t* szFileName,
         _Outptr_ ID3D12Resource** texture,
-        _Inout_ std::unique_ptr<uint8_t[]>& ddsData,
-        _Inout_ std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
-        _In_ size_t maxsize = 0,
+        std::unique_ptr<uint8_t[]>& ddsData,
+        std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
+        size_t maxsize = 0,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
 
+    // Standard version with resource upload
     HRESULT __cdecl CreateDDSTextureFromMemory(
         _In_ ID3D12Device* device,
-        _In_ ResourceUploadBatch& resourceUpload,
+        ResourceUploadBatch& resourceUpload,
         _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
-        _In_ size_t ddsDataSize,
+        size_t ddsDataSize,
         _Outptr_ ID3D12Resource** texture,
-        _In_ bool generateMipsIfMissing = false,
-        _In_ size_t maxsize = 0,
+        bool generateMipsIfMissing = false,
+        size_t maxsize = 0,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
 
     HRESULT __cdecl CreateDDSTextureFromFile(
         _In_ ID3D12Device* device,
-        _In_ ResourceUploadBatch& resourceUpload,
+        ResourceUploadBatch& resourceUpload,
         _In_z_ const wchar_t* szFileName,
         _Outptr_ ID3D12Resource** texture,
-        _In_ bool generateMipsIfMissing = false,
-        _In_ size_t maxsize = 0,
+        bool generateMipsIfMissing = false,
+        size_t maxsize = 0,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
 
@@ -89,50 +90,51 @@ namespace DirectX
     HRESULT __cdecl LoadDDSTextureFromMemoryEx(
         _In_ ID3D12Device* d3dDevice,
         _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
-        _In_ size_t ddsDataSize,
-        _In_ size_t maxsize,
-        _In_ D3D12_RESOURCE_FLAGS flags,
-        _In_ bool forceSRGB,
-        _In_ bool reserveFullMipChain,
+        size_t ddsDataSize,
+        size_t maxsize,
+        D3D12_RESOURCE_FLAGS flags,
+        bool forceSRGB,
+        bool reserveFullMipChain,
         _Outptr_ ID3D12Resource** texture,
-        _Inout_ std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
+        std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
 
     HRESULT __cdecl LoadDDSTextureFromFileEx(
         _In_ ID3D12Device* d3dDevice,
         _In_z_ const wchar_t* szFileName,
-        _In_ size_t maxsize,
-        _In_ D3D12_RESOURCE_FLAGS flags,
-        _In_ bool forceSRGB,
-        _In_ bool reserveFullMipChain,
+        size_t maxsize,
+        D3D12_RESOURCE_FLAGS flags,
+        bool forceSRGB,
+        bool reserveFullMipChain,
         _Outptr_ ID3D12Resource** texture,
-        _Inout_ std::unique_ptr<uint8_t[]>& ddsData,
-        _Inout_ std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
+        std::unique_ptr<uint8_t[]>& ddsData,
+        std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
 
+    // Extended version with resource upload
     HRESULT __cdecl CreateDDSTextureFromMemoryEx(
         _In_ ID3D12Device* device,
-        _In_ ResourceUploadBatch& resourceUpload,
+        ResourceUploadBatch& resourceUpload,
         _In_reads_bytes_(ddsDataSize) const uint8_t* ddsData,
-        _In_ size_t ddsDataSize,
-        _In_ size_t maxsize,
-        _In_ D3D12_RESOURCE_FLAGS flags,
-        _In_ bool forceSRGB,
-        _In_ bool generateMipsIfMissing,
+        size_t ddsDataSize,
+        size_t maxsize,
+        D3D12_RESOURCE_FLAGS flags,
+        bool forceSRGB,
+        bool generateMipsIfMissing,
         _Outptr_ ID3D12Resource** texture,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
 
     HRESULT __cdecl CreateDDSTextureFromFileEx(
         _In_ ID3D12Device* device,
-        _In_ ResourceUploadBatch& resourceUpload,
+        ResourceUploadBatch& resourceUpload,
         _In_z_ const wchar_t* szFileName,
-        _In_ size_t maxsize,
-        _In_ D3D12_RESOURCE_FLAGS flags,
-        _In_ bool forceSRGB,
-        _In_ bool generateMipsIfMissing,
+        size_t maxsize,
+        D3D12_RESOURCE_FLAGS flags,
+        bool forceSRGB,
+        bool generateMipsIfMissing,
         _Outptr_ ID3D12Resource** texture,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
