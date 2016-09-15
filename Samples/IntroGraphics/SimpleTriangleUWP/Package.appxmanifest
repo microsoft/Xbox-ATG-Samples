@@ -8,7 +8,7 @@
 
   <Identity
     Name="f44693b7-b22f-4b3e-af3e-58ff4894161f"
-    Publisher="CN=Publisher"
+    Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="f44693b7-b22f-4b3e-af3e-58ff4894161f" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>

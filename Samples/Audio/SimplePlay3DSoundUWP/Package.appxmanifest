@@ -8,14 +8,14 @@
 
   <Identity
     Name="b249be7d-7da8-4fee-b113-f14e859b30af"
-    Publisher="CN=jeball"
+    Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="b249be7d-7da8-4fee-b113-f14e859b30af" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>SimplePlay3DSound</DisplayName>
-    <PublisherDisplayName>jeball</PublisherDisplayName>
+    <PublisherDisplayName>Xbox Advanced Technology Group</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

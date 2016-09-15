@@ -218,6 +218,15 @@ void TextConsole::RestoreDevice(ID3D11DeviceContext* context, const wchar_t* fon
 }
 
 
+void TextConsole::SetViewport(const D3D11_VIEWPORT& viewPort)
+{
+    if (m_batch)
+    {
+        m_batch->SetViewport(viewPort);
+    }
+}
+
+
 void TextConsole::SetRotation(DXGI_MODE_ROTATION rotation)
 {
     if (m_batch)
@@ -323,6 +332,12 @@ void TextConsoleImage::SetWindow(const RECT& fullscreen, bool useSafeRect)
     {
         TextConsole::SetWindow(fullscreen);
     }
+
+    UINT width = std::max<UINT>(fullscreen.right - fullscreen.left, 1);
+    UINT height = std::max<UINT>(fullscreen.bottom - fullscreen.top, 1);
+
+    auto vp = CD3D11_VIEWPORT(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height));
+    m_batch->SetViewport(vp);
 }
 
 
