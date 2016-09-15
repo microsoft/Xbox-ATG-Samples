@@ -38,6 +38,7 @@ struct AlphaTestEffectTraits
     static const int VertexShaderCount = 4;
     static const int PixelShaderCount = 4;
     static const int ShaderPermutationCount = 8;
+    static const int RootSignatureCount = 1;
 };
 
 
@@ -49,9 +50,9 @@ public:
 
     enum RootParameterIndex
     {
+        ConstantBuffer,
         TextureSRV,
         TextureSampler,
-        ConstantBuffer,
         RootParameterCount
     };
 
@@ -159,24 +160,29 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
     static_assert( _countof(EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode) == AlphaTestEffectTraits::PixelShaderCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<AlphaTestEffectTraits>::PixelShaderIndices) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch" );
 
-    D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-        D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
-        D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-        D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
-        D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
+    // Create root signature
+    {
+        D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
-    CD3DX12_DESCRIPTOR_RANGE textureRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-    CD3DX12_DESCRIPTOR_RANGE textureSamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+        CD3DX12_DESCRIPTOR_RANGE textureRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+        CD3DX12_DESCRIPTOR_RANGE textureSamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
 
-    CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
-    rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureRange);
-    rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSamplerRange);
-    rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+        CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
+        rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureRange);
+        rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSamplerRange);
+        rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
-    CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
-    rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
+        CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
+        rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
-    ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
+        mRootSignature = GetRootSignature(0, rsigDesc);
+    }
+
+    assert(mRootSignature != 0);
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
 
@@ -190,7 +196,8 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
         DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::Lighting\n");
         throw std::invalid_argument("AlphaTestEffect");
     }
-  
+
+    // Create pipeline state
     int sp = GetPipelineStatePermutation(
         (effectFlags & EffectFlags::VertexColor) != 0);
     assert(sp >= 0 && sp < AlphaTestEffectTraits::ShaderPermutationCount);
@@ -200,17 +207,14 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
     int pi = EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < AlphaTestEffectTraits::PixelShaderCount);
   
-    EffectBase::CreatePipelineState(
-        mRootSignature.Get(),
-        pipelineDescription.inputLayout,
-        &EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode[vi],
-        &EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode[pi],
-        pipelineDescription.blendDesc,
-        pipelineDescription.depthStencilDesc,
-        pipelineDescription.rasterizerDesc,
-        pipelineDescription.renderTargetState,
-        pipelineDescription.primitiveTopology,
-        pipelineDescription.stripCutValue);
+    pipelineDescription.CreatePipelineState(
+        device,
+        mRootSignature,
+        EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode[vi],
+        EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode[pi],
+        mPipelineState.ReleaseAndGetAddressOf());
+
+    SetDebugObjectName(mPipelineState.Get(), L"AlphaTestEffect");
 }
 
 
@@ -331,7 +335,7 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     }
 
     // Set the root signature
-    commandList->SetGraphicsRootSignature(mRootSignature.Get());
+    commandList->SetGraphicsRootSignature(mRootSignature);
 
     // Set the texture
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
@@ -472,7 +476,7 @@ void XM_CALLCONV AlphaTestEffect::SetFogColor(FXMVECTOR value)
 
 
 // Texture settings.
-void AlphaTestEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
+void AlphaTestEffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture = srvDescriptor;
     pImpl->textureSampler = samplerDescriptor;

@@ -49,6 +49,7 @@ struct BasicEffectTraits
     static const int VertexShaderCount = 16;
     static const int PixelShaderCount = 10;
     static const int ShaderPermutationCount = 24;
+    static const int RootSignatureCount = 2;
 };
 
 
@@ -60,9 +61,9 @@ public:
 
     enum RootParameterIndex
     {
+        ConstantBuffer,
         TextureSRV,
         TextureSampler,
-        ConstantBuffer,
         RootParameterCount
     };
 
@@ -268,29 +269,51 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
 
     lights.InitializeConstants(constants.specularColorAndPower, constants.lightDirection, constants.lightDiffuseColor, constants.lightSpecularColor);
 
-    D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-        D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
-        D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-        D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
-        D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
-
-    CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-    CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
-
-    CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
-    rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV); 
-    rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler); 
-    rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-
-    CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
-    rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
-
-    ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
-
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
     lightingEnabled = (effectFlags & EffectFlags::Lighting) != 0;
     textureEnabled = (effectFlags & EffectFlags::Texture) != 0;
-   
+
+    // Create root signature
+    {
+        D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
+            D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
+
+        // Create root parameters and initialize first (constants)
+        CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
+        rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+
+        // Root paramteer descriptor - conditionally initialized
+        CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
+
+        if (textureEnabled)
+        {
+            // Include texture and srv
+            CD3DX12_DESCRIPTOR_RANGE textureSRV(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+            CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+
+            rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV);
+            rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler);
+
+            // use all parameters
+            rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
+
+            mRootSignature = GetRootSignature(1, rsigDesc);
+        }
+        else
+        {
+            // only use constant
+            rsigDesc.Init(1, rootParameters, 0, nullptr, rootSignatureFlags);
+
+            mRootSignature = GetRootSignature(0, rsigDesc);
+        }
+    }
+
+    assert(mRootSignature != 0);
+
+    // Create pipeline state
     int sp = GetPipelineStatePermutation(
         (effectFlags & EffectFlags::PerPixelLightingBit) != 0,
         (effectFlags & EffectFlags::VertexColor) != 0);
@@ -301,17 +324,14 @@ BasicEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Effect
     int pi = EffectBase<BasicEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < BasicEffectTraits::PixelShaderCount);
 
-    EffectBase::CreatePipelineState(
-        mRootSignature.Get(),
-        pipelineDescription.inputLayout,
-        &EffectBase<BasicEffectTraits>::VertexShaderBytecode[vi],
-        &EffectBase<BasicEffectTraits>::PixelShaderBytecode[pi],
-        pipelineDescription.blendDesc,
-        pipelineDescription.depthStencilDesc,
-        pipelineDescription.rasterizerDesc,
-        pipelineDescription.renderTargetState,
-        pipelineDescription.primitiveTopology,
-        pipelineDescription.stripCutValue);
+    pipelineDescription.CreatePipelineState(
+        device,
+        mRootSignature,
+        EffectBase<BasicEffectTraits>::VertexShaderBytecode[vi],
+        EffectBase<BasicEffectTraits>::PixelShaderBytecode[pi],
+        mPipelineState.ReleaseAndGetAddressOf());
+
+    SetDebugObjectName(mPipelineState.Get(), L"BasicEffect");
 }
 
 
@@ -365,7 +385,7 @@ void BasicEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     UpdateConstants();
 
     // Set the root signature
-    commandList->SetGraphicsRootSignature(mRootSignature.Get());
+    commandList->SetGraphicsRootSignature(mRootSignature);
 
     // Set the texture
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
@@ -590,7 +610,7 @@ void XM_CALLCONV BasicEffect::SetFogColor(FXMVECTOR value)
 
 
 // Texture settings.
-void BasicEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
+void BasicEffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture = srvDescriptor;
     pImpl->sampler = samplerDescriptor;

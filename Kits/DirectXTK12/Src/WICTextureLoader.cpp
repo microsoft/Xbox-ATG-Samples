@@ -155,24 +155,22 @@ namespace DirectX
 {
     IWICImagingFactory2* _GetWIC()
     {
-        static IWICImagingFactory2* s_Factory = nullptr;
+        static INIT_ONCE s_initOnce = INIT_ONCE_STATIC_INIT;
 
-        if (s_Factory)
-            return s_Factory;
+        IWICImagingFactory2* factory = nullptr;
+        (void)InitOnceExecuteOnce(&s_initOnce,
+            [](PINIT_ONCE, PVOID, PVOID *factory) -> BOOL
+            {
+                return SUCCEEDED( CoCreateInstance(
+                    CLSID_WICImagingFactory2,
+                    nullptr,
+                    CLSCTX_INPROC_SERVER,
+                    __uuidof(IWICImagingFactory2),
+                    factory) ) ? TRUE : FALSE;
+            }, nullptr, reinterpret_cast<LPVOID*>(&factory));
 
-        HRESULT hr = CoCreateInstance(
-            CLSID_WICImagingFactory2,
-            nullptr,
-            CLSCTX_INPROC_SERVER,
-            IID_PPV_ARGS(&s_Factory));
-        if (FAILED(hr))
-        {
-            s_Factory = nullptr;
-            return nullptr;
-        }
-        return s_Factory;
+        return factory;
     }
-
 } // namespace DirectX
 
 
@@ -307,7 +305,7 @@ namespace
         // Handle sRGB formats
         if (forceSRGB)
         {
-            format = MakeSRGB(format);
+            format = LoaderHelpers::MakeSRGB(format);
         }
         else
         {
@@ -356,7 +354,7 @@ namespace
                     PropVariantClear(&value);
 
                     if (sRGB)
-                        format = MakeSRGB(format);
+                        format = LoaderHelpers::MakeSRGB(format);
                 }
             }
         }
@@ -573,10 +571,8 @@ HRESULT DirectX::LoadWICTextureFromMemoryEx(
     if ( !wicDataSize )
         return E_FAIL;
 
-#ifdef _M_AMD64
-    if ( wicDataSize > 0xFFFFFFFF )
+    if ( wicDataSize > UINT32_MAX )
         return HRESULT_FROM_WIN32( ERROR_FILE_TOO_LARGE );
-#endif
 
     auto pWIC = _GetWIC();
     if ( !pWIC )

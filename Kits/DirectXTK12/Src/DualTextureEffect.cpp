@@ -38,6 +38,7 @@ struct DualTextureEffectTraits
     static const int VertexShaderCount = 4;
     static const int PixelShaderCount = 2;
     static const int ShaderPermutationCount = 4;
+    static const int RootSignatureCount = 1;
 };
 
 
@@ -146,7 +147,8 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
     static_assert(_countof(EffectBase<DualTextureEffectTraits>::PixelShaderBytecode) == DualTextureEffectTraits::PixelShaderCount, "array/max mismatch");
     static_assert(_countof(EffectBase<DualTextureEffectTraits>::PixelShaderIndices) == DualTextureEffectTraits::ShaderPermutationCount, "array/max mismatch");
     
-    {   // Create Root signature
+    // Create root signature
+    {
         D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
             D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
             D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
@@ -161,7 +163,7 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
         CD3DX12_DESCRIPTOR_RANGE texture1SamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
         rootParameters[RootParameterIndex::Texture1SRV].InitAsDescriptorTable(1, &texture1Range);
         rootParameters[RootParameterIndex::Texture1Sampler].InitAsDescriptorTable(1, &texture1SamplerRange);
-        
+
         // Texture 2
         CD3DX12_DESCRIPTOR_RANGE texture2Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
         CD3DX12_DESCRIPTOR_RANGE texture2SamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 1);
@@ -169,11 +171,13 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
         rootParameters[RootParameterIndex::Texture2Sampler].InitAsDescriptorTable(1, &texture2SamplerRange);
 
         // Create the root signature
-        CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
+        CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
         rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
-        ThrowIfFailed(CreateRootSignature(device, &rsigDesc, mRootSignature.ReleaseAndGetAddressOf()));
+        mRootSignature = GetRootSignature(0, rsigDesc);
     }
+
+    assert(mRootSignature != 0);
 
     // Validate flags & state
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
@@ -189,28 +193,24 @@ DualTextureEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const 
         throw std::invalid_argument("DualTextureEffect");
     }
 
-    {   // Create pipeline state
-        int sp = GetPipelineStatePermutation(
-            (effectFlags & EffectFlags::VertexColor) != 0);
-        assert(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
+    // Create pipeline state
+    int sp = GetPipelineStatePermutation(
+        (effectFlags & EffectFlags::VertexColor) != 0);
+    assert(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
 
-        int vi = EffectBase<DualTextureEffectTraits>::VertexShaderIndices[sp];
-        assert(vi >= 0 && vi < DualTextureEffectTraits::VertexShaderCount);
-        int pi = EffectBase<DualTextureEffectTraits>::PixelShaderIndices[sp];
-        assert(pi >= 0 && pi < DualTextureEffectTraits::PixelShaderCount);
+    int vi = EffectBase<DualTextureEffectTraits>::VertexShaderIndices[sp];
+    assert(vi >= 0 && vi < DualTextureEffectTraits::VertexShaderCount);
+    int pi = EffectBase<DualTextureEffectTraits>::PixelShaderIndices[sp];
+    assert(pi >= 0 && pi < DualTextureEffectTraits::PixelShaderCount);
 
-        EffectBase::CreatePipelineState(
-            mRootSignature.Get(),
-            pipelineDescription.inputLayout,
-            &EffectBase<DualTextureEffectTraits>::VertexShaderBytecode[vi],
-            &EffectBase<DualTextureEffectTraits>::PixelShaderBytecode[pi],
-            pipelineDescription.blendDesc,
-            pipelineDescription.depthStencilDesc,
-            pipelineDescription.rasterizerDesc,
-            pipelineDescription.renderTargetState,
-            pipelineDescription.primitiveTopology,
-            pipelineDescription.stripCutValue);
-    }
+    pipelineDescription.CreatePipelineState(
+        device,
+        mRootSignature,
+        EffectBase<DualTextureEffectTraits>::VertexShaderBytecode[vi],
+        EffectBase<DualTextureEffectTraits>::PixelShaderBytecode[pi],
+        mPipelineState.ReleaseAndGetAddressOf());
+
+    SetDebugObjectName(mPipelineState.Get(), L"DualTextureEffect");
 }
 
 
@@ -247,7 +247,7 @@ void DualTextureEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     UpdateConstants();
 
     // Set the root signature
-    commandList->SetGraphicsRootSignature(mRootSignature.Get());
+    commandList->SetGraphicsRootSignature(mRootSignature);
 
     // Set the textures
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
@@ -396,14 +396,14 @@ void XM_CALLCONV DualTextureEffect::SetFogColor(FXMVECTOR value)
 
 
 // Texture settings.
-void DualTextureEffect::SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
+void DualTextureEffect::SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture1 = srvDescriptor;
     pImpl->texture1Sampler = samplerDescriptor;
 }
 
 
-void DualTextureEffect::SetTexture2(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
+void DualTextureEffect::SetTexture2(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor)
 {
     pImpl->texture2 = srvDescriptor;
     pImpl->texture2Sampler = samplerDescriptor;

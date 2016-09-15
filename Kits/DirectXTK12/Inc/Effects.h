@@ -24,6 +24,7 @@
 #include <string>
 
 #include "RenderTargetState.h"
+#include "EffectPipelineStateDescription.h"
 
 
 namespace DirectX
@@ -100,41 +101,6 @@ namespace DirectX
 
 
     //----------------------------------------------------------------------------------
-    // Pipeline state information for creating effects.
-    struct EffectPipelineStateDescription
-    {
-        EffectPipelineStateDescription(
-            _In_opt_ const D3D12_INPUT_LAYOUT_DESC* inputLayout,
-            const D3D12_BLEND_DESC& blend,
-            const D3D12_DEPTH_STENCIL_DESC& depthStencil,
-            const D3D12_RASTERIZER_DESC& rasterizer,
-            const RenderTargetState& renderTarget,
-            D3D12_PRIMITIVE_TOPOLOGY_TYPE primitiveTopology = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE,
-            D3D12_INDEX_BUFFER_STRIP_CUT_VALUE stripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED)
-            :
-            inputLayout{},
-            blendDesc(blend),
-            depthStencilDesc(depthStencil),
-            rasterizerDesc(rasterizer),
-            renderTargetState(renderTarget),
-            primitiveTopology(primitiveTopology),
-            stripCutValue(stripCutValue)
-        {
-            if (inputLayout)
-                this->inputLayout = *inputLayout;
-        }
-
-        uint32_t ComputeHash() const;
-
-        D3D12_INPUT_LAYOUT_DESC             inputLayout;
-        D3D12_BLEND_DESC                    blendDesc;
-        D3D12_DEPTH_STENCIL_DESC            depthStencilDesc;
-        D3D12_RASTERIZER_DESC               rasterizerDesc;
-        RenderTargetState                   renderTargetState;
-        D3D12_PRIMITIVE_TOPOLOGY_TYPE       primitiveTopology;
-        D3D12_INDEX_BUFFER_STRIP_CUT_VALUE  stripCutValue;
-    };
-
     namespace EffectFlags
     {
         const int None              = 0x00;
@@ -194,7 +160,7 @@ namespace DirectX
         void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
         // Texture setting.
-        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
+        void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
 
     private:
         // Private implementation.
@@ -238,7 +204,7 @@ namespace DirectX
         void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
         // Texture setting.
-        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
+        void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
 
         // Alpha test settings.
         void __cdecl SetReferenceAlpha(int value);
@@ -283,12 +249,9 @@ namespace DirectX
         void __cdecl SetFogEnd(float value) override;
         void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
-        // Vertex color setting.
-        //void __cdecl SetVertexColorEnabled(bool value);
-
         // Texture settings.
-        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
-        void __cdecl SetTexture2(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
+        void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
+        void __cdecl SetTexture2(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
         
     private:
         // Private implementation.
@@ -407,7 +370,7 @@ namespace DirectX
         void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
         // Texture setting.
-        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
+        void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
         
         // Animation settings.
         void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
@@ -469,9 +432,9 @@ namespace DirectX
         void XM_CALLCONV SetFogColor(FXMVECTOR value) override;
 
         // Texture setting - albedo, normal and specular intensity
-        void __cdecl SetTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, _In_ D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
-        void __cdecl SetNormalTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
-        void __cdecl SetSpecularTexture(_In_ D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+        void __cdecl SetTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE samplerDescriptor);
+        void __cdecl SetNormalTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
+        void __cdecl SetSpecularTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
 
     private:
         // Private implementation.
@@ -533,6 +496,9 @@ namespace DirectX
         void __cdecl ReleaseCache();
 
         void __cdecl SetSharing( bool enabled );
+
+        void __cdecl EnableForceSRGB( bool forceSRGB ); 
+        void __cdecl EnableAutoGenMips( bool generateMips );
 
         void __cdecl SetDirectory(_In_opt_z_ const wchar_t* path);
 

@@ -122,7 +122,7 @@ private:
     void SortSprites();
     void GrowSortedSprites();
 
-    void RenderBatch(_In_ D3D12_GPU_DESCRIPTOR_HANDLE texture, _In_ XMVECTOR textureSize, _In_reads_(count) SpriteInfo const* const* sprites, size_t count);
+    void RenderBatch(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMVECTOR textureSize, _In_reads_(count) SpriteInfo const* const* sprites, size_t count);
 
     static void XM_CALLCONV RenderSprite(_In_ SpriteInfo const* sprite,
         _Out_writes_(VerticesPerSprite) VertexPositionColorTexture* vertices,
@@ -253,6 +253,8 @@ void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* de
         nullptr,
         IID_GRAPHICS_PPV_ARGS(indexBuffer.ReleaseAndGetAddressOf())));
 
+    SetDebugObjectName(indexBuffer.Get(), L"SpriteBatch");
+
     auto indexValues = CreateIndexValues();
 
     D3D12_SUBRESOURCE_DATA indexDataDesc = {};
@@ -297,6 +299,8 @@ void SpriteBatch::Impl::DeviceResources::CreateRootSignatures(_In_ ID3D12Device*
         rsigDesc.Init(_countof(rootParameters), rootParameters, 1, &sampler, rootSignatureFlags);
 
         ThrowIfFailed(::CreateRootSignature(device, &rsigDesc, rootSignatureStatic.ReleaseAndGetAddressOf()));
+
+        SetDebugObjectName(rootSignatureStatic.Get(), L"SpriteBatch");
     }
 
     {
@@ -311,6 +315,8 @@ void SpriteBatch::Impl::DeviceResources::CreateRootSignatures(_In_ ID3D12Device*
         rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
         ThrowIfFailed(::CreateRootSignature(device, &rsigDesc, rootSignatureHeap.ReleaseAndGetAddressOf()));
+
+        SetDebugObjectName(rootSignatureHeap.Get(), L"SpriteBatch");
     }
 }
 
@@ -408,6 +414,8 @@ SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const
     ThrowIfFailed(device->CreateGraphicsPipelineState(
         &d3dDesc,
         IID_GRAPHICS_PPV_ARGS(mPSO.ReleaseAndGetAddressOf())));
+
+    SetDebugObjectName(mPSO.Get(), L"SpriteBatch");
 }
 
 // Begins a batch of sprite drawing operations.
