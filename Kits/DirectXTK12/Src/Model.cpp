@@ -38,6 +38,7 @@ ModelMeshPart::ModelMeshPart(uint32_t partIndex) :
     startIndex(0),
     vertexOffset(0),
     vertexStride(0),
+    vertexCount(0),
     primitiveType(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST),
     indexFormat(DXGI_FORMAT_R16_UINT)
 {
@@ -84,7 +85,10 @@ void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const 
 
 
 _Use_decl_annotations_
-void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const ModelMeshPart::Collection& meshParts, ModelMeshPart::DrawCallback callback)
+void ModelMeshPart::DrawMeshParts(
+    ID3D12GraphicsCommandList* commandList,
+    const ModelMeshPart::Collection& meshParts,
+    ModelMeshPart::DrawCallback callback)
 {
     for ( auto it = meshParts.cbegin(); it != meshParts.cend(); ++it )
     {
@@ -98,7 +102,9 @@ void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const 
 
 
 _Use_decl_annotations_
-void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const ModelMeshPart::Collection& meshParts, IEffect* effect)
+void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList,
+    const ModelMeshPart::Collection& meshParts,
+    IEffect* effect)
 {
     effect->Apply(commandList);
     DrawMeshParts(commandList, meshParts);
@@ -168,7 +174,7 @@ Model::~Model()
 
 
 // Load texture resources
-int Model::LoadTextures(IEffectTextureFactory& texFactory, int destinationDescriptorOffset)
+int Model::LoadTextures(IEffectTextureFactory& texFactory, int destinationDescriptorOffset) const
 {
     for (size_t i = 0; i < textureNames.size(); ++i)
     {
@@ -181,7 +187,11 @@ int Model::LoadTextures(IEffectTextureFactory& texFactory, int destinationDescri
 
 // Load texture resources (helper function)
 _Use_decl_annotations_
-std::unique_ptr<EffectTextureFactory> Model::LoadTextures(ID3D12Device* device, ResourceUploadBatch& resourceUploadBatch, const wchar_t* texturesPath, D3D12_DESCRIPTOR_HEAP_FLAGS flags)
+std::unique_ptr<EffectTextureFactory> Model::LoadTextures(
+    ID3D12Device* device,
+    ResourceUploadBatch& resourceUploadBatch,
+    const wchar_t* texturesPath,
+    D3D12_DESCRIPTOR_HEAP_FLAGS flags) const
 {
     if (textureNames.empty())
         return nullptr;
@@ -208,7 +218,7 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
     const EffectPipelineStateDescription& opaquePipelineState,
     const EffectPipelineStateDescription& alphaPipelineState, 
     int textureDescriptorOffset,
-    int samplerDescriptorOffset)
+    int samplerDescriptorOffset) const
 {
     if (materials.empty())
     {
@@ -299,7 +309,7 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
     ID3D12DescriptorHeap* textureDescriptorHeap, 
     ID3D12DescriptorHeap* samplerDescriptorHeap,
     int textureDescriptorOffset,
-    int samplerDescriptorOffset)
+    int samplerDescriptorOffset) const
 {
     EffectFactory fxFactory(textureDescriptorHeap, samplerDescriptorHeap);
     return CreateEffects(fxFactory, opaquePipelineState, alphaPipelineState, textureDescriptorOffset, samplerDescriptorOffset);

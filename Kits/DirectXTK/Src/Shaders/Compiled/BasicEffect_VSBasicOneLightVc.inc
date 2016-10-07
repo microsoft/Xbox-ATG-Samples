@@ -84,7 +84,7 @@
     mov r2.xyz, c1  // Parameters::DiffuseColor<0,1,2>
     mad r1.xyz, r1, r2, c2  // ::result<0,1,2>
 
-#line 228 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 295 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT0.xyz, r1, v2  // ::VSBasicOneLightVc<0,1,2>
 
 #line 42 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
@@ -103,7 +103,7 @@
     max r0.x, r0.x, c19.x
     min oT1.w, r0.x, c19.y  // ::VSBasicOneLightVc<7>
 
-#line 228 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 295 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT0.w, v2.w, c1.w  // ::VSBasicOneLightVc<3>
 
 #line 63 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
@@ -111,7 +111,7 @@
     dp4 r0.y, v0, c16  // ::vout<1>
     dp4 r0.z, v0, c18  // ::vout<3>
 
-#line 221 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 288 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicOneLightVc<8,9>
     mov oPos.w, r0.z  // ::VSBasicOneLightVc<11>
 
@@ -169,10 +169,10 @@ ret
 
 const BYTE BasicEffect_VSBasicOneLightVc[] =
 {
-     68,  88,  66,  67, 112, 162, 
-     51,  99, 143, 131, 125, 253, 
-    230,  29, 229, 127, 255, 225, 
-     94, 185,   1,   0,   0,   0, 
+     68,  88,  66,  67, 156, 209, 
+     70,  60, 171, 237, 148, 237, 
+      7, 192,  49,  30, 213,  68, 
+    162,  18,   1,   0,   0,   0, 
     108,  15,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     164,   9,   0,   0, 140,  14, 
@@ -276,7 +276,7 @@ const BYTE BasicEffect_VSBasicOneLightVc[] =
     216,   7,   0,   0,  46,   0, 
       0,   0, 232,   7,   0,   0, 
      46,   0,   0,   0, 244,   7, 
-      0,   0, 228,   0,   1,   0, 
+      0,   0,  39,   1,   1,   0, 
       8,   8,   0,   0,  42,   0, 
       0,   0,  24,   8,   0,   0, 
      42,   0,   0,   0,  40,   8, 
@@ -288,14 +288,14 @@ const BYTE BasicEffect_VSBasicOneLightVc[] =
     104,   8,   0,   0,  14,   0, 
       2,   0, 120,   8,   0,   0, 
      14,   0,   2,   0, 136,   8, 
-      0,   0, 228,   0,   1,   0, 
+      0,   0,  39,   1,   1,   0, 
     152,   8,   0,   0,  63,   0, 
       0,   0, 168,   8,   0,   0, 
      63,   0,   0,   0, 184,   8, 
       0,   0,  63,   0,   0,   0, 
-    200,   8,   0,   0, 221,   0, 
+    200,   8,   0,   0,  32,   1, 
       1,   0, 216,   8,   0,   0, 
-    221,   0,   1,   0, 236,   8, 
+     32,   1,   1,   0, 236,   8, 
       0,   0,  80,  97, 114,  97, 
     109, 101, 116, 101, 114, 115, 
       0,  68, 105, 102, 102, 117, 

@@ -92,7 +92,7 @@
     dp4 r0.y, v0, c15  // ::vout<14>
     dp4 r0.z, v0, c17  // ::vout<16>
 
-#line 130
+#line 144
     mad oPos.xy, r0.z, c0, r0  // ::VSEnvMapOneLight<13,14>
     mov oPos.w, r0.z  // ::VSEnvMapOneLight<16>
 
@@ -102,7 +102,7 @@
 #line 77 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     mov oT1.xyz, c1.x  // ::VSEnvMapOneLight<4,5,6>
 
-#line 132
+#line 146
     mov oT2.xy, v2  // ::VSEnvMapOneLight<8,9>
 
 // approximately 34 instruction slots used
@@ -153,10 +153,10 @@ ret
 
 const BYTE EnvironmentMapEffect_VSEnvMapOneLight[] =
 {
-     68,  88,  66,  67, 206,  62, 
-     79, 251, 131, 102,  23,  10, 
-    244, 227, 174, 253, 160, 129, 
-    147, 238,   1,   0,   0,   0, 
+     68,  88,  66,  67, 153,  19, 
+    246,  32,  80,  68, 178, 209, 
+     78, 117, 154, 149,  75, 101, 
+    170,   1,   1,   0,   0,   0, 
     136,  13,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      84,   8,   0,   0, 112,  12, 
@@ -266,12 +266,12 @@ const BYTE EnvironmentMapEffect_VSEnvMapOneLight[] =
      64,   7,   0,   0,  71,   0, 
       0,   0,  80,   7,   0,   0, 
      71,   0,   0,   0,  96,   7, 
-      0,   0, 130,   0,   0,   0, 
-    112,   7,   0,   0, 130,   0, 
+      0,   0, 144,   0,   0,   0, 
+    112,   7,   0,   0, 144,   0, 
       0,   0, 132,   7,   0,   0, 
      46,   0,   1,   0, 144,   7, 
       0,   0,  77,   0,   0,   0, 
-    156,   7,   0,   0, 132,   0, 
+    156,   7,   0,   0, 146,   0, 
       0,   0, 168,   7,   0,   0, 
      80,  97, 114,  97, 109, 101, 
     116, 101, 114, 115,   0,  68, 

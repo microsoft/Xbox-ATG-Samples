@@ -46,12 +46,12 @@
     dcl_2d s0
     dcl_cube s1
 
-#line 188 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 231 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     texld r0, t3, s1
     texld r1, t2, s0
     mul r1, r1, t0  // ::color<0,1,2,3>
 
-#line 190
+#line 233
     mad r0.xyz, r0, r1.w, -r1
     mul r0.w, r0.w, r1.w  // ::envmap<3>
     mad r0.xyz, t1, r0, r1  // ::color<0,1,2>
@@ -91,10 +91,10 @@ ret
 
 const BYTE EnvironmentMapEffect_PSEnvMapSpecular[] =
 {
-     68,  88,  66,  67, 154, 109, 
-    133, 117, 231, 203,  75, 152, 
-    241,   6, 158, 237, 249, 124, 
-     55,  47,   1,   0,   0,   0, 
+     68,  88,  66,  67, 108, 225, 
+    177, 239,  37, 142, 134, 111, 
+     73, 125,  45,  57, 218,  52, 
+     31,  49,   1,   0,   0,   0, 
      72,   7,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     156,   4,   0,   0, 148,   6, 
@@ -155,15 +155,15 @@ const BYTE EnvironmentMapEffect_PSEnvMapSpecular[] =
     255, 255,  72,   3,   0,   0, 
       0,   0, 255, 255,  84,   3, 
       0,   0,   0,   0, 255, 255, 
-     96,   3,   0,   0, 188,   0, 
+     96,   3,   0,   0, 231,   0, 
       0,   0, 108,   3,   0,   0, 
-    187,   0,   0,   0, 124,   3, 
-      0,   0, 187,   0,   0,   0, 
-    140,   3,   0,   0, 190,   0, 
+    230,   0,   0,   0, 124,   3, 
+      0,   0, 230,   0,   0,   0, 
+    140,   3,   0,   0, 233,   0, 
       0,   0, 156,   3,   0,   0, 
-    188,   0,   0,   0, 176,   3, 
-      0,   0, 190,   0,   0,   0, 
-    192,   3,   0,   0, 191,   0, 
+    231,   0,   0,   0, 176,   3, 
+      0,   0, 233,   0,   0,   0, 
+    192,   3,   0,   0, 234,   0, 
       0,   0, 212,   3,   0,   0, 
      20,   0,   1,   0, 232,   3, 
       0,   0,  20,   0,   1,   0, 

@@ -123,7 +123,7 @@
     mov r1.xyz, c1  // Parameters::DiffuseColor<0,1,2>
     mad r0.xyz, r0, r1, c2  // ::result<0,1,2>
 
-#line 173 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 185 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT0.xyz, r0, v2  // ::VSBasicVertexLightingVc<0,1,2>
     mul oT0.w, v2.w, c1.w  // ::VSBasicVertexLightingVc<3>
 
@@ -132,7 +132,7 @@
     dp4 r0.y, v0, c22  // ::vout<1>
     dp4 r0.z, v0, c24  // ::vout<3>
 
-#line 166 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 178 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicVertexLightingVc<8,9>
     mov oPos.w, r0.z  // ::VSBasicVertexLightingVc<11>
 
@@ -206,10 +206,10 @@ ret
 
 const BYTE BasicEffect_VSBasicVertexLightingVc[] =
 {
-     68,  88,  66,  67, 150,  82, 
-    142, 129, 207, 223,   0, 189, 
-     99, 233, 154, 230, 199, 146, 
-     78,  65,   1,   0,   0,   0, 
+     68,  88,  66,  67,  63, 202, 
+    208,  96, 117,  79, 255, 236, 
+    165, 136,  31, 174,  52, 234, 
+    106, 211,   1,   0,   0,   0, 
     104,  19,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     108,  11,   0,   0, 136,  18, 
@@ -342,15 +342,15 @@ const BYTE BasicEffect_VSBasicVertexLightingVc[] =
       0,   0,  46,   0,   0,   0, 
      84,  10,   0,   0,  46,   0, 
       0,   0,  96,  10,   0,   0, 
-    173,   0,   2,   0, 116,  10, 
-      0,   0, 173,   0,   2,   0, 
+    185,   0,   2,   0, 116,  10, 
+      0,   0, 185,   0,   2,   0, 
     132,  10,   0,   0,  63,   0, 
       0,   0, 148,  10,   0,   0, 
      63,   0,   0,   0, 164,  10, 
       0,   0,  63,   0,   0,   0, 
-    180,  10,   0,   0, 166,   0, 
+    180,  10,   0,   0, 178,   0, 
       2,   0, 196,  10,   0,   0, 
-    166,   0,   2,   0, 216,  10, 
+    178,   0,   2,   0, 216,  10, 
       0,   0,  80,  97, 114,  97, 
     109, 101, 116, 101, 114, 115, 
       0,  68, 105, 102, 102, 117, 

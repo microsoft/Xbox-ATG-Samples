@@ -43,7 +43,7 @@
     dcl_texcoord v0  // vin<0,1,2,3>
     dcl_texcoord1 v1  // vin<4,5,6,7>
 
-#line 43 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 49 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 oPos.z, v0, c5  // ::VSBasicVc<10>
 
 #line 14
@@ -54,7 +54,7 @@
 #line 75 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT0, v1, c1  // ::VSBasicVc<0,1,2,3>
 
-#line 43 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 49 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c3  // ::vout<0>
     dp4 r0.y, v0, c4  // ::vout<1>
     dp4 r0.z, v0, c6  // ::vout<3>
@@ -63,7 +63,7 @@
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicVc<8,9>
     mov oPos.w, r0.z  // ::VSBasicVc<11>
 
-#line 45 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 51 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mov oT1.xyz, c7.x  // ::VSBasicVc<4,5,6>
 
 // approximately 11 instruction slots used
@@ -87,10 +87,10 @@ ret
 
 const BYTE BasicEffect_VSBasicVc[] =
 {
-     68,  88,  66,  67,  33, 226, 
-     58, 237,  99,   8, 162, 131, 
-    200,  12,  54, 174, 231, 186, 
-    144,  34,   1,   0,   0,   0, 
+     68,  88,  66,  67,  39, 119, 
+    165, 103, 233,  17, 249, 215, 
+     66, 211, 138, 177, 251, 116, 
+     53,  78,   1,   0,   0,   0, 
     140,   6,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     136,   4,   0,   0, 204,   5, 
@@ -147,21 +147,21 @@ const BYTE BasicEffect_VSBasicVc[] =
     255, 255,  36,   3,   0,   0, 
       0,   0, 255, 255,  60,   3, 
       0,   0,   0,   0, 255, 255, 
-     72,   3,   0,   0,  43,   0, 
+     72,   3,   0,   0,  49,   0, 
       0,   0,  84,   3,   0,   0, 
      14,   0,   0,   0, 100,   3, 
       0,   0,  14,   0,   0,   0, 
     116,   3,   0,   0,  14,   0, 
       0,   0, 132,   3,   0,   0, 
      75,   0,   1,   0, 148,   3, 
-      0,   0,  43,   0,   0,   0, 
-    164,   3,   0,   0,  43,   0, 
+      0,   0,  49,   0,   0,   0, 
+    164,   3,   0,   0,  49,   0, 
       0,   0, 180,   3,   0,   0, 
-     43,   0,   0,   0, 196,   3, 
+     49,   0,   0,   0, 196,   3, 
       0,   0,  68,   0,   1,   0, 
     212,   3,   0,   0,  68,   0, 
       1,   0, 232,   3,   0,   0, 
-     45,   0,   0,   0, 244,   3, 
+     51,   0,   0,   0, 244,   3, 
       0,   0,  86,  83,  66,  97, 
     115, 105,  99,  86,  99,   0, 
      68, 105, 102, 102, 117, 115, 

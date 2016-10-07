@@ -102,14 +102,14 @@
     dp4 r0.y, v0, c19  // ::vout<14>
     dp4 r0.z, v0, c21  // ::vout<16>
 
-#line 123
+#line 130
     mad oPos.xy, r0.z, c0, r0  // ::VSEnvMapFresnel<13,14>
     mov oPos.w, r0.z  // ::VSEnvMapFresnel<16>
 
 #line 46 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mov oT0.w, c2.w  // ::VSEnvMapFresnel<3>
 
-#line 125 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 132 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     mov oT2.xy, v2  // ::VSEnvMapFresnel<8,9>
 
 // approximately 45 instruction slots used
@@ -170,10 +170,10 @@ ret
 
 const BYTE EnvironmentMapEffect_VSEnvMapFresnel[] =
 {
-     68,  88,  66,  67,  36, 119, 
-    147, 224,  95, 198, 141,  47, 
-    176, 202, 102, 224, 128,  96, 
-     97,  48,   1,   0,   0,   0, 
+     68,  88,  66,  67,  85, 247, 
+     15, 122, 219, 105,  63, 248, 
+      8, 121,  73, 139, 128, 101, 
+    137,  54,   1,   0,   0,   0, 
     248,  15,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     108,   9,   0,   0, 224,  14, 
@@ -292,11 +292,11 @@ const BYTE EnvironmentMapEffect_VSEnvMapFresnel[] =
       0,   0, 124,   8,   0,   0, 
      71,   0,   0,   0, 140,   8, 
       0,   0,  71,   0,   0,   0, 
-    156,   8,   0,   0, 123,   0, 
+    156,   8,   0,   0, 130,   0, 
       0,   0, 172,   8,   0,   0, 
-    123,   0,   0,   0, 192,   8, 
+    130,   0,   0,   0, 192,   8, 
       0,   0,  46,   0,   1,   0, 
-    204,   8,   0,   0, 125,   0, 
+    204,   8,   0,   0, 132,   0, 
       0,   0, 216,   8,   0,   0, 
      80,  97, 114,  97, 109, 101, 
     116, 101, 114, 115,   0,  68, 

@@ -44,7 +44,7 @@
     dcl_texcoord1 v1  // vin<4,5>
     dcl_texcoord2 v2  // vin<6,7>
 
-#line 43 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 49 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 oPos.z, v0, c4  // ::VSDualTextureNoFog<10>
     dp4 r0.x, v0, c2  // ::vout<0>
     dp4 r0.y, v0, c3  // ::vout<1>
@@ -54,7 +54,7 @@
     mad oPos.xy, r0.z, c0, r0  // ::VSDualTextureNoFog<8,9>
     mov oPos.w, r0.z  // ::VSDualTextureNoFog<11>
 
-#line 44 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 50 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mov oT0, c1  // ::VSDualTextureNoFog<0,1,2,3>
 
 #line 55 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\DualTextureEffect.fx"
@@ -84,10 +84,10 @@ ret
 
 const BYTE DualTextureEffect_VSDualTextureNoFog[] =
 {
-     68,  88,  66,  67,  36,  48, 
-    206, 189, 176, 119, 224,  21, 
-    176, 135, 143,  80, 143, 119, 
-     80, 145,   1,   0,   0,   0, 
+     68,  88,  66,  67, 203, 254, 
+     64, 226, 244, 228,  90, 120, 
+     16, 255,  80,  56,  17, 214, 
+    112, 171,   1,   0,   0,   0, 
     192,   6,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     136,   4,   0,   0, 196,   5, 
@@ -143,15 +143,15 @@ const BYTE DualTextureEffect_VSDualTextureNoFog[] =
     100,   3,   0,   0,   0,   0, 
     255, 255, 112,   3,   0,   0, 
       0,   0, 255, 255, 124,   3, 
-      0,   0,  43,   0,   0,   0, 
-    136,   3,   0,   0,  43,   0, 
+      0,   0,  49,   0,   0,   0, 
+    136,   3,   0,   0,  49,   0, 
       0,   0, 152,   3,   0,   0, 
-     43,   0,   0,   0, 168,   3, 
-      0,   0,  43,   0,   0,   0, 
+     49,   0,   0,   0, 168,   3, 
+      0,   0,  49,   0,   0,   0, 
     184,   3,   0,   0,  48,   0, 
       1,   0, 200,   3,   0,   0, 
      48,   0,   1,   0, 220,   3, 
-      0,   0,  44,   0,   0,   0, 
+      0,   0,  50,   0,   0,   0, 
     232,   3,   0,   0,  55,   0, 
       1,   0, 244,   3,   0,   0, 
      55,   0,   1,   0,   0,   4, 

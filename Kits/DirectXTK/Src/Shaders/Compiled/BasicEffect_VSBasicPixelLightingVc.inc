@@ -63,7 +63,7 @@
     max r0.x, r0.x, c13.x
     min oT0.w, r0.x, c13.y  // ::VSBasicPixelLightingVc<3>
 
-#line 286 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 410 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT2.w, v2.w, c1.w  // ::VSBasicPixelLightingVc<10>
 
 #line 85 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
@@ -71,11 +71,11 @@
     dp4 r0.y, v0, c10  // ::vout<1>
     dp4 r0.z, v0, c12  // ::vout<3>
 
-#line 278 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 402 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicPixelLightingVc<11,12>
     mov oPos.w, r0.z  // ::VSBasicPixelLightingVc<14>
 
-#line 285
+#line 409
     mov oT2.xyz, v2  // ::VSBasicPixelLightingVc<7,8,9>
 
 // approximately 20 instruction slots used
@@ -111,10 +111,10 @@ ret
 
 const BYTE BasicEffect_VSBasicPixelLightingVc[] =
 {
-     68,  88,  66,  67,  85, 217, 
-     83, 175, 117,  39,  24, 237, 
-    162, 115,  25, 143, 146, 129, 
-     80, 108,   1,   0,   0,   0, 
+     68,  88,  66,  67,   0, 198, 
+    211,  50,  32,  48,  91, 153, 
+    107, 244, 148, 100,  75, 123, 
+     60, 121,   1,   0,   0,   0, 
     160,   9,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      60,   6,   0,   0, 160,   8, 
@@ -203,15 +203,15 @@ const BYTE BasicEffect_VSBasicPixelLightingVc[] =
       0,   0,  14,   0,   1,   0, 
      40,   5,   0,   0,  14,   0, 
       1,   0,  56,   5,   0,   0, 
-     30,   1,   2,   0,  72,   5, 
+    154,   1,   2,   0,  72,   5, 
       0,   0,  85,   0,   0,   0, 
      88,   5,   0,   0,  85,   0, 
       0,   0, 104,   5,   0,   0, 
      85,   0,   0,   0, 120,   5, 
-      0,   0,  22,   1,   2,   0, 
-    136,   5,   0,   0,  22,   1, 
+      0,   0, 146,   1,   2,   0, 
+    136,   5,   0,   0, 146,   1, 
       2,   0, 156,   5,   0,   0, 
-     29,   1,   2,   0, 168,   5, 
+    153,   1,   2,   0, 168,   5, 
       0,   0,  86,  83,  66,  97, 
     115, 105,  99,  80, 105, 120, 
     101, 108,  76, 105, 103, 104, 

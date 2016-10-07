@@ -66,11 +66,11 @@
     dp4 r0.y, v0, c10  // ::vout<1>
     dp4 r0.z, v0, c12  // ::vout<3>
 
-#line 264 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 374 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicPixelLighting<11,12>
     mov oPos.w, r0.z  // ::VSBasicPixelLighting<14>
 
-#line 271
+#line 381
     mov r0.xy, c13
     mad oT2, c1.w, r0.xxxy, r0.yyyx  // ::VSBasicPixelLighting<7,8,9,10>
 
@@ -106,10 +106,10 @@ ret
 
 const BYTE BasicEffect_VSBasicPixelLighting[] =
 {
-     68,  88,  66,  67,   7, 177, 
-    136, 155, 119,  25, 224,  68, 
-     81,  20, 254, 154,  28, 218, 
-     78,  62,   1,   0,   0,   0, 
+     68,  88,  66,  67, 213, 218, 
+    227,  55, 235, 184, 169, 127, 
+      5, 172, 145, 208,   1, 136, 
+    234,   6,   1,   0,   0,   0, 
      60,   9,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
       0,   6,   0,   0,  92,   8, 
@@ -200,11 +200,11 @@ const BYTE BasicEffect_VSBasicPixelLighting[] =
       0,   0,   8,   5,   0,   0, 
      85,   0,   0,   0,  24,   5, 
       0,   0,  85,   0,   0,   0, 
-     40,   5,   0,   0,   8,   1, 
+     40,   5,   0,   0, 118,   1, 
       2,   0,  56,   5,   0,   0, 
-      8,   1,   2,   0,  76,   5, 
-      0,   0,  15,   1,   2,   0, 
-     88,   5,   0,   0,  15,   1, 
+    118,   1,   2,   0,  76,   5, 
+      0,   0, 125,   1,   2,   0, 
+     88,   5,   0,   0, 125,   1, 
       2,   0, 100,   5,   0,   0, 
      86,  83,  66,  97, 115, 105, 
      99,  80, 105, 120, 101, 108, 

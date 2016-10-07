@@ -41,7 +41,7 @@
     dcl_texcoord v0  // vin<0,1,2,3>
     dcl_texcoord1 v1  // vin<4,5>
 
-#line 43 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 49 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 oPos.z, v0, c4  // ::VSBasicTxNoFog<8>
     dp4 r0.x, v0, c2  // ::vout<0>
     dp4 r0.y, v0, c3  // ::vout<1>
@@ -51,7 +51,7 @@
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicTxNoFog<6,7>
     mov oPos.w, r0.z  // ::VSBasicTxNoFog<9>
 
-#line 44 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 50 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mov oT0, c1  // ::VSBasicTxNoFog<0,1,2,3>
 
 #line 117 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
@@ -77,10 +77,10 @@ ret
 
 const BYTE BasicEffect_VSBasicTxNoFog[] =
 {
-     68,  88,  66,  67, 202,  56, 
-    116,   0,  88,  46, 141,  54, 
-    109, 199, 102, 141, 133,  44, 
-    134, 123,   1,   0,   0,   0, 
+     68,  88,  66,  67,  71,  10, 
+     94, 124, 111, 168, 127,  89, 
+     12,   3,  63, 248, 220,  33, 
+    117, 109,   1,   0,   0,   0, 
       0,   6,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      36,   4,   0,   0,  52,   5, 
@@ -134,15 +134,15 @@ const BYTE BasicEffect_VSBasicTxNoFog[] =
     111,   0,   0,   0,   0,   0, 
     255, 255,  24,   3,   0,   0, 
       0,   0, 255, 255,  36,   3, 
-      0,   0,  43,   0,   0,   0, 
-     48,   3,   0,   0,  43,   0, 
+      0,   0,  49,   0,   0,   0, 
+     48,   3,   0,   0,  49,   0, 
       0,   0,  64,   3,   0,   0, 
-     43,   0,   0,   0,  80,   3, 
-      0,   0,  43,   0,   0,   0, 
+     49,   0,   0,   0,  80,   3, 
+      0,   0,  49,   0,   0,   0, 
      96,   3,   0,   0, 110,   0, 
       1,   0, 112,   3,   0,   0, 
     110,   0,   1,   0, 132,   3, 
-      0,   0,  44,   0,   0,   0, 
+      0,   0,  50,   0,   0,   0, 
     144,   3,   0,   0, 117,   0, 
       1,   0, 156,   3,   0,   0, 
      86,  83,  66,  97, 115, 105, 

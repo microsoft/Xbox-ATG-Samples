@@ -44,7 +44,7 @@
     dcl_texcoord v0  // vin<0,1,2,3>
     dcl_texcoord1 v1  // vin<4,5>
 
-#line 43 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 49 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 oPos.z, v0, c5  // ::VSBasicTx<12>
 
 #line 14
@@ -52,7 +52,7 @@
     max r0.x, r0.x, c7.x
     min oT1.w, r0.x, c7.y  // ::VSBasicTx<7>
 
-#line 43
+#line 49
     dp4 r0.x, v0, c3  // ::vout<0>
     dp4 r0.y, v0, c4  // ::vout<1>
     dp4 r0.z, v0, c6  // ::vout<3>
@@ -61,7 +61,7 @@
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicTx<10,11>
     mov oPos.w, r0.z  // ::VSBasicTx<13>
 
-#line 44 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 50 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mov oT0, c1  // ::VSBasicTx<0,1,2,3>
     mov oT1.xyz, c7.x  // ::VSBasicTx<4,5,6>
 
@@ -91,10 +91,10 @@ ret
 
 const BYTE BasicEffect_VSBasicTx[] =
 {
-     68,  88,  66,  67, 242, 255, 
-    236,  34, 156,   3,  67,  58, 
-     33, 158, 245,  92,  18,  92, 
-    175, 109,   1,   0,   0,   0, 
+     68,  88,  66,  67, 115, 168, 
+    219,  94,  23, 225, 151,  21, 
+    165, 100, 102,  53, 211,  19, 
+     26, 239,   1,   0,   0,   0, 
       4,   7,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     196,   4,   0,   0,  32,   6, 
@@ -151,21 +151,21 @@ const BYTE BasicEffect_VSBasicTx[] =
     255, 255,  88,   3,   0,   0, 
       0,   0, 255, 255, 112,   3, 
       0,   0,   0,   0, 255, 255, 
-    124,   3,   0,   0,  43,   0, 
+    124,   3,   0,   0,  49,   0, 
       0,   0, 136,   3,   0,   0, 
      14,   0,   0,   0, 152,   3, 
       0,   0,  14,   0,   0,   0, 
     168,   3,   0,   0,  14,   0, 
       0,   0, 184,   3,   0,   0, 
-     43,   0,   0,   0, 200,   3, 
-      0,   0,  43,   0,   0,   0, 
-    216,   3,   0,   0,  43,   0, 
+     49,   0,   0,   0, 200,   3, 
+      0,   0,  49,   0,   0,   0, 
+    216,   3,   0,   0,  49,   0, 
       0,   0, 232,   3,   0,   0, 
      96,   0,   1,   0, 248,   3, 
       0,   0,  96,   0,   1,   0, 
-     12,   4,   0,   0,  44,   0, 
+     12,   4,   0,   0,  50,   0, 
       0,   0,  24,   4,   0,   0, 
-     45,   0,   0,   0,  36,   4, 
+     51,   0,   0,   0,  36,   4, 
       0,   0, 103,   0,   1,   0, 
      48,   4,   0,   0,  86,  83, 
      66,  97, 115, 105,  99,  84, 

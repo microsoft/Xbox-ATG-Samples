@@ -41,7 +41,7 @@
     dcl t2.xy  // pin<8,9>
     dcl_2d s0
 
-#line 344 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 514 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     texld r0, t2, s0
     mul r0, r0, t0  // ::color<0,1,2,3>
 
@@ -71,10 +71,10 @@ ret
 
 const BYTE BasicEffect_PSBasicTx[] =
 {
-     68,  88,  66,  67, 251,  22, 
-      1, 176, 232, 160, 123,  17, 
-     14, 196, 205,  34, 224,  52, 
-    254,  88,   1,   0,   0,   0, 
+     68,  88,  66,  67, 225, 186, 
+     84, 201, 163, 246,   7, 179, 
+    174, 233, 227, 162,  93,  69, 
+    244,  70,   1,   0,   0,   0, 
      24,   5,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      96,   3,   0,   0, 124,   4, 
@@ -129,8 +129,8 @@ const BYTE BasicEffect_PSBasicTx[] =
       0,   0,   0,   0, 255, 255, 
     132,   2,   0,   0,   0,   0, 
     255, 255, 144,   2,   0,   0, 
-     88,   1,   0,   0, 156,   2, 
-      0,   0,  88,   1,   0,   0, 
+      2,   2,   0,   0, 156,   2, 
+      0,   0,   2,   2,   0,   0, 
     172,   2,   0,   0,  20,   0, 
       1,   0, 188,   2,   0,   0, 
      20,   0,   1,   0, 208,   2, 

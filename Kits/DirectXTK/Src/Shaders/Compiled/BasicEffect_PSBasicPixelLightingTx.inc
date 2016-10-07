@@ -44,7 +44,7 @@
     dcl t3  // pin<9,10,11,12>
     dcl_2d s0
 
-#line 427 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 597 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     texld r0, t0, s0
     add r1.xyz, -t1, c12
     dp3 r1.w, r1, r1
@@ -54,7 +54,7 @@
     mad r2.xyz, r1, r1.w, -c3
     nrm r3.xyz, r2  // ::halfVectors<0,1,2>
 
-#line 430 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 600 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     nrm r2.xyz, t2  // ::worldNormal<0,1,2>
 
 #line 37 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
@@ -99,7 +99,7 @@
     mad r1.xyz, r1.z, c11, r3
     mul r1.xyz, r1, c2  // ::result<3,4,5>
 
-#line 427 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 597 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul r0, r0, t3  // ::color<0,1,2,3>
 
 #line 26 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
@@ -185,10 +185,10 @@ ret
 
 const BYTE BasicEffect_PSBasicPixelLightingTx[] =
 {
-     68,  88,  66,  67, 149,  61, 
-    121,  77, 163, 142, 100, 148, 
-    132, 146, 229,  60, 189, 157, 
-    167, 214,   1,   0,   0,   0, 
+     68,  88,  66,  67,  45, 181, 
+      8, 154,  53,  96, 255,   2, 
+    130, 111, 241, 219, 152,  32, 
+    170,  87,   1,   0,   0,   0, 
      48,  17,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      12,  10,   0,   0, 124,  16, 
@@ -258,15 +258,15 @@ const BYTE BasicEffect_PSBasicPixelLightingTx[] =
     184,   6,   0,   0,   0,   0, 
     255, 255, 196,   6,   0,   0, 
       0,   0, 255, 255, 208,   6, 
-      0,   0, 171,   1,   0,   0, 
-    220,   6,   0,   0, 173,   1, 
+      0,   0,  85,   2,   0,   0, 
+    220,   6,   0,   0,  87,   2, 
       0,   0, 236,   6,   0,   0, 
-    173,   1,   0,   0, 252,   6, 
-      0,   0, 173,   1,   0,   0, 
+     87,   2,   0,   0, 252,   6, 
+      0,   0,  87,   2,   0,   0, 
      12,   7,   0,   0,  33,   0, 
       1,   0,  24,   7,   0,   0, 
      33,   0,   1,   0,  44,   7, 
-      0,   0, 174,   1,   0,   0, 
+      0,   0,  88,   2,   0,   0, 
      56,   7,   0,   0,  37,   0, 
       1,   0,  68,   7,   0,   0, 
      33,   0,   1,   0,  84,   7, 
@@ -302,7 +302,7 @@ const BYTE BasicEffect_PSBasicPixelLightingTx[] =
     164,   8,   0,   0,  47,   0, 
       1,   0, 184,   8,   0,   0, 
      47,   0,   1,   0, 204,   8, 
-      0,   0, 171,   1,   0,   0, 
+      0,   0,  85,   2,   0,   0, 
     220,   8,   0,   0,  26,   0, 
       2,   0, 236,   8,   0,   0, 
      46,   0,   1,   0, 252,   8, 

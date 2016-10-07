@@ -38,7 +38,7 @@
     vs_2_0
     dcl_texcoord v0  // vin<0,1,2,3>
 
-#line 43 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 49 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 oPos.z, v0, c4  // ::VSBasicNoFog<6>
     dp4 r0.x, v0, c2  // ::vout<0>
     dp4 r0.y, v0, c3  // ::vout<1>
@@ -48,7 +48,7 @@
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicNoFog<4,5>
     mov oPos.w, r0.z  // ::VSBasicNoFog<7>
 
-#line 44 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 50 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mov oT0, c1  // ::VSBasicNoFog<0,1,2,3>
 
 // approximately 7 instruction slots used
@@ -68,10 +68,10 @@ ret
 
 const BYTE BasicEffect_VSBasicNoFog[] =
 {
-     68,  88,  66,  67, 231, 107, 
-    249,  16,  38, 110,  58, 225, 
-     51, 188,   6,  21, 210, 142, 
-    242, 173,   1,   0,   0,   0, 
+     68,  88,  66,  67, 160, 161, 
+    232, 102, 229, 165, 222, 189, 
+    136, 138, 234,  23,  63, 149, 
+     83, 150,   1,   0,   0,   0, 
      36,   5,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     184,   3,   0,   0, 156,   4, 
@@ -124,15 +124,15 @@ const BYTE BasicEffect_VSBasicNoFog[] =
     171, 171,  40,   0,   0,   0, 
     111,   0,   0,   0,   0,   0, 
     255, 255, 196,   2,   0,   0, 
-     43,   0,   0,   0, 208,   2, 
-      0,   0,  43,   0,   0,   0, 
-    224,   2,   0,   0,  43,   0, 
+     49,   0,   0,   0, 208,   2, 
+      0,   0,  49,   0,   0,   0, 
+    224,   2,   0,   0,  49,   0, 
       0,   0, 240,   2,   0,   0, 
-     43,   0,   0,   0,   0,   3, 
+     49,   0,   0,   0,   0,   3, 
       0,   0,  56,   0,   1,   0, 
      16,   3,   0,   0,  56,   0, 
       1,   0,  36,   3,   0,   0, 
-     44,   0,   0,   0,  48,   3, 
+     50,   0,   0,   0,  48,   3, 
       0,   0,  86,  83,  66,  97, 
     115, 105,  99,  78, 111,  70, 
     111, 103,   0,  68, 105, 102, 

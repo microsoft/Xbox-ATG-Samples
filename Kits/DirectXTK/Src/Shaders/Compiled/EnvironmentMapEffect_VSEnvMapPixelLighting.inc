@@ -69,11 +69,11 @@
     dp4 r0.y, v0, c10  // ::vout<1>
     dp4 r0.z, v0, c12  // ::vout<3>
 
-#line 144 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 172 "D:\ATG Sample Development\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSEnvMapPixelLighting<13,14>
     mov oPos.w, r0.z  // ::VSEnvMapPixelLighting<16>
 
-#line 152
+#line 180
     mov oT0.xy, v2  // ::VSEnvMapPixelLighting<0,1>
     mov r0.xy, c13
     mad oT3, c1.w, r0.xxxy, r0.yyyx  // ::VSEnvMapPixelLighting<9,10,11,12>
@@ -113,10 +113,10 @@ ret
 
 const BYTE EnvironmentMapEffect_VSEnvMapPixelLighting[] =
 {
-     68,  88,  66,  67,   6,  58, 
-    158, 236,  39, 118, 196,   5, 
-     98, 113,  25, 177, 241,  34, 
-     36,   1,   1,   0,   0,   0, 
+     68,  88,  66,  67,  33,  28, 
+    221, 229,  21, 143,  92, 196, 
+    108, 108,  78, 206,  53, 160, 
+     81, 210,   1,   0,   0,   0, 
      20,  10,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     116,   6,   0,   0, 252,   8, 
@@ -210,12 +210,12 @@ const BYTE EnvironmentMapEffect_VSEnvMapPixelLighting[] =
     112,   5,   0,   0,  85,   0, 
       0,   0, 128,   5,   0,   0, 
      85,   0,   0,   0, 144,   5, 
-      0,   0, 144,   0,   2,   0, 
-    160,   5,   0,   0, 144,   0, 
+      0,   0, 172,   0,   2,   0, 
+    160,   5,   0,   0, 172,   0, 
       2,   0, 180,   5,   0,   0, 
-    152,   0,   2,   0, 192,   5, 
-      0,   0, 151,   0,   2,   0, 
-    204,   5,   0,   0, 151,   0, 
+    180,   0,   2,   0, 192,   5, 
+      0,   0, 179,   0,   2,   0, 
+    204,   5,   0,   0, 179,   0, 
       2,   0, 216,   5,   0,   0, 
      86,  83,  69, 110, 118,  77, 
      97, 112,  80, 105, 120, 101, 
