@@ -433,9 +433,6 @@ void Sample::CreateDeviceDependentResources()
         // Upload the resources to the GPU.
         auto uploadResourcesFinished = resourceUpload.End(m_deviceResources->GetCommandQueue());
 
-        // Wait for the command list to finish executing
-        m_deviceResources->WaitForGpu();
-
         // Wait for the upload thread to terminate
         uploadResourcesFinished.wait();
     }

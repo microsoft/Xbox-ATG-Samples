@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Assets">
+      <UniqueIdentifier>18c8d9a1-ff3d-41f9-9a89-3fa69ad5ce37</UniqueIdentifier>
+      <Extensions>bmp;dds;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Filter Include="ATG Tool Kit">
+      <UniqueIdentifier>{ddbbf8d0-ce55-45af-a9b0-345b08d48cac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shared">
+      <UniqueIdentifier>{d011644b-b755-4c53-b901-861f5ded6206}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Backgrounds">
+      <UniqueIdentifier>{3193fbea-fdac-47bc-ab74-c54874871e18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Models">
+      <UniqueIdentifier>{94e88a15-d53e-44c6-9190-7bd0c744a50c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UWP">
+      <UniqueIdentifier>{ef97e544-5a3b-4af0-857a-3512e7d7b99a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Models\XboxOrb">
+      <UniqueIdentifier>{f22afe59-0487-4316-94b6-38a911af033c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Logo">
+      <UniqueIdentifier>{08afbad8-cf4a-4ce2-8605-2d011c3d7f52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ATG Tool Kit\PBREffect">
+      <UniqueIdentifier>{a8d8dfff-b806-4fd1-a936-d06c0e1c4584}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ATG Tool Kit\ToneMapEffect">
+      <UniqueIdentifier>{72dc149d-78d0-4a74-9107-eff7ac649ab3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Fonts">
+      <UniqueIdentifier>{475e1100-2c53-4f97-a0c3-edd7af1b1bde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Models\ToyRobot">
+      <UniqueIdentifier>{0d2f37da-d7b1-4588-b30f-e61450aff6f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Models\ToyRobot\Floor">
+      <UniqueIdentifier>{44404798-9b36-41d2-89a6-3722eab0a693}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Models\ToyRobot\ToyRobot">
+      <UniqueIdentifier>{a32c56f4-3a70-4d3b-be69-cd22347913df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Models\ToyRobot\WoodBlocks">
+      <UniqueIdentifier>{13ff252a-7fb4-45f0-a9e1-db019f8db4fb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Shared\SharedSimplePBR.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="UWP\d3dx12.h">
+      <Filter>UWP</Filter>
+    </ClInclude>
+    <ClInclude Include="UWP\DeviceResources.h">
+      <Filter>UWP</Filter>
+    </ClInclude>
+    <ClInclude Include="UWP\SimplePBRUWP12.h">
+      <Filter>UWP</Filter>
+    </ClInclude>
+    <ClInclude Include="Shared\pch.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Shared\StepTimer.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\OrbitCamera.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="Shared\PBRModel.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Shared\DescriptorPile.h">
+      <Filter>Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect.h">
+      <Filter>ATG Tool Kit\PBREffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ToneMapEffect\ToneMapEffect.h">
+      <Filter>ATG Tool Kit\ToneMapEffect</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Shared\SharedSimplePBR.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="UWP\DeviceResources.cpp">
+      <Filter>UWP</Filter>
+    </ClCompile>
+    <ClCompile Include="UWP\Main.cpp">
+      <Filter>UWP</Filter>
+    </ClCompile>
+    <ClCompile Include="UWP\SimplePBRUWP12.cpp">
+      <Filter>UWP</Filter>
+    </ClCompile>
+    <ClCompile Include="Shared\pch.cpp">
+      <Filter>Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\OrbitCamera.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect.cpp">
+      <Filter>ATG Tool Kit\PBREffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\ToneMapEffect\ToneMapEffect.cpp">
+      <Filter>ATG Tool Kit\ToneMapEffect</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\LogoUWP.png">
+      <Filter>Assets\Logo</Filter>
+    </Image>
+    <Image Include="Assets\SmallLogoUWP.png">
+      <Filter>Assets\Logo</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreenUWP.png">
+      <Filter>Assets\Logo</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogoUWP.png">
+      <Filter>Assets\Logo</Filter>
+    </Image>
+    <Image Include="Assets\WideLogoUWP.png">
+      <Filter>Assets\Logo</Filter>
+    </Image>
+    <Image Include="Assets\Models\ToyRobot\Floor\Floor_Normal.png">
+      <Filter>Assets\Models\ToyRobot\Floor</Filter>
+    </Image>
+    <Image Include="Assets\Models\ToyRobot\Floor\Floor_RMA.png">
+      <Filter>Assets\Models\ToyRobot\Floor</Filter>
+    </Image>
+    <Image Include="Assets\Models\ToyRobot\ToyRobot\ToyRobot_Normal.png">
+      <Filter>Assets\Models\ToyRobot\ToyRobot</Filter>
+    </Image>
+    <Image Include="Assets\Models\ToyRobot\ToyRobot\ToyRobot_RMA.png">
+      <Filter>Assets\Models\ToyRobot\ToyRobot</Filter>
+    </Image>
+    <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_Normal.png">
+      <Filter>Assets\Models\ToyRobot\WoodBlocks</Filter>
+    </Image>
+    <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_RMA.png">
+      <Filter>Assets\Models\ToyRobot\WoodBlocks</Filter>
+    </Image>
+    <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_BaseColor.dds">
+      <Filter>Assets\Models\ToyRobot\WoodBlocks</Filter>
+    </Image>
+    <Image Include="Assets\Models\ToyRobot\ToyRobot\ToyRobot_BaseColor.dds">
+      <Filter>Assets\Models\ToyRobot\ToyRobot</Filter>
+    </Image>
+    <Image Include="Assets\Models\ToyRobot\Floor\Floor_BaseColor.dds">
+      <Filter>Assets\Models\ToyRobot\Floor</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\HDR\Stonewall_Ref_irradiance.dds">
+      <Filter>Assets\Backgrounds</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\HDR\Stonewall_Ref_radiance.dds">
+      <Filter>Assets\Backgrounds</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Models\XboxOrb\XboxOrb.sdkmesh">
+      <Filter>Assets\Models\XboxOrb</Filter>
+    </None>
+    <None Include="Readme.docx" />
+    <None Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_Common.hlsli">
+      <Filter>ATG Tool Kit\PBREffect</Filter>
+    </None>
+    <None Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_Math.hlsli">
+      <Filter>ATG Tool Kit\PBREffect</Filter>
+    </None>
+    <None Include="..\..\..\Kits\ATGTK\ToneMapEffect\ToneMapEffect_Common.hlsli">
+      <Filter>ATG Tool Kit\ToneMapEffect</Filter>
+    </None>
+    <None Include="Assets\Models\ToyRobot\Floor\Floor.sdkmesh">
+      <Filter>Assets\Models\ToyRobot\Floor</Filter>
+    </None>
+    <None Include="Assets\Models\ToyRobot\ToyRobot\ToyRobot.sdkmesh">
+      <Filter>Assets\Models\ToyRobot\ToyRobot</Filter>
+    </None>
+    <None Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks.sdkmesh">
+      <Filter>Assets\Models\ToyRobot\WoodBlocks</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
+      <Filter>Assets\Fonts</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
+      <Filter>Assets\Fonts</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="UWP\Package.appxmanifest">
+      <Filter>UWP</Filter>
+    </AppxManifest>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_PSConstant.hlsl">
+      <Filter>ATG Tool Kit\PBREffect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_PSTextured.hlsl">
+      <Filter>ATG Tool Kit\PBREffect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_VSConstant.hlsl">
+      <Filter>ATG Tool Kit\PBREffect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\Kits\ATGTK\ToneMapEffect\ToneMapEffect_PS.hlsl">
+      <Filter>ATG Tool Kit\ToneMapEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\Kits\ATGTK\ToneMapEffect\ToneMapEffect_VS.hlsl">
+      <Filter>ATG Tool Kit\ToneMapEffect</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

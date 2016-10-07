@@ -23,10 +23,6 @@ public:
 
     // Basic render loop
     void Tick();
-    void Render();
-
-    // Rendering helpers
-    void Clear();
 
     // IDeviceNotify
     virtual void OnDeviceLost() override;
@@ -64,6 +60,9 @@ private:
     float                                   m_temporaryTextTime;
 
     void Update(DX::StepTimer const& timer);
+    void Render();
+
+    void Clear();
 
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();

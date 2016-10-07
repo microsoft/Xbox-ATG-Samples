@@ -724,11 +724,8 @@ void Sample::CreateDeviceDependentResources()
     // Initialize the positions/state of all the cubes in the scene.
     ResetSimulation();
 
-    auto uploadResourcesFinished = resourceUpload.End(m_deviceResources->GetCommandQueue());
-
     // Wait until assets have been uploaded to the GPU.
-    m_deviceResources->WaitForGpu();
-
+    auto uploadResourcesFinished = resourceUpload.End(m_deviceResources->GetCommandQueue());
     uploadResourcesFinished.wait();
 
     // Create a fence for synchronizing between the CPU and the GPU

@@ -413,9 +413,6 @@ void Sample::CreateDeviceDependentResources()
     m_help->RestoreDevice(device, uploadBatch, rtState);
 
     auto finish = uploadBatch.End(m_deviceResources->GetCommandQueue());
-
-    m_deviceResources->WaitForGpu();
-
     finish.wait();
 }
 

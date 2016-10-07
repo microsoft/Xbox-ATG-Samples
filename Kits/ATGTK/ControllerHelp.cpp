@@ -13,6 +13,7 @@
 #include "ControllerHelp.h"
 #include "DDSTextureLoader.h"
 #include "SimpleMath.h"
+#include "DirectXHelpers.h"
 
 #if !defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP)
 #include "FindMedia.h"
@@ -645,7 +646,7 @@ ATG::Help::Help(const wchar_t* title, const wchar_t* description, const HelpButt
         ++m_calloutCount;
     }
 
-    bool dpadLabels = true;
+    bool dpadLabels = false;
     float dpadYOffset[4] = {0.f, 0.f, 0.f, 0.f};
 
     static const float c_fontSize18 = 31.9218750f;
@@ -878,6 +879,8 @@ void ATG::Help::RestoreDevice(ID3D12Device* device, ResourceUploadBatch& uploadB
         CommonStates::DepthNone, CommonStates::CullNone, rtState, D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
     m_lineEffect = std::make_unique<BasicEffect>(device, EffectFlags::VertexColor, fxPsoDesc);
 
+    unsigned int loadFlags = m_linearColors ? DDS_LOADER_FORCE_SRGB : DDS_LOADER_DEFAULT;
+
 #if !defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP)
     wchar_t buff[MAX_PATH];
     DX::FindMediaFile(buff, MAX_PATH, L"Media//Fonts//SegoeUI_18.spritefont");
@@ -890,21 +893,21 @@ void ATG::Help::RestoreDevice(ID3D12Device* device, ResourceUploadBatch& uploadB
     m_spriteFonts[SEGOE_UI_36PT] = std::make_unique<SpriteFont>(device, uploadBatch, buff, m_descriptorHeap->GetCpuHandle(Descriptors::Segoe36), m_descriptorHeap->GetGpuHandle(Descriptors::Segoe36));
 
     DX::FindMediaFile(buff, MAX_PATH, L"Media//Textures//callout_circle.dds");
-    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, buff, 0, D3D12_RESOURCE_FLAG_NONE, m_linearColors, false, m_circleTex.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, buff, 0, D3D12_RESOURCE_FLAG_NONE, loadFlags, m_circleTex.ReleaseAndGetAddressOf()));
 
     DX::FindMediaFile(buff, MAX_PATH, L"Media//Textures//gamepad.dds");
-    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, buff, 0, D3D12_RESOURCE_FLAG_NONE, m_linearColors, false, m_gamepadTex.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, buff, 0, D3D12_RESOURCE_FLAG_NONE, loadFlags, m_gamepadTex.ReleaseAndGetAddressOf()));
 
     DX::FindMediaFile(buff, MAX_PATH, L"Media//Textures//ATGSampleBackground.DDS");
-    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, buff, 0, D3D12_RESOURCE_FLAG_NONE, m_linearColors, false, m_backgroundTex.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, buff, 0, D3D12_RESOURCE_FLAG_NONE, loadFlags, m_backgroundTex.ReleaseAndGetAddressOf()));
 #else
     m_spriteFonts[SEGOE_UI_18PT] = std::make_unique<SpriteFont>(device, uploadBatch, L"SegoeUI_18.spritefont", m_descriptorHeap->GetCpuHandle(Descriptors::Segoe18), m_descriptorHeap->GetGpuHandle(Descriptors::Segoe18));
     m_spriteFonts[SEGOE_UI_22PT] = std::make_unique<SpriteFont>(device, uploadBatch, L"SegoeUI_22.spritefont", m_descriptorHeap->GetCpuHandle(Descriptors::Segoe22), m_descriptorHeap->GetGpuHandle(Descriptors::Segoe22));
     m_spriteFonts[SEGOE_UI_36PT] = std::make_unique<SpriteFont>(device, uploadBatch, L"SegoeUI_36.spritefont", m_descriptorHeap->GetCpuHandle(Descriptors::Segoe36), m_descriptorHeap->GetGpuHandle(Descriptors::Segoe36));
 
-    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, L"callout_circle.dds", 0, D3D12_RESOURCE_FLAG_NONE, m_linearColors, false, m_circleTex.ReleaseAndGetAddressOf()));
-    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, L"gamepad.dds", 0, D3D12_RESOURCE_FLAG_NONE, m_linearColors, false, m_gamepadTex.ReleaseAndGetAddressOf()));
-    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, L"ATGSampleBackground.DDS", 0, D3D12_RESOURCE_FLAG_NONE, m_linearColors, false, m_backgroundTex.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, L"callout_circle.dds", 0, D3D12_RESOURCE_FLAG_NONE, loadFlags, m_circleTex.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, L"gamepad.dds", 0, D3D12_RESOURCE_FLAG_NONE, loadFlags, m_gamepadTex.ReleaseAndGetAddressOf()));
+    DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, L"ATGSampleBackground.DDS", 0, D3D12_RESOURCE_FLAG_NONE, loadFlags, m_backgroundTex.ReleaseAndGetAddressOf()));
 #endif
 
     DirectX::CreateShaderResourceView(device, m_circleTex.Get(), m_descriptorHeap->GetCpuHandle(Descriptors::CircleTex), false);

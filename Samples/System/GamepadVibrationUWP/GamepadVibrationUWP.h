@@ -34,10 +34,6 @@ public:
 
     // Basic render loop
     void Tick();
-    void Render();
-
-    // Rendering helpers
-    void Clear();
 
     // IDeviceNotify
     virtual void OnDeviceLost() override;
@@ -62,6 +58,9 @@ private:
     static const int MAX_PLAYER_COUNT = 8;
 
     void Update(DX::StepTimer const& timer);
+    void Render();
+
+    void Clear();
 
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();

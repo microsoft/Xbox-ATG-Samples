@@ -28,10 +28,6 @@ public:
 
     // Basic render loop
     void Tick();
-    void Render();
-
-    // Rendering helpers
-    void Clear();
 
     //IDeviceNotify
     virtual void OnDeviceLost() override;
@@ -61,6 +57,9 @@ public:
 private:
 
     void Update(DX::StepTimer const& timer);
+    void Render();
+
+    void Clear();
 
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();

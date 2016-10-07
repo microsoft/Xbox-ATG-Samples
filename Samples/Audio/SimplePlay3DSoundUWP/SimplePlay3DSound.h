@@ -24,10 +24,6 @@ public:
 
     // Basic render loop
     void Tick();
-    void Render();
-
-    // Rendering helpers
-    void Clear();
 
     // IDeviceNotify
     virtual void OnDeviceLost() override;
@@ -58,6 +54,9 @@ private:
     void XM_CALLCONV DrawListener(X3DAUDIO_VECTOR position, DirectX::FXMVECTOR color);
 
     void Update(DX::StepTimer const& timer);
+    void Render();
+
+    void Clear();
 
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();
