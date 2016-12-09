@@ -7,6 +7,7 @@
 
 #include "pch.h"
 #include "InputInterfacingUWP.h"
+#include <ppltasks.h>
 
 #include "ATGColors.h"
 #include <Windows.Gaming.Input.h>
@@ -15,7 +16,7 @@ using namespace DirectX;
 using namespace Windows::Gaming::Input;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
-
+using namespace Platform::Collections;
 using Microsoft::WRL::ComPtr;
 
 namespace
@@ -33,96 +34,46 @@ namespace
         L"arcade sticks\n";
 }
 
-//--------------------------------------------------------------------------------------
-// Helper class for managing the input devices
-//--------------------------------------------------------------------------------------
-namespace InputManager
-{
-    UINavigationController^ GetMostRecentNavController()
-    {
-        UINavigationController^ navController = nullptr;
-
-        auto allNavControllers = UINavigationController::UINavigationControllers;
-        if (allNavControllers->Size > 0)
-        {
-            navController = allNavControllers->GetAt(0);
-        }
-
-        return navController;
-    }
-
-    ArcadeStick^ GetMostRecentArcadeStick()
-    {
-        ArcadeStick^ arcadeStick = nullptr;
-
-        auto allArcadeSticks = ArcadeStick::ArcadeSticks;
-        if (allArcadeSticks->Size > 0)
-        {
-            arcadeStick = allArcadeSticks->GetAt(0);
-        }
-
-        return arcadeStick;
-    }
-
-    RacingWheel^ GetMostRecentRacingWheel()
-    {
-        RacingWheel^ racingWheel = nullptr;
-
-        auto allRacingWheels = RacingWheel::RacingWheels;
-        if (allRacingWheels->Size > 0)
-        {
-            racingWheel = allRacingWheels->GetAt(0);
-        }
-
-        return racingWheel;
-    }
-};
-
 void Sample::GenerateNavString()
 {
     m_buttonString = L"Nav inputs pressed:  ";
 
-    if (static_cast<int>(m_navReading.RequiredButtons & RequiredUINavigationButtons::Up) != 0)
+    if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::Up) == RequiredUINavigationButtons::Up)
     {
         m_buttonString += L"Up ";
     }
 
-    if (static_cast<int>(m_navReading.RequiredButtons & RequiredUINavigationButtons::Down) != 0)
+    if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::Down) == RequiredUINavigationButtons::Down)
     {
         m_buttonString += L"Down ";
     }
 
-    if (static_cast<int>(m_navReading.RequiredButtons & RequiredUINavigationButtons::Left) != 0)
+    if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::Left) == RequiredUINavigationButtons::Left)
     {
         m_buttonString += L"Left ";
     }
 
-    if (static_cast<int>(m_navReading.RequiredButtons & RequiredUINavigationButtons::Right) != 0)
+    if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::Right) == RequiredUINavigationButtons::Right)
     {
         m_buttonString += L"Right ";
     }
 
-    if (static_cast<int>(m_navReading.RequiredButtons & RequiredUINavigationButtons::Accept) != 0)
+    if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::Accept) == RequiredUINavigationButtons::Accept)
     {
         m_buttonString += L"Accept ";
     }
 
-    if (static_cast<int>(m_navReading.RequiredButtons & RequiredUINavigationButtons::Cancel) != 0)
+    if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::Cancel) == RequiredUINavigationButtons::Cancel)
     {
         m_buttonString += L"Cancel ";
     }
 
-    if (static_cast<int>(m_navReading.RequiredButtons & RequiredUINavigationButtons::Menu) != 0)
+    if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::Menu) == RequiredUINavigationButtons::Menu)
     {
         m_buttonString += L"Menu ";
     }
 
-    if (static_cast<int>(m_navReading.RequiredButtons & RequiredUINavigationButtons::None) != 0)
-    {
-        m_buttonString += L"None ";
-    }
-
-    if (static_cast<int>(m_navReading.RequiredButtons & RequiredUINavigationButtons::View) != 0)
+    if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::View) == RequiredUINavigationButtons::View)
     {
         m_buttonString += L"View ";
     }
@@ -132,67 +83,62 @@ void Sample::GenerateStickString()
 {
     m_buttonString = L"Arcade Stick inputs pressed:  ";
 
-    if (static_cast<int>(m_arcadeReading.Buttons & ArcadeStickButtons::StickUp) != 0)
+    if ((m_arcadeReading.Buttons & ArcadeStickButtons::StickUp) == ArcadeStickButtons::StickUp)
     {
         m_buttonString += L"Up ";
     }
 
-    if (static_cast<int>(m_arcadeReading.Buttons & ArcadeStickButtons::StickDown) != 0)
+    if ((m_arcadeReading.Buttons & ArcadeStickButtons::StickDown) == ArcadeStickButtons::StickDown)
     {
         m_buttonString += L"Down ";
     }
 
-    if (static_cast<int>(m_arcadeReading.Buttons & ArcadeStickButtons::StickLeft) != 0)
+    if ((m_arcadeReading.Buttons & ArcadeStickButtons::StickLeft) == ArcadeStickButtons::StickLeft)
     {
         m_buttonString += L"Left ";
     }
 
-    if (static_cast<int>(m_arcadeReading.Buttons & ArcadeStickButtons::StickRight) != 0)
+    if ((m_arcadeReading.Buttons & ArcadeStickButtons::StickRight) == ArcadeStickButtons::StickRight)
     {
         m_buttonString += L"Right ";
     }
 
-    if (static_cast<int>(m_arcadeReading.Buttons & ArcadeStickButtons::Action1) != 0)
+    if ((m_arcadeReading.Buttons & ArcadeStickButtons::Action1) == ArcadeStickButtons::Action1)
     {
         m_buttonString += L"1 ";
     }
 
-    if (static_cast<int>(m_arcadeReading.Buttons & ArcadeStickButtons::Action2) != 0)
+    if ((m_arcadeReading.Buttons & ArcadeStickButtons::Action2) == ArcadeStickButtons::Action2)
     {
         m_buttonString += L"2 ";
     }
 
-    if (static_cast<int>(m_arcadeReading.Buttons & ArcadeStickButtons::Action3) != 0)
+    if ((m_arcadeReading.Buttons & ArcadeStickButtons::Action3) == ArcadeStickButtons::Action3)
     {
         m_buttonString += L"3 ";
     }
 
-    if (static_cast<int>(m_arcadeReading.Buttons & ArcadeStickButtons::Action4) != 0)
+    if ((m_arcadeReading.Buttons & ArcadeStickButtons::Action4) == ArcadeStickButtons::Action4)
     {
         m_buttonString += L"4 ";
     }
 
-    if (static_cast<int>(m_arcadeReading.Buttons & ArcadeStickButtons::Action5) != 0)
+    if ((m_arcadeReading.Buttons & ArcadeStickButtons::Action5) == ArcadeStickButtons::Action5)
     {
         m_buttonString += L"5 ";
     }
 
-    if (static_cast<int>(m_arcadeReading.Buttons & ArcadeStickButtons::Action6) != 0)
+    if ((m_arcadeReading.Buttons & ArcadeStickButtons::Action6) == ArcadeStickButtons::Action6)
     {
         m_buttonString += L"6 ";
     }
 
-    if (static_cast<int>(m_arcadeReading.Buttons & ArcadeStickButtons::None) != 0)
-    {
-        m_buttonString += L"None ";
-    }
-
-    if (static_cast<int>(m_arcadeReading.Buttons & ArcadeStickButtons::Special1) != 0)
+    if ((m_arcadeReading.Buttons & ArcadeStickButtons::Special1) == ArcadeStickButtons::Special1)
     {
         m_buttonString += L"S1 ";
     }
 
-    if (static_cast<int>(m_arcadeReading.Buttons & ArcadeStickButtons::Special2) != 0)
+    if ((m_arcadeReading.Buttons & ArcadeStickButtons::Special2) == ArcadeStickButtons::Special2)
     {
         m_buttonString += L"S2 ";
     }
@@ -236,6 +182,42 @@ void Sample::DrawWheel(XMFLOAT2 startPosition)
     }
 }
 
+UINavigationController^ Sample::GetFirstNavController()
+{
+    UINavigationController^ navController = nullptr;
+
+    if (m_navCollection->Size > 0)
+    {
+        navController = m_navCollection->GetAt(0);
+    }
+
+    return navController;
+}
+
+ArcadeStick^ Sample::GetFirstArcadeStick()
+{
+    ArcadeStick^ stick = nullptr;
+
+    if (m_stickCollection->Size > 0)
+    {
+        stick = m_stickCollection->GetAt(0);
+    }
+
+    return stick;
+}
+
+RacingWheel^ Sample::GetFirstWheel()
+{
+    RacingWheel^ wheel = nullptr;
+
+    if (m_wheelCollection->Size > 0)
+    {
+        wheel = m_wheelCollection->GetAt(0);
+    }
+
+    return wheel;
+}
+
 Sample::Sample()
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
@@ -256,43 +238,117 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
     m_currentMode = NavigationDevice;
     m_selectPressed = false;
     m_connected = false;
+    m_effectLoaded = false;
 
-    m_currentNav = InputManager::GetMostRecentNavController();
-    m_currentStick = InputManager::GetMostRecentArcadeStick();
-    m_currentWheel = InputManager::GetMostRecentRacingWheel();
-    m_currentNavNeedsRefresh = false;
-    m_currentWheelNeedsRefresh = false;
-    m_currentStickNeedsRefresh = false;
+    //Create an effect
+    m_effect = ref new ForceFeedback::ConstantForceEffect();
+    TimeSpan time;
+    time.Duration = 10000;
+    Numerics::float3 vector;
+    vector.x = 1.f;
+    vector.y = 0.f;
+    vector.z = 0.f;
+    m_effect->SetParameters(vector, time);
+
+    m_navCollection = ref new Vector<UINavigationController^>();
+    m_stickCollection = ref new Vector<ArcadeStick^>();
+    m_wheelCollection = ref new Vector<RacingWheel^>();
+
+    auto navControllers = UINavigationController::UINavigationControllers;
+    for (auto controller : navControllers)
+    {
+        m_navCollection->Append(controller);
+    }
+
+    auto stickControllers = ArcadeStick::ArcadeSticks;
+    for (auto controller : stickControllers)
+    {
+        m_stickCollection->Append(controller);
+    }
+
+    auto wheelControllers = RacingWheel::RacingWheels;
+    for (auto controller : wheelControllers)
+    {
+        m_wheelCollection->Append(controller);
+    }
 
     UINavigationController::UINavigationControllerAdded += ref new EventHandler<UINavigationController^ >([=](Platform::Object^, UINavigationController^ args)
     {
+        m_navCollection->Append(args);
         m_currentNavNeedsRefresh = true;
     });
 
     UINavigationController::UINavigationControllerRemoved += ref new EventHandler<UINavigationController^ >([=](Platform::Object^, UINavigationController^ args)
     {
-        m_currentNavNeedsRefresh = true;
+        unsigned int index;
+        if (m_navCollection->IndexOf(args, &index))
+        {
+            m_navCollection->RemoveAt(index);
+            m_currentNavNeedsRefresh = true;
+        }
     });
 
     ArcadeStick::ArcadeStickAdded += ref new EventHandler<ArcadeStick^ >([=](Platform::Object^, ArcadeStick^ args)
     {
+        m_stickCollection->Append(args);
         m_currentStickNeedsRefresh = true;
     });
 
     ArcadeStick::ArcadeStickRemoved += ref new EventHandler<ArcadeStick^ >([=](Platform::Object^, ArcadeStick^ args)
     {
-        m_currentStickNeedsRefresh = true;
+        unsigned int index;
+        if (m_stickCollection->IndexOf(args, &index))
+        {
+            m_stickCollection->RemoveAt(index);
+            m_currentStickNeedsRefresh = true;
+        }
     });
 
     RacingWheel::RacingWheelAdded += ref new EventHandler<RacingWheel^ >([=](Platform::Object^, RacingWheel^ args)
     {
+        m_wheelCollection->Append(args);
         m_currentWheelNeedsRefresh = true;
     });
 
     RacingWheel::RacingWheelRemoved += ref new EventHandler<RacingWheel^ >([=](Platform::Object^, RacingWheel^ args)
     {
-        m_currentWheelNeedsRefresh = true;
+        unsigned int index;
+        if (m_wheelCollection->IndexOf(args, &index))
+        {
+            m_wheelCollection->RemoveAt(index);
+            m_currentWheelNeedsRefresh = true;
+        }
     });
+
+    m_currentNav = GetFirstNavController();
+    m_currentStick = GetFirstArcadeStick();
+    m_currentWheel = GetFirstWheel();
+    m_currentNavNeedsRefresh = false;
+    m_currentWheelNeedsRefresh = false;
+    m_currentStickNeedsRefresh = false;
+    
+    if (m_currentWheel != nullptr && m_currentWheel->WheelMotor != nullptr)
+    {
+        IAsyncOperation<ForceFeedback::ForceFeedbackLoadEffectResult>^ request = m_currentWheel->WheelMotor->LoadEffectAsync(m_effect);
+
+        auto loadEffectTask = Concurrency::create_task(request);
+        loadEffectTask.then([this](ForceFeedback::ForceFeedbackLoadEffectResult result)
+        {
+            if (result == ForceFeedback::ForceFeedbackLoadEffectResult::Succeeded)
+            {
+                m_effectLoaded = true;
+            }
+            else
+            {
+                m_effectLoaded = false;
+            }
+        }).wait();
+    }
+
+    if (m_effectLoaded)
+    {
+        m_effect->Start();
+    }
 }
 
 #pragma region Frame Update
@@ -312,9 +368,11 @@ void Sample::Update(DX::StepTimer const& )
 {
     PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
 
+    bool toggleFFB = false;
+
     if (m_currentNavNeedsRefresh)
     {
-        auto mostRecentNav = InputManager::GetMostRecentNavController();
+        auto mostRecentNav = GetFirstNavController();
         if (m_currentNav != mostRecentNav)
         {
             m_currentNav = mostRecentNav;
@@ -334,17 +392,41 @@ void Sample::Update(DX::StepTimer const& )
 
     if (m_currentWheelNeedsRefresh)
     {
-        auto mostRecentWheel = InputManager::GetMostRecentRacingWheel();
+        auto mostRecentWheel = GetFirstWheel();
         if (m_currentWheel != mostRecentWheel)
         {
             m_currentWheel = mostRecentWheel;
         }
         m_currentWheelNeedsRefresh = false;
+
+
+        if (m_currentWheel != nullptr && m_currentWheel->WheelMotor != nullptr)
+        {
+            IAsyncOperation<ForceFeedback::ForceFeedbackLoadEffectResult>^ request = m_currentWheel->WheelMotor->LoadEffectAsync(m_effect);
+
+            auto loadEffectTask = Concurrency::create_task(request);
+            loadEffectTask.then([this](ForceFeedback::ForceFeedbackLoadEffectResult result)
+            {
+                if (result == ForceFeedback::ForceFeedbackLoadEffectResult::Succeeded)
+                {
+                    m_effectLoaded = true;
+                }
+                else
+                {
+                    m_effectLoaded = false;
+                }
+            }).wait();
+        }
+
+        if (m_effectLoaded)
+        {
+            m_effect->Start();
+        }
     }
 
     if (m_currentStickNeedsRefresh)
     {
-        auto mostRecentStick = InputManager::GetMostRecentArcadeStick();
+        auto mostRecentStick = GetFirstArcadeStick();
         if (m_currentStick != mostRecentStick)
         {
             m_currentStick = mostRecentStick;
@@ -354,19 +436,19 @@ void Sample::Update(DX::StepTimer const& )
 
     m_navReading = m_currentNav->GetCurrentReading();
 
-    if (static_cast<int>(m_navReading.RequiredButtons & RequiredUINavigationButtons::View))
+    if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::View) == RequiredUINavigationButtons::View)
     {
         Windows::ApplicationModel::Core::CoreApplication::Exit();
     }
 
     if (!m_selectPressed)
     {
-        if (static_cast<int>(m_navReading.RequiredButtons & RequiredUINavigationButtons::Right))
+        if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::Right) == RequiredUINavigationButtons::Right)
         {
             m_selectPressed = true;
             m_currentMode = (Modes)((m_currentMode + 1) % _countof(c_InputTestNames));
         }
-        else if (static_cast<int>(m_navReading.RequiredButtons & RequiredUINavigationButtons::Left))
+        else if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::Left) == RequiredUINavigationButtons::Left)
         {
             m_selectPressed = true;
             if (m_currentMode == NavigationDevice)
@@ -378,10 +460,14 @@ void Sample::Update(DX::StepTimer const& )
                 m_currentMode = (Modes)(m_currentMode - 1);
             }
         }
+        else if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::Accept) == RequiredUINavigationButtons::Accept)
+        {
+            toggleFFB = true;
+        }
     }
     else
     {
-        if (static_cast<int>(m_navReading.RequiredButtons & (RequiredUINavigationButtons::Right | RequiredUINavigationButtons::Left)) == 0)
+        if ((m_navReading.RequiredButtons & (RequiredUINavigationButtons::Right | RequiredUINavigationButtons::Left | RequiredUINavigationButtons::Accept)) == RequiredUINavigationButtons::None)
         {
             m_selectPressed = false;
         }
@@ -403,6 +489,18 @@ void Sample::Update(DX::StepTimer const& )
         if (m_currentWheel != nullptr)
         {
             m_wheelReading = m_currentWheel->GetCurrentReading();
+
+            if(m_effectLoaded && toggleFFB)
+            {
+                if (m_effect->State == ForceFeedback::ForceFeedbackEffectState::Running)
+                {
+                    m_effect->Stop();
+                }
+                else
+                {
+                    m_effect->Start();
+                }
+            }
         }
         break;
     }

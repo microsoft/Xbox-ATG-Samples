@@ -11,6 +11,18 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>{10ae51c0-7081-4e55-9ca3-4a9074bfb6a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Telemetry">
+      <UniqueIdentifier>{c568989c-aeee-411a-a6b4-eee373c85a53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\ARM">
+      <UniqueIdentifier>{5f6214a9-7a5d-4419-b50d-469a460ea941}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\Win32">
+      <UniqueIdentifier>{b6828000-8d7c-4706-8b26-6f8074ceba4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\x64">
+      <UniqueIdentifier>{e0b67a63-3205-4e35-9c4d-1ba673e64406}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -72,6 +84,15 @@
     <None Include="Readme.docx" />
     <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
       <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\ARM\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\ARM</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\x64\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\x64</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\Win32\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\Win32</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

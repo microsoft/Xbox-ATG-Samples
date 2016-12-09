@@ -11,6 +11,18 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>{961d0540-3154-4b69-aef4-b677b4205872}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Telemetry">
+      <UniqueIdentifier>{7736a951-7d81-422b-b3e5-d6deb1f36dcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\ARM">
+      <UniqueIdentifier>{45dcb6a9-c6c7-44d0-8a4b-1b76bb5985d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\Win32">
+      <UniqueIdentifier>{a23fadfd-9003-487c-b275-a1ca67a8387c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\x64">
+      <UniqueIdentifier>{e867f0b3-c060-493c-9dc4-1824dce11085}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -61,6 +73,15 @@
       <Filter>Assets</Filter>
     </None>
     <None Include="Readme.docx" />
+    <None Include="..\..\..\Kits\Telemetry\ARM\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\ARM</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\x64\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\x64</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\Win32\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\Win32</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\..\..\Media\Sounds\musicmono_adpcm.wav">

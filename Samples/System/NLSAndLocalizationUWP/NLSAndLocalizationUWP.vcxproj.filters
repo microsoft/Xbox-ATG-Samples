@@ -32,6 +32,18 @@
     <Filter Include="ja-JP">
       <UniqueIdentifier>{f87ce996-7ed7-4905-8f71-b37ceca2268e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Telemetry">
+      <UniqueIdentifier>{83ba8206-d36a-4dca-b8e1-b2141bb267cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\ARM">
+      <UniqueIdentifier>{9dc24fd0-6e57-4735-baf7-14597172ee60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\Win32">
+      <UniqueIdentifier>{c54b9ee8-1b83-4bc9-bd8d-0c25512d408a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\x64">
+      <UniqueIdentifier>{fe891299-0f87-4c2a-8845-917f77308160}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -129,6 +141,15 @@
       <Filter>ja-JP</Filter>
     </None>
     <None Include="Readme.docx" />
+    <None Include="..\..\..\Kits\Telemetry\ARM\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\ARM</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\x64\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\x64</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\Win32\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\Win32</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="de-DE\Resources.resw">

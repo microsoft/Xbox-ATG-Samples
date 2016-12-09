@@ -14,6 +14,18 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{585fe56b-1b7e-4a89-a58d-f4cacc87fdb4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Telemetry">
+      <UniqueIdentifier>{794cc3d6-0e7b-4894-a2bb-76693ce8fd46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\ARM">
+      <UniqueIdentifier>{ab4cb636-059b-4768-884b-e80112a8fafc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\Win32">
+      <UniqueIdentifier>{25efc997-e04c-4e39-82a5-e0df0da37682}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\x64">
+      <UniqueIdentifier>{64aa3df4-8b16-47cc-a86a-73e3ab20df6c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -64,6 +76,15 @@
     <none Include="SimpleLighting.hlsli">
       <Filter>Shaders</Filter>
     </none>
+    <None Include="..\..\..\Kits\Telemetry\ARM\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\ARM</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\x64\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\x64</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\Win32\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\Win32</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="TriangleVS.hlsl">

@@ -231,7 +231,7 @@ void Sample::Clear()
     PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Clear");
 
     // Clear the views.
-    auto renderTarget = m_deviceResources->GetBackBufferRenderTargetView();
+    auto renderTarget = m_deviceResources->GetRenderTargetView();
     auto depthStencil = m_deviceResources->GetDepthStencilView();
 
     // Use linear clear color for gamma-correct rendering

@@ -9,7 +9,7 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
-
+#include <collection.h>
 
 enum Modes
 {
@@ -52,6 +52,10 @@ private:
     void GenerateStickString();
     void DrawWheel(DirectX::XMFLOAT2 startPosition);
 
+    Windows::Gaming::Input::UINavigationController^ GetFirstNavController();
+    Windows::Gaming::Input::ArcadeStick^ GetFirstArcadeStick();
+    Windows::Gaming::Input::RacingWheel^ GetFirstWheel();
+
     void Update(DX::StepTimer const& timer);
     void Render();
 
@@ -74,6 +78,13 @@ private:
     Windows::Gaming::Input::ArcadeStickReading          m_arcadeReading;
     Windows::Gaming::Input::RacingWheel^                m_currentWheel;
     Windows::Gaming::Input::RacingWheelReading          m_wheelReading;
+    Windows::Gaming::Input::ForceFeedback::ConstantForceEffect^ m_effect;
+
+    Platform::Collections::Vector<Windows::Gaming::Input::UINavigationController^>^ m_navCollection;
+    Platform::Collections::Vector<Windows::Gaming::Input::ArcadeStick^>^ m_stickCollection;
+    Platform::Collections::Vector<Windows::Gaming::Input::RacingWheel^>^ m_wheelCollection;
+
+    bool                                                m_effectLoaded;
     bool                                                m_currentNavNeedsRefresh;
     bool                                                m_currentWheelNeedsRefresh;
     bool                                                m_currentStickNeedsRefresh;

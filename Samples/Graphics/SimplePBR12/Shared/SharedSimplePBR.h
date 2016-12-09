@@ -14,6 +14,8 @@
 
 #include "PBREffect/PBREffect.h"
 #include "ToneMapEffect/ToneMapEffect.h"
+#include "Skybox/Skybox.h"
+#include "GeometricPrimitive.h"
 #include "PBRModel.h"
 #include "DescriptorPile.h"
 
@@ -75,4 +77,7 @@ private:
 
     // Model
     std::vector< std::unique_ptr<ATG::PBRModel>>    m_pbrModels;
+
+    // Skybox
+    std::unique_ptr<ATG::Skybox>                    m_skybox;
 };

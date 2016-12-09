@@ -27,8 +27,8 @@
 Texture2D<float4> PBR_AlbedoTexture     : register(t0);
 Texture2D<float3> PBR_NormalTexture     : register(t1);
 Texture2D<float3> PBR_RMATexture        : register(t2);
-Texture2D<float3> PBR_RadianceTexture   : register(t3);
-Texture2D<float3> PBR_IrradianceTexture : register(t4);
+TextureCube<float3> PBR_RadianceTexture   : register(t3);
+TextureCube<float3> PBR_IrradianceTexture : register(t4);
 
 sampler PBR_SurfaceSampler : register(s0);
 sampler PBR_IBLSampler     : register(s1);

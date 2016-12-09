@@ -47,6 +47,21 @@
     <Filter Include="Assets\Models\ToyRobot\WoodBlocks">
       <UniqueIdentifier>{13ff252a-7fb4-45f0-a9e1-db019f8db4fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ATG Tool Kit\Skybox">
+      <UniqueIdentifier>{d8f7b660-fa37-41af-aea4-92bcffc3f336}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UWP\Telemetry">
+      <UniqueIdentifier>{d834c0d0-5610-4e42-9b94-0372067fa5fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UWP\Telemetry\ARM">
+      <UniqueIdentifier>{a3a31c9e-bf2a-42da-abc8-ab3529601ccb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UWP\Telemetry\Win32">
+      <UniqueIdentifier>{dc402fac-c36c-431f-9437-5c69bd450cf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UWP\Telemetry\x64">
+      <UniqueIdentifier>{30597bb4-101e-4958-aedc-5971c63a8260}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shared\SharedSimplePBR.h">
@@ -88,6 +103,12 @@
     <ClInclude Include="..\..\..\Kits\ATGTK\ToneMapEffect\ToneMapEffect.h">
       <Filter>ATG Tool Kit\ToneMapEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\Skybox\Skybox.h">
+      <Filter>ATG Tool Kit\Skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\Skybox\SkyboxEffect.h">
+      <Filter>ATG Tool Kit\Skybox</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Shared\SharedSimplePBR.cpp">
@@ -113,6 +134,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\Kits\ATGTK\ToneMapEffect\ToneMapEffect.cpp">
       <Filter>ATG Tool Kit\ToneMapEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\Skybox\SkyboxEffect.cpp">
+      <Filter>ATG Tool Kit\Skybox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -194,6 +218,18 @@
     <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
       <Filter>Assets\Fonts</Filter>
     </None>
+    <None Include="..\..\..\Kits\ATGTK\Skybox\SkyboxEffect_Common.hlsli">
+      <Filter>ATG Tool Kit\Skybox</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\ARM\ATGTelemetryUWP.dll">
+      <Filter>UWP\Telemetry\ARM</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\x64\ATGTelemetryUWP.dll">
+      <Filter>UWP\Telemetry\x64</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\Win32\ATGTelemetryUWP.dll">
+      <Filter>UWP\Telemetry\Win32</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="UWP\Package.appxmanifest">
@@ -215,6 +251,12 @@
     </FxCompile>
     <FxCompile Include="..\..\..\Kits\ATGTK\ToneMapEffect\ToneMapEffect_VS.hlsl">
       <Filter>ATG Tool Kit\ToneMapEffect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\Kits\ATGTK\Skybox\SkyboxEffect_PS.hlsl">
+      <Filter>ATG Tool Kit\Skybox</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\Kits\ATGTK\Skybox\SkyboxEffect_VS.hlsl">
+      <Filter>ATG Tool Kit\Skybox</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

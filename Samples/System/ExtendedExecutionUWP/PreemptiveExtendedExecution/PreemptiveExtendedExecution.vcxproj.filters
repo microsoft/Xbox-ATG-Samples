@@ -14,6 +14,18 @@
     <Filter Include="Media">
       <UniqueIdentifier>{85016833-bba2-48ac-88c8-c3f082f38b38}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Telemetry">
+      <UniqueIdentifier>{c8913420-6c4c-47bd-8aec-283fdcd5d986}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\ARM">
+      <UniqueIdentifier>{6619b393-63f9-4f8f-9723-1e308b35d569}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\Win32">
+      <UniqueIdentifier>{995cb962-c394-4bc2-8226-74b9e67c505c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\x64">
+      <UniqueIdentifier>{d165c936-ff9e-49e0-b1ea-ffa9eefdeed3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -70,5 +82,14 @@
       <Filter>Media</Filter>
     </None>
     <None Include="..\Readme.docx" />
+    <None Include="..\..\..\..\Kits\Telemetry\ARM\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\ARM</Filter>
+    </None>
+    <None Include="..\..\..\..\Kits\Telemetry\x64\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\x64</Filter>
+    </None>
+    <None Include="..\..\..\..\Kits\Telemetry\Win32\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\Win32</Filter>
+    </None>
   </ItemGroup>
 </Project>

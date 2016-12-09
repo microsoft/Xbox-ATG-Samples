@@ -325,6 +325,46 @@ void Sample::Render()
         }
         break;
 
+    case InfoPage::EASCLIENTINFO:
+        {
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"EasClientDeviceInformation", mid, y, ATG::Colors::LightGrey, m_scale);
+
+            using namespace Windows::Security::ExchangeActiveSyncProvisioning;
+
+            auto easinfo = ref new EasClientDeviceInformation;
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Id", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), easinfo->Id.ToString()->Data(), right, y, m_scale);
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"FriendlyName", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), easinfo->FriendlyName->Data(), right, y, m_scale);
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"OperatingSystem", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), easinfo->OperatingSystem->Data(), right, y, m_scale);
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"SystemManufacturer", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), easinfo->SystemManufacturer->Data(), right, y, m_scale);
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"SystemProductName", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), easinfo->SystemProductName->Data(), right, y, m_scale);
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"SystemSku", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), easinfo->SystemSku->Data(), right, y, m_scale);
+
+            if (!easinfo->SystemHardwareVersion->IsEmpty())
+            {
+                DrawStringLeft(m_batch.get(), m_smallFont.get(), L"SystemHardwareVersion", left, y, m_scale);
+                y += DrawStringRight(m_batch.get(), m_smallFont.get(), easinfo->SystemHardwareVersion->Data(), right, y, m_scale);
+            }
+
+            if (!easinfo->SystemFirmwareVersion->IsEmpty())
+            {
+                DrawStringLeft(m_batch.get(), m_smallFont.get(), L"SystemFirmwareVersion", left, y, m_scale);
+                y += DrawStringRight(m_batch.get(), m_smallFont.get(), easinfo->SystemFirmwareVersion->Data(), right, y, m_scale);
+            }
+        }
+        break;
+
     case InfoPage::APICONTRACT:
         {
             y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"IsApiContractPresent", mid, y, ATG::Colors::LightGrey, m_scale);
@@ -992,6 +1032,9 @@ void Sample::CreateDeviceDependentResources()
 // Allocate all memory resources that change on a window SizeChanged event.
 void Sample::CreateWindowSizeDependentResources()
 {
+    auto vp = m_deviceResources->GetScreenViewport();
+    m_batch->SetViewport(vp);
+
     m_batch->SetRotation(m_deviceResources->GetRotation());
 
     auto size = m_deviceResources->GetOutputSize();

@@ -32,7 +32,8 @@ namespace DX
         if (!inFile)
         {
             wchar_t moduleName[_MAX_PATH];
-            (void)GetModuleFileNameW(nullptr, moduleName, _MAX_PATH);
+            if (!GetModuleFileNameW(nullptr, moduleName, _MAX_PATH))
+                throw std::exception("GetModuleFileName");
 
             wchar_t drive[_MAX_DRIVE];
             wchar_t path[_MAX_PATH];

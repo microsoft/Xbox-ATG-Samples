@@ -10,6 +10,7 @@
 #include "DeviceResources.h"
 #include "StepTimer.h"
 #include <Windows.Gaming.Input.h>
+#include <collection.h>
 
 // A basic sample implementation that creates a D3D11 device and
 // provides a render loop.
@@ -44,6 +45,7 @@ private:
 
     void Update(DX::StepTimer const& timer);
     void Render();
+    Windows::Gaming::Input::Gamepad^ GetFirstGamepad();
 
     void Clear();
 
@@ -57,6 +59,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_background;
 
     //Gamepad states
+    Platform::Collections::Vector<Windows::Gaming::Input::Gamepad^>^ m_localCollection;
     Windows::Gaming::Input::GamepadReading      m_reading;
     Windows::Gaming::Input::Gamepad^            m_currentGamepad;
 

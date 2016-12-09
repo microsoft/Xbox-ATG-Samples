@@ -163,6 +163,9 @@ void SharedSimplePBR::Update(DX::StepTimer const& timer)
         effect->SetProjection(m_camera->GetProjection());
         effect->SetWorld(Matrix::CreateRotationY(XM_PI));
     }
+
+    // Update skybox
+    m_skybox->Update(m_camera->GetView(), m_camera->GetProjection());
 }
 
 void SharedSimplePBR::Render()
@@ -182,25 +185,9 @@ void SharedSimplePBR::Render()
     // Draw to HDR buffer
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Render HDR");
 
-    // Sky 
-    {
-        auto depthStencilDescriptor = deviceResources->GetDepthStencilView();
-        auto toneMapRTVDescriptor = m_rtvHeap->GetFirstCpuHandle();
-        commandList->OMSetRenderTargets(1, &toneMapRTVDescriptor, FALSE, &depthStencilDescriptor);
-
-        // input texture size
-        auto texSize = XMUINT2((uint32_t)m_radianceTexture->GetDesc().Width,
-            (uint32_t)m_radianceTexture->GetDesc().Width);
-
-        // Render spherical background
-         auto view = deviceResources->GetScreenViewport();
-        RECT position = { 0, 0, (LONG)view.Width, (LONG)view.Height };
-        
-        m_spriteBatch->SetViewport(view);
-        m_spriteBatch->Begin(commandList, SpriteSortMode_Immediate);
-        m_spriteBatch->Draw(m_srvPile->GetGpuHandle(m_radTexDescIndex), texSize, position);
-        m_spriteBatch->End();
-    }
+    auto depthStencilDescriptor = deviceResources->GetDepthStencilView();
+    auto toneMapRTVDescriptor = m_rtvHeap->GetFirstCpuHandle();
+    commandList->OMSetRenderTargets(1, &toneMapRTVDescriptor, FALSE, &depthStencilDescriptor);
 
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Model Draw");
 #ifndef TEST_SCENE
@@ -210,9 +197,17 @@ void SharedSimplePBR::Render()
         m->GetModel()->DrawOpaque(commandList);
     }
 #else
-    s_testScene->Render(commandList, m_camera->GetView(), m_camera->GetProjection());
+   s_testScene->Render(commandList, m_camera->GetView(), m_camera->GetProjection());
 #endif
     PIXEndEvent(commandList); // Model Draw
+
+    PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Sky box");
+    {  
+        // Render test skybox
+        m_skybox->Render(commandList);
+    }
+
+    PIXEndEvent(commandList);
 
     PIXEndEvent(commandList); // Render HDR
 
@@ -277,6 +272,32 @@ void SharedSimplePBR::CreateDeviceDependentResources()
     ResourceUploadBatch resourceUpload(device);
     resourceUpload.Begin();
 
+    // Radiance (specular environment) texture
+    DX::ThrowIfFailed(
+        DirectX::CreateDDSTextureFromFile(
+            device,
+            resourceUpload,
+            L"Stonewall_Ref_radiance.dds",
+            m_radianceTexture.ReleaseAndGetAddressOf(),
+            false
+            ));
+
+    m_radTexDescIndex = m_srvPile->Allocate();
+    DirectX::CreateShaderResourceView(device, m_radianceTexture.Get(), m_srvPile->GetCpuHandle(m_radTexDescIndex), true);
+
+    // Irradiance (diffuse environment) texture
+    DX::ThrowIfFailed(
+        DirectX::CreateDDSTextureFromFile(
+            device,
+            resourceUpload,
+            L"Stonewall_Ref_irradiance.dds",
+            m_irradianceTexture.ReleaseAndGetAddressOf(),
+            false
+            ));
+
+    m_irrTexDescIndex = m_srvPile->Allocate();
+    DirectX::CreateShaderResourceView(device, m_irradianceTexture.Get(), m_srvPile->GetCpuHandle(m_irrTexDescIndex), true);
+
     // Pipeline state - for rendering direct to back buffer
     {
         RenderTargetState backBufferRts(Sample::GetBackBufferFormat(), Sample::GetDepthFormat());
@@ -305,7 +326,7 @@ void SharedSimplePBR::CreateDeviceDependentResources()
 
         // Tone map batch
         m_toneMapBatch = std::make_unique<DirectX::PrimitiveBatch<ToneMapVert>>(device);
-    }
+   }
 
     // Pipeline state - for rendering to HDR buffer
     {
@@ -323,37 +344,14 @@ void SharedSimplePBR::CreateDeviceDependentResources()
             m_pbrModels[i] = std::make_unique<ATG::PBRModel>(s_modelPaths[i]);
             m_pbrModels[i]->Create(device, hdrBufferRts, m_commonStates.get(), resourceUpload, m_srvPile.get());
         }
+
+        // Skybox
+        m_skybox = std::make_unique<ATG::Skybox>(device, m_srvPile->GetGpuHandle(m_radTexDescIndex), hdrBufferRts, *m_commonStates);
     }
  
-    // Radiance (specular environment) texture
-    DX::ThrowIfFailed(
-        DirectX::CreateDDSTextureFromFile(
-            device,
-            resourceUpload,
-            L"Stonewall_Ref_radiance.dds",
-            m_radianceTexture.ReleaseAndGetAddressOf(),
-            false
-        ));
-
-    m_radTexDescIndex = m_srvPile->Allocate();
-    DirectX::CreateShaderResourceView(device, m_radianceTexture.Get(), m_srvPile->GetCpuHandle(m_radTexDescIndex));
-
-    // Irradiance (diffuse environment) texture
-    DX::ThrowIfFailed(
-        DirectX::CreateDDSTextureFromFile(
-            device,
-            resourceUpload,
-            L"Stonewall_Ref_irradiance.dds",
-            m_irradianceTexture.ReleaseAndGetAddressOf(),
-            false
-        ));
-
-    m_irrTexDescIndex = m_srvPile->Allocate();
-    DirectX::CreateShaderResourceView(device, m_irradianceTexture.Get(), m_srvPile->GetCpuHandle(m_irrTexDescIndex));
-
     // The current map has too much detail removed at last mips, scale back down to
     // match reference.
-    const int numMips = m_radianceTexture->GetDesc().MipLevels - 2;
+    const int numMips = m_radianceTexture->GetDesc().MipLevels - 3;
 
     // Set lighting textures for each model
     for (auto& m : m_pbrModels)
@@ -362,14 +360,14 @@ void SharedSimplePBR::CreateDeviceDependentResources()
             m_srvPile->GetGpuHandle(m_radTexDescIndex),
             numMips,
             m_srvPile->GetGpuHandle(m_irrTexDescIndex),
-            m_commonStates->LinearClamp());
+            m_commonStates->LinearWrap());
     }
 
     s_testScene = std::make_unique<TestScene>();
     s_testScene->Init(device, m_srvPile->GetGpuHandle(m_radTexDescIndex),
         numMips,
         m_srvPile->GetGpuHandle(m_irrTexDescIndex),
-        m_commonStates->LinearClamp());
+        m_commonStates->LinearWrap());
 
     auto finished = resourceUpload.End(m_sample->m_deviceResources->GetCommandQueue());
     finished.wait();

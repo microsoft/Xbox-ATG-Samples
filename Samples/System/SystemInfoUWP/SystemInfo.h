@@ -78,6 +78,7 @@ private:
         GETPROCESSINFO,
         GLOBALMEMORYSTATUS,
         ANALYTICSINFO,
+        EASCLIENTINFO,
         APICONTRACT,
         CPUSETS,
         DXGI,

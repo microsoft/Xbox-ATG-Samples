@@ -8,6 +8,18 @@
       <UniqueIdentifier>4573178e-7ad6-400a-b813-912afa4bc70d</UniqueIdentifier>
       <Extensions>bmp;dds;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
     </Filter>
+    <Filter Include="Common\Telemetry">
+      <UniqueIdentifier>{2ec9fa2e-776a-4bb0-8b62-c0f05b769eff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\ARM">
+      <UniqueIdentifier>{360453c5-d1d9-44b0-8ce5-f5303410273c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\Win32">
+      <UniqueIdentifier>{2e6f1d6d-2474-4e62-8e4e-2bbb4e098545}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\x64">
+      <UniqueIdentifier>{e3b83398-69af-46b2-a466-968f35c6b111}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -69,6 +81,15 @@
     </None>
     <None Include="..\..\..\Media\Sounds\ADPCMdroid.xwb">
       <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\ARM\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\ARM</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\x64\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\x64</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\Win32\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\Win32</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

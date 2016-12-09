@@ -103,7 +103,6 @@ namespace ATG
                                          pile->GetGpuHandle(start + Normal),
                                          pile->GetGpuHandle(start + RMA),
                                          commonStates->AnisotropicClamp());
-            m_effect->EnableDefaultLighting();
         }
 
         const DirectX::Model* GetModel() const { return m_model.get(); }

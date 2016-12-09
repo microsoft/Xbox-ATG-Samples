@@ -30,8 +30,8 @@ namespace DX
         void ValidateDevice();
         void HandleDeviceLost();
         void RegisterDeviceNotify(IDeviceNotify* deviceNotify) { m_deviceNotify = deviceNotify; }
-        void Prepare();
-        void Present();
+        void Prepare(D3D12_RESOURCE_STATES beforeState = D3D12_RESOURCE_STATE_PRESENT);
+        void Present(D3D12_RESOURCE_STATES beforeState = D3D12_RESOURCE_STATE_RENDER_TARGET);
         void WaitForGpu() noexcept;
 
         // Device Accessors.

@@ -15,24 +15,9 @@ using namespace DirectX;
 using namespace Windows::Gaming::Input;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
+using namespace Platform::Collections;
 
 using Microsoft::WRL::ComPtr;
-
-namespace GamepadManager
-{
-    Gamepad^ GetFirstGamepad()
-    {
-        Gamepad^ gamepad = nullptr;
-
-        auto allGamepads = Gamepad::Gamepads;
-        if (allGamepads->Size > 0)
-        {
-            gamepad = allGamepads->GetAt(0);
-        }
-
-        return gamepad;
-    }
-};
 
 Sample::Sample()
 {
@@ -52,18 +37,32 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
     m_deviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
 
-    m_currentGamepad = GamepadManager::GetFirstGamepad();
-    m_currentGamepadNeedsRefresh = false;
+    m_localCollection = ref new Vector<Gamepad^>();
+
+    auto gamepads = Gamepad::Gamepads;
+    for (auto gamepad : gamepads)
+    {
+        m_localCollection->Append(gamepad);
+    }
 
     Gamepad::GamepadAdded += ref new EventHandler<Gamepad^ >([=](Platform::Object^, Gamepad^ args)
     {
+        m_localCollection->Append(args);
         m_currentGamepadNeedsRefresh = true;
     });
 
     Gamepad::GamepadRemoved += ref new EventHandler<Gamepad^ >([=](Platform::Object^, Gamepad^ args)
     {
-        m_currentGamepadNeedsRefresh = true;
+        unsigned int index;
+        if (m_localCollection->IndexOf(args, &index))
+        {
+            m_localCollection->RemoveAt(index);
+            m_currentGamepadNeedsRefresh = true;
+        }
     });
+
+    m_currentGamepad = GetFirstGamepad();
+    m_currentGamepadNeedsRefresh = false;
 }
 
 #pragma region Frame Update
@@ -78,6 +77,18 @@ void Sample::Tick()
     Render();
 }
 
+Gamepad^ Sample::GetFirstGamepad()
+{
+    Gamepad^ gamepad = nullptr;
+
+    if (m_localCollection->Size > 0)
+    {
+        gamepad = m_localCollection->GetAt(0);
+    }
+
+    return gamepad;
+}
+
 // Updates the world.
 void Sample::Update(DX::StepTimer const&)
 {
@@ -85,7 +96,7 @@ void Sample::Update(DX::StepTimer const&)
 
     if (m_currentGamepadNeedsRefresh)
     {
-        auto mostRecentGamepad = GamepadManager::GetFirstGamepad();
+        auto mostRecentGamepad = GetFirstGamepad();
         if (m_currentGamepad != mostRecentGamepad)
         {
             m_currentGamepad = mostRecentGamepad;
@@ -104,72 +115,72 @@ void Sample::Update(DX::StepTimer const&)
 
     m_buttonString = L"Buttons pressed:  ";
 
-    if (static_cast<int>(m_reading.Buttons & GamepadButtons::DPadUp) != 0)
+    if ((m_reading.Buttons & GamepadButtons::DPadUp) == GamepadButtons::DPadUp)
     {
         m_buttonString += L"[DPad]Up ";
     }
     
-    if (static_cast<int>(m_reading.Buttons & GamepadButtons::DPadDown) != 0)
+    if ((m_reading.Buttons & GamepadButtons::DPadDown) == GamepadButtons::DPadDown)
     {
         m_buttonString += L"[DPad]Down ";
     }
     
-    if (static_cast<int>(m_reading.Buttons & GamepadButtons::DPadRight) != 0)
+    if ((m_reading.Buttons & GamepadButtons::DPadRight) == GamepadButtons::DPadRight)
     {
         m_buttonString += L"[DPad]Right ";
     }
     
-    if (static_cast<int>(m_reading.Buttons & GamepadButtons::DPadLeft) != 0)
+    if ((m_reading.Buttons & GamepadButtons::DPadLeft) == GamepadButtons::DPadLeft)
     {
         m_buttonString += L"[DPad]Left ";
     }
     
-    if (static_cast<int>(m_reading.Buttons & GamepadButtons::A) != 0)
+    if ((m_reading.Buttons & GamepadButtons::A) == GamepadButtons::A)
     {
         m_buttonString += L"[A] ";
     }
     
-    if (static_cast<int>(m_reading.Buttons & GamepadButtons::B) != 0)
+    if ((m_reading.Buttons & GamepadButtons::B) == GamepadButtons::B)
     {
         m_buttonString += L"[B] ";
     }
     
-    if (static_cast<int>(m_reading.Buttons & GamepadButtons::X) != 0)
+    if ((m_reading.Buttons & GamepadButtons::X) == GamepadButtons::X)
     {
         m_buttonString += L"[X] ";
     }
     
-    if (static_cast<int>(m_reading.Buttons & GamepadButtons::Y) != 0)
+    if ((m_reading.Buttons & GamepadButtons::Y) == GamepadButtons::Y)
     {
         m_buttonString += L"[Y] ";
     }
     
-    if (static_cast<int>(m_reading.Buttons & GamepadButtons::LeftShoulder) != 0)
+    if ((m_reading.Buttons & GamepadButtons::LeftShoulder) == GamepadButtons::LeftShoulder)
     {
         m_buttonString += L"[LB] ";
     }
     
-    if (static_cast<int>(m_reading.Buttons & GamepadButtons::RightShoulder) != 0)
+    if ((m_reading.Buttons & GamepadButtons::RightShoulder) == GamepadButtons::RightShoulder)
     {
         m_buttonString += L"[RB] ";
     }
     
-    if (static_cast<int>(m_reading.Buttons & GamepadButtons::LeftThumbstick) != 0)
+    if ((m_reading.Buttons & GamepadButtons::LeftThumbstick) == GamepadButtons::LeftThumbstick)
     {
         m_buttonString += L"[LThumb] ";
     }
     
-    if (static_cast<int>(m_reading.Buttons & GamepadButtons::RightThumbstick) != 0)
+    if ((m_reading.Buttons & GamepadButtons::RightThumbstick) == GamepadButtons::RightThumbstick)
     {
         m_buttonString += L"[RThumb] ";
     }
     
-    if (static_cast<int>(m_reading.Buttons & GamepadButtons::Menu) != 0)
+    if ((m_reading.Buttons & GamepadButtons::Menu) == GamepadButtons::Menu)
     {
         m_buttonString += L"[Menu] ";
     }
     
-    if (static_cast<int>(m_reading.Buttons & GamepadButtons::View) != 0)
+    if ((m_reading.Buttons & GamepadButtons::View) == GamepadButtons::View)
     {
         m_buttonString += L"[View] ";
     }

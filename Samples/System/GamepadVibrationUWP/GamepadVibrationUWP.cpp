@@ -15,6 +15,7 @@ using namespace DirectX;
 using namespace Windows::Gaming::Input;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
+using namespace Platform::Collections;
 
 using Microsoft::WRL::ComPtr;
 
@@ -73,42 +74,6 @@ namespace
     float footstepsRightTriggerLevels[] = { 0.0f, 0.0f, 0.3f, 0.0f };
 }
 
-//--------------------------------------------------------------------------------------
-// Helper class for managing the gamepads
-//--------------------------------------------------------------------------------------
-namespace GamepadManager
-{
-    Gamepad^ GetMostRecentGamepad()
-    {
-        Gamepad^ gamepad = nullptr;
-
-        auto allGamepads = Gamepad::Gamepads;
-        if (allGamepads->Size > 0)
-        {
-            gamepad = allGamepads->GetAt(0);
-        }
-
-        return gamepad;
-    }
-
-    bool IsGamepadValid(Gamepad^ gamepad)
-    {
-        IIterator<Gamepad^>^ it = Gamepad::Gamepads->First();
-
-        while (it->HasCurrent)
-        {
-            if (gamepad == it->Current)
-            {
-                return true;
-            }
-
-            it->MoveNext();
-        }
-
-        return false;
-    }
-};
-
 Sample::Sample()
 {
     // Renders only 2D, so no need for a depth buffer.
@@ -127,19 +92,34 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
     m_deviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
     
-    m_currentGamepad = GamepadManager::GetMostRecentGamepad();
-    m_currentGamepadNeedsRefresh = false;
     m_connected = false;
+
+    m_localCollection = ref new Vector<Gamepad^>();
+
+    auto gamepads = Gamepad::Gamepads;
+    for (auto gamepad : gamepads)
+    {
+        m_localCollection->Append(gamepad);
+    }
 
     Gamepad::GamepadAdded += ref new EventHandler<Gamepad^ >([=](Platform::Object^, Gamepad^ args)
     {
+        m_localCollection->Append(args);
         m_currentGamepadNeedsRefresh = true;
     });
 
     Gamepad::GamepadRemoved += ref new EventHandler<Gamepad^ >([=](Platform::Object^, Gamepad^ args)
     {
-        m_currentGamepadNeedsRefresh = true;
+        unsigned int index;
+        if (m_localCollection->IndexOf(args, &index))
+        {
+            m_localCollection->RemoveAt(index);
+            m_currentGamepadNeedsRefresh = true;
+        }
     });
+
+    m_currentGamepad = GetFirstGamepad();
+    m_currentGamepadNeedsRefresh = false;
 
     QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER *>(&m_frequency));
 }
@@ -161,7 +141,7 @@ void Sample::InitializeCurrentGamepad()
 
 void Sample::ShutdownCurrentGamepad()
 {
-    if (m_currentGamepad && GamepadManager::IsGamepadValid(m_currentGamepad))
+    if (m_currentGamepad)
     {
         GamepadVibration vibration = { 0 };
         m_currentGamepad->Vibration = vibration;
@@ -253,6 +233,18 @@ void Sample::Tick()
     Render();
 }
 
+Gamepad^ Sample::GetFirstGamepad()
+{
+    Gamepad^ gamepad = nullptr;
+
+    if (m_localCollection->Size > 0)
+    {
+        gamepad = m_localCollection->GetAt(0);
+    }
+
+    return gamepad;
+}
+
 // Updates the world.
 void Sample::Update(DX::StepTimer const&)
 {
@@ -260,7 +252,7 @@ void Sample::Update(DX::StepTimer const&)
 
     if (m_currentGamepadNeedsRefresh)
     {
-        auto mostRecentGamepad = GamepadManager::GetMostRecentGamepad();
+        auto mostRecentGamepad = GetFirstGamepad();
         if (m_currentGamepad != mostRecentGamepad)
         {
             ShutdownCurrentGamepad();
@@ -281,20 +273,20 @@ void Sample::Update(DX::StepTimer const&)
 
     m_reading = m_currentGamepad->GetCurrentReading();
 
-    if (static_cast<int>(m_reading.Buttons & GamepadButtons::View))
+    if ((m_reading.Buttons & GamepadButtons::View) == GamepadButtons::View)
     {
         Windows::ApplicationModel::Core::CoreApplication::Exit();
     }
 
     if (!m_dPadPressed)
     {
-        if (static_cast<int>(m_reading.Buttons & GamepadButtons::DPadRight))
+        if ((m_reading.Buttons & GamepadButtons::DPadRight) == GamepadButtons::DPadRight)
         {
             m_dPadPressed = true;
             m_selectedTriggerEffect = static_cast<TRIGGEREFFECTS>((static_cast<int>(m_selectedTriggerEffect) + 1) % TRIGGEREFFECTS_MAX);
             InitializeImpulseTriggerEffects();
         }
-        else if (static_cast<int>(m_reading.Buttons & GamepadButtons::DPadLeft))
+        else if ((m_reading.Buttons & GamepadButtons::DPadLeft) == GamepadButtons::DPadLeft)
         {
             m_dPadPressed = true;
             m_selectedTriggerEffect = static_cast<TRIGGEREFFECTS>((static_cast<int>(m_selectedTriggerEffect) + TRIGGEREFFECTS_MAX - 1) % TRIGGEREFFECTS_MAX);
@@ -303,7 +295,7 @@ void Sample::Update(DX::StepTimer const&)
     }
     else
     {
-        if (static_cast<int>(m_reading.Buttons & (GamepadButtons::DPadRight | GamepadButtons::DPadLeft)) == 0)
+        if ((m_reading.Buttons & (GamepadButtons::DPadRight | GamepadButtons::DPadLeft)) == GamepadButtons::None)
         {
             m_dPadPressed = false;
         }

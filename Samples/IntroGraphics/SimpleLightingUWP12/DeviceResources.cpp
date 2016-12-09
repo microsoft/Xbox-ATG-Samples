@@ -100,6 +100,7 @@ void DX::DeviceResources::CreateDeviceResources()
 {
 #if defined(_DEBUG)
     // Enable the debug layer (only available if the Graphics Tools feature-on-demand is enabled).
+    bool debugDXGI = false;
     {
         ComPtr<ID3D12Debug> debugController;
         if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(debugController.GetAddressOf()))))
@@ -114,10 +115,16 @@ void DX::DeviceResources::CreateDeviceResources()
         ComPtr<IDXGIInfoQueue> dxgiInfoQueue;
         if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiInfoQueue.GetAddressOf()))))
         {
+            debugDXGI = true;
+
+            DX::ThrowIfFailed(CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(m_dxgiFactory.ReleaseAndGetAddressOf())));
+
             dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
             dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
         }
     }
+
+    if (!debugDXGI)
 #endif
 
     DX::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(m_dxgiFactory.ReleaseAndGetAddressOf())));
@@ -217,10 +224,10 @@ void DX::DeviceResources::CreateDeviceResources()
     m_fenceValues[m_backBufferIndex]++;
 
     m_fenceEvent.Attach(CreateEvent(nullptr, FALSE, FALSE, nullptr));
-	if (!m_fenceEvent.IsValid())
-	{
-		throw std::exception("CreateEvent");
-	}
+    if (!m_fenceEvent.IsValid())
+    {
+        throw std::exception("CreateEvent");
+    }
 }
 
 // These resources need to be recreated every time the window size is changed.
@@ -519,23 +526,29 @@ void DX::DeviceResources::HandleDeviceLost()
 }
 
 // Prepare the command list and render target for rendering.
-void DX::DeviceResources::Prepare()
+void DX::DeviceResources::Prepare(D3D12_RESOURCE_STATES beforeState)
 {
     // Reset command list and allocator.
     DX::ThrowIfFailed(m_commandAllocators[m_backBufferIndex]->Reset());
     DX::ThrowIfFailed(m_commandList->Reset(m_commandAllocators[m_backBufferIndex].Get(), nullptr));
 
-    // Transition the render target into the correct state to allow for drawing into it.
-    D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-    m_commandList->ResourceBarrier(1, &barrier);
+    if (beforeState != D3D12_RESOURCE_STATE_RENDER_TARGET)
+    {
+        // Transition the render target into the correct state to allow for drawing into it.
+        D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex].Get(), beforeState, D3D12_RESOURCE_STATE_RENDER_TARGET);
+        m_commandList->ResourceBarrier(1, &barrier);
+    }
 }
 
 // Present the contents of the swap chain to the screen.
-void DX::DeviceResources::Present() 
+void DX::DeviceResources::Present(D3D12_RESOURCE_STATES beforeState)
 {
-    // Transition the render target to the state that allows it to be presented to the display.
-    D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-    m_commandList->ResourceBarrier(1, &barrier);
+    if (beforeState != D3D12_RESOURCE_STATE_PRESENT)
+    {
+        // Transition the render target to the state that allows it to be presented to the display.
+        D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_renderTargets[m_backBufferIndex].Get(), beforeState, D3D12_RESOURCE_STATE_PRESENT);
+        m_commandList->ResourceBarrier(1, &barrier);
+    }
 
     // Send the command list off to the GPU for processing.
     DX::ThrowIfFailed(m_commandList->Close());

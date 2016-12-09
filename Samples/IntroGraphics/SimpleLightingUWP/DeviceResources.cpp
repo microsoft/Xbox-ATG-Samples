@@ -237,6 +237,8 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
     m_d3dContext->OMSetRenderTargets(_countof(nullViews), nullViews, nullptr);
     m_d3dRenderTargetView.Reset();
     m_d3dDepthStencilView.Reset();
+    m_renderTarget.Reset();
+    m_depthStencil.Reset();
     m_d3dContext->Flush();
 
     // Determine the render target size in pixels.
@@ -341,12 +343,11 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
     DX::ThrowIfFailed(m_swapChain->SetRotation(m_rotation));
 
     // Create a render target view of the swap chain back buffer.
-    ComPtr<ID3D11Texture2D> backBuffer;
-    DX::ThrowIfFailed(m_swapChain->GetBuffer(0, IID_PPV_ARGS(backBuffer.GetAddressOf())));
+    DX::ThrowIfFailed(m_swapChain->GetBuffer(0, IID_PPV_ARGS(m_renderTarget.ReleaseAndGetAddressOf())));
 
     CD3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc(D3D11_RTV_DIMENSION_TEXTURE2D, m_backBufferFormat);
     DX::ThrowIfFailed(m_d3dDevice->CreateRenderTargetView(
-        backBuffer.Get(),
+        m_renderTarget.Get(),
         &renderTargetViewDesc,
         m_d3dRenderTargetView.ReleaseAndGetAddressOf()
         ));
@@ -363,16 +364,15 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
             D3D11_BIND_DEPTH_STENCIL
             );
 
-        ComPtr<ID3D11Texture2D> depthStencil;
         DX::ThrowIfFailed(m_d3dDevice->CreateTexture2D(
             &depthStencilDesc,
             nullptr,
-            depthStencil.GetAddressOf()
+            m_depthStencil.ReleaseAndGetAddressOf()
             ));
 
         CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2D);
         DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilView(
-            depthStencil.Get(),
+            m_depthStencil.Get(),
             &depthStencilViewDesc,
             m_d3dDepthStencilView.ReleaseAndGetAddressOf()
             ));
@@ -477,6 +477,8 @@ void DX::DeviceResources::HandleDeviceLost()
 
     m_d3dDepthStencilView.Reset();
     m_d3dRenderTargetView.Reset();
+    m_renderTarget.Reset();
+    m_depthStencil.Reset();
     m_swapChain.Reset();
     m_d3dContext.Reset();
     m_d3dDevice.Reset();
@@ -555,17 +557,24 @@ void DX::DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter)
 
     ComPtr<IDXGIFactory2> dxgiFactory;
 #ifdef _DEBUG
-    UINT creationFlags = 0;
-
-    if (SdkLayersAvailable())
+    bool debugDXGI = false;
     {
-        creationFlags |= DXGI_CREATE_FACTORY_DEBUG;
+        ComPtr<IDXGIInfoQueue> dxgiInfoQueue;
+        if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiInfoQueue.GetAddressOf()))))
+        {
+            debugDXGI = true;
+
+            DX::ThrowIfFailed(CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(dxgiFactory.GetAddressOf())));
+
+            dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
+            dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
+        }
     }
 
-    DX::ThrowIfFailed(CreateDXGIFactory2(creationFlags, IID_PPV_ARGS(dxgiFactory.GetAddressOf())));
-#else
-    DX::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(dxgiFactory.GetAddressOf())));
+    if (!debugDXGI)
 #endif
+
+    DX::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(dxgiFactory.GetAddressOf())));
 
     ComPtr<IDXGIAdapter1> adapter;
     for (UINT adapterIndex = 0; DXGI_ERROR_NOT_FOUND != dxgiFactory->EnumAdapters1(adapterIndex, adapter.ReleaseAndGetAddressOf()); adapterIndex++)
