@@ -502,6 +502,62 @@ void Sample::Render()
         }
         break;
 
+    case InfoPage::DISPLAYINFO:
+        {
+            using namespace Windows::Graphics::Display;
+
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"DisplayInformation", mid, y, ATG::Colors::LightGrey, m_scale);
+
+            auto displayInformation = DisplayInformation::GetForCurrentView();
+
+            wchar_t buff[128] = { 0 };
+            swprintf_s(buff, L"%u %%", displayInformation->ResolutionScale);
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Resolution Scale", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
+
+            swprintf_s(buff, L"%.f (X:%.f  Y:%.f)", displayInformation->LogicalDpi, displayInformation->RawDpiX, displayInformation->RawDpiY);
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Dots Per Inch (DPI)", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
+
+            try
+            {
+                swprintf_s(buff, L"%u x %u (pixels)", displayInformation->ScreenWidthInRawPixels, displayInformation->ScreenHeightInRawPixels);
+                DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Screen Size", left, y, m_scale);
+                y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
+            }
+            catch (...)
+            {
+                y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"Screen size requires Windows 10 (14393) or later", mid, y, ATG::Colors::Orange, m_scale);
+            }
+
+            const wchar_t* orientation = nullptr;
+            switch (displayInformation->CurrentOrientation)
+            {
+            case DisplayOrientations::Landscape: orientation = L"Landscape"; break;
+            case DisplayOrientations::LandscapeFlipped: orientation = L"Landscape (flipped)"; break;
+            case DisplayOrientations::Portrait: orientation = L"Portrait"; break;
+            case DisplayOrientations::PortraitFlipped: orientation = L"Portrait (flipped)"; break;
+            default: orientation = L"None"; break;
+            }
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Current Orientation", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), orientation, right, y, m_scale);
+
+            switch (displayInformation->NativeOrientation)
+            {
+            case DisplayOrientations::Landscape: orientation = L"Landscape"; break;
+            case DisplayOrientations::LandscapeFlipped: orientation = L"Landscape (flipped)"; break;
+            case DisplayOrientations::Portrait: orientation = L"Portrait"; break;
+            case DisplayOrientations::PortraitFlipped: orientation = L"Portrait (flipped)"; break;
+            default: orientation = L"None"; break;
+            }
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Native Orientation", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), orientation, right, y, m_scale);
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Stereoscopic 3D", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), displayInformation->StereoEnabled ? L"Enabled" : L"Disabled", right, y, m_scale);
+        }
+        break;
+
     case InfoPage::DXGI:
         {
             y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"DXGI", mid, y, ATG::Colors::LightGrey, m_scale);

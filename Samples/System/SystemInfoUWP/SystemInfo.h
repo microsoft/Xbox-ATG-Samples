@@ -81,6 +81,7 @@ private:
         EASCLIENTINFO,
         APICONTRACT,
         CPUSETS,
+        DISPLAYINFO,
         DXGI,
         DIRECT3D11_1,
         DIRECT3D11_2,
