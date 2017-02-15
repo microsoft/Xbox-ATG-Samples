@@ -55,6 +55,10 @@ namespace
         if (desc.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D)
             return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
 
+        UINT numberOfPlanes = D3D12GetFormatPlaneCount(device, desc.Format);
+        if (numberOfPlanes != 1)
+            return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+
         D3D12_HEAP_PROPERTIES sourceHeapProperties;
         D3D12_HEAP_FLAGS sourceHeapFlags;
         HRESULT hr = pSource->GetHeapProperties(&sourceHeapProperties, &sourceHeapFlags);
@@ -538,7 +542,7 @@ HRESULT DirectX::SaveWICTextureToFile(
     {
         // Opt-in to the WIC2 support for writing 32-bit Windows BMP files with an alpha channel
         PROPBAG2 option = {};
-        option.pstrName = L"EnableV5Header32bppBGRA";
+        option.pstrName = const_cast<wchar_t*>(L"EnableV5Header32bppBGRA");
 
         VARIANT varValue;
         varValue.vt = VT_BOOL;
@@ -615,7 +619,7 @@ HRESULT DirectX::SaveWICTextureToFile(
         PropVariantInit(&value);
 
         value.vt = VT_LPSTR;
-        value.pszVal = "DirectXTK";
+        value.pszVal = const_cast<char*>("DirectXTK");
 
         if (memcmp(&guidContainerFormat, &GUID_ContainerFormatPng, sizeof(GUID)) == 0)
         {

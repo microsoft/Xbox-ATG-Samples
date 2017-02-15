@@ -135,9 +135,9 @@ namespace
         { GUID_WICPixelFormat128bppRGBFixedPoint,   GUID_WICPixelFormat128bppRGBAFloat }, // DXGI_FORMAT_R32G32B32A32_FLOAT 
         { GUID_WICPixelFormat32bppRGBE,             GUID_WICPixelFormat128bppRGBAFloat }, // DXGI_FORMAT_R32G32B32A32_FLOAT 
 
-        { GUID_WICPixelFormat32bppCMYK,             GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM 
+        { GUID_WICPixelFormat32bppCMYK,             GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM
         { GUID_WICPixelFormat64bppCMYK,             GUID_WICPixelFormat64bppRGBA }, // DXGI_FORMAT_R16G16B16A16_UNORM
-        { GUID_WICPixelFormat40bppCMYKAlpha,        GUID_WICPixelFormat64bppRGBA }, // DXGI_FORMAT_R16G16B16A16_UNORM
+        { GUID_WICPixelFormat40bppCMYKAlpha,        GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM
         { GUID_WICPixelFormat80bppCMYKAlpha,        GUID_WICPixelFormat64bppRGBA }, // DXGI_FORMAT_R16G16B16A16_UNORM
 
         { GUID_WICPixelFormat32bppRGB,              GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM
@@ -248,12 +248,12 @@ namespace
             if (width > height)
             {
                 twidth = static_cast<UINT>(maxsize);
-                theight = static_cast<UINT>(static_cast<float>(maxsize) * ar);
+                theight = std::max<UINT>(1, static_cast<UINT>(static_cast<float>(maxsize) * ar));
             }
             else
             {
                 theight = static_cast<UINT>(maxsize);
-                twidth = static_cast<UINT>(static_cast<float>(maxsize) / ar);
+                twidth = std::max<UINT>(1, static_cast<UINT>(static_cast<float>(maxsize) / ar));
             }
             assert(twidth <= maxsize && theight <= maxsize);
         }
