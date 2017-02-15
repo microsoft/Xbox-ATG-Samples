@@ -1,25 +1,27 @@
 //--------------------------------------------------------------------------------------
-// GamepadUWP.cpp
+// GamepadCppWinRT_UWP.cpp
 //
 // Advanced Technology Group (ATG)
 // Copyright (C) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
 
 #include "pch.h"
-#include "GamepadUWP.h"
+#include "GamepadCppWinRT_UWP.h"
 
 #include "ATGColors.h"
 #include "ControllerFont.h"
 
+#include <algorithm>
+
 using namespace DirectX;
-using namespace Windows::Gaming::Input;
-using namespace Windows::Foundation;
-using namespace Windows::Foundation::Collections;
-using namespace Platform::Collections;
+using namespace winrt::Windows::Gaming::Input;
+using namespace winrt::Windows::Foundation;
+using namespace winrt::Windows::Foundation::Collections;
 
 using Microsoft::WRL::ComPtr;
 
-Sample::Sample()
+Sample::Sample() :
+    m_currentGamepad(nullptr)
 {
     // Renders only 2D, so no need for a depth buffer.
     m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_UNKNOWN);
@@ -37,32 +39,34 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
     m_deviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
 
-    m_localCollection = ref new Vector<Gamepad^>();
+    RefreshCachedGamepads();
 
-    auto gamepads = Gamepad::Gamepads;
-    for (auto gamepad : gamepads)
-    {
-        m_localCollection->Append(gamepad);
-    }
-
-    Gamepad::GamepadAdded += ref new EventHandler<Gamepad^ >([=](Platform::Object^, Gamepad^ args)
-    {
-        m_localCollection->Append(args);
-        m_currentGamepadNeedsRefresh = true;
-    });
-
-    Gamepad::GamepadRemoved += ref new EventHandler<Gamepad^ >([=](Platform::Object^, Gamepad^ args)
-    {
-        unsigned int index;
-        if (m_localCollection->IndexOf(args, &index))
-        {
-            m_localCollection->RemoveAt(index);
-            m_currentGamepadNeedsRefresh = true;
-        }
-    });
-
+    Gamepad::GamepadAdded({ this, &Sample::OnGamepadAdded });
+    Gamepad::GamepadRemoved({ this, &Sample::OnGamepadRemoved });
+    
     m_currentGamepad = GetLastGamepad();
     m_currentGamepadNeedsRefresh = false;
+}
+
+void Sample::OnGamepadAdded(winrt::Windows::IInspectable const &, Gamepad const & args)
+{
+    m_localCollection.push_back(args);
+    m_currentGamepadNeedsRefresh = true;
+}
+
+void Sample::OnGamepadRemoved(winrt::Windows::IInspectable const &, Gamepad const & /*args*/)
+{
+    RefreshCachedGamepads();
+}
+
+void Sample::RefreshCachedGamepads()
+{
+    m_localCollection.clear();
+    auto gamepads = Gamepad::Gamepads();
+    for (auto gamepad : gamepads)
+    {
+        m_localCollection.push_back(gamepad);
+    }
 }
 
 #pragma region Frame Update
@@ -77,13 +81,13 @@ void Sample::Tick()
     Render();
 }
 
-Gamepad^ Sample::GetLastGamepad()
+const Gamepad* Sample::GetLastGamepad()
 {
-    Gamepad^ gamepad = nullptr;
+    Gamepad* gamepad = nullptr;
 
-    if (m_localCollection->Size > 0)
+    if (m_localCollection.size() > 0)
     {
-        gamepad = m_localCollection->GetAt(m_localCollection->Size - 1);
+        gamepad = &m_localCollection.back();
     }
 
     return gamepad;

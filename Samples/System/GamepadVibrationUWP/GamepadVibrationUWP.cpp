@@ -118,7 +118,7 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
         }
     });
 
-    m_currentGamepad = GetFirstGamepad();
+    m_currentGamepad = GetLastGamepad();
     m_currentGamepadNeedsRefresh = false;
 
     QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER *>(&m_frequency));
@@ -233,13 +233,13 @@ void Sample::Tick()
     Render();
 }
 
-Gamepad^ Sample::GetFirstGamepad()
+Gamepad^ Sample::GetLastGamepad()
 {
     Gamepad^ gamepad = nullptr;
 
     if (m_localCollection->Size > 0)
     {
-        gamepad = m_localCollection->GetAt(0);
+        gamepad = m_localCollection->GetAt(m_localCollection->Size - 1);
     }
 
     return gamepad;
@@ -252,7 +252,7 @@ void Sample::Update(DX::StepTimer const&)
 
     if (m_currentGamepadNeedsRefresh)
     {
-        auto mostRecentGamepad = GetFirstGamepad();
+        auto mostRecentGamepad = GetLastGamepad();
         if (m_currentGamepad != mostRecentGamepad)
         {
             ShutdownCurrentGamepad();

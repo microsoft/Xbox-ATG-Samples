@@ -18,13 +18,13 @@
 namespace ATG
 {
     // Must register the event provider before writing any events
-    ATG_TELEMETRY_API uint32_t EventRegisterATGSampleTelemetry();
-    ATG_TELEMETRY_API uint32_t EventUnregisterATGSampleTelemetry();
+    ATG_TELEMETRY_API uint32_t __cdecl EventRegisterATGSampleTelemetry();
+    ATG_TELEMETRY_API uint32_t __cdecl EventUnregisterATGSampleTelemetry();
 
     // Returns true if you've called EventRegisterATGSampleTelemetry()
-    ATG_TELEMETRY_API bool EventEnabledSampleLoaded();
+    ATG_TELEMETRY_API bool __cdecl EventEnabledSampleLoaded();
 
     // Log the SampleLoaded event
     // requires that you call EventRegisterATGSampleTelemetry() first
-    ATG_TELEMETRY_API uint32_t EventWriteSampleLoaded(const wchar_t* exeName);
+    ATG_TELEMETRY_API uint32_t __cdecl EventWriteSampleLoaded(const wchar_t* exeName);
 }

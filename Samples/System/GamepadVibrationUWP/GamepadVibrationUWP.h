@@ -58,7 +58,7 @@ private:
 
     static const int MAX_PLAYER_COUNT = 8;
     
-    Windows::Gaming::Input::Gamepad^ GetFirstGamepad();
+    Windows::Gaming::Input::Gamepad^ GetLastGamepad();
     void Update(DX::StepTimer const& timer);
     void Render();
 

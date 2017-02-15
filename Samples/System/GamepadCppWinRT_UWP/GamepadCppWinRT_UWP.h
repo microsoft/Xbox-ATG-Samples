@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------
-// GamepadUWP.h
+// GamepadCppWinRT_UWP.h
 //
 // Advanced Technology Group (ATG)
 // Copyright (C) Microsoft Corporation. All rights reserved.
@@ -10,7 +10,7 @@
 #include "DeviceResources.h"
 #include "StepTimer.h"
 #include <Windows.Gaming.Input.h>
-#include <collection.h>
+
 
 // A basic sample implementation that creates a D3D11 device and
 // provides a render loop.
@@ -45,7 +45,11 @@ private:
 
     void Update(DX::StepTimer const& timer);
     void Render();
-    Windows::Gaming::Input::Gamepad^ GetLastGamepad();
+    const winrt::Windows::Gaming::Input::Gamepad* GetLastGamepad();
+
+    void OnGamepadAdded(winrt::Windows::IInspectable const & sender, winrt::Windows::Gaming::Input::Gamepad const & args);
+    void OnGamepadRemoved(winrt::Windows::IInspectable const & sender, winrt::Windows::Gaming::Input::Gamepad const & args);
+    void RefreshCachedGamepads();
 
     void Clear();
 
@@ -59,9 +63,9 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_background;
 
     //Gamepad states
-    Platform::Collections::Vector<Windows::Gaming::Input::Gamepad^>^ m_localCollection;
-    Windows::Gaming::Input::GamepadReading      m_reading;
-    Windows::Gaming::Input::Gamepad^            m_currentGamepad;
+    std::vector<winrt::Windows::Gaming::Input::Gamepad> m_localCollection;
+    winrt::Windows::Gaming::Input::GamepadReading       m_reading;
+    const winrt::Windows::Gaming::Input::Gamepad*       m_currentGamepad;
 
     bool                    m_currentGamepadNeedsRefresh;
     std::wstring            m_buttonString;

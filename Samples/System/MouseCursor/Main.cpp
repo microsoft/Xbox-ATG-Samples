@@ -382,8 +382,8 @@ protected:
             
             // Use the window location and the virtual cursors location to reposition the windows mouse
             Windows::Foundation::Point newPoint;
-            newPoint.X = sender->Bounds.X + ConvertPixelsToDips(m_virtualCursorOnscreenPosition.X);
-            newPoint.Y = sender->Bounds.Y + ConvertPixelsToDips(m_virtualCursorOnscreenPosition.Y);
+            newPoint.X = sender->Bounds.X + ConvertPixelsToDips(int(m_virtualCursorOnscreenPosition.X));
+            newPoint.Y = sender->Bounds.Y + ConvertPixelsToDips(int(m_virtualCursorOnscreenPosition.Y));
             sender->PointerPosition = newPoint;
             
             m_clipCursor = false;
@@ -402,8 +402,8 @@ protected:
 
         // Use the window location and the virtual cursors location to reposition the windows mouse
         Windows::Foundation::Point newPoint;
-        newPoint.X = sender->Bounds.X + ConvertPixelsToDips(m_virtualCursorOnscreenPosition.X);
-        newPoint.Y = sender->Bounds.Y + ConvertPixelsToDips(m_virtualCursorOnscreenPosition.Y);
+        newPoint.X = sender->Bounds.X + ConvertPixelsToDips(int(m_virtualCursorOnscreenPosition.X));
+        newPoint.Y = sender->Bounds.Y + ConvertPixelsToDips(int(m_virtualCursorOnscreenPosition.Y));
         sender->PointerPosition = newPoint;
 
         m_clipCursor = false;
