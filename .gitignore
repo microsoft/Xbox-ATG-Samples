@@ -26,6 +26,7 @@ Profile
 Release
 x64
 /wiki
+packages
 !Kits/Telemetry/ARM
 !Kits/Telemetry/Win32
 !Kits/Telemetry/x64
