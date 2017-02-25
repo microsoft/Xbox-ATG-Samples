@@ -44,8 +44,8 @@ public:
         m_nativeOrientation( DisplayOrientations::None ),
         m_currentOrientation( DisplayOrientations::None )
     {
-        m_outputWidthPixels = ConvertDipsToPixels(m_logicalWidth);
-        m_outputHeightPixels = ConvertDipsToPixels(m_logicalHeight);
+        m_outputWidthPixels = m_logicalWidthPixels = ConvertDipsToPixels(m_logicalWidth);
+        m_outputHeightPixels = m_logicalHeightPixels = ConvertDipsToPixels(m_logicalHeight);
     }
 
     // IFrameworkView methods
@@ -133,8 +133,8 @@ public:
             ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>( this, &ViewProvider::OnKeyDown );
 
         m_DPI = currentDisplayInformation->LogicalDpi;
-
-        
+        m_resizeManager = CoreWindowResizeManager::GetForCurrentView();
+        m_resizeManager->ShouldWaitForLayoutCompletion = true;
 
         m_logicalWidth = window->Bounds.Width;
         m_logicalHeight = window->Bounds.Height;
@@ -142,8 +142,8 @@ public:
         m_nativeOrientation = currentDisplayInformation->NativeOrientation;
         m_currentOrientation = currentDisplayInformation->CurrentOrientation;
 
-        m_outputWidthPixels = ConvertDipsToPixels( m_logicalWidth );
-        m_outputHeightPixels = ConvertDipsToPixels( m_logicalHeight );
+        m_outputWidthPixels = m_logicalWidthPixels = ConvertDipsToPixels( m_logicalWidth );
+        m_outputHeightPixels = m_logicalHeightPixels = ConvertDipsToPixels( m_logicalHeight );
 
         DXGI_MODE_ROTATION rotation = ComputeDisplayRotation();
 
@@ -241,25 +241,25 @@ protected:
 
     void OnWindowSizeChanged( CoreWindow^ sender, WindowSizeChangedEventArgs^ args )
     {
-        float prevWidth = (float) m_outputWidthPixels;
-        float prevHeight = (float) m_outputHeightPixels;
+        float prevWidth = (float) m_logicalWidthPixels;
+        float prevHeight = (float) m_logicalHeightPixels;
 
         m_logicalWidth = sender->Bounds.Width;
         m_logicalHeight = sender->Bounds.Height;
 
-        m_outputWidthPixels = ConvertDipsToPixels(m_logicalWidth);
-        m_outputHeightPixels = ConvertDipsToPixels(m_logicalHeight);
+        m_logicalWidthPixels = ConvertDipsToPixels(m_logicalWidth);
+        m_logicalHeightPixels = ConvertDipsToPixels(m_logicalHeight);
 
         // Adjust drawn cursor location based on size change
         if (m_relative)
         {
-            m_virtualCursorOnscreenPosition.X = m_outputWidthPixels / 2.0f;
-            m_virtualCursorOnscreenPosition.Y = m_outputHeightPixels / 2.0f;
+            m_virtualCursorOnscreenPosition.X = m_logicalWidthPixels / 2.0f;
+            m_virtualCursorOnscreenPosition.Y = m_logicalHeightPixels / 2.0f;
         }
         else if (m_clipCursor)
         {
-            m_virtualCursorOnscreenPosition.X = m_virtualCursorOnscreenPosition.X * (m_outputWidthPixels / prevWidth);
-            m_virtualCursorOnscreenPosition.Y = m_virtualCursorOnscreenPosition.Y * (m_outputHeightPixels / prevHeight);
+            m_virtualCursorOnscreenPosition.X = m_virtualCursorOnscreenPosition.X * (m_logicalWidthPixels / prevWidth);
+            m_virtualCursorOnscreenPosition.Y = m_virtualCursorOnscreenPosition.Y * (m_logicalHeightPixels / prevHeight);
             m_sample->UpdatePointer(m_virtualCursorOnscreenPosition);
         }
         HandleWindowSizeChanged();
@@ -308,6 +308,7 @@ protected:
 
     void OnOrientationChanged( DisplayInformation^ sender, Object^ args )
     {
+        m_nativeOrientation = sender->NativeOrientation;
         m_currentOrientation = sender->CurrentOrientation;
 
         HandleWindowSizeChanged();
@@ -347,8 +348,8 @@ protected:
                 m_virtualCursorOnscreenPosition.X = newX;
                 m_virtualCursorOnscreenPosition.Y = newY;
 
-                m_virtualCursorOnscreenPosition.X = fmaxf( 0.f, fminf( m_virtualCursorOnscreenPosition.X, (float) m_outputWidthPixels ) );
-                m_virtualCursorOnscreenPosition.Y = fmaxf( 0.f, fminf( m_virtualCursorOnscreenPosition.Y, (float) m_outputHeightPixels ) );
+                m_virtualCursorOnscreenPosition.X = fmaxf( 0.f, fminf( m_virtualCursorOnscreenPosition.X, (float) m_logicalWidthPixels ) );
+                m_virtualCursorOnscreenPosition.Y = fmaxf( 0.f, fminf( m_virtualCursorOnscreenPosition.Y, (float) m_logicalHeightPixels ) );
 
             }
             // If the user selected clip cursor mode, capture the mouse
@@ -366,8 +367,8 @@ protected:
                 m_virtualCursorOnscreenPosition.X = newX;
                 m_virtualCursorOnscreenPosition.Y = newY;
 
-                m_virtualCursorOnscreenPosition.X = fmaxf( 0.f, fminf( m_virtualCursorOnscreenPosition.X, (float) m_outputWidthPixels ) );
-                m_virtualCursorOnscreenPosition.Y = fmaxf( 0.f, fminf( m_virtualCursorOnscreenPosition.Y, (float) m_outputHeightPixels ) );
+                m_virtualCursorOnscreenPosition.X = fmaxf( 0.f, fminf( m_virtualCursorOnscreenPosition.X, (float)m_logicalWidth) );
+                m_virtualCursorOnscreenPosition.Y = fmaxf( 0.f, fminf( m_virtualCursorOnscreenPosition.Y, (float) m_logicalHeight ) );
             }
         }
     }
@@ -437,8 +438,8 @@ protected:
             m_virtualCursorOnscreenPosition.X = m_virtualCursorOnscreenPosition.X + newX;
             m_virtualCursorOnscreenPosition.Y = m_virtualCursorOnscreenPosition.Y + newY;
 
-            m_virtualCursorOnscreenPosition.X = fmaxf( 0.f, fminf( m_virtualCursorOnscreenPosition.X, (float) m_outputWidthPixels ) );
-            m_virtualCursorOnscreenPosition.Y = fmaxf( 0.f, fminf( m_virtualCursorOnscreenPosition.Y, (float) m_outputHeightPixels ) );
+            m_virtualCursorOnscreenPosition.X = fmaxf( 0.f, fminf( m_virtualCursorOnscreenPosition.X, (float) m_logicalWidthPixels ) );
+            m_virtualCursorOnscreenPosition.Y = fmaxf( 0.f, fminf( m_virtualCursorOnscreenPosition.Y, (float) m_logicalHeightPixels ) );
             
             
             m_sample->UpdatePointer( m_virtualCursorOnscreenPosition );
@@ -450,14 +451,17 @@ protected:
     }
 
 private:
-    bool                    m_exit;
-    bool                    m_visible;
-    float                   m_DPI;
-    float                   m_logicalWidth;
-    float                   m_logicalHeight;
-    int                     m_outputHeightPixels;
-    int                     m_outputWidthPixels;
-    std::unique_ptr<Sample> m_sample;
+    bool                     m_exit;
+    bool                     m_visible;
+    float                    m_DPI;
+    float                    m_logicalWidth;
+    float                    m_logicalHeight;
+    int                      m_logicalWidthPixels;
+    int                      m_logicalHeightPixels;
+    int                      m_outputHeightPixels;
+    int                      m_outputWidthPixels;
+    std::unique_ptr<Sample>  m_sample;
+    CoreWindowResizeManager^ m_resizeManager;
 
     // Mode
     bool m_clipCursor = false;
@@ -532,8 +536,8 @@ private:
 
     void HandleWindowSizeChanged()
     {
-        m_outputWidthPixels = ConvertDipsToPixels( m_logicalWidth );
-        m_outputHeightPixels = ConvertDipsToPixels( m_logicalHeight );
+        m_outputWidthPixels = m_logicalWidthPixels = ConvertDipsToPixels(m_logicalWidth);
+        m_outputHeightPixels = m_logicalHeightPixels = ConvertDipsToPixels(m_logicalHeight);
 
 
         DXGI_MODE_ROTATION rotation = ComputeDisplayRotation();
@@ -544,6 +548,8 @@ private:
         }
 
         m_sample->OnWindowSizeChanged(m_outputWidthPixels, m_outputHeightPixels, rotation );
+
+        m_resizeManager->NotifyLayoutCompleted();
     }
 
 };

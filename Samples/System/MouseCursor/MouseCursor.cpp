@@ -72,12 +72,12 @@ void Sample::Update( DX::StepTimer const&)
         if (m_screenLocation.X < 20.f)
             MoveRight(-25.f);
 
-        else if (m_screenLocation.X > m_deviceResources->GetOutputSize().right - m_deviceResources->GetOutputSize().left - 20.f)
+        else if (m_screenLocation.X > m_deviceResources->GetLogicalOutputSize().right - m_deviceResources->GetLogicalOutputSize().left - 20.f)
             MoveRight(25.f);
 
         if (m_screenLocation.Y < 20.f)
             MoveForward(25.f);
-        else if (m_screenLocation.Y > m_deviceResources->GetOutputSize().bottom - m_deviceResources->GetOutputSize().top - 20.f)
+        else if (m_screenLocation.Y > m_deviceResources->GetLogicalOutputSize().bottom - m_deviceResources->GetLogicalOutputSize().top - 20.f)
             MoveForward(-25.f);
     }
 
@@ -126,7 +126,24 @@ void Sample::Render()
             m_spriteBatch->Draw( m_texture_tile_border.Get(), m_RTStile );
         }
 
-        std::wstring text1 = L"Mouse Cursor Sample";
+        std::wstring text1 = L"Mouse Cursor Sample: ";
+
+        switch (this->m_deviceResources->GetRotation())
+        {
+        case DXGI_MODE_ROTATION_IDENTITY:
+            text1 += L"0";
+            break;
+        case DXGI_MODE_ROTATION_ROTATE90:
+            text1 += L"90";
+            break;
+        case DXGI_MODE_ROTATION_ROTATE180:
+            text1 += L"180";
+            break;
+        case DXGI_MODE_ROTATION_ROTATE270:
+            text1 += L"270";
+            break;
+        }
+
         const wchar_t* outputTitle = text1.c_str();
         Vector2 originTitle = m_font64->MeasureString( outputTitle ) / 2.f;
         std::wstring text2 = L"Choose a game mode";
@@ -275,7 +292,7 @@ void Sample::CreateDeviceDependentResources()
 void Sample::CreateWindowSizeDependentResources()
 {
     // Initialization of background image
-    m_fullscreenRect = m_deviceResources->GetOutputSize();
+    m_fullscreenRect = m_deviceResources->GetLogicalOutputSize();
 
     UINT backBufferWidth = static_cast<UINT>(m_fullscreenRect.right - m_fullscreenRect.left);
     UINT backBufferHeight = static_cast<UINT>(m_fullscreenRect.bottom - m_fullscreenRect.top);
@@ -424,8 +441,8 @@ void Sample::MoveRight( float amount )
 // Update the viewport based on the updated eye and target values
 void Sample::SetView()
 {
-    UINT backBufferWidth = static_cast<UINT>( m_deviceResources->GetOutputSize().right - m_deviceResources->GetOutputSize().left );
-    UINT backBufferHeight = static_cast<UINT>( m_deviceResources->GetOutputSize().bottom - m_deviceResources->GetOutputSize().top );
+    UINT backBufferWidth = static_cast<UINT>( m_deviceResources->GetLogicalOutputSize().right - m_deviceResources->GetLogicalOutputSize().left );
+    UINT backBufferHeight = static_cast<UINT>( m_deviceResources->GetLogicalOutputSize().bottom - m_deviceResources->GetLogicalOutputSize().top );
 
     m_view = Matrix::CreateLookAt( m_eye, m_target, Vector3::UnitY );
     Matrix proj = XMMatrixPerspectiveFovLH( XM_PI / 4.f, float( backBufferWidth ) / float( backBufferHeight ), 0.1f, 10000.f );
@@ -440,8 +457,8 @@ Sample::MouseMode Sample::SetMode( Windows::Foundation::Point mouseLocation )
     if ( mouseLocation.X < m_FPStile.right && mouseLocation.X > m_FPStile.left
         && mouseLocation.Y > m_FPStile.top && mouseLocation.Y < m_FPStile.bottom )
     {
-        UINT backBufferWidth = static_cast<UINT>( m_deviceResources->GetOutputSize().right - m_deviceResources->GetOutputSize().left );
-        UINT backBufferHeight = static_cast<UINT>( m_deviceResources->GetOutputSize().bottom - m_deviceResources->GetOutputSize().top );
+        UINT backBufferWidth = static_cast<UINT>( m_deviceResources->GetLogicalOutputSize().right - m_deviceResources->GetLogicalOutputSize().left );
+        UINT backBufferHeight = static_cast<UINT>( m_deviceResources->GetLogicalOutputSize().bottom - m_deviceResources->GetLogicalOutputSize().top );
 
         m_screenLocation.X = backBufferWidth / 2.f;
         m_screenLocation.Y = backBufferHeight / 2.f;

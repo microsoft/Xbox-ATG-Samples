@@ -547,6 +547,17 @@ void DX::DeviceResources::Present()
     }
 }
 
+RECT DX::DeviceResources::GetLogicalOutputSize() const
+{
+    RECT outputSize = m_outputSize;
+    if (m_rotation == DXGI_MODE_ROTATION_ROTATE90 || m_rotation == DXGI_MODE_ROTATION_ROTATE270)
+    {
+        std::swap(outputSize.right, outputSize.bottom);
+    }
+
+    return outputSize;
+}
+
 // This method acquires the first available hardware adapter.
 // If no such adapter can be found, *ppAdapter will be set to nullptr.
 void DX::DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter)
