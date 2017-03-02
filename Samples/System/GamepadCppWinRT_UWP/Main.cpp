@@ -111,7 +111,7 @@ public:
             std::swap(outputWidth, outputHeight);
         }
 
-        m_sample->Initialize(winrt::get(window), outputWidth, outputHeight, rotation);
+        m_sample->Initialize(winrt::get_abi(window), outputWidth, outputHeight, rotation);
     }
 
     void Load(winrt::hstring const &)

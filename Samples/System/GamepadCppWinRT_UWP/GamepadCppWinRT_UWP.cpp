@@ -29,7 +29,7 @@ Sample::Sample() :
 }
 
 // Initialize the Direct3D resources required to run.
-void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATION rotation)
+void Sample::Initialize(::IUnknown* window, int width, int height, DXGI_MODE_ROTATION rotation)
 {
     m_deviceResources->SetWindow(window, width, height, rotation);
 
@@ -48,13 +48,13 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
     m_currentGamepadNeedsRefresh = false;
 }
 
-void Sample::OnGamepadAdded(winrt::Windows::IInspectable const &, Gamepad const & args)
+void Sample::OnGamepadAdded(winrt::Windows::Foundation::IInspectable const &, Gamepad const & args)
 {
     m_localCollection.push_back(args);
     m_currentGamepadNeedsRefresh = true;
 }
 
-void Sample::OnGamepadRemoved(winrt::Windows::IInspectable const &, Gamepad const & /*args*/)
+void Sample::OnGamepadRemoved(winrt::Windows::Foundation::IInspectable const &, Gamepad const & /*args*/)
 {
     RefreshCachedGamepads();
 }

@@ -17,6 +17,7 @@
 *.lastbuildstate
 *.ilk
 *.VC.db
+.vs
 ARM
 "Generated Files"
 Bin
@@ -25,6 +26,8 @@ Debug
 Profile
 Release
 x64
+Samples/Graphics/SimplePBR12/Compiled/
+Samples/Tools/errorlookup/errorlookup/project.lock.json
 /wiki
 packages
 !Kits/Telemetry/ARM

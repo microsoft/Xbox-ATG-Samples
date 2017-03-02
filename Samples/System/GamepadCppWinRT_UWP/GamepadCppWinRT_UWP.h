@@ -21,7 +21,7 @@ public:
     Sample();
 
     // Initialization and management
-    void Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATION rotation);
+    void Initialize(::IUnknown* window, int width, int height, DXGI_MODE_ROTATION rotation);
 
     // Basic render loop
     void Tick();
@@ -47,8 +47,8 @@ private:
     void Render();
     const winrt::Windows::Gaming::Input::Gamepad* GetLastGamepad();
 
-    void OnGamepadAdded(winrt::Windows::IInspectable const & sender, winrt::Windows::Gaming::Input::Gamepad const & args);
-    void OnGamepadRemoved(winrt::Windows::IInspectable const & sender, winrt::Windows::Gaming::Input::Gamepad const & args);
+    void OnGamepadAdded(winrt::Windows::Foundation::IInspectable const & sender, winrt::Windows::Gaming::Input::Gamepad const & args);
+    void OnGamepadRemoved(winrt::Windows::Foundation::IInspectable const & sender, winrt::Windows::Gaming::Input::Gamepad const & args);
     void RefreshCachedGamepads();
 
     void Clear();
