@@ -26,7 +26,8 @@ namespace
         L"<Navigation Test>\n",
         L"<ArcadeStick Test>\n",
         L"<RacingWheel Test>\n",
-    };
+		L"<FlightStick Test>\n",
+	};
 
     static const wchar_t c_NavDescription[] =
         L"Using the UINavigationController allows you to read generic navigation \n"
@@ -144,6 +145,81 @@ void Sample::GenerateStickString()
     }
 }
 
+void Sample::DrawFlightStick(DirectX::XMFLOAT2 startPosition)
+{
+	std::wstring localButtonString = L"Flight Stick inputs pressed:  ";
+	wchar_t stickString[128] = {};
+
+	if ((m_flightStickReading.Buttons & FlightStickButtons::FirePrimary) == FlightStickButtons::FirePrimary)
+	{
+		localButtonString += L"FirePrimary ";
+	}
+
+	if ((m_flightStickReading.Buttons & FlightStickButtons::FireSecondary) == FlightStickButtons::FireSecondary)
+	{
+		localButtonString += L"FireSecondary ";
+	}
+	
+	if ((m_flightStickReading.HatSwitch & GameControllerSwitchPosition::Up) == GameControllerSwitchPosition::Up)
+	{
+		localButtonString += L"HatUp ";
+	}
+
+	if ((m_flightStickReading.HatSwitch & GameControllerSwitchPosition::UpRight) == GameControllerSwitchPosition::UpRight)
+	{
+		localButtonString += L"HatUpRight ";
+	}
+
+	if ((m_flightStickReading.HatSwitch & GameControllerSwitchPosition::Right) == GameControllerSwitchPosition::Right)
+	{
+		localButtonString += L"HatRight ";
+	}
+
+	if ((m_flightStickReading.HatSwitch & GameControllerSwitchPosition::DownRight) == GameControllerSwitchPosition::DownRight)
+	{
+		localButtonString += L"HatDownRight ";
+	}
+
+	if ((m_flightStickReading.HatSwitch & GameControllerSwitchPosition::Down) == GameControllerSwitchPosition::Down)
+	{
+		localButtonString += L"HatDown ";
+	}
+
+	if ((m_flightStickReading.HatSwitch & GameControllerSwitchPosition::DownLeft) == GameControllerSwitchPosition::DownLeft)
+	{
+		localButtonString += L"HatDownLeft ";
+	}
+
+	if ((m_flightStickReading.HatSwitch & GameControllerSwitchPosition::Left) == GameControllerSwitchPosition::Left)
+	{
+		localButtonString += L"HatLeft ";
+	}
+
+	if ((m_flightStickReading.HatSwitch & GameControllerSwitchPosition::UpLeft) == GameControllerSwitchPosition::UpLeft)
+	{
+		localButtonString += L"HatUpLeft ";
+	}
+
+	m_font->DrawString(m_spriteBatch.get(), localButtonString.c_str(), startPosition, ATG::Colors::Green);
+	startPosition.y += m_font->GetLineSpacing() * 1.1f;
+
+	swprintf_s(stickString, L"Roll %1.3f", m_flightStickReading.Roll);
+	m_font->DrawString(m_spriteBatch.get(), stickString, startPosition, ATG::Colors::Green);
+	startPosition.y += m_font->GetLineSpacing() * 1.1f;
+
+	swprintf_s(stickString, L"Pitch %1.3f", m_flightStickReading.Pitch);
+	m_font->DrawString(m_spriteBatch.get(), stickString, startPosition, ATG::Colors::Green);
+	startPosition.y += m_font->GetLineSpacing() * 1.1f;
+
+	swprintf_s(stickString, L"Yaw %1.3f", m_flightStickReading.Yaw);
+	m_font->DrawString(m_spriteBatch.get(), stickString, startPosition, ATG::Colors::Green);
+	startPosition.y += m_font->GetLineSpacing() * 1.1f;
+
+	swprintf_s(stickString, L"Throttle %1.3f", m_flightStickReading.Throttle);
+	m_font->DrawString(m_spriteBatch.get(), stickString, startPosition, ATG::Colors::Green);
+	startPosition.y += m_font->GetLineSpacing() * 1.1f;
+}
+
 void Sample::DrawWheel(XMFLOAT2 startPosition)
 {
     wchar_t wheelString[128] = {};
@@ -218,6 +294,18 @@ RacingWheel^ Sample::GetFirstWheel()
     return wheel;
 }
 
+FlightStick^ Sample::GetFirstFlightStick()
+{
+	FlightStick^ stick = nullptr;
+
+	if (m_flightStickCollection->Size > 0)
+	{
+		stick = m_flightStickCollection->GetAt(0);
+	}
+
+	return stick;
+}
+
 Sample::Sample()
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
@@ -253,6 +341,7 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
     m_navCollection = ref new Vector<UINavigationController^>();
     m_stickCollection = ref new Vector<ArcadeStick^>();
     m_wheelCollection = ref new Vector<RacingWheel^>();
+	m_flightStickCollection = ref new Vector<FlightStick^>();
 
     auto navControllers = UINavigationController::UINavigationControllers;
     for (auto controller : navControllers)
@@ -272,7 +361,13 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
         m_wheelCollection->Append(controller);
     }
 
-    UINavigationController::UINavigationControllerAdded += ref new EventHandler<UINavigationController^ >([=](Platform::Object^, UINavigationController^ args)
+	auto flightStickControllers = FlightStick::FlightSticks;
+	for (auto controller : flightStickControllers)
+	{
+		m_flightStickCollection->Append(controller);
+	}
+
+	UINavigationController::UINavigationControllerAdded += ref new EventHandler<UINavigationController^ >([=](Platform::Object^, UINavigationController^ args)
     {
         m_navCollection->Append(args);
         m_currentNavNeedsRefresh = true;
@@ -320,13 +415,31 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
         }
     });
 
-    m_currentNav = GetFirstNavController();
+	FlightStick::FlightStickAdded += ref new EventHandler<FlightStick^ >([=](Platform::Object^, FlightStick^ args)
+	{
+		m_flightStickCollection->Append(args);
+		m_currentFlightStickNeedsRefresh = true;
+	});
+
+	FlightStick::FlightStickRemoved += ref new EventHandler<FlightStick^ >([=](Platform::Object^, FlightStick^ args)
+	{
+		unsigned int index;
+		if (m_flightStickCollection->IndexOf(args, &index))
+		{
+			m_flightStickCollection->RemoveAt(index);
+			m_currentFlightStickNeedsRefresh = true;
+		}
+	});
+	
+	m_currentNav = GetFirstNavController();
     m_currentStick = GetFirstArcadeStick();
     m_currentWheel = GetFirstWheel();
-    m_currentNavNeedsRefresh = false;
+	m_currentFlightStick = GetFirstFlightStick();
+	m_currentNavNeedsRefresh = false;
     m_currentWheelNeedsRefresh = false;
     m_currentStickNeedsRefresh = false;
-    
+	m_currentFlightStickNeedsRefresh = false;
+
     if (m_currentWheel != nullptr && m_currentWheel->WheelMotor != nullptr)
     {
         IAsyncOperation<ForceFeedback::ForceFeedbackLoadEffectResult>^ request = m_currentWheel->WheelMotor->LoadEffectAsync(m_effect);
@@ -434,7 +547,17 @@ void Sample::Update(DX::StepTimer const& )
         m_currentStickNeedsRefresh = false;
     }
 
-    m_navReading = m_currentNav->GetCurrentReading();
+	if (m_currentFlightStickNeedsRefresh)
+	{
+		auto mostRecentFlightStick = GetFirstFlightStick();
+		if (m_currentFlightStick != mostRecentFlightStick)
+		{
+			m_currentFlightStick = mostRecentFlightStick;
+		}
+		m_currentFlightStickNeedsRefresh = false;
+	}
+	
+	m_navReading = m_currentNav->GetCurrentReading();
 
     if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::View) == RequiredUINavigationButtons::View)
     {
@@ -485,7 +608,13 @@ void Sample::Update(DX::StepTimer const& )
             GenerateStickString();
         }
         break;
-    case RacingWheelDevice:
+	case FlightStickDevice:
+		if (m_currentFlightStick != nullptr)
+		{
+			m_flightStickReading = m_currentFlightStick->GetCurrentReading();
+		}
+		break;
+	case RacingWheelDevice:
         if (m_currentWheel != nullptr)
         {
             m_wheelReading = m_currentWheel->GetCurrentReading();
@@ -571,7 +700,17 @@ void Sample::Render()
                 m_font->DrawString(m_spriteBatch.get(), L"No wheel connected", pos, ATG::Colors::Orange);
             }
             break;
-        }
+		case 3:
+			if (m_currentFlightStick != nullptr)
+			{
+				DrawFlightStick(pos);
+			}
+			else
+			{
+				m_font->DrawString(m_spriteBatch.get(), L"No flight stick connected", pos, ATG::Colors::Orange);
+			}
+			break;
+		}
     }
     else
     {

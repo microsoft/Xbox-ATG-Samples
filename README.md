@@ -13,8 +13,8 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 
 # Requirements
 
-* Windows 10 Verion 1511 (November 2015) or Version 1607 (Anniversary Update)
-* Visual Studio 2015 Update 3 with the Windows 10 Anniversary Update SDK (14393)
+* Windows 10 Creators Update (Build 15063 or greater)
+* Visual Studio 2017 with the Windows 10 Creators Update SDK (15063)
 
 # Privacy Statement
 

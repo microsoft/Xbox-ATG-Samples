@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>26104b34-cb6a-48a5-9dcc-a17918fe3e26</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>17ea61f1-f66d-4b67-9bbf-c3e37cc3dc93</UniqueIdentifier>
+      <Extensions>bmp;dds;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Filter Include="ATG Tool Kit">
+      <UniqueIdentifier>{2756b903-0a26-4347-84cc-690c257d5545}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="StepTimer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceResources.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="ISACRenderer.h" />
+    <ClInclude Include="AdvancedSpatialSoundsUWP.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="DeviceResources.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="ISACRenderer.cpp" />
+    <ClCompile Include="AdvancedSpatialSoundsUWP.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Logo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SmallLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\WideLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Textures\callout_circle.dds">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Assets\Jungle_RainThunder_5.1_mixdown.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\Jungle_RainThunder_SideSurroundL-R.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\Jungle_RainThunder_TopFrontL-R.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\Jungle_RainThunder_TopRearL-R.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_height_birdHawk01.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_height_birdLoon01.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_moving_BirdFlap01.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_moving_birdFlicker01.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_moving_birdFlycatcher01.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_moving_birdLark01.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_moving_birdLoop01.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_moving_birdLoop02.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_moving_birdLoop03.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_moving_birdLoop04.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_moving_birdLoop05.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_moving_birdLoop06.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_moving_birdSparrow01.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_moving_birdSparrow02.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_moving_birdWarbler01.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_moving_Fly01.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_moving_Fly02.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_stationary_cicada01.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_stationary_grasshopper01.wav">
+      <Filter>Assets</Filter>
+    </Media>
+    <Media Include="Assets\SFX_stationary_grasshopper02.wav">
+      <Filter>Assets</Filter>
+    </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Readme.docx" />
+  </ItemGroup>
+</Project>

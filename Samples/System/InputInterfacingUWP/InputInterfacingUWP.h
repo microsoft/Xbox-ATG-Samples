@@ -15,7 +15,8 @@ enum Modes
 {
     NavigationDevice = 0,
     ArcadeStickDevice,
-    RacingWheelDevice
+    RacingWheelDevice,
+	FlightStickDevice
 };
 
 // A basic sample implementation that creates a D3D11 device and
@@ -50,11 +51,13 @@ public:
 private:
     void GenerateNavString();
     void GenerateStickString();
-    void DrawWheel(DirectX::XMFLOAT2 startPosition);
+	void DrawFlightStick(DirectX::XMFLOAT2 startPosition);
+	void DrawWheel(DirectX::XMFLOAT2 startPosition);
 
     Windows::Gaming::Input::UINavigationController^ GetFirstNavController();
     Windows::Gaming::Input::ArcadeStick^ GetFirstArcadeStick();
     Windows::Gaming::Input::RacingWheel^ GetFirstWheel();
+	Windows::Gaming::Input::FlightStick^ GetFirstFlightStick();
 
     void Update(DX::StepTimer const& timer);
     void Render();
@@ -79,16 +82,20 @@ private:
     Windows::Gaming::Input::RacingWheel^                m_currentWheel;
     Windows::Gaming::Input::RacingWheelReading          m_wheelReading;
     Windows::Gaming::Input::ForceFeedback::ConstantForceEffect^ m_effect;
+	Windows::Gaming::Input::FlightStick^				m_currentFlightStick;
+	Windows::Gaming::Input::FlightStickReading			m_flightStickReading;
 
     Platform::Collections::Vector<Windows::Gaming::Input::UINavigationController^>^ m_navCollection;
     Platform::Collections::Vector<Windows::Gaming::Input::ArcadeStick^>^ m_stickCollection;
     Platform::Collections::Vector<Windows::Gaming::Input::RacingWheel^>^ m_wheelCollection;
+	Platform::Collections::Vector<Windows::Gaming::Input::FlightStick^>^ m_flightStickCollection;
 
     bool                                                m_effectLoaded;
     bool                                                m_currentNavNeedsRefresh;
     bool                                                m_currentWheelNeedsRefresh;
     bool                                                m_currentStickNeedsRefresh;
-    
+	bool                                                m_currentFlightStickNeedsRefresh;
+
     Modes                   m_currentMode;
     bool                    m_selectPressed;
     bool                    m_connected;
