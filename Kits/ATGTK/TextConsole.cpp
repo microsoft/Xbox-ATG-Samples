@@ -86,7 +86,7 @@ void TextConsole::Clear()
 
 
 _Use_decl_annotations_
-void TextConsole::Write(_In_z_ const wchar_t *str)
+void TextConsole::Write(const wchar_t *str)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -132,7 +132,7 @@ void TextConsole::Format(const wchar_t* strFormat, ...)
     if (m_tempBuffer.size() < len)
         m_tempBuffer.resize(len);
 
-    memset(m_tempBuffer.data(), 0, len);
+    memset(m_tempBuffer.data(), 0, sizeof(wchar_t) * len);
 
     vswprintf_s(m_tempBuffer.data(), m_tempBuffer.size(), strFormat, argList);
 
