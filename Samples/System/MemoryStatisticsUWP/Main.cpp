@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // Main.cpp
 //
-// Entry point for universal Windows app.
+// Entry point for Universal Windows Platform (UWP) app.
 //
 // Advanced Technology Group (ATG)
 // Copyright (C) Microsoft Corporation. All rights reserved.
@@ -32,6 +32,7 @@ public:
     ViewProvider() :
         m_exit(false),
         m_visible(true),
+        m_in_sizemove(false),
         m_DPI(96.f),
         m_logicalWidth(800.f),
         m_logicalHeight(600.f),
@@ -83,6 +84,21 @@ public:
     {
         window->SizeChanged +=
             ref new TypedEventHandler<CoreWindow^, WindowSizeChangedEventArgs^>(this, &ViewProvider::OnWindowSizeChanged);
+
+#if defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+        try
+        {
+            window->ResizeStarted +=
+                ref new TypedEventHandler<CoreWindow^, Object^>(this, &ViewProvider::OnResizeStarted);
+
+            window->ResizeCompleted +=
+                ref new TypedEventHandler<CoreWindow^, Object^>(this, &ViewProvider::OnResizeCompleted);
+        }
+        catch (...)
+        {
+            // Requires Windows 10 Creators Update (10.0.15063) or later
+        }
+#endif
 
         window->VisibilityChanged +=
             ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &ViewProvider::OnVisibilityChanged);
@@ -173,17 +189,15 @@ protected:
         ApplicationView::PreferredLaunchWindowingMode = ApplicationViewWindowingMode::PreferredLaunchViewSize;
         // Change to ApplicationViewWindowingMode::FullScreen to default to full screen
 
-        auto desiredSize = Size( ConvertPixelsToDips( w ),
-                                 ConvertPixelsToDips( h ) ); 
+        auto desiredSize = Size(ConvertPixelsToDips(w), ConvertPixelsToDips(h));
 
         ApplicationView::PreferredLaunchViewSize = desiredSize;
 
         auto view = ApplicationView::GetForCurrentView();
 
-        auto minSize = Size( ConvertPixelsToDips( 320 ),
-                             ConvertPixelsToDips( 200 ) );
+        auto minSize = Size(ConvertPixelsToDips(320), ConvertPixelsToDips(200));
 
-        view->SetPreferredMinSize( minSize );
+        view->SetPreferredMinSize(minSize);
 
         CoreWindow::GetForCurrentThread()->Activate();
 
@@ -214,8 +228,25 @@ protected:
         m_logicalWidth = sender->Bounds.Width;
         m_logicalHeight = sender->Bounds.Height;
 
+        if (m_in_sizemove)
+            return;
+
         HandleWindowSizeChanged();
     }
+
+#if defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+    void OnResizeStarted(CoreWindow^ sender, Platform::Object^ args)
+    {
+        m_in_sizemove = true;
+    }
+
+    void OnResizeCompleted(CoreWindow^ sender, Platform::Object^ args)
+    {
+        m_in_sizemove = false;
+
+        HandleWindowSizeChanged();
+    }
+#endif
 
     void OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
     {
@@ -259,9 +290,14 @@ protected:
 
     void OnOrientationChanged(DisplayInformation^ sender, Object^ args)
     {
+        auto resizeManager = CoreWindowResizeManager::GetForCurrentView();
+        resizeManager->ShouldWaitForLayoutCompletion = true;
+
         m_currentOrientation = sender->CurrentOrientation;
 
         HandleWindowSizeChanged();
+
+        resizeManager->NotifyLayoutCompleted();
     }
 
     void OnDisplayContentsInvalidated(DisplayInformation^ sender, Object^ args)
@@ -272,6 +308,7 @@ protected:
 private:
     bool                    m_exit;
     bool                    m_visible;
+    bool                    m_in_sizemove;
     float                   m_DPI;
     float                   m_logicalWidth;
     float                   m_logicalHeight;
@@ -373,6 +410,11 @@ public:
 int main(Platform::Array<Platform::String^>^ argv)
 {
     UNREFERENCED_PARAMETER(argv);
+
+    if (!XMVerifyCPUSupport())
+    {
+        throw std::exception("XMVerifyCPUSupport");
+    }
 
     auto viewProviderFactory = ref new ViewProviderFactory();
     CoreApplication::Run(viewProviderFactory);

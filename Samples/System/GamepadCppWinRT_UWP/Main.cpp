@@ -29,6 +29,7 @@ public:
     ViewProvider() :
         m_exit(false),
         m_visible(true),
+        m_in_sizemove(false),
         m_DPI(96.f),
         m_logicalWidth(800.f),
         m_logicalHeight(600.f),
@@ -76,6 +77,19 @@ public:
     void SetWindow(CoreWindow const & window)
     {
         window.SizeChanged({ this, &ViewProvider::OnWindowSizeChanged });
+
+#if defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+        try
+        {
+            window.ResizeStarted([this](auto&&, auto&&) { m_in_sizemove = true; });
+
+            window.ResizeCompleted([this](auto&&, auto&&) { m_in_sizemove = false; HandleWindowSizeChanged(); });
+        }
+        catch (...)
+        {
+            // Requires Windows 10 Creators Update (10.0.15063) or later
+        }
+#endif
 
         window.VisibilityChanged({ this, &ViewProvider::OnVisibilityChanged });
 
@@ -198,6 +212,9 @@ protected:
         m_logicalWidth = sender.Bounds().Width;
         m_logicalHeight = sender.Bounds().Height;
 
+        if (m_in_sizemove)
+            return;
+
         HandleWindowSizeChanged();
     }
 
@@ -243,9 +260,14 @@ protected:
 
     void OnOrientationChanged(DisplayInformation const & sender, IInspectable const & /*args*/)
     {
+        auto resizeManager = CoreWindowResizeManager::GetForCurrentView();
+        resizeManager.ShouldWaitForLayoutCompletion(true);
+
         m_currentOrientation = sender.CurrentOrientation();
 
         HandleWindowSizeChanged();
+
+        resizeManager.NotifyLayoutCompleted();
     }
 
     void OnDisplayContentsInvalidated(DisplayInformation const & /*sender*/, IInspectable const & /*args*/)
@@ -256,6 +278,7 @@ protected:
 private:
     bool                    m_exit;
     bool                    m_visible;
+    bool                    m_in_sizemove;
     float                   m_DPI;
     float                   m_logicalWidth;
     float                   m_logicalHeight;

@@ -67,9 +67,6 @@
     <ClInclude Include="Shared\SharedSimplePBR.h">
       <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="UWP\d3dx12.h">
-      <Filter>UWP</Filter>
-    </ClInclude>
     <ClInclude Include="UWP\DeviceResources.h">
       <Filter>UWP</Filter>
     </ClInclude>
@@ -83,6 +80,9 @@
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\d3dx12.h">
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Kits\ATGTK\OrbitCamera.h">
@@ -155,24 +155,6 @@
     <Image Include="Assets\WideLogoUWP.png">
       <Filter>Assets\Logo</Filter>
     </Image>
-    <Image Include="Assets\Models\ToyRobot\Floor\Floor_Normal.png">
-      <Filter>Assets\Models\ToyRobot\Floor</Filter>
-    </Image>
-    <Image Include="Assets\Models\ToyRobot\Floor\Floor_RMA.png">
-      <Filter>Assets\Models\ToyRobot\Floor</Filter>
-    </Image>
-    <Image Include="Assets\Models\ToyRobot\ToyRobot\ToyRobot_Normal.png">
-      <Filter>Assets\Models\ToyRobot\ToyRobot</Filter>
-    </Image>
-    <Image Include="Assets\Models\ToyRobot\ToyRobot\ToyRobot_RMA.png">
-      <Filter>Assets\Models\ToyRobot\ToyRobot</Filter>
-    </Image>
-    <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_Normal.png">
-      <Filter>Assets\Models\ToyRobot\WoodBlocks</Filter>
-    </Image>
-    <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_RMA.png">
-      <Filter>Assets\Models\ToyRobot\WoodBlocks</Filter>
-    </Image>
     <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_BaseColor.dds">
       <Filter>Assets\Models\ToyRobot\WoodBlocks</Filter>
     </Image>
@@ -187,6 +169,24 @@
     </Image>
     <Image Include="..\..\..\Media\HDR\Stonewall_Ref_radiance.dds">
       <Filter>Assets\Backgrounds</Filter>
+    </Image>
+    <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_Normal.DDS">
+      <Filter>Assets\Models\ToyRobot\WoodBlocks</Filter>
+    </Image>
+    <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_RMA.DDS">
+      <Filter>Assets\Models\ToyRobot\WoodBlocks</Filter>
+    </Image>
+    <Image Include="Assets\Models\ToyRobot\ToyRobot\Toyrobot_Normal.DDS">
+      <Filter>Assets\Models\ToyRobot\ToyRobot</Filter>
+    </Image>
+    <Image Include="Assets\Models\ToyRobot\ToyRobot\Toyrobot_RMA.DDS">
+      <Filter>Assets\Models\ToyRobot\ToyRobot</Filter>
+    </Image>
+    <Image Include="Assets\Models\ToyRobot\Floor\Floor_Normal.DDS">
+      <Filter>Assets\Models\ToyRobot\Floor</Filter>
+    </Image>
+    <Image Include="Assets\Models\ToyRobot\Floor\Floor_RMA.DDS">
+      <Filter>Assets\Models\ToyRobot\Floor</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>

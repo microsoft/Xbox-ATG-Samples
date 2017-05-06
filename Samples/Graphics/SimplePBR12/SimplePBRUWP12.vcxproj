@@ -99,6 +99,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
     <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <AppxSymbolPackageEnabled>false</AppxSymbolPackageEnabled> 
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <Link>
@@ -213,6 +214,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h" />
     <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h" />
+    <ClInclude Include="..\..\..\Kits\ATGTK\d3dx12.h" />
     <ClInclude Include="..\..\..\Kits\ATGTK\OrbitCamera.h" />
     <ClInclude Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect.h" />
     <ClInclude Include="..\..\..\Kits\ATGTK\Skybox\Skybox.h" />
@@ -225,7 +227,6 @@
     <ClInclude Include="Shared\pch.h" />
     <ClInclude Include="Shared\StepTimer.h" />
     <ClInclude Include="UWP\DeviceResources.h" />
-    <ClInclude Include="UWP\d3dx12.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Kits\ATGTK\OrbitCamera.cpp">
@@ -367,14 +368,14 @@
     <Image Include="..\..\..\Media\HDR\Stonewall_Ref_radiance.dds" />
     <Image Include="Assets\LogoUWP.png" />
     <Image Include="Assets\Models\ToyRobot\Floor\Floor_BaseColor.dds" />
-    <Image Include="Assets\Models\ToyRobot\Floor\Floor_Normal.png" />
-    <Image Include="Assets\Models\ToyRobot\Floor\Floor_RMA.png" />
+    <Image Include="Assets\Models\ToyRobot\Floor\Floor_Normal.DDS" />
+    <Image Include="Assets\Models\ToyRobot\Floor\Floor_RMA.DDS" />
     <Image Include="Assets\Models\ToyRobot\ToyRobot\ToyRobot_BaseColor.dds" />
-    <Image Include="Assets\Models\ToyRobot\ToyRobot\ToyRobot_Normal.png" />
-    <Image Include="Assets\Models\ToyRobot\ToyRobot\ToyRobot_RMA.png" />
+    <Image Include="Assets\Models\ToyRobot\ToyRobot\Toyrobot_Normal.DDS" />
+    <Image Include="Assets\Models\ToyRobot\ToyRobot\Toyrobot_RMA.DDS" />
     <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_BaseColor.dds" />
-    <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_Normal.png" />
-    <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_RMA.png" />
+    <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_Normal.DDS" />
+    <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_RMA.DDS" />
     <Image Include="Assets\SmallLogoUWP.png" />
     <Image Include="Assets\SplashScreenUWP.png" />
     <Image Include="Assets\StoreLogoUWP.png" />
