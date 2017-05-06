@@ -38,6 +38,7 @@ public:
     ViewProvider() :
         m_exit( false ),
         m_visible( true ),
+        m_in_sizemove(false),
         m_DPI( 96.f ),
         m_logicalWidth( 800.f ),
         m_logicalHeight( 600.f ),
@@ -92,6 +93,21 @@ public:
         window->SizeChanged +=
             ref new TypedEventHandler<CoreWindow^, WindowSizeChangedEventArgs^>( this, &ViewProvider::OnWindowSizeChanged );
 
+#if defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+        try
+        {
+            window->ResizeStarted +=
+                ref new TypedEventHandler<CoreWindow^, Object^>(this, &ViewProvider::OnResizeStarted);
+
+            window->ResizeCompleted +=
+                ref new TypedEventHandler<CoreWindow^, Object^>(this, &ViewProvider::OnResizeCompleted);
+        }
+        catch (...)
+        {
+            // Requires Windows 10 Creators Update (10.0.15063) or later
+        }
+#endif
+
         window->VisibilityChanged +=
             ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>( this, &ViewProvider::OnVisibilityChanged );
 
@@ -133,8 +149,6 @@ public:
             ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::KeyEventArgs ^>( this, &ViewProvider::OnKeyDown );
 
         m_DPI = currentDisplayInformation->LogicalDpi;
-        m_resizeManager = CoreWindowResizeManager::GetForCurrentView();
-        m_resizeManager->ShouldWaitForLayoutCompletion = true;
 
         m_logicalWidth = window->Bounds.Width;
         m_logicalHeight = window->Bounds.Height;
@@ -250,6 +264,9 @@ protected:
         m_logicalWidthPixels = ConvertDipsToPixels(m_logicalWidth);
         m_logicalHeightPixels = ConvertDipsToPixels(m_logicalHeight);
 
+        if (m_in_sizemove)
+            return;
+
         // Adjust drawn cursor location based on size change
         if (m_relative)
         {
@@ -264,6 +281,20 @@ protected:
         }
         HandleWindowSizeChanged();
     }
+
+#if defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+    void OnResizeStarted(CoreWindow^ sender, Platform::Object^ args)
+    {
+        m_in_sizemove = true;
+    }
+
+    void OnResizeCompleted(CoreWindow^ sender, Platform::Object^ args)
+    {
+        m_in_sizemove = false;
+
+        HandleWindowSizeChanged();
+    }
+#endif
 
     void OnVisibilityChanged( CoreWindow^ sender, VisibilityChangedEventArgs^ args )
     {
@@ -308,10 +339,15 @@ protected:
 
     void OnOrientationChanged( DisplayInformation^ sender, Object^ args )
     {
+        auto resizeManager = CoreWindowResizeManager::GetForCurrentView();
+        resizeManager->ShouldWaitForLayoutCompletion = true;
+
         m_nativeOrientation = sender->NativeOrientation;
         m_currentOrientation = sender->CurrentOrientation;
 
         HandleWindowSizeChanged();
+
+        resizeManager->NotifyLayoutCompleted();
     }
 
     void OnDisplayContentsInvalidated( DisplayInformation^ sender, Object^ args )
@@ -453,6 +489,7 @@ protected:
 private:
     bool                     m_exit;
     bool                     m_visible;
+    bool                     m_in_sizemove;
     float                    m_DPI;
     float                    m_logicalWidth;
     float                    m_logicalHeight;
@@ -461,7 +498,6 @@ private:
     int                      m_outputHeightPixels;
     int                      m_outputWidthPixels;
     std::unique_ptr<Sample>  m_sample;
-    CoreWindowResizeManager^ m_resizeManager;
 
     // Mode
     bool m_clipCursor = false;
@@ -539,7 +575,6 @@ private:
         m_outputWidthPixels = m_logicalWidthPixels = ConvertDipsToPixels(m_logicalWidth);
         m_outputHeightPixels = m_logicalHeightPixels = ConvertDipsToPixels(m_logicalHeight);
 
-
         DXGI_MODE_ROTATION rotation = ComputeDisplayRotation();
 
         if ( rotation == DXGI_MODE_ROTATION_ROTATE90 || rotation == DXGI_MODE_ROTATION_ROTATE270 )
@@ -548,8 +583,6 @@ private:
         }
 
         m_sample->OnWindowSizeChanged(m_outputWidthPixels, m_outputHeightPixels, rotation );
-
-        m_resizeManager->NotifyLayoutCompleted();
     }
 
 };

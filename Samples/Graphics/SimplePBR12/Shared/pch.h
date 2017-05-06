@@ -22,7 +22,7 @@
 #else
 
 #include <d3d12.h>
-#include "..\UWP\d3dx12.h"
+#include "d3dx12.h"
 #include <dxgi1_4.h>
 
 #ifdef _DEBUG

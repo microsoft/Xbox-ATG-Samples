@@ -58,8 +58,8 @@ namespace ATG
             wchar_t fullTexturePath[MaxTextures][_MAX_PATH] = {};
 
             swprintf_s(fullTexturePath[Albedo], L"%s\\%s_BaseColor.dds", m_modelBasePath.c_str(),  m_modelName.c_str());
-            swprintf_s(fullTexturePath[Normal], L"%s\\%s_Normal.png",    m_modelBasePath.c_str(),  m_modelName.c_str());
-            swprintf_s(fullTexturePath[RMA], L"%s\\%s_RMA.png",          m_modelBasePath.c_str(),  m_modelName.c_str());
+            swprintf_s(fullTexturePath[Normal], L"%s\\%s_Normal.dds",    m_modelBasePath.c_str(),  m_modelName.c_str());
+            swprintf_s(fullTexturePath[RMA], L"%s\\%s_RMA.dds",          m_modelBasePath.c_str(),  m_modelName.c_str());
          
             // PBR Model
             m_model = Model::CreateFromSDKMESH(m_modelFullPath.c_str());
@@ -71,12 +71,11 @@ namespace ATG
                     D3D12_RESOURCE_FLAG_NONE, WIC_LOADER_FORCE_SRGB,
                     m_textureResources[Albedo].ReleaseAndGetAddressOf()));
 
-            // Load others as linear
+            // Reload others as linear
             for (size_t i = Normal; i < MaxTextures; i++)
             {
-                DX::ThrowIfFailed(
-                    CreateWICTextureFromFile(device, resourceUpload, fullTexturePath[i],
-                        m_textureResources[i].ReleaseAndGetAddressOf()));
+                DX::ThrowIfFailed(CreateDDSTextureFromFile(device, resourceUpload, fullTexturePath[i],
+                    m_textureResources[i].ReleaseAndGetAddressOf()));
             }
 
             // Allocate a range of descriptors from pile

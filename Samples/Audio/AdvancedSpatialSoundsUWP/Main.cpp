@@ -12,6 +12,8 @@
 
 #include <ppltasks.h>
 
+#include "Telemetry.h"
+
 using namespace concurrency;
 using namespace Windows::ApplicationModel;
 using namespace Windows::ApplicationModel::Core;
@@ -51,6 +53,25 @@ public:
             ref new EventHandler<Platform::Object^>(this, &ViewProvider::OnResuming);
 
         m_sample = std::make_unique<Sample>();
+
+		// Sample Usage Telemetry
+		//
+		// Disable or remove this code block to opt-out of sample usage telemetry
+		//
+		if (ATG::EventRegisterATGSampleTelemetry() == ERROR_SUCCESS)
+		{
+			wchar_t exeName[MAX_PATH + 1] = {};
+			if (!GetModuleFileNameW(nullptr, exeName, MAX_PATH))
+			{
+				wcscpy_s(exeName, L"Unknown");
+			}
+			wchar_t fname[_MAX_FNAME] = {};
+			wchar_t ext[_MAX_EXT] = {};
+			(void)_wsplitpath_s(exeName, nullptr, 0, nullptr, 0, fname, _MAX_FNAME, ext, _MAX_EXT);
+			(void)_wmakepath_s(exeName, nullptr, nullptr, fname, ext); // keep only the filename + extension
+
+			ATG::EventWriteSampleLoaded(exeName);
+		}
     }
 
     virtual void Uninitialize()

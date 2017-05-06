@@ -33,6 +33,7 @@ public:
     ViewProvider() :
         m_exit(false),
         m_visible(true),
+        m_in_sizemove(false),
         m_DPI(96.f),
         m_logicalWidth(800.f),
         m_logicalHeight(600.f),
@@ -54,9 +55,9 @@ public:
             ref new EventHandler<Platform::Object^>(this, &ViewProvider::OnResuming);
 
         m_sample = std::make_unique<Sample>();
-		m_sample->ShowInstructions();
-		m_sample->LogPLMEvent(L"Initialize()");
-		
+        m_sample->ShowInstructions();
+        m_sample->LogPLMEvent(L"Initialize()");
+        
         // Sample Usage Telemetry
         //
         // Disable or remove this code block to opt-out of sample usage telemetry
@@ -86,6 +87,21 @@ public:
     {
         window->SizeChanged +=
             ref new TypedEventHandler<CoreWindow^, WindowSizeChangedEventArgs^>(this, &ViewProvider::OnWindowSizeChanged);
+
+#if defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+        try
+        {
+            window->ResizeStarted +=
+                ref new TypedEventHandler<CoreWindow^, Object^>(this, &ViewProvider::OnResizeStarted);
+
+            window->ResizeCompleted +=
+                ref new TypedEventHandler<CoreWindow^, Object^>(this, &ViewProvider::OnResizeCompleted);
+        }
+        catch (...)
+        {
+            // Requires Windows 10 Creators Update (10.0.15063) or later
+        }
+#endif
 
         window->VisibilityChanged +=
             ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &ViewProvider::OnVisibilityChanged);
@@ -129,17 +145,17 @@ public:
 
         m_sample->Initialize(reinterpret_cast<IUnknown*>(window),
                            outputWidth, outputHeight, rotation );
-		m_sample->LogPLMEvent(L"SetWindow()");
+        m_sample->LogPLMEvent(L"SetWindow()");
     }
 
     virtual void Load(Platform::String^ entryPoint)
     {
-		m_sample->LogPLMEvent(L"Load()", entryPoint->Data());
+        m_sample->LogPLMEvent(L"Load()", entryPoint->Data());
     }
 
     virtual void Run()
     {
-		m_sample->LogPLMEvent(L"Run()");
+        m_sample->LogPLMEvent(L"Run()");
         while (!m_exit)
         {
             if (m_visible)
@@ -158,7 +174,7 @@ public:
 protected:
     // Event handlers
     void OnActivated(CoreApplicationView^ applicationView, IActivatedEventArgs^ args)
-	{
+    {
         if (args->Kind == ActivationKind::Launch)
         {
             auto launchArgs = static_cast<LaunchActivatedEventArgs^>(args);
@@ -191,7 +207,7 @@ protected:
 
         view->SetPreferredMinSize( minSize );
 
-		m_sample->LogPLMEvent(L"OnActivated()", args->Kind.ToString()->Data());
+        m_sample->LogPLMEvent(L"OnActivated()", args->Kind.ToString()->Data());
         CoreWindow::GetForCurrentThread()->Activate();
 
         view->FullScreenSystemOverlayMode = FullScreenSystemOverlayMode::Minimal;
@@ -201,27 +217,27 @@ protected:
 
     void OnSuspending(Platform::Object^ sender, SuspendingEventArgs^ args)
     {
-		if (m_sample->GetUseDeferral())
-		{
-			SuspendingDeferral^ deferral = args->SuspendingOperation->GetDeferral();
+        if (m_sample->GetUseDeferral())
+        {
+            SuspendingDeferral^ deferral = args->SuspendingOperation->GetDeferral();
 
-			concurrency::create_task([this, deferral]()
-			{
-				m_sample->LogPLMEvent(L"OnSuspending()", L"using a deferral");
-				m_sample->OnSuspending();
-				deferral->Complete();
-			});
-		}
-		else
-		{
-			m_sample->LogPLMEvent(L"OnSuspending()", L"not using a deferral");
-			m_sample->OnSuspending();
-		}
+            concurrency::create_task([this, deferral]()
+            {
+                m_sample->LogPLMEvent(L"OnSuspending()", L"using a deferral");
+                m_sample->OnSuspending();
+                deferral->Complete();
+            });
+        }
+        else
+        {
+            m_sample->LogPLMEvent(L"OnSuspending()", L"not using a deferral");
+            m_sample->OnSuspending();
+        }
     }
 
     void OnResuming(Platform::Object^ sender, Platform::Object^ args)
     {
-		m_sample->LogPLMEvent(L"OnResuming()");
+        m_sample->LogPLMEvent(L"OnResuming()");
         m_sample->OnResuming();
     }
 
@@ -230,22 +246,40 @@ protected:
         m_logicalWidth = sender->Bounds.Width;
         m_logicalHeight = sender->Bounds.Height;
 
+        if (m_in_sizemove)
+            return;
+
         HandleWindowSizeChanged();
     }
 
-	void OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
-	{
-		m_visible = args->Visible;
-		if (m_visible)
-		{
-			m_sample->LogPLMEvent(L"OnVisibilityChanged()", L"Visible");
-			m_sample->OnActivated();
-		}
-		else
-		{
-			m_sample->LogPLMEvent(L"OnVisibilityChanged()", L"Not Visible");
-			m_sample->OnDeactivated();
-		}
+#if defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+    void OnResizeStarted(CoreWindow^ sender, Platform::Object^ args)
+    {
+        m_in_sizemove = true;
+    }
+
+    void OnResizeCompleted(CoreWindow^ sender, Platform::Object^ args)
+    {
+        m_in_sizemove = false;
+
+        HandleWindowSizeChanged();
+    }
+#endif
+
+
+    void OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
+    {
+        m_visible = args->Visible;
+        if (m_visible)
+        {
+            m_sample->LogPLMEvent(L"OnVisibilityChanged()", L"Visible");
+            m_sample->OnActivated();
+        }
+        else
+        {
+            m_sample->LogPLMEvent(L"OnVisibilityChanged()", L"Not Visible");
+            m_sample->OnDeactivated();
+        }
     }
 
     void OnWindowClosed(CoreWindow^ sender, CoreWindowEventArgs^ args)
@@ -281,9 +315,14 @@ protected:
 
     void OnOrientationChanged(DisplayInformation^ sender, Object^ args)
     {
+        auto resizeManager = CoreWindowResizeManager::GetForCurrentView();
+        resizeManager->ShouldWaitForLayoutCompletion = true;
+
         m_currentOrientation = sender->CurrentOrientation;
 
         HandleWindowSizeChanged();
+
+        resizeManager->NotifyLayoutCompleted();
     }
 
     void OnDisplayContentsInvalidated(DisplayInformation^ sender, Object^ args)
@@ -294,6 +333,7 @@ protected:
 private:
     bool                    m_exit;
     bool                    m_visible;
+    bool                    m_in_sizemove;
     float                   m_DPI;
     float                   m_logicalWidth;
     float                   m_logicalHeight;
@@ -395,6 +435,11 @@ public:
 int main(Platform::Array<Platform::String^>^ argv)
 {
     UNREFERENCED_PARAMETER(argv);
+
+    if (!XMVerifyCPUSupport())
+    {
+        throw std::exception("XMVerifyCPUSupport");
+    }
 
     auto viewProviderFactory = ref new ViewProviderFactory();
     CoreApplication::Run(viewProviderFactory);
