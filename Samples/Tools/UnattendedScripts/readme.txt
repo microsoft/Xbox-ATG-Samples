@@ -1,4 +1,4 @@
-This folder provides a location for sample scripts which can be used either via unattended setup boot scripts or the Project Scorpio Devkit's front panel display.
+This folder provides a location for sample scripts which can be used either via unattended setup boot scripts or front panel scripts on an Xbox One DevKit equipped with a front panel display.
 
 For unattended setup boot scripts, place the script at the root of a USB drive or copy it to d:\boot\boot.cmd on the console.
 For front panel display scripts, copy the script to d:\QuickActions on the console.
