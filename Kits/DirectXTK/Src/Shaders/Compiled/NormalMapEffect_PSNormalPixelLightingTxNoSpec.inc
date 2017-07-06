@@ -48,32 +48,32 @@
     dcl_2d s0
     dcl_2d s1
 
-#line 197 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
+#line 197 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
     texld r0, t0, s1  // BiasX2::x<0,1,2>
 
 #line 204
     texld r1, t0, s0
 
-#line 103 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 103 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     nrm r2.xyz, t2  // ::normal<0,1,2>
     nrm r3.xyz, t3  // ::tangent<0,1,2>
     mul r4.xyz, r2.zxyw, r3.yzxw
     mad r4.xyz, r2.yzxw, r3.zxyw, -r4  // ::binormal<0,1,2>
 
-#line 32 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 32 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r0.xyz, r0, c14.x, c14.y  // ::BiasX2<0,1,2>
 
-#line 108 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 108 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mul r4.xyz, r4, r0.y
     mad r3.xyz, r0.x, r3, r4
     mad r0.xyz, r0.z, r2, r3  // ::PeturbNormal<0,1,2>
 
-#line 194 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
+#line 194 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
     add r2.xyz, -t1, c12
     dp3 r0.w, r2, r2
     rsq r0.w, r0.w
 
-#line 33 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 33 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mad r3.xyz, r2, r0.w, -c3
     nrm r4.xyz, r3  // ::halfVectors<0,1,2>
 
@@ -119,20 +119,20 @@
     mad r2.xyz, r2.z, c11, r3
     mul r2.xyz, r2, c2  // ::result<3,4,5>
 
-#line 204 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
+#line 204 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
     mul r1, r1, t4  // ::color<0,1,2,3>
 
-#line 26 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 26 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mul r2.xyz, r1.w, r2
 
-#line 46 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 46 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mul r3.xyz, r0.y, c7
     mad r3.xyz, r0.x, c6, r3
     mad r0.xyz, r0.z, c8, r3
     mov r3.xyz, c0  // Parameters::DiffuseColor<0,1,2>
     mad r0.xyz, r0, r3, c1  // ::result<0,1,2>
 
-#line 26 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 26 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r0.xyz, r1, r0, r2  // AddSpecular::color<0,1,2>
 
 #line 20
@@ -217,10 +217,10 @@ ret
 
 const BYTE NormalMapEffect_PSNormalPixelLightingTxNoSpec[] =
 {
-     68,  88,  66,  67,  92,   4, 
-     29, 164, 223, 120,  15,  43, 
-    178,  89, 243, 252,  82, 138, 
-    242, 183,   1,   0,   0,   0, 
+     68,  88,  66,  67, 152, 197, 
+    236, 246,  59,  94, 220, 213, 
+    132, 181, 216,  21,  60, 106, 
+     24,   6,   1,   0,   0,   0, 
     128,  20,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     212,  11,   0,   0, 180,  19, 
@@ -244,7 +244,7 @@ const BYTE NormalMapEffect_PSNormalPixelLightingTxNoSpec[] =
      60,   0,   0,   0, 220,   0, 
       0,   0,  19,   0,   0,   0, 
     248,   5,   0,   0,  20,   3, 
-      0,   0,  67,  58,  92,  65, 
+      0,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 
@@ -254,7 +254,7 @@ const BYTE NormalMapEffect_PSNormalPixelLightingTxNoSpec[] =
      92,  78, 111, 114, 109,  97, 
     108,  77,  97, 112,  69, 102, 
     102, 101,  99, 116,  46, 102, 
-    120,   0,  67,  58,  92,  65, 
+    120,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 
@@ -263,7 +263,7 @@ const BYTE NormalMapEffect_PSNormalPixelLightingTxNoSpec[] =
     104,  97, 100, 101, 114, 115, 
      92,  76, 105, 103, 104, 116, 
     105, 110, 103,  46, 102, 120, 
-    104,   0,  67,  58,  92,  65, 
+    104,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 

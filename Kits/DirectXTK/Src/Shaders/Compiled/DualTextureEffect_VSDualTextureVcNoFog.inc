@@ -46,18 +46,18 @@
     dcl_texcoord2 v2  // vin<6,7>
     dcl_texcoord3 v3  // vin<8,9,10,11>
 
-#line 49 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 49 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 oPos.z, v0, c4  // ::VSDualTextureVcNoFog<10>
 
-#line 88 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\DualTextureEffect.fx"
+#line 88 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\DualTextureEffect.fx"
     mul oT0, v3, c1  // ::VSDualTextureVcNoFog<0,1,2,3>
 
-#line 49 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 49 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c2  // ::vout<0>
     dp4 r0.y, v0, c3  // ::vout<1>
     dp4 r0.z, v0, c5  // ::vout<3>
 
-#line 79 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\DualTextureEffect.fx"
+#line 79 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\DualTextureEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSDualTextureVcNoFog<8,9>
     mov oPos.w, r0.z  // ::VSDualTextureVcNoFog<11>
 
@@ -89,10 +89,10 @@ ret
 
 const BYTE DualTextureEffect_VSDualTextureVcNoFog[] =
 {
-     68,  88,  66,  67,  50, 120, 
-    119, 116,  49, 137, 216,  88, 
-    182, 128, 201,  15, 123,  28, 
-    203,   9,   1,   0,   0,   0, 
+     68,  88,  66,  67,  17, 130, 
+     73, 201, 222, 221, 152, 237, 
+    246,  47, 168, 249,  31, 102, 
+    202,  82,   1,   0,   0,   0, 
       0,   7,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     152,   4,   0,   0, 232,   5, 
@@ -117,7 +117,7 @@ const BYTE DualTextureEffect_VSDualTextureVcNoFog[] =
       0,   0,  13,   0,   0,   0, 
     164,   0,   0,   0,   3,   0, 
       0,   0, 244,   2,   0,   0, 
-     12,   1,   0,   0,  67,  58, 
+     12,   1,   0,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -126,7 +126,7 @@ const BYTE DualTextureEffect_VSDualTextureVcNoFog[] =
      92,  83, 104,  97, 100, 101, 
     114, 115,  92,  67, 111, 109, 
     109, 111, 110,  46, 102, 120, 
-    104,   0,  67,  58,  92,  65, 
+    104,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 

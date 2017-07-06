@@ -42,7 +42,7 @@
     dcl_texcoord1 v1  // texCoord<0,1>
     dcl_texcoord2 v2  // position<0,1,2,3>
 
-#line 26 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SpriteEffect.fx"
+#line 26 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SpriteEffect.fx"
     mul r0, v2.y, c2
     mad r0, v2.x, c1, r0
     mad r0, v2.z, c3, r0
@@ -74,10 +74,10 @@ ret
 
 const BYTE SpriteEffect_SpriteVertexShader[] =
 {
-     68,  88,  66,  67,  58,  49, 
-     95,  78, 240,  23, 233,  35, 
-    191, 113,  38, 196, 211, 226, 
-      3, 180,   1,   0,   0,   0, 
+     68,  88,  66,  67, 195,  18, 
+     99, 240, 134, 203, 128,  31, 
+     15, 158, 162, 178, 130, 214, 
+     39, 200,   1,   0,   0,   0, 
      28,   5,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     252,   2,   0,   0,  52,   4, 
@@ -100,7 +100,7 @@ const BYTE SpriteEffect_SpriteVertexShader[] =
       0,   0,  11,   0,   0,   0, 
     104,   0,   0,   0,   3,   0, 
       0,   0, 116,   1,   0,   0, 
-    192,   0,   0,   0,  67,  58, 
+    192,   0,   0,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 

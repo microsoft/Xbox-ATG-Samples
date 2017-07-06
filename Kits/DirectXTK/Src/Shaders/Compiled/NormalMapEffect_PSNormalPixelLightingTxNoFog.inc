@@ -50,7 +50,7 @@
     dcl_2d s1
     dcl_2d s2
 
-#line 127 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
+#line 127 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
     texld r0, t0, s2  // BiasX2::x<0,1,2>
 
 #line 138
@@ -59,26 +59,26 @@
 #line 134
     texld r2, t0, s0
 
-#line 103 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 103 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     nrm r3.xyz, t2  // ::normal<0,1,2>
     nrm r4.xyz, t3  // ::tangent<0,1,2>
     mul r5.xyz, r3.zxyw, r4.yzxw
     mad r5.xyz, r3.yzxw, r4.zxyw, -r5  // ::binormal<0,1,2>
 
-#line 32 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 32 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r0.xyz, r0, c13.x, c13.y  // ::BiasX2<0,1,2>
 
-#line 108 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 108 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mul r5.xyz, r5, r0.y
     mad r4.xyz, r0.x, r4, r5
     mad r0.xyz, r0.z, r3, r4  // ::PeturbNormal<0,1,2>
 
-#line 124 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
+#line 124 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
     add r3.xyz, -t1, c12
     dp3 r0.w, r3, r3
     rsq r0.w, r0.w
 
-#line 33 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 33 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mad r4.xyz, r3, r0.w, -c3
     nrm r5.xyz, r4  // ::halfVectors<0,1,2>
 
@@ -124,23 +124,23 @@
     mad r3.xyz, r3.z, c11, r4
     mul r3.xyz, r3, c2  // ::result<3,4,5>
 
-#line 139 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
+#line 139 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
     mul r1.xyz, r1, r3  // AddSpecular::specular<0,1,2>
 
 #line 134
     mul r2, r2, t4  // ::color<0,1,2,3>
 
-#line 26 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 26 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mul r1.xyz, r1, r2.w
 
-#line 46 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 46 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mul r3.xyz, r0.y, c7
     mad r3.xyz, r0.x, c6, r3
     mad r0.xyz, r0.z, c8, r3
     mov r3.xyz, c0  // Parameters::DiffuseColor<0,1,2>
     mad r0.xyz, r0, r3, c1  // ::result<0,1,2>
 
-#line 26 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 26 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r2.xyz, r2, r0, r1  // AddSpecular::color<0,1,2>
     mov oC0, r2  // ::PSNormalPixelLightingTxNoFog<0,1,2,3>
 
@@ -222,10 +222,10 @@ ret
 
 const BYTE NormalMapEffect_PSNormalPixelLightingTxNoFog[] =
 {
-     68,  88,  66,  67, 146,  97, 
-    141, 113, 209, 190, 175,  64, 
-     69, 118, 228, 133, 153, 112, 
-    128,  53,   1,   0,   0,   0, 
+     68,  88,  66,  67,  43,  10, 
+     12, 246, 153,  42,  43, 170, 
+     71, 234, 128,  11, 120, 181, 
+    221, 113,   1,   0,   0,   0, 
     184,  20,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      12,  12,   0,   0, 236,  19, 
@@ -250,7 +250,7 @@ const BYTE NormalMapEffect_PSNormalPixelLightingTxNoFog[] =
       0,   0, 220,   0,   0,   0, 
      20,   0,   0,   0,  20,   6, 
       0,   0,  28,   3,   0,   0, 
-     67,  58,  92,  65,  84,  71, 
+     68,  58,  92,  65,  84,  71, 
      92, 115, 116,  95, 100, 101, 
     118,  92,  75, 105, 116, 115, 
      92,  68, 105, 114, 101,  99, 
@@ -260,7 +260,7 @@ const BYTE NormalMapEffect_PSNormalPixelLightingTxNoFog[] =
     111, 114, 109,  97, 108,  77, 
      97, 112,  69, 102, 102, 101, 
      99, 116,  46, 102, 120,   0, 
-     67,  58,  92,  65,  84,  71, 
+     68,  58,  92,  65,  84,  71, 
      92, 115, 116,  95, 100, 101, 
     118,  92,  75, 105, 116, 115, 
      92,  68, 105, 114, 101,  99, 
@@ -269,7 +269,7 @@ const BYTE NormalMapEffect_PSNormalPixelLightingTxNoFog[] =
     100, 101, 114, 115,  92,  76, 
     105, 103, 104, 116, 105, 110, 
     103,  46, 102, 120, 104,   0, 
-     67,  58,  92,  65,  84,  71, 
+     68,  58,  92,  65,  84,  71, 
      92, 115, 116,  95, 100, 101, 
     118,  92,  75, 105, 116, 115, 
      92,  68, 105, 114, 101,  99, 

@@ -22,7 +22,7 @@
     ps_2_0
     dcl t0  // pin<0,1,2,3>
 
-#line 507 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 507 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mov oC0, t0  // ::PSBasicNoFog<0,1,2,3>
 
 // approximately 1 instruction slot used
@@ -36,10 +36,10 @@ ret
 
 const BYTE BasicEffect_PSBasicNoFog[] =
 {
-     68,  88,  66,  67, 223, 112, 
-    180, 160, 127,  27, 212, 153, 
-     83,  32,   5,  48, 221, 174, 
-     43, 173,   1,   0,   0,   0, 
+     68,  88,  66,  67,  30, 143, 
+    129, 169,  64,  67, 190,  94, 
+    187, 199, 124, 239, 138, 120, 
+     62, 127,   1,   0,   0,   0, 
      88,   2,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     180,   1,   0,   0, 244,   1, 
@@ -60,7 +60,7 @@ const BYTE BasicEffect_PSBasicNoFog[] =
       0,   0, 100,   0,   0,   0, 
       2,   0,   0,   0, 224,   0, 
       0,   0, 116,   0,   0,   0, 
-     67,  58,  92,  65,  84,  71, 
+     68,  58,  92,  65,  84,  71, 
      92, 115, 116,  95, 100, 101, 
     118,  92,  75, 105, 116, 115, 
      92,  68, 105, 114, 101,  99, 

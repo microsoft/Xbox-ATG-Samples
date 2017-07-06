@@ -48,7 +48,7 @@
     dcl_texcoord2 v2  // vin<7,8>
     dcl_texcoord3 v3  // vin<9,10,11,12>
 
-#line 57 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 57 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 r0.x, v0, c15  // ::pos_ws<0>
     dp4 r0.y, v0, c16  // ::pos_ws<1>
     dp4 r0.z, v0, c17  // ::pos_ws<2>
@@ -59,10 +59,10 @@
     add r0.xyz, r1, -c4
     nrm r2.xyz, r0  // ::halfVectors<0,1,2>
 
-#line 32 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 32 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r0.xyz, v1, c25.x, c25.y  // ::BiasX2<0,1,2>
 
-#line 59 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 59 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp3 r3.x, r0, c18
     dp3 r3.y, r0, c19
     dp3 r3.z, r0, c20
@@ -117,28 +117,28 @@
 #line 63
     dp4 oPos.z, v0, c23  // ::VSBasicVertexLightingTxVcBn<12>
 
-#line 14 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 14 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.w, v0, c14
     max r0.w, r0.w, c25.z
     min oT1.w, r0.w, c25.w  // ::VSBasicVertexLightingTxVcBn<7>
 
-#line 46 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 46 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mul r1.xyz, r0.y, c8
     mad r0.xyw, r0.x, c7.xyzz, r1.xyzz
     mad r0.xyz, r0.z, c9, r0.xyww
     mov r1.xyz, c1  // Parameters::DiffuseColor<0,1,2>
     mad r0.xyz, r0, r1, c2  // ::result<0,1,2>
 
-#line 257 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 257 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT0.xyz, r0, v3  // ::VSBasicVertexLightingTxVcBn<0,1,2>
     mul oT0.w, v3.w, c1.w  // ::VSBasicVertexLightingTxVcBn<3>
 
-#line 63 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 63 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 r0.x, v0, c21  // ::vout<0>
     dp4 r0.y, v0, c22  // ::vout<1>
     dp4 r0.z, v0, c24  // ::vout<3>
 
-#line 247 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 247 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicVertexLightingTxVcBn<10,11>
     mov oPos.w, r0.z  // ::VSBasicVertexLightingTxVcBn<13>
 
@@ -219,10 +219,10 @@ ret
 
 const BYTE BasicEffect_VSBasicVertexLightingTxVcBn[] =
 {
-     68,  88,  66,  67,  64,   8, 
-    215,  19, 106,  61, 168,  24, 
-    147, 158, 214, 161, 169,   4, 
-    224, 133,   1,   0,   0,   0, 
+     68,  88,  66,  67,   0,  94, 
+    139,  26, 102,  30,  30, 137, 
+    154, 112, 162,  58,  58, 189, 
+    145, 153,   1,   0,   0,   0, 
     156,  20,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     248,  11,   0,   0, 124,  19, 
@@ -249,7 +249,7 @@ const BYTE BasicEffect_VSBasicVertexLightingTxVcBn[] =
       0,   0,  60,   0,   0,   0, 
     216,   0,   0,   0,  15,   0, 
       0,   0, 116,   6,   0,   0, 
-     16,   3,   0,   0,  67,  58, 
+     16,   3,   0,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -258,7 +258,7 @@ const BYTE BasicEffect_VSBasicVertexLightingTxVcBn[] =
      92,  83, 104,  97, 100, 101, 
     114, 115,  92,  76, 105, 103, 
     104, 116, 105, 110, 103,  46, 
-    102, 120, 104,   0,  67,  58, 
+    102, 120, 104,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -267,7 +267,7 @@ const BYTE BasicEffect_VSBasicVertexLightingTxVcBn[] =
      92,  83, 104,  97, 100, 101, 
     114, 115,  92,  67, 111, 109, 
     109, 111, 110,  46, 102, 120, 
-    104,   0,  67,  58,  92,  65, 
+    104,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 
