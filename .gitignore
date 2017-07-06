@@ -29,6 +29,7 @@ x64
 Samples/Graphics/SimplePBR12/Compiled/
 Samples/Tools/errorlookup/errorlookup/project.lock.json
 /wiki
+AppPackages
 packages
 !Kits/Telemetry/ARM
 !Kits/Telemetry/Win32

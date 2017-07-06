@@ -32,7 +32,7 @@
     dcl t1.xy  // pin<4,5>
     dcl_2d s0
 
-#line 525 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 525 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     texld r0, t1, s0
     mul r0, r0, t0  // ::PSBasicTxNoFog<0,1,2,3>
     mov oC0, r0  // ::PSBasicTxNoFog<0,1,2,3>
@@ -53,10 +53,10 @@ ret
 
 const BYTE BasicEffect_PSBasicTxNoFog[] =
 {
-     68,  88,  66,  67, 155, 103, 
-    253, 171, 169, 115, 201,   4, 
-     82, 215, 150,  31,  59,  26, 
-    191,  51,   1,   0,   0,   0, 
+     68,  88,  66,  67, 248,  60, 
+    215, 214, 126, 120,  68, 146, 
+    107, 190,  30,  87,  92, 248, 
+     95,  60,   1,   0,   0,   0, 
     108,   3,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      76,   2,   0,   0, 232,   2, 
@@ -77,7 +77,7 @@ const BYTE BasicEffect_PSBasicTxNoFog[] =
       0,   0,   6,   0,   0,   0, 
     100,   0,   0,   0,   2,   0, 
       0,   0,  60,   1,   0,   0, 
-    148,   0,   0,   0,  67,  58, 
+    148,   0,   0,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 

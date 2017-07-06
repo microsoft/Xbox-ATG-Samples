@@ -46,7 +46,7 @@
     dcl_2d s0
     dcl_cube s1
 
-#line 92 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 92 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     nrm r0.xyz, t2  // ::worldNormal<0,1,2>
     add r1.xyz, -t1, c10
     nrm r2.xyz, r1  // ::eyeVector<0,1,2>
@@ -62,7 +62,7 @@
 #line 100
     texld r1, r1, s1
 
-#line 36 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 36 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp3 r4.x, -c4, r0  // ::dotL<0>
     dp3 r4.y, -c5, r0  // ::dotL<1>
     dp3 r4.z, -c6, r0  // ::dotL<2>
@@ -78,7 +78,7 @@
     mov r5.xyz, c2  // Parameters::DiffuseColor<0,1,2>
     mad r4.xyz, r4, r5, c3  // ::result<0,1,2>
 
-#line 89 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 89 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     mul r3, r3, t3  // ::color<0,1,2,3>
 
 #line 96
@@ -158,10 +158,10 @@ ret
 
 const BYTE EnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog[] =
 {
-     68,  88,  66,  67, 248, 144, 
-    122, 174, 225, 193, 231,   5, 
-     99, 191, 148, 133,  35, 124, 
-    121, 101,   1,   0,   0,   0, 
+     68,  88,  66,  67, 149, 182, 
+    252, 156, 198, 235, 240, 136, 
+    120,  92, 214, 160, 170, 173, 
+      0, 194,   1,   0,   0,   0, 
     116,  14,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     164,   8,   0,   0, 192,  13, 
@@ -185,7 +185,7 @@ const BYTE EnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog[] =
      38,   0,   0,   0, 168,   0, 
       0,   0,  14,   0,   0,   0, 
     136,   4,   0,   0,  64,   2, 
-      0,   0,  67,  58,  92,  65, 
+      0,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 
@@ -196,7 +196,7 @@ const BYTE EnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog[] =
     111, 110, 109, 101, 110, 116, 
      77,  97, 112,  69, 102, 102, 
     101,  99, 116,  46, 102, 120, 
-      0,  67,  58,  92,  65,  84, 
+      0,  68,  58,  92,  65,  84, 
      71,  92, 115, 116,  95, 100, 
     101, 118,  92,  75, 105, 116, 
     115,  92,  68, 105, 114, 101, 

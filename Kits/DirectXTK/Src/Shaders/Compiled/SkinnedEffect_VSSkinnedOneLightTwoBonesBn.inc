@@ -48,16 +48,16 @@
     dcl_texcoord3 v3  // vin<9,10,11,12>
     dcl_texcoord4 v4  // vin<13,14,15,16>
 
-#line 52 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 52 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     mul r0.xy, v3, c243.z
     mova a0.xy, r0.yxzw
     mul r0, v4.y, c26[a0.x]
     mad r0, c26[a0.y], v4.x, r0  // ::skinning<0,3,6,9>
 
-#line 32 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 32 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r1.xyz, v1, c243.x, c243.y  // ::BiasX2<0,1,2>
 
-#line 56 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 56 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     dp3 r2.x, r1, r0  // ::Skin<0>
     dp4 r0.x, v0, r0  // Skin::vin<0>
 
@@ -73,7 +73,7 @@
     dp3 r2.z, r1, r4  // ::Skin<2>
     dp4 r0.z, v0, r4  // Skin::vin<2>
 
-#line 59 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 59 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp3 r1.x, r2, c19
     dp3 r1.y, r2, c20
     dp3 r1.z, r2, c21
@@ -119,24 +119,24 @@
 #line 63
     dp4 oPos.z, r0, c24  // ::VSSkinnedOneLightTwoBonesBn<12>
 
-#line 14 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 14 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r1.x, r0, c14
     max r1.x, r1.x, c243.w
     min oT1.w, r1.x, -c243.y  // ::VSSkinnedOneLightTwoBonesBn<7>
 
-#line 63 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 63 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 r1.x, r0, c22  // ::vout<0>
     dp4 r1.y, r0, c23  // ::vout<1>
     dp4 r0.x, r0, c25  // ::vout<3>
 
-#line 203 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 203 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     mad oPos.xy, r0.x, c242, r1  // ::VSSkinnedOneLightTwoBonesBn<10,11>
     mov oPos.w, r0.x  // ::VSSkinnedOneLightTwoBonesBn<13>
 
-#line 46 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 46 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mov oT0.w, c0.w  // ::VSSkinnedOneLightTwoBonesBn<3>
 
-#line 209 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 209 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     mov oT2.xy, v2  // ::VSSkinnedOneLightTwoBonesBn<8,9>
 
 // approximately 59 instruction slots used
@@ -211,10 +211,10 @@ ret
 
 const BYTE SkinnedEffect_VSSkinnedOneLightTwoBonesBn[] =
 {
-     68,  88,  66,  67, 246, 249, 
-     70,  90, 231,  14, 154,  54, 
-    181,  28, 199,   6, 153,  68, 
-     63, 186,   1,   0,   0,   0, 
+     68,  88,  66,  67, 182, 214, 
+     10, 190,  65, 147, 158, 102, 
+     39, 101,  57, 140,  18,  67, 
+    205, 125,   1,   0,   0,   0, 
     152,  20,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      36,  12,   0,   0,  76,  19, 
@@ -237,7 +237,7 @@ const BYTE SkinnedEffect_VSSkinnedOneLightTwoBonesBn[] =
       0,   0,  57,   0,   0,   0, 
     216,   0,   0,   0,  17,   0, 
       0,   0, 156,   6,   0,   0, 
-     36,   3,   0,   0,  67,  58, 
+     36,   3,   0,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -247,7 +247,7 @@ const BYTE SkinnedEffect_VSSkinnedOneLightTwoBonesBn[] =
     114, 115,  92,  83, 107, 105, 
     110, 110, 101, 100,  69, 102, 
     102, 101,  99, 116,  46, 102, 
-    120,   0,  67,  58,  92,  65, 
+    120,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 
@@ -256,7 +256,7 @@ const BYTE SkinnedEffect_VSSkinnedOneLightTwoBonesBn[] =
     104,  97, 100, 101, 114, 115, 
      92,  67, 111, 109, 109, 111, 
     110,  46, 102, 120, 104,   0, 
-     67,  58,  92,  65,  84,  71, 
+     68,  58,  92,  65,  84,  71, 
      92, 115, 116,  95, 100, 101, 
     118,  92,  75, 105, 116, 115, 
      92,  68, 105, 114, 101,  99, 

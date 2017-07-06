@@ -41,20 +41,20 @@
     dcl_texcoord v0  // vin<0,1,2,3>
     dcl_texcoord1 v1  // vin<4,5>
 
-#line 49 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 49 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 oPos.z, v0, c4  // ::VSAlphaTestNoFog<8>
     dp4 r0.x, v0, c2  // ::vout<0>
     dp4 r0.y, v0, c3  // ::vout<1>
     dp4 r0.z, v0, c5  // ::vout<3>
 
-#line 45 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
+#line 45 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSAlphaTestNoFog<6,7>
     mov oPos.w, r0.z  // ::VSAlphaTestNoFog<9>
 
-#line 50 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 50 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mov oT0, c1  // ::VSAlphaTestNoFog<0,1,2,3>
 
-#line 52 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
+#line 52 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
     mov oT1.xy, v1  // ::VSAlphaTestNoFog<4,5>
 
 // approximately 8 instruction slots used
@@ -77,10 +77,10 @@ ret
 
 const BYTE AlphaTestEffect_VSAlphaTestNoFog[] =
 {
-     68,  88,  66,  67,   3, 168, 
-    135, 208,   6, 246,  31,   6, 
-    123, 242,  87, 130,  26, 124, 
-     30, 206,   1,   0,   0,   0, 
+     68,  88,  66,  67,  17, 231, 
+     58, 227, 143,  44, 111,   7, 
+    194,  47, 134, 243,  82, 246, 
+     70,  18,   1,   0,   0,   0, 
     224,   5,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
       4,   4,   0,   0,  20,   5, 
@@ -105,7 +105,7 @@ const BYTE AlphaTestEffect_VSAlphaTestNoFog[] =
       0,   0,  10,   0,   0,   0, 
     160,   0,   0,   0,   3,   0, 
       0,   0, 136,   2,   0,   0, 
-    240,   0,   0,   0,  67,  58, 
+    240,   0,   0,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -114,7 +114,7 @@ const BYTE AlphaTestEffect_VSAlphaTestNoFog[] =
      92,  83, 104,  97, 100, 101, 
     114, 115,  92,  67, 111, 109, 
     109, 111, 110,  46, 102, 120, 
-    104,   0,  67,  58,  92,  65, 
+    104,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 

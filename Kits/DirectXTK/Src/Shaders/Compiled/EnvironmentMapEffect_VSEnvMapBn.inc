@@ -47,16 +47,16 @@
     dcl_texcoord1 v1  // vin<4,5,6>
     dcl_texcoord2 v2  // vin<7,8>
 
-#line 32 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 32 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r0.xyz, v1, c22.x, c22.y  // ::BiasX2<0,1,2>
 
-#line 67 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 67 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     dp3 r1.x, r0, c15
     dp3 r1.y, r0, c16
     dp3 r1.z, r0, c17
     nrm r0.xyz, r1  // ::worldNormal<0,1,2>
 
-#line 36 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 36 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp3 r1.x, -c4, r0  // ::dotL<0>
     dp3 r1.y, -c5, r0  // ::dotL<1>
     dp3 r1.z, -c6, r0  // ::dotL<2>
@@ -72,15 +72,15 @@
     mov r2.xyz, c2  // Parameters::DiffuseColor<0,1,2>
     mad oT0.xyz, r1, r2, c3  // ::VSEnvMapBn<0,1,2>
 
-#line 71 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 71 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     dp4 oPos.z, v0, c20  // ::VSEnvMapBn<15>
 
-#line 14 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 14 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.w, v0, c11
     max r0.w, r0.w, c22.z
     min oT1.w, r0.w, c22.w  // ::VSEnvMapBn<7>
 
-#line 65 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 65 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     dp4 r1.x, v0, c12  // ::pos_ws<0>
     dp4 r1.y, v0, c13  // ::pos_ws<1>
     dp4 r1.z, v0, c14  // ::pos_ws<2>
@@ -101,10 +101,10 @@
     mad oPos.xy, r0.z, c0, r0  // ::VSEnvMapBn<13,14>
     mov oPos.w, r0.z  // ::VSEnvMapBn<16>
 
-#line 46 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 46 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mov oT0.w, c2.w  // ::VSEnvMapBn<3>
 
-#line 77 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 77 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     mov oT1.xyz, c1.x  // ::VSEnvMapBn<4,5,6>
 
 #line 125
@@ -163,10 +163,10 @@ ret
 
 const BYTE EnvironmentMapEffect_VSEnvMapBn[] =
 {
-     68,  88,  66,  67, 108,  21, 
-     54, 130,  39, 250,  26, 183, 
-     60,   1, 102,  83, 146, 124, 
-    236,  43,   1,   0,   0,   0, 
+     68,  88,  66,  67,  37,  21, 
+      3,   8,  98,  46,  89,  37, 
+    133, 199, 136,  19, 242, 251, 
+    199, 204,   1,   0,   0,   0, 
     240,  14,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     208,   8,   0,   0, 216,  13, 
@@ -193,7 +193,7 @@ const BYTE EnvironmentMapEffect_VSEnvMapBn[] =
       0,   0,  39,   0,   0,   0, 
     224,   0,   0,   0,  11,   0, 
       0,   0, 208,   4,   0,   0, 
-    112,   2,   0,   0,  67,  58, 
+    112,   2,   0,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -202,7 +202,7 @@ const BYTE EnvironmentMapEffect_VSEnvMapBn[] =
      92,  83, 104,  97, 100, 101, 
     114, 115,  92,  67, 111, 109, 
     109, 111, 110,  46, 102, 120, 
-    104,   0,  67,  58,  92,  65, 
+    104,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 
@@ -213,7 +213,7 @@ const BYTE EnvironmentMapEffect_VSEnvMapBn[] =
     111, 110, 109, 101, 110, 116, 
      77,  97, 112,  69, 102, 102, 
     101,  99, 116,  46, 102, 120, 
-      0,  67,  58,  92,  65,  84, 
+      0,  68,  58,  92,  65,  84, 
      71,  92, 115, 116,  95, 100, 
     101, 118,  92,  75, 105, 116, 
     115,  92,  68, 105, 114, 101, 

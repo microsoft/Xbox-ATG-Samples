@@ -52,7 +52,7 @@
     dcl_texcoord3 v3  // vin<11,12>
     dcl_texcoord4 v4  // vin<13,14,15,16>
 
-#line 85 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 85 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 oPos.z, v0, c11  // ::VSNormalPixelLightingTxVc<18>
     dp4 oT1.x, v0, c3  // ::VSNormalPixelLightingTxVc<2>
     dp4 oT1.y, v0, c4  // ::VSNormalPixelLightingTxVc<3>
@@ -64,12 +64,12 @@
     rsq r0.w, r0.w
     mul oT2.xyz, r0.w, r0  // ::VSNormalPixelLightingTxVc<6,7,8>
 
-#line 14 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 14 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c2
     max r0.x, r0.x, c13.x
     min oT1.w, r0.x, c13.y  // ::VSNormalPixelLightingTxVc<5>
 
-#line 91 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
+#line 91 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
     mul oT4.w, v4.w, c1.w  // ::VSNormalPixelLightingTxVc<15>
 
 #line 95
@@ -80,12 +80,12 @@
     rsq r0.w, r0.w
     mul oT3.xyz, r0.w, r0  // ::VSNormalPixelLightingTxVc<9,10,11>
 
-#line 85 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 85 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 r0.x, v0, c9  // ::vout<0>
     dp4 r0.y, v0, c10  // ::vout<1>
     dp4 r0.z, v0, c12  // ::vout<3>
 
-#line 83 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
+#line 83 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\NormalMapEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSNormalPixelLightingTxVc<16,17>
     mov oPos.w, r0.z  // ::VSNormalPixelLightingTxVc<19>
 
@@ -137,10 +137,10 @@ ret
 
 const BYTE NormalMapEffect_VSNormalPixelLightingTxVc[] =
 {
-     68,  88,  66,  67, 139, 231, 
-    108, 159, 210, 166,  72,  94, 
-    134, 214, 116, 166,  24, 202, 
-     50, 182,   1,   0,   0,   0, 
+     68,  88,  66,  67, 202, 140, 
+    200, 211, 216,  49, 196, 175, 
+     73, 118, 209, 174, 200, 176, 
+     38, 255,   1,   0,   0,   0, 
      20,  12,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      80,   7,   0,   0, 164,  10, 
@@ -167,7 +167,7 @@ const BYTE NormalMapEffect_VSNormalPixelLightingTxVc[] =
       0,   0,  33,   0,   0,   0, 
     220,   0,   0,   0,   3,   0, 
       0,   0, 100,   4,   0,   0, 
-    228,   1,   0,   0,  67,  58, 
+    228,   1,   0,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -176,7 +176,7 @@ const BYTE NormalMapEffect_VSNormalPixelLightingTxVc[] =
      92,  83, 104,  97, 100, 101, 
     114, 115,  92,  76, 105, 103, 
     104, 116, 105, 110, 103,  46, 
-    102, 120, 104,   0,  67,  58, 
+    102, 120, 104,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -185,7 +185,7 @@ const BYTE NormalMapEffect_VSNormalPixelLightingTxVc[] =
      92,  83, 104,  97, 100, 101, 
     114, 115,  92,  67, 111, 109, 
     109, 111, 110,  46, 102, 120, 
-    104,   0,  67,  58,  92,  65, 
+    104,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 

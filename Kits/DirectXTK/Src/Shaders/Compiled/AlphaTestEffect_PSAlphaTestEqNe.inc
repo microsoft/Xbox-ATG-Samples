@@ -41,7 +41,7 @@
     dcl t2.xy  // pin<8,9>
     dcl_2d s0
 
-#line 115 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
+#line 115 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
     texld r0, t2, s0
     mad r1.w, r0.w, t0.w, -c0.x
     mul r0, r0, t0  // ::color<0,1,2,3>
@@ -50,7 +50,7 @@
     cmp r1, r1.x, c0.w, c0.z
     texkill r1
 
-#line 20 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 20 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r1.xyz, c1, r0.w, -r0
     mad r0.xyz, t1.w, r1, r0  // ApplyFog::color<0,1,2>
     mov oC0, r0  // ::PSAlphaTestEqNe<0,1,2,3>
@@ -81,10 +81,10 @@ ret
 
 const BYTE AlphaTestEffect_PSAlphaTestEqNe[] =
 {
-     68,  88,  66,  67, 223, 222, 
-     22,  17, 155,  72, 223, 203, 
-     67, 118, 170, 136,  35,  43, 
-    102,  58,   1,   0,   0,   0, 
+     68,  88,  66,  67,   4, 162, 
+     13, 139, 204, 139, 237, 107, 
+    120, 146, 165,  30, 105, 221, 
+     97,  27,   1,   0,   0,   0, 
      16,   6,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     180,   3,   0,   0, 116,   5, 
@@ -107,7 +107,7 @@ const BYTE AlphaTestEffect_PSAlphaTestEqNe[] =
       0,   0,  14,   0,   0,   0, 
     160,   0,   0,   0,   4,   0, 
       0,   0, 240,   1,   0,   0, 
-     16,   1,   0,   0,  67,  58, 
+     16,   1,   0,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -117,7 +117,7 @@ const BYTE AlphaTestEffect_PSAlphaTestEqNe[] =
     114, 115,  92,  65, 108, 112, 
     104,  97,  84, 101, 115, 116, 
      69, 102, 102, 101,  99, 116, 
-     46, 102, 120,   0,  67,  58, 
+     46, 102, 120,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 

@@ -59,7 +59,7 @@
     dcl_texcoord4 v4  // vertex<13,14,15,16>
     dcl_texcoord5 v5  // vertex<17,18,19,20>
 
-#line 97 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\DGSLEffect.fx"
+#line 97 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\DGSLEffect.fx"
     mul r0.x, v4.x, c228.x
     mova a0.x, r0.x
     mul r0, v5.x, c0[a0.x]  // ::skinning<0,3,6,9>
@@ -181,10 +181,10 @@ ret
 
 const BYTE DGSLEffect_main1Bones[] =
 {
-     68,  88,  66,  67, 240, 248, 
-      6, 203,  30, 228, 242, 125, 
-    237, 108, 143, 162, 100,  47, 
-    138,  34,   1,   0,   0,   0, 
+     68,  88,  66,  67, 105, 195, 
+     67,  91, 242, 242,  63, 241, 
+    115,  72, 255, 245,  54, 228, 
+    168, 140,   1,   0,   0,   0, 
      80,  15,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     200,   8,   0,   0, 132,  13, 
@@ -217,7 +217,7 @@ const BYTE DGSLEffect_main1Bones[] =
       0,   0,  42,   0,   0,   0, 
     100,   0,   0,   0,   6,   0, 
       0,   0, 232,   4,   0,   0, 
-    180,   1,   0,   0,  67,  58, 
+    180,   1,   0,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 

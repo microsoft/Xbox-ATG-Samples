@@ -244,17 +244,13 @@ EnvironmentMapEffect::Impl::Impl(
     static_assert( _countof(EffectBase<EnvironmentMapEffectTraits>::PixelShaderBytecode) == EnvironmentMapEffectTraits::PixelShaderCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices) == EnvironmentMapEffectTraits::ShaderPermutationCount, "array/max mismatch" );
 
-    // Create root signature
+    // Create root signature.
     {
         D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
+            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
-
-        CD3DX12_STATIC_SAMPLER_DESC samplers[2];
-        samplers[0] = CD3DX12_STATIC_SAMPLER_DESC(0);
-        samplers[1] = CD3DX12_STATIC_SAMPLER_DESC(1);
 
         CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
@@ -262,14 +258,14 @@ EnvironmentMapEffect::Impl::Impl(
         // Texture 1
         CD3DX12_DESCRIPTOR_RANGE textureDescriptor(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
         CD3DX12_DESCRIPTOR_RANGE textureSamplerDescriptor(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
-        rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureDescriptor);
-        rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSamplerDescriptor);
+        rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureDescriptor, D3D12_SHADER_VISIBILITY_PIXEL);
+        rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSamplerDescriptor, D3D12_SHADER_VISIBILITY_PIXEL);
 
         // Texture 2
         CD3DX12_DESCRIPTOR_RANGE cubemapDescriptor(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
         CD3DX12_DESCRIPTOR_RANGE cubemapSamplerDescriptor(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 1);
-        rootParameters[RootParameterIndex::CubemapSRV].InitAsDescriptorTable(1, &cubemapDescriptor);
-        rootParameters[RootParameterIndex::CubemapSampler].InitAsDescriptorTable(1, &cubemapSamplerDescriptor);
+        rootParameters[RootParameterIndex::CubemapSRV].InitAsDescriptorTable(1, &cubemapDescriptor, D3D12_SHADER_VISIBILITY_PIXEL);
+        rootParameters[RootParameterIndex::CubemapSampler].InitAsDescriptorTable(1, &cubemapSamplerDescriptor, D3D12_SHADER_VISIBILITY_PIXEL);
 
         // Create the root signature
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
@@ -297,7 +293,7 @@ EnvironmentMapEffect::Impl::Impl(
 
     lights.InitializeConstants(unwantedOutput[0], constants.lightDirection, constants.lightDiffuseColor, unwantedOutput);
 
-    // Create pipeline state
+    // Create pipeline state.
     int sp = GetPipelineStatePermutation(
         fresnelEnabled,
         specularEnabled,
@@ -314,7 +310,7 @@ EnvironmentMapEffect::Impl::Impl(
         mRootSignature,
         EffectBase<EnvironmentMapEffectTraits>::VertexShaderBytecode[vi],
         EffectBase<EnvironmentMapEffectTraits>::PixelShaderBytecode[pi],
-        mPipelineState.ReleaseAndGetAddressOf());
+        mPipelineState.GetAddressOf());
 
     SetDebugObjectName(mPipelineState.Get(), L"EnvironmentMapEffect");
 }

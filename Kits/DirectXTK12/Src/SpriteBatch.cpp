@@ -330,7 +330,7 @@ void SpriteBatch::Impl::DeviceResources::CreateIndexBuffer(_In_ ID3D12Device* de
 void SpriteBatch::Impl::DeviceResources::CreateRootSignatures(_In_ ID3D12Device* device)
 {
     D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-        D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | // Only the input assembler stage needs access to the constant buffer.
+        D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
         D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
         D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
         D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
@@ -344,10 +344,17 @@ void SpriteBatch::Impl::DeviceResources::CreateRootSignatures(_In_ ID3D12Device*
             D3D12_FILTER_MIN_MAG_MIP_LINEAR,
             D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
             D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
-            D3D12_TEXTURE_ADDRESS_MODE_CLAMP);
+            D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
+            0.f,
+            16,
+            D3D12_COMPARISON_FUNC_LESS_EQUAL,
+            D3D12_STATIC_BORDER_COLOR_OPAQUE_WHITE,
+            0.f,
+            D3D12_FLOAT32_MAX,
+            D3D12_SHADER_VISIBILITY_PIXEL);
 
         CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount - 1];
-        rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV);
+        rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV, D3D12_SHADER_VISIBILITY_PIXEL);
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
@@ -362,9 +369,9 @@ void SpriteBatch::Impl::DeviceResources::CreateRootSignatures(_In_ ID3D12Device*
         CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
 
         CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
-        rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV);
+        rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV, D3D12_SHADER_VISIBILITY_PIXEL);
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-        rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler);
+        rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler, D3D12_SHADER_VISIBILITY_PIXEL);
 
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
         rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
@@ -469,7 +476,7 @@ SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const
 
     ThrowIfFailed(device->CreateGraphicsPipelineState(
         &d3dDesc,
-        IID_GRAPHICS_PPV_ARGS(mPSO.ReleaseAndGetAddressOf())));
+        IID_GRAPHICS_PPV_ARGS(mPSO.GetAddressOf())));
 
     SetDebugObjectName(mPSO.Get(), L"SpriteBatch");
 }

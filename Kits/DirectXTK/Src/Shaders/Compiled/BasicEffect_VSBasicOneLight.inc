@@ -46,7 +46,7 @@
     dcl_texcoord v0  // vin<0,1,2,3>
     dcl_texcoord1 v1  // vin<4,5,6>
 
-#line 59 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 59 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp3 r0.x, v1, c12
     dp3 r0.y, v1, c13
     dp3 r0.z, v1, c14
@@ -91,21 +91,21 @@
 #line 63
     dp4 oPos.z, v0, c17  // ::VSBasicOneLight<10>
 
-#line 14 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 14 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c8
     max r0.x, r0.x, c19.x
     min oT1.w, r0.x, c19.y  // ::VSBasicOneLight<7>
 
-#line 63 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 63 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 r0.x, v0, c15  // ::vout<0>
     dp4 r0.y, v0, c16  // ::vout<1>
     dp4 r0.z, v0, c18  // ::vout<3>
 
-#line 264 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 264 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicOneLight<8,9>
     mov oPos.w, r0.z  // ::VSBasicOneLight<11>
 
-#line 46 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 46 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mov oT0.w, c1.w  // ::VSBasicOneLight<3>
 
 // approximately 42 instruction slots used
@@ -160,10 +160,10 @@ ret
 
 const BYTE BasicEffect_VSBasicOneLight[] =
 {
-     68,  88,  66,  67, 254, 167, 
-    194,  44, 136,  45, 223, 177, 
-    134,   3,  91, 249,  97,  92, 
-    103,  14,   1,   0,   0,   0, 
+     68,  88,  66,  67, 200,  96, 
+     34,  33,  65, 204, 128, 126, 
+     24, 219, 245, 159,  51, 215, 
+     34, 124,   1,   0,   0,   0, 
      76,  14,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     212,   8,   0,   0, 140,  13, 
@@ -196,7 +196,7 @@ const BYTE BasicEffect_VSBasicOneLight[] =
       0,   0,  37,   0,   0,   0, 
     216,   0,   0,   0,  13,   0, 
       0,   0, 176,   4,   0,   0, 
-     52,   2,   0,   0,  67,  58, 
+     52,   2,   0,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -205,7 +205,7 @@ const BYTE BasicEffect_VSBasicOneLight[] =
      92,  83, 104,  97, 100, 101, 
     114, 115,  92,  76, 105, 103, 
     104, 116, 105, 110, 103,  46, 
-    102, 120, 104,   0,  67,  58, 
+    102, 120, 104,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -214,7 +214,7 @@ const BYTE BasicEffect_VSBasicOneLight[] =
      92,  83, 104,  97, 100, 101, 
     114, 115,  92,  67, 111, 109, 
     109, 111, 110,  46, 102, 120, 
-    104,   0,  67,  58,  92,  65, 
+    104,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 

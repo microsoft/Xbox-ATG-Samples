@@ -46,10 +46,10 @@
     dcl_texcoord1 v1  // vin<4,5,6>
     dcl_texcoord2 v2  // vin<7,8>
 
-#line 32 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 32 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r0.xyz, v1, c25.x, c25.y  // ::BiasX2<0,1,2>
 
-#line 59 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 59 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp3 r1.x, r0, c18
     dp3 r1.y, r0, c19
     dp3 r1.z, r0, c20
@@ -120,24 +120,24 @@
 #line 63
     dp4 oPos.z, v0, c23  // ::VSBasicVertexLightingTxBn<12>
 
-#line 14 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 14 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c14
     max r0.x, r0.x, c25.z
     min oT1.w, r0.x, c25.w  // ::VSBasicVertexLightingTxBn<7>
 
-#line 63 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 63 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 r0.x, v0, c21  // ::vout<0>
     dp4 r0.y, v0, c22  // ::vout<1>
     dp4 r0.z, v0, c24  // ::vout<3>
 
-#line 218 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 218 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicVertexLightingTxBn<10,11>
     mov oPos.w, r0.z  // ::VSBasicVertexLightingTxBn<13>
 
-#line 46 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 46 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mov oT0.w, c1.w  // ::VSBasicVertexLightingTxBn<3>
 
-#line 227 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 227 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mov oT2.xy, v2  // ::VSBasicVertexLightingTxBn<8,9>
 
 // approximately 64 instruction slots used
@@ -212,10 +212,10 @@ ret
 
 const BYTE BasicEffect_VSBasicVertexLightingTxBn[] =
 {
-     68,  88,  66,  67, 128,  91, 
-     87,  46,  26, 180,   5,  78, 
-    145, 159, 184, 139,  84,  72, 
-    205, 231,   1,   0,   0,   0, 
+     68,  88,  66,  67,  67, 252, 
+     43,  68,  65,  54,  78, 234, 
+    225,  33, 248,  14, 203, 109, 
+    101,  72,   1,   0,   0,   0, 
     184,  19,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     100,  11,   0,   0, 184,  18, 
@@ -242,7 +242,7 @@ const BYTE BasicEffect_VSBasicVertexLightingTxBn[] =
       0,   0,  58,   0,   0,   0, 
     216,   0,   0,   0,  14,   0, 
       0,   0,  20,   6,   0,   0, 
-      0,   3,   0,   0,  67,  58, 
+      0,   3,   0,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -251,7 +251,7 @@ const BYTE BasicEffect_VSBasicVertexLightingTxBn[] =
      92,  83, 104,  97, 100, 101, 
     114, 115,  92,  67, 111, 109, 
     109, 111, 110,  46, 102, 120, 
-    104,   0,  67,  58,  92,  65, 
+    104,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 
@@ -260,7 +260,7 @@ const BYTE BasicEffect_VSBasicVertexLightingTxBn[] =
     104,  97, 100, 101, 114, 115, 
      92,  76, 105, 103, 104, 116, 
     105, 110, 103,  46, 102, 120, 
-    104,   0,  67,  58,  92,  65, 
+    104,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 

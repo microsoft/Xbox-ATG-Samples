@@ -49,16 +49,16 @@
     dcl_texcoord2 v2  // vin<7,8>
     dcl_texcoord3 v3  // vin<9,10,11,12>
 
-#line 85 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 85 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 oPos.z, v0, c11  // ::VSBasicPixelLightingTxVcBn<15>
     dp4 oT1.x, v0, c3  // ::VSBasicPixelLightingTxVcBn<2>
     dp4 oT1.y, v0, c4  // ::VSBasicPixelLightingTxVcBn<3>
     dp4 oT1.z, v0, c5  // ::VSBasicPixelLightingTxVcBn<4>
 
-#line 32 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 32 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r0.xyz, v1, c13.x, c13.y  // ::BiasX2<0,1,2>
 
-#line 87 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 87 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp3 r1.x, r0, c6
     dp3 r1.y, r0, c7
     dp3 r1.z, r0, c8
@@ -66,20 +66,20 @@
     rsq r0.x, r0.x
     mul oT2.xyz, r0.x, r1  // ::VSBasicPixelLightingTxVcBn<6,7,8>
 
-#line 14 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 14 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c2
     max r0.x, r0.x, c13.z
     min oT1.w, r0.x, c13.w  // ::VSBasicPixelLightingTxVcBn<5>
 
-#line 486 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 486 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT3.w, v3.w, c1.w  // ::VSBasicPixelLightingTxVcBn<12>
 
-#line 85 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 85 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 r0.x, v0, c9  // ::vout<0>
     dp4 r0.y, v0, c10  // ::vout<1>
     dp4 r0.z, v0, c12  // ::vout<3>
 
-#line 476 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 476 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicPixelLightingTxVcBn<13,14>
     mov oPos.w, r0.z  // ::VSBasicPixelLightingTxVcBn<16>
 
@@ -124,10 +124,10 @@ ret
 
 const BYTE BasicEffect_VSBasicPixelLightingTxVcBn[] =
 {
-     68,  88,  66,  67, 108,  32, 
-    122, 106, 107,  93, 158,  19, 
-     78, 247, 112, 175, 124,  51, 
-     91, 134,   1,   0,   0,   0, 
+     68,  88,  66,  67,  23,  86, 
+     89,  63, 118, 226, 217, 101, 
+    209,  41, 236,  44,  48,  81, 
+    156, 106,   1,   0,   0,   0, 
     200,  10,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     196,   6,   0,   0, 144,   9, 
@@ -154,7 +154,7 @@ const BYTE BasicEffect_VSBasicPixelLightingTxVcBn[] =
       0,   0,  27,   0,   0,   0, 
     216,   0,   0,   0,   4,   0, 
       0,   0,  24,   4,   0,   0, 
-    212,   1,   0,   0,  67,  58, 
+    212,   1,   0,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -163,7 +163,7 @@ const BYTE BasicEffect_VSBasicPixelLightingTxVcBn[] =
      92,  83, 104,  97, 100, 101, 
     114, 115,  92,  76, 105, 103, 
     104, 116, 105, 110, 103,  46, 
-    102, 120, 104,   0,  67,  58, 
+    102, 120, 104,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -172,7 +172,7 @@ const BYTE BasicEffect_VSBasicPixelLightingTxVcBn[] =
      92,  83, 104,  97, 100, 101, 
     114, 115,  92,  67, 111, 109, 
     109, 111, 110,  46, 102, 120, 
-    104,   0,  67,  58,  92,  65, 
+    104,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 

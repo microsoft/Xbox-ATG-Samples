@@ -43,18 +43,18 @@
     dcl_texcoord1 v1  // vin<4,5>
     dcl_texcoord2 v2  // vin<6,7,8,9>
 
-#line 49 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 49 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 oPos.z, v0, c4  // ::VSAlphaTestVcNoFog<8>
 
-#line 82 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
+#line 82 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
     mul oT0, v2, c1  // ::VSAlphaTestVcNoFog<0,1,2,3>
 
-#line 49 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 49 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c2  // ::vout<0>
     dp4 r0.y, v0, c3  // ::vout<1>
     dp4 r0.z, v0, c5  // ::vout<3>
 
-#line 74 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
+#line 74 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSAlphaTestVcNoFog<6,7>
     mov oPos.w, r0.z  // ::VSAlphaTestVcNoFog<9>
 
@@ -82,10 +82,10 @@ ret
 
 const BYTE AlphaTestEffect_VSAlphaTestVcNoFog[] =
 {
-     68,  88,  66,  67,  22,  95, 
-    135,  27, 179,  87, 215, 174, 
-    126,  37, 202,  18,  25,  17, 
-    167,  48,   1,   0,   0,   0, 
+     68,  88,  66,  67,  48, 147, 
+    202, 173, 242, 175, 212,  27, 
+     43, 132, 220, 253,  13,  33, 
+     54,  89,   1,   0,   0,   0, 
      64,   6,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      52,   4,   0,   0,  88,   5, 
@@ -110,7 +110,7 @@ const BYTE AlphaTestEffect_VSAlphaTestVcNoFog[] =
       0,   0,  11,   0,   0,   0, 
     160,   0,   0,   0,   3,   0, 
       0,   0, 168,   2,   0,   0, 
-    248,   0,   0,   0,  67,  58, 
+    248,   0,   0,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -119,7 +119,7 @@ const BYTE AlphaTestEffect_VSAlphaTestVcNoFog[] =
      92,  83, 104,  97, 100, 101, 
     114, 115,  92,  67, 111, 109, 
     109, 111, 110,  46, 102, 120, 
-    104,   0,  67,  58,  92,  65, 
+    104,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 

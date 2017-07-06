@@ -51,7 +51,7 @@
     dcl_texcoord2 v2  // vin<7,8>
     dcl_texcoord3 v3  // vin<9,10,11,12>
 
-#line 57 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 57 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 r0.x, v0, c9  // ::pos_ws<0>
     dp4 r0.y, v0, c10  // ::pos_ws<1>
     dp4 r0.z, v0, c11  // ::pos_ws<2>
@@ -62,10 +62,10 @@
     add r0.xyz, r1, -c4
     nrm r1.xyz, r0  // ::halfVectors<0,1,2>
 
-#line 32 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 32 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r0.xyz, v1, c19.x, c19.y  // ::BiasX2<0,1,2>
 
-#line 59 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 59 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp3 r2.x, r0, c12
     dp3 r2.y, r0, c13
     dp3 r2.z, r0, c14
@@ -90,10 +90,10 @@
     mov r2.xyz, c1  // Parameters::DiffuseColor<0,1,2>
     mad r1.xyz, r1, r2, c2  // ::result<0,1,2>
 
-#line 367 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 367 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT0.xyz, r1, v3  // ::VSBasicOneLightTxVcBn<0,1,2>
 
-#line 42 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 42 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     pow r1.x, r0.y, c3.w
     mul r0.x, r0.x, r1.x  // ::specular<0>
 
@@ -104,20 +104,20 @@
 #line 63
     dp4 oPos.z, v0, c17  // ::VSBasicOneLightTxVcBn<12>
 
-#line 14 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 14 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c8
     max r0.x, r0.x, c19.z
     min oT1.w, r0.x, c19.w  // ::VSBasicOneLightTxVcBn<7>
 
-#line 367 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 367 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT0.w, v3.w, c1.w  // ::VSBasicOneLightTxVcBn<3>
 
-#line 63 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 63 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 r0.x, v0, c15  // ::vout<0>
     dp4 r0.y, v0, c16  // ::vout<1>
     dp4 r0.z, v0, c18  // ::vout<3>
 
-#line 357 "C:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 357 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicOneLightTxVcBn<10,11>
     mov oPos.w, r0.z  // ::VSBasicOneLightTxVcBn<13>
 
@@ -182,10 +182,10 @@ ret
 
 const BYTE BasicEffect_VSBasicOneLightTxVcBn[] =
 {
-     68,  88,  66,  67, 157,  92, 
-     32,  56, 164, 226,  39,  56, 
-     14,  65, 240, 232,  44, 189, 
-    198, 125,   1,   0,   0,   0, 
+     68,  88,  66,  67,  83, 200, 
+    193, 224, 116,  67, 233, 210, 
+     57,  33, 131, 113,  69, 122, 
+    162, 140,   1,   0,   0,   0, 
     160,  16,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      48,  10,   0,   0, 128,  15, 
@@ -218,7 +218,7 @@ const BYTE BasicEffect_VSBasicOneLightTxVcBn[] =
       0,   0,  42,   0,   0,   0, 
     216,   0,   0,   0,  15,   0, 
       0,   0, 152,   5,   0,   0, 
-    128,   2,   0,   0,  67,  58, 
+    128,   2,   0,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -227,7 +227,7 @@ const BYTE BasicEffect_VSBasicOneLightTxVcBn[] =
      92,  83, 104,  97, 100, 101, 
     114, 115,  92,  76, 105, 103, 
     104, 116, 105, 110, 103,  46, 
-    102, 120, 104,   0,  67,  58, 
+    102, 120, 104,   0,  68,  58, 
      92,  65,  84,  71,  92, 115, 
     116,  95, 100, 101, 118,  92, 
      75, 105, 116, 115,  92,  68, 
@@ -236,7 +236,7 @@ const BYTE BasicEffect_VSBasicOneLightTxVcBn[] =
      92,  83, 104,  97, 100, 101, 
     114, 115,  92,  67, 111, 109, 
     109, 111, 110,  46, 102, 120, 
-    104,   0,  67,  58,  92,  65, 
+    104,   0,  68,  58,  92,  65, 
      84,  71,  92, 115, 116,  95, 
     100, 101, 118,  92,  75, 105, 
     116, 115,  92,  68, 105, 114, 
