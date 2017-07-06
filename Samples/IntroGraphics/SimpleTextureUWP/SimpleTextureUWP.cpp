@@ -11,6 +11,8 @@
 #include "ATGColors.h"
 #include "ReadData.h"
 
+extern void ExitSample();
+
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
@@ -61,7 +63,8 @@ namespace
                 throw std::exception("CanConvert");
             }
 
-            DX::ThrowIfFailed(formatConverter->Initialize(frame.Get(), GUID_WICPixelFormat32bppBGRA, WICBitmapDitherTypeErrorDiffusion, 0, 0, WICBitmapPaletteTypeCustom));
+            DX::ThrowIfFailed(formatConverter->Initialize(frame.Get(), GUID_WICPixelFormat32bppBGRA,
+                WICBitmapDitherTypeErrorDiffusion, nullptr, 0, WICBitmapPaletteTypeMedianCut));
 
             DX::ThrowIfFailed(formatConverter->CopyPixels(0, rowPitch, imageSize, reinterpret_cast<BYTE*>(image.data())));
         }
@@ -116,14 +119,14 @@ void Sample::Update(DX::StepTimer const&)
     {
         if (pad.IsViewPressed())
         {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
         }
     }
 
     auto kb = m_keyboard->GetState();
     if (kb.Escape)
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
 
     PIXEndEvent();

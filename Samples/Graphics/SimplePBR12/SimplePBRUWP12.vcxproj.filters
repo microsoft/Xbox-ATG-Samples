@@ -29,9 +29,6 @@
     <Filter Include="ATG Tool Kit\PBREffect">
       <UniqueIdentifier>{a8d8dfff-b806-4fd1-a936-d06c0e1c4584}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ATG Tool Kit\ToneMapEffect">
-      <UniqueIdentifier>{72dc149d-78d0-4a74-9107-eff7ac649ab3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Assets\Fonts">
       <UniqueIdentifier>{475e1100-2c53-4f97-a0c3-edd7af1b1bde}</UniqueIdentifier>
     </Filter>
@@ -73,7 +70,7 @@
     <ClInclude Include="UWP\SimplePBRUWP12.h">
       <Filter>UWP</Filter>
     </ClInclude>
-    <ClInclude Include="Shared\pch.h">
+    <ClInclude Include="pch.h">
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="Shared\StepTimer.h">
@@ -91,23 +88,20 @@
     <ClInclude Include="Shared\PBRModel.h">
       <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="Shared\DescriptorPile.h">
-      <Filter>Shared</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h">
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect.h">
       <Filter>ATG Tool Kit\PBREffect</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Kits\ATGTK\ToneMapEffect\ToneMapEffect.h">
-      <Filter>ATG Tool Kit\ToneMapEffect</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Kits\ATGTK\Skybox\Skybox.h">
       <Filter>ATG Tool Kit\Skybox</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Kits\ATGTK\Skybox\SkyboxEffect.h">
       <Filter>ATG Tool Kit\Skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\RenderTexture.h">
+      <Filter>ATG Tool Kit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -123,7 +117,7 @@
     <ClCompile Include="UWP\SimplePBRUWP12.cpp">
       <Filter>UWP</Filter>
     </ClCompile>
-    <ClCompile Include="Shared\pch.cpp">
+    <ClCompile Include="pch.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Kits\ATGTK\OrbitCamera.cpp">
@@ -132,11 +126,11 @@
     <ClCompile Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect.cpp">
       <Filter>ATG Tool Kit\PBREffect</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Kits\ATGTK\ToneMapEffect\ToneMapEffect.cpp">
-      <Filter>ATG Tool Kit\ToneMapEffect</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Kits\ATGTK\Skybox\SkyboxEffect.cpp">
       <Filter>ATG Tool Kit\Skybox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\RenderTexture.cpp">
+      <Filter>ATG Tool Kit</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -155,13 +149,13 @@
     <Image Include="Assets\WideLogoUWP.png">
       <Filter>Assets\Logo</Filter>
     </Image>
-    <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_BaseColor.dds">
+    <Image Include="..\..\..\Media\PBR\ToyRobot\WoodBlocks\WoodBlocks_BaseColor.dds">
       <Filter>Assets\Models\ToyRobot\WoodBlocks</Filter>
     </Image>
-    <Image Include="Assets\Models\ToyRobot\ToyRobot\ToyRobot_BaseColor.dds">
+    <Image Include="..\..\..\Media\PBR\ToyRobot\ToyRobot\ToyRobot_BaseColor.dds">
       <Filter>Assets\Models\ToyRobot\ToyRobot</Filter>
     </Image>
-    <Image Include="Assets\Models\ToyRobot\Floor\Floor_BaseColor.dds">
+    <Image Include="..\..\..\Media\PBR\ToyRobot\Floor\Floor_BaseColor.dds">
       <Filter>Assets\Models\ToyRobot\Floor</Filter>
     </Image>
     <Image Include="..\..\..\Media\HDR\Stonewall_Ref_irradiance.dds">
@@ -170,27 +164,27 @@
     <Image Include="..\..\..\Media\HDR\Stonewall_Ref_radiance.dds">
       <Filter>Assets\Backgrounds</Filter>
     </Image>
-    <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_Normal.DDS">
+    <Image Include="..\..\..\Media\PBR\ToyRobot\WoodBlocks\WoodBlocks_Normal.DDS">
       <Filter>Assets\Models\ToyRobot\WoodBlocks</Filter>
     </Image>
-    <Image Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks_RMA.DDS">
+    <Image Include="..\..\..\Media\PBR\ToyRobot\WoodBlocks\WoodBlocks_RMA.DDS">
       <Filter>Assets\Models\ToyRobot\WoodBlocks</Filter>
     </Image>
-    <Image Include="Assets\Models\ToyRobot\ToyRobot\Toyrobot_Normal.DDS">
+    <Image Include="..\..\..\Media\PBR\ToyRobot\ToyRobot\Toyrobot_Normal.DDS">
       <Filter>Assets\Models\ToyRobot\ToyRobot</Filter>
     </Image>
-    <Image Include="Assets\Models\ToyRobot\ToyRobot\Toyrobot_RMA.DDS">
+    <Image Include="..\..\..\Media\PBR\ToyRobot\ToyRobot\Toyrobot_RMA.DDS">
       <Filter>Assets\Models\ToyRobot\ToyRobot</Filter>
     </Image>
-    <Image Include="Assets\Models\ToyRobot\Floor\Floor_Normal.DDS">
+    <Image Include="..\..\..\Media\PBR\ToyRobot\Floor\Floor_Normal.DDS">
       <Filter>Assets\Models\ToyRobot\Floor</Filter>
     </Image>
-    <Image Include="Assets\Models\ToyRobot\Floor\Floor_RMA.DDS">
+    <Image Include="..\..\..\Media\PBR\ToyRobot\Floor\Floor_RMA.DDS">
       <Filter>Assets\Models\ToyRobot\Floor</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Models\XboxOrb\XboxOrb.sdkmesh">
+    <None Include="..\..\..\Media\PBR\XboxOrb\XboxOrb.sdkmesh">
       <Filter>Assets\Models\XboxOrb</Filter>
     </None>
     <None Include="Readme.docx" />
@@ -200,16 +194,13 @@
     <None Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_Math.hlsli">
       <Filter>ATG Tool Kit\PBREffect</Filter>
     </None>
-    <None Include="..\..\..\Kits\ATGTK\ToneMapEffect\ToneMapEffect_Common.hlsli">
-      <Filter>ATG Tool Kit\ToneMapEffect</Filter>
-    </None>
-    <None Include="Assets\Models\ToyRobot\Floor\Floor.sdkmesh">
+    <None Include="..\..\..\Media\PBR\ToyRobot\Floor\Floor.sdkmesh">
       <Filter>Assets\Models\ToyRobot\Floor</Filter>
     </None>
-    <None Include="Assets\Models\ToyRobot\ToyRobot\ToyRobot.sdkmesh">
+    <None Include="..\..\..\Media\PBR\ToyRobot\ToyRobot\ToyRobot.sdkmesh">
       <Filter>Assets\Models\ToyRobot\ToyRobot</Filter>
     </None>
-    <None Include="Assets\Models\ToyRobot\WoodBlocks\WoodBlocks.sdkmesh">
+    <None Include="..\..\..\Media\PBR\ToyRobot\WoodBlocks\WoodBlocks.sdkmesh">
       <Filter>Assets\Models\ToyRobot\WoodBlocks</Filter>
     </None>
     <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
@@ -230,6 +221,12 @@
     <None Include="..\..\..\Kits\Telemetry\Win32\ATGTelemetryUWP.dll">
       <Filter>UWP\Telemetry\Win32</Filter>
     </None>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_36.spritefont">
+      <Filter>Assets\Fonts</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\XboxOneControllerLegend.spritefont">
+      <Filter>Assets\Fonts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="UWP\Package.appxmanifest">
@@ -245,12 +242,6 @@
     </FxCompile>
     <FxCompile Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_VSConstant.hlsl">
       <Filter>ATG Tool Kit\PBREffect</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\..\Kits\ATGTK\ToneMapEffect\ToneMapEffect_PS.hlsl">
-      <Filter>ATG Tool Kit\ToneMapEffect</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\..\Kits\ATGTK\ToneMapEffect\ToneMapEffect_VS.hlsl">
-      <Filter>ATG Tool Kit\ToneMapEffect</Filter>
     </FxCompile>
     <FxCompile Include="..\..\..\Kits\ATGTK\Skybox\SkyboxEffect_PS.hlsl">
       <Filter>ATG Tool Kit\Skybox</Filter>

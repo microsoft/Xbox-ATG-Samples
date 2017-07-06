@@ -15,6 +15,8 @@
 #include "DDSTextureLoader.h"
 #include "GeometricPrimitive.h"
 
+//#define TEST_SCENE
+
 #if defined(_XBOX_ONE) && defined(_TITLE)
 #include "../Xbox/SimplePBRXbox12.h" // get sample definition
 #else
@@ -31,9 +33,9 @@ namespace
     // PBR Assest paths.
     const wchar_t* s_modelPaths[] =
     {
-        L"Assets\\Models\\ToyRobot\\Floor\\Floor.sdkmesh",
-        L"Assets\\Models\\ToyRobot\\ToyRobot\\ToyRobot.sdkmesh",
-        L"Assets\\Models\\ToyRobot\\WoodBlocks\\WoodBlocks.sdkmesh"
+        L"Floor.sdkmesh",
+        L"ToyRobot.sdkmesh",
+        L"WoodBlocks.sdkmesh"
     };
 
     // A simple test scene for material parameters
@@ -70,7 +72,7 @@ namespace
                     sampler);
             
             // Model
-            m_model = Model::CreateFromSDKMESH(L"Assets\\Models\\XboxOrb\\XboxOrb.sdkmesh");
+            m_model = Model::CreateFromSDKMESH(L"XboxOrb.sdkmesh");
         }
 
         void XM_CALLCONV Render(ID3D12GraphicsCommandList* commandList, FXMMATRIX camView, CXMMATRIX camProj)
@@ -123,10 +125,11 @@ namespace
 
 SharedSimplePBR::SharedSimplePBR(Sample* sample) :
     m_sample(sample),
-    m_radTexDescIndex(ATG::DescriptorPile::INVALID_INDEX),
-    m_HDRBufferDescIndex(ATG::DescriptorPile::INVALID_INDEX)
+    m_gamepadConnected(false)
 {
     m_gamePad = std::make_unique<GamePad>();
+
+    m_hdrScene = std::make_unique<DX::RenderTexture>(Sample::GetHDRRenderFormat());
 }
 
 void SharedSimplePBR::Update(DX::StepTimer const& timer)
@@ -137,6 +140,8 @@ void SharedSimplePBR::Update(DX::StepTimer const& timer)
     auto pad = m_gamePad->GetState(0);
     if (pad.IsConnected())
     {
+        m_gamepadConnected = true;
+
         m_gamePadButtons.Update(pad);
 
         if (pad.IsViewPressed())
@@ -146,6 +151,8 @@ void SharedSimplePBR::Update(DX::StepTimer const& timer)
     }
     else
     {
+        m_gamepadConnected = false;
+
         m_gamePadButtons.Reset();
     }
     m_camera->Update(elapsedSeconds, pad);
@@ -183,6 +190,8 @@ void SharedSimplePBR::Render()
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Render");
 
     // Draw to HDR buffer
+    m_hdrScene->BeginScene(commandList);
+
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Render HDR");
 
     auto depthStencilDescriptor = deviceResources->GetDepthStencilView();
@@ -215,24 +224,12 @@ void SharedSimplePBR::Render()
     {
         auto rtv = static_cast<D3D12_CPU_DESCRIPTOR_HANDLE>(deviceResources->GetRenderTargetView());
         commandList->OMSetRenderTargets(1, &rtv, FALSE, NULL);
-        
-        D3D12_RESOURCE_BARRIER b1 = CD3DX12_RESOURCE_BARRIER::Transition(m_rtvHDRBuffer.Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
-        commandList->ResourceBarrier(1, &b1);
 
-        // Set up tonemap effect
-        m_toneMapEffect->SetTexture(m_srvPile->GetGpuHandle(m_HDRBufferDescIndex), m_commonStates->LinearClamp());
-        m_toneMapEffect->Apply(commandList);
+        m_hdrScene->EndScene(commandList);
 
-        // Draw quad
-        m_toneMapBatch->Begin(commandList);
-        m_toneMapBatch->DrawQuad(ToneMapVert(Vector3(-1, 1, 0), Vector2(0, 0)),
-            ToneMapVert(Vector3(1, 1, 0), Vector2(1, 0)),
-            ToneMapVert(Vector3(1, -1, 0), Vector2(1, 1)),
-            ToneMapVert(Vector3(-1, -1, 0), Vector2(0, 1)));
-        m_toneMapBatch->End();
-
-        D3D12_RESOURCE_BARRIER b2 = CD3DX12_RESOURCE_BARRIER::Transition(m_rtvHDRBuffer.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_RENDER_TARGET);
-        commandList->ResourceBarrier(1, &b2);
+        // Tonemap
+        m_toneMap->SetHDRSourceTexture(m_srvPile->GetGpuHandle(StaticDescriptors::SceneTex));
+        m_toneMap->Process(commandList);
     }
     PIXEndEvent(commandList); // Tonemap
     
@@ -243,9 +240,13 @@ void SharedSimplePBR::Render()
         m_smallFont->DrawString(m_hudBatch.get(), L"SimplePBR Sample",
             XMFLOAT2(float(safe.left), float(safe.top)), ATG::Colors::LightGrey);
 
+        const wchar_t* legendStr = (m_gamepadConnected) ?
+            L"[RThumb] [LThumb]: Move Camera   [View] Exit "
+            : L"Mouse, W,A,S,D: Move Camera   Esc: Exit ";
+
         DX::DrawControllerString(m_hudBatch.get(),
             m_smallFont.get(), m_ctrlFont.get(),
-            L"[RThumb] [LThumb] Mouse, W,A,S,D : Move Camera [View] Exit ",
+            legendStr,
             XMFLOAT2(float(safe.left),
                 float(safe.bottom) - m_smallFont->GetLineSpacing()),
             ATG::Colors::LightGrey);
@@ -265,8 +266,15 @@ void SharedSimplePBR::CreateDeviceDependentResources()
     m_commonStates = std::make_unique<DirectX::CommonStates>(device);
 
     // create heaps
-    m_srvPile = std::make_unique<ATG::DescriptorPile>(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, 128);
+    m_srvPile = std::make_unique<DescriptorPile>(device,
+        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
+        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
+        128, // Maximum descriptors for both static and dynamic
+        StaticDescriptors::Reserve);
     m_rtvHeap = std::make_unique<DescriptorHeap>(device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE, 1);
+
+    // Set up HDR render target.
+    m_hdrScene->SetDevice(device, m_srvPile->GetCpuHandle(StaticDescriptors::SceneTex), m_rtvHeap->GetFirstCpuHandle());
     
     // Begin uploading texture resources
     ResourceUploadBatch resourceUpload(device);
@@ -282,8 +290,7 @@ void SharedSimplePBR::CreateDeviceDependentResources()
             false
             ));
 
-    m_radTexDescIndex = m_srvPile->Allocate();
-    DirectX::CreateShaderResourceView(device, m_radianceTexture.Get(), m_srvPile->GetCpuHandle(m_radTexDescIndex), true);
+    DirectX::CreateShaderResourceView(device, m_radianceTexture.Get(), m_srvPile->GetCpuHandle(StaticDescriptors::RadianceTex), true);
 
     // Irradiance (diffuse environment) texture
     DX::ThrowIfFailed(
@@ -295,8 +302,7 @@ void SharedSimplePBR::CreateDeviceDependentResources()
             false
             ));
 
-    m_irrTexDescIndex = m_srvPile->Allocate();
-    DirectX::CreateShaderResourceView(device, m_irradianceTexture.Get(), m_srvPile->GetCpuHandle(m_irrTexDescIndex), true);
+    DirectX::CreateShaderResourceView(device, m_irradianceTexture.Get(), m_srvPile->GetCpuHandle(StaticDescriptors::IrradianceTex), true);
 
     // Pipeline state - for rendering direct to back buffer
     {
@@ -309,23 +315,9 @@ void SharedSimplePBR::CreateDeviceDependentResources()
 
         m_hudBatch = std::make_unique<SpriteBatch>(device, resourceUpload, hudpd);
 
-        auto segoeDescIndex = m_srvPile->Allocate();
-        m_smallFont = std::make_unique<SpriteFont>(device, resourceUpload,
-            L"SegoeUI_18.spritefont",
-            m_srvPile->GetCpuHandle(segoeDescIndex),
-            m_srvPile->GetGpuHandle(segoeDescIndex));
-
-        auto legendDescInex = m_srvPile->Allocate();
-        m_ctrlFont = std::make_unique<SpriteFont>(device, resourceUpload,
-            L"XboxOneControllerLegendSmall.spritefont",
-            m_srvPile->GetCpuHandle(legendDescInex),
-            m_srvPile->GetGpuHandle(legendDescInex));
-
         // Create tone mapping effect
-        m_toneMapEffect = std::make_unique<ATG::ToneMapEffect>(device, Sample::GetBackBufferFormat());
-
-        // Tone map batch
-        m_toneMapBatch = std::make_unique<DirectX::PrimitiveBatch<ToneMapVert>>(device);
+        m_toneMap = std::make_unique<ToneMapPostProcess>(device, backBufferRts,
+            ToneMapPostProcess::ACESFilmic, ToneMapPostProcess::SRGB);
    }
 
     // Pipeline state - for rendering to HDR buffer
@@ -346,7 +338,7 @@ void SharedSimplePBR::CreateDeviceDependentResources()
         }
 
         // Skybox
-        m_skybox = std::make_unique<ATG::Skybox>(device, m_srvPile->GetGpuHandle(m_radTexDescIndex), hdrBufferRts, *m_commonStates);
+        m_skybox = std::make_unique<ATG::Skybox>(device, m_srvPile->GetGpuHandle(StaticDescriptors::RadianceTex), hdrBufferRts, *m_commonStates);
     }
  
     // The current map has too much detail removed at last mips, scale back down to
@@ -357,16 +349,16 @@ void SharedSimplePBR::CreateDeviceDependentResources()
     for (auto& m : m_pbrModels)
     {
         m->GetEffect()->SetIBLTextures(
-            m_srvPile->GetGpuHandle(m_radTexDescIndex),
+            m_srvPile->GetGpuHandle(StaticDescriptors::RadianceTex),
             numMips,
-            m_srvPile->GetGpuHandle(m_irrTexDescIndex),
+            m_srvPile->GetGpuHandle(StaticDescriptors::IrradianceTex),
             m_commonStates->LinearWrap());
     }
 
     s_testScene = std::make_unique<TestScene>();
-    s_testScene->Init(device, m_srvPile->GetGpuHandle(m_radTexDescIndex),
+    s_testScene->Init(device, m_srvPile->GetGpuHandle(StaticDescriptors::RadianceTex),
         numMips,
-        m_srvPile->GetGpuHandle(m_irrTexDescIndex),
+        m_srvPile->GetGpuHandle(StaticDescriptors::IrradianceTex),
         m_commonStates->LinearWrap());
 
     auto finished = resourceUpload.End(m_sample->m_deviceResources->GetCommandQueue());
@@ -396,41 +388,24 @@ void SharedSimplePBR::CreateWindowSizeDependentResources()
     }
 
     // HDR render target resource
-    {
-        D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Tex2D(
-            Sample::GetHDRRenderFormat(),
-            size.right,
-            size.bottom,
-            1,
-            1  // Use a single mipmap level.
-        );
-        desc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+    m_hdrScene->SetWindow(size);
 
-        // create resource
-        CD3DX12_HEAP_PROPERTIES rtvHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
-        DX::ThrowIfFailed(device->CreateCommittedResource(
-            &rtvHeapProperties,
-            D3D12_HEAP_FLAG_NONE,
-            &desc,
-            D3D12_RESOURCE_STATE_RENDER_TARGET,
-            nullptr, // &depthOptimizedClearValue,
-            IID_GRAPHICS_PPV_ARGS(m_rtvHDRBuffer.ReleaseAndGetAddressOf())
-        ));
-        m_rtvHDRBuffer->SetName(L"HDR buffer");
-    }
+    // Begin uploading texture resources
+    ResourceUploadBatch resourceUpload(device);
+    resourceUpload.Begin();
 
-    // HDR render target view
-    {  
-        D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
-        rtvDesc.Format = Sample::GetHDRRenderFormat();
-        rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-        device->CreateRenderTargetView(m_rtvHDRBuffer.Get(), &rtvDesc, m_rtvHeap->GetFirstCpuHandle());
+    m_smallFont = std::make_unique<SpriteFont>(device, resourceUpload,
+        (size.bottom > 1200) ? L"SegoeUI_36.spritefont" : L"SegoeUI_18.spritefont",
+        m_srvPile->GetCpuHandle(StaticDescriptors::Font),
+        m_srvPile->GetGpuHandle(StaticDescriptors::Font));
 
-        // create SR view and put in heap
-        if (m_HDRBufferDescIndex == ATG::DescriptorPile::INVALID_INDEX) m_HDRBufferDescIndex = m_srvPile->Allocate();
+    m_ctrlFont = std::make_unique<SpriteFont>(device, resourceUpload,
+        (size.bottom > 1200) ? L"XboxOneControllerLegend.spritefont" : L"XboxOneControllerLegendSmall.spritefont",
+        m_srvPile->GetCpuHandle(StaticDescriptors::CtrlFont),
+        m_srvPile->GetGpuHandle(StaticDescriptors::CtrlFont));
 
-        DirectX::CreateShaderResourceView(device, m_rtvHDRBuffer.Get(), m_srvPile->GetCpuHandle(m_HDRBufferDescIndex));
-    }
+    auto finished = resourceUpload.End(m_sample->m_deviceResources->GetCommandQueue());
+    finished.wait();
 }
 
 // For UWP only
@@ -440,16 +415,15 @@ void SharedSimplePBR::OnDeviceLost()
     m_smallFont.reset();
     m_ctrlFont.reset();
     
-    m_gamePad.reset();
     m_camera.reset();
     m_commonStates.reset();
 
     m_srvPile.reset();
 
     m_spriteBatch.reset();
-    m_toneMapEffect.reset();
-    m_toneMapBatch.reset();
+    m_toneMap.reset();
 
+    m_hdrScene->ReleaseDevice();
     m_rtvHeap.reset();
 
     for (auto& m : m_pbrModels)

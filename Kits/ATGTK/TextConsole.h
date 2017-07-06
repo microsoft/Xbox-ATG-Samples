@@ -31,6 +31,12 @@ namespace DX
         TextConsole();
         TextConsole(ID3D11DeviceContext* context, const wchar_t* fontName);
 
+        TextConsole(TextConsole&&) = default;
+        TextConsole& operator= (TextConsole&&) = default;
+
+        TextConsole(TextConsole const&) = delete;
+        TextConsole& operator= (TextConsole const&) = delete;
+
         void Render();
 
         void Clear();
@@ -82,6 +88,13 @@ namespace DX
     public:
         TextConsoleImage();
         TextConsoleImage(ID3D11DeviceContext* context, const wchar_t* fontName, const wchar_t* image);
+
+        TextConsoleImage(TextConsoleImage&&) = default;
+        TextConsoleImage& operator= (TextConsoleImage&&) = default;
+
+        TextConsoleImage(TextConsoleImage const&) = delete;
+        TextConsoleImage& operator= (TextConsoleImage const&) = delete;
+
 
         void Render();
 

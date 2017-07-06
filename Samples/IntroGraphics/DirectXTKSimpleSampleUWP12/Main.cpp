@@ -218,7 +218,7 @@ protected:
 
     void OnSuspending(Platform::Object^ sender, SuspendingEventArgs^ args)
     {
-        SuspendingDeferral^ deferral = args->SuspendingOperation->GetDeferral();
+        auto deferral = args->SuspendingOperation->GetDeferral();
 
         create_task([this, deferral]()
         {
@@ -431,11 +431,9 @@ public:
 
 // Entry point
 [Platform::MTAThread]
-int main(Platform::Array<Platform::String^>^ argv)
+int __cdecl main(Platform::Array<Platform::String^>^ /*argv*/)
 {
-    UNREFERENCED_PARAMETER(argv);
-
-    if (!XMVerifyCPUSupport())
+        if (!XMVerifyCPUSupport())
     {
         throw std::exception("XMVerifyCPUSupport");
     }
@@ -443,4 +441,11 @@ int main(Platform::Array<Platform::String^>^ argv)
     auto viewProviderFactory = ref new ViewProviderFactory();
     CoreApplication::Run(viewProviderFactory);
     return 0;
+}
+
+
+// Exit helper
+void ExitSample()
+{
+    Windows::ApplicationModel::Core::CoreApplication::Exit();
 }

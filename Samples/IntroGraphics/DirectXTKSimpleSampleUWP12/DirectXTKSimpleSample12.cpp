@@ -8,6 +8,8 @@
 #include "pch.h"
 #include "DirectXTKSimpleSample12.h"
 
+extern void ExitSample();
+
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
@@ -126,7 +128,7 @@ void Sample::Update(DX::StepTimer const& timer)
 
         if (pad.IsViewPressed())
         {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
         }
     }
     else
@@ -139,7 +141,7 @@ void Sample::Update(DX::StepTimer const& timer)
 
     if (kb.Escape)
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
 
     auto mouse = m_mouse->GetState();
