@@ -10,6 +10,8 @@
 
 #include "ATGColors.h"
 
+extern void ExitSample();
+
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
@@ -63,7 +65,7 @@ void Sample::Update(DX::StepTimer const& timer)
 
     if (kb.Escape)
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
 
     // Update core sample

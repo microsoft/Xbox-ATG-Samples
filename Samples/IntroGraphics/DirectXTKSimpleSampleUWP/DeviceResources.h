@@ -17,10 +17,13 @@ namespace DX
     class DeviceResources
     {
     public:
+        static const unsigned int c_AllowTearing = 0x1;
+
         DeviceResources(DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM,
                         DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D24_UNORM_S8_UINT,
                         UINT backBufferCount = 2,
-                        D3D_FEATURE_LEVEL minFeatureLevel = D3D_FEATURE_LEVEL_9_3);
+                        D3D_FEATURE_LEVEL minFeatureLevel = D3D_FEATURE_LEVEL_9_3,
+                        unsigned int flags = 0);
 
         void CreateDeviceResources();
         void CreateWindowSizeDependentResources();
@@ -50,6 +53,7 @@ namespace DX
         D3D11_VIEWPORT          GetScreenViewport() const             { return m_screenViewport; }
         UINT                    GetBackBufferCount() const            { return m_backBufferCount; }
         DirectX::XMFLOAT4X4     GetOrientationTransform3D() const     { return m_orientationTransform3D; }
+        unsigned int            GetDeviceOptions() const              { return m_options; }
 
     private:
         void GetHardwareAdapter(IDXGIAdapter1** ppAdapter);
@@ -80,6 +84,9 @@ namespace DX
 
         // Transforms used for display orientation.
         DirectX::XMFLOAT4X4                             m_orientationTransform3D;
+
+        // DeviceResources options (see flags above)
+        unsigned int                                    m_options;
 
         // The IDeviceNotify can be held directly as it owns the DeviceResources.
         IDeviceNotify*                                  m_deviceNotify;

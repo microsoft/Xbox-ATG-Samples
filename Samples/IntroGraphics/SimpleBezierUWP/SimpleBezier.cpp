@@ -15,6 +15,8 @@
 #include "ATGColors.h"
 #include "ReadData.h"
 
+extern void ExitSample();
+
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
@@ -188,7 +190,7 @@ void Sample::Update(DX::StepTimer const&)
 
     if ((!m_showHelp && m_keyboardButtons.IsKeyPressed(Keyboard::Escape)) || pad.IsViewPressed())
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
 
     if (m_keyboardButtons.IsKeyPressed(Keyboard::F1) || m_gamePadButtons.menu == GamePad::ButtonStateTracker::PRESSED)

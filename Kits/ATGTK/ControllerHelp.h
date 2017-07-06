@@ -67,6 +67,13 @@ namespace ATG
     public:
         Help(_In_z_ const wchar_t* title, _In_z_ const wchar_t* description,
              _In_count_(buttonCount) const HelpButtonAssignment* buttons, size_t buttonCount, bool linearColors = false);
+
+        Help(Help&&) = default;
+        Help& operator= (Help&&) = default;
+
+        Help(Help const&) = delete;
+        Help& operator= (Help const&) = delete;
+
         ~Help();
 
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__)

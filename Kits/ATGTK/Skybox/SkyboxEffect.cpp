@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
-// ToneMapEffect.cpp
+// SkyboxEffect.cpp
 //
-// A simple flimic tonemapping effect for DirectX 12.
+// A sky box rendering helper for DirectX 12.
 //
 // Advanced Technology Group (ATG)
 // Copyright (C) Microsoft Corporation. All rights reserved.
@@ -87,7 +87,7 @@ const int EffectBase<SkyboxEffectTraits>::PixelShaderIndices[] =
     0,      // basic
 };
 
-// Global pool of per-device ToneMapEffect resources.
+// Global pool of per-device SkyboxEffect resources.
 SharedResourcePool<ID3D12Device*, EffectBase<SkyboxEffectTraits>::DeviceResources> EffectBase<SkyboxEffectTraits>::deviceResourcesPool;
 
 

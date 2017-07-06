@@ -17,7 +17,6 @@
 #pragma once
 
 #include <Model.h>
-#include "DescriptorPile.h"
 #include "PBREffect\PBREffect.h"
 
 namespace ATG
@@ -30,18 +29,21 @@ namespace ATG
         {
             // Remove extension and path
             auto lastSlash = m_modelFullPath.find_last_of(L"\\");
-            m_modelBasePath = m_modelFullPath.substr(0, lastSlash);
+            if (lastSlash != size_t(-1))
+                m_modelBasePath = m_modelFullPath.substr(0, lastSlash);
+            else
+                m_modelBasePath = L".";
 
             auto lastDot = m_modelFullPath.find_last_of(L".");
             m_modelName = m_modelFullPath.substr( lastSlash + 1, lastDot - lastSlash - 1);
         }
 
         void Create(
-            ID3D12Device* device,
+            _In_ ID3D12Device* device,
             const DirectX::RenderTargetState& rtState,
             const DirectX::CommonStates* commonStates,
             DirectX::ResourceUploadBatch& resourceUpload,
-            ATG::DescriptorPile* pile)
+            _In_ DirectX::DescriptorPile* pile)
         {
             using namespace DirectX;
             using namespace DirectX::SimpleMath;

@@ -12,6 +12,8 @@
 #include "ControllerFont.h"
 #include "ReadData.h"
 
+extern void ExitSample();
+
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
@@ -105,7 +107,7 @@ void Sample::Update(DX::StepTimer const& timer)
 
         if (pad.IsViewPressed())
         {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
         }
 
         if (m_gamePadButtons.a == GamePad::ButtonStateTracker::ButtonState::PRESSED)
@@ -173,7 +175,7 @@ void Sample::Update(DX::StepTimer const& timer)
 
     if (kb.Escape)
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
 
     if (m_keyboardButtons.IsKeyPressed(Keyboard::Q))

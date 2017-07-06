@@ -41,8 +41,8 @@ public:
     // Properties
     void GetDefaultSize( int& width, int& height ) const;
 
-    inline static DXGI_FORMAT GetHDRRenderFormat() { return DXGI_FORMAT_R16G16B16A16_FLOAT; }
-    inline static DXGI_FORMAT GetBackBufferFormat() { return DXGI_FORMAT_R16G16B16A16_FLOAT; }
+    inline static DXGI_FORMAT GetHDRRenderFormat() { return DXGI_FORMAT_R11G11B10_FLOAT; }
+    inline static DXGI_FORMAT GetBackBufferFormat() { return DXGI_FORMAT_R10G10B10A2_UNORM; }
     inline static DXGI_FORMAT GetDepthFormat() { return DXGI_FORMAT_D32_FLOAT; }
 
 private:

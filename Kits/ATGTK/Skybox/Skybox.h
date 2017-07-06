@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // Skybox.h
 //
-// A sky box rendering helper. Takes DDS cubemap as input. 
+// A sky box rendering helper for DirectX 12. Takes DDS cubemap as input. 
 // 
 // Advanced Technology Group (ATG)
 // Copyright (C) Microsoft Corporation. All rights reserved.
@@ -36,8 +36,8 @@ namespace ATG
             m_effect = std::make_unique<ATG::SkyboxEffect>(device, skyPSD);
             m_effect->SetTexture(cubeTexture, commonStates.LinearWrap());
 
-            // Create cube with corners at ([-1, 1], [-1, 1], [-1, 1]) 
-            m_cube = DirectX::GeometricPrimitive::CreateGeoSphere(2.f);
+            // "Skybox" geometry
+            m_sky = DirectX::GeometricPrimitive::CreateGeoSphere(2.f);
         }
 
         void XM_CALLCONV Update(DirectX::FXMMATRIX view, DirectX::CXMMATRIX projection)
@@ -48,11 +48,11 @@ namespace ATG
         void Render(ID3D12GraphicsCommandList* cmdList)
         {
             m_effect->Apply(cmdList);
-            m_cube->Draw(cmdList);
+            m_sky->Draw(cmdList);
         }
 
     private:
-        std::unique_ptr<DirectX::GeometricPrimitive>    m_cube;
+        std::unique_ptr<DirectX::GeometricPrimitive>    m_sky;
         std::unique_ptr<ATG::SkyboxEffect>              m_effect;
     };
 }

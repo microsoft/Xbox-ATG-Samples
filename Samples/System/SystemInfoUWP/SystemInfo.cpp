@@ -375,7 +375,10 @@ void Sample::Render()
             bool isuniversal1 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 1, 0);
             bool isuniversal2 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2, 0);
             bool isuniversal3 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3, 0);
+            bool isuniversal4 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4, 0);
             bool isphone = ApiInformation::IsApiContractPresent("Windows.Phone.PhoneContract", 1, 0);
+            bool isstore = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 1, 0);
+            bool isstore2 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 2, 0);
 
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"FoundationContract 1.0", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), isfoundation ? L"true" : L"false", right, y, m_scale);
@@ -389,8 +392,17 @@ void Sample::Render()
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UniversalApiContract 3.0", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), isuniversal3 ? L"true" : L"false", right, y, m_scale);
 
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UniversalApiContract 4.0", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isuniversal4 ? L"true" : L"false", right, y, m_scale);
+
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"PhoneContract 1.0", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), isphone ? L"true" : L"false", right, y, m_scale);
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"StoreContract 1.0", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isstore ? L"true" : L"false", right, y, m_scale);
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"StoreContract 2.0", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isstore2 ? L"true" : L"false", right, y, m_scale);
         }
         break;
 

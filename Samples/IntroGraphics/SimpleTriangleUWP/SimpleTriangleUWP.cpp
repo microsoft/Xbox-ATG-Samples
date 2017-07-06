@@ -11,6 +11,8 @@
 #include "ATGColors.h"
 #include "ReadData.h"
 
+extern void ExitSample();
+
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
@@ -27,7 +29,13 @@ namespace
 Sample::Sample()
 {
     // Use gamma-correct rendering.
-    m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM_SRGB);
+    m_deviceResources = std::make_unique<DX::DeviceResources>(
+        DXGI_FORMAT_B8G8R8A8_UNORM_SRGB,
+        DXGI_FORMAT_D24_UNORM_S8_UINT,
+        2,
+        D3D_FEATURE_LEVEL_9_3,
+        DX::DeviceResources::c_AllowTearing
+        );
     m_deviceResources->RegisterDeviceNotify(this);
 }
 
@@ -70,14 +78,14 @@ void Sample::Update(DX::StepTimer const&)
     {
         if (pad.IsViewPressed())
         {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
         }
     }
 
     auto kb = m_keyboard->GetState();
     if (kb.Escape)
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
 
     PIXEndEvent();
