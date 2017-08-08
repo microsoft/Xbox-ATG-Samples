@@ -4,15 +4,16 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 
 * ``Kits`` contains support code used by the samples
 * ``Media`` contains media files used by the samples
-* ``Samples``
- * ``Audio``
- * ``IntroGraphics``
- * ``Graphics``
- * ``System``
- * ``Tools``
+* ``UWPSamples`` contains samples for the Universal Windows Platform
+  * ``Audio``
+  * ``IntroGraphics``
+  * ``Graphics``
+  * ``System``
+  * ``Tools``
 
 # Requirements
 
+## UWP apps
 * Windows 10 Creators Update (Build 15063 or greater)
 * Visual Studio 2017 with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, *Windows 10 SDK (10.0.15063.0)*, and *Windows 10 SDK (10.0.14393.0)*.
 
