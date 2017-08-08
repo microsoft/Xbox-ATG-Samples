@@ -44,7 +44,7 @@ namespace DX
         ID3D11DeviceContext2*   GetD3DDeviceContext() const           { return m_d3dContext.Get(); }
         IDXGISwapChain3*        GetSwapChain() const                  { return m_swapChain.Get(); }
         D3D_FEATURE_LEVEL       GetDeviceFeatureLevel() const         { return m_d3dFeatureLevel; }
-        ID3D11RenderTargetView* GetBackBufferRenderTargetView() const { return m_d3dRenderTargetView.Get(); }
+        ID3D11RenderTargetView* GetRenderTargetView() const           { return m_d3dRenderTargetView.Get(); }
         ID3D11DepthStencilView* GetDepthStencilView() const           { return m_d3dDepthStencilView.Get(); }
         DXGI_FORMAT             GetBackBufferFormat() const           { return m_backBufferFormat; }
         DXGI_FORMAT             GetDepthBufferFormat() const          { return m_depthBufferFormat; }

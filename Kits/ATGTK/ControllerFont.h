@@ -53,7 +53,7 @@ namespace DX
         float offsetY = buttonScale / 2.f;
 
         size_t j = 0;
-        wchar_t strBuffer[4096] = {0};
+        wchar_t strBuffer[4096] = {};
 
         bool buttonText = false;
 
@@ -67,7 +67,7 @@ namespace DX
 
                 if (text[ch] == L']')
                 {
-                    wchar_t button[2] = { 0 };
+                    wchar_t button[2] = {};
 
                     if (_wcsicmp(strBuffer, L"[A]") == 0)
                     {
@@ -204,7 +204,7 @@ namespace DX
         float offsetY = buttonScale / 2.f;
 
         size_t j = 0;
-        wchar_t strBuffer[4096] = { 0 };
+        wchar_t strBuffer[4096] = {};
 
         bool buttonText = false;
 
@@ -219,7 +219,7 @@ namespace DX
 
                 if (text[ch] == L']')
                 {
-                    wchar_t button[2] = { 0 };
+                    wchar_t button[2] = {};
 
                     if (_wcsicmp(strBuffer, L"[A]") == 0)
                     {

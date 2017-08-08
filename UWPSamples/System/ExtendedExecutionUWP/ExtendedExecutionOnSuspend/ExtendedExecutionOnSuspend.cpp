@@ -234,7 +234,7 @@ void Sample::Clear()
     PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Clear");
 
     // Clear the views.
-    auto renderTarget = m_deviceResources->GetBackBufferRenderTargetView();
+    auto renderTarget = m_deviceResources->GetRenderTargetView();
 
     context->OMSetRenderTargets(1, &renderTarget, nullptr);
 

@@ -41,4 +41,16 @@ namespace ATG
         XMGLOBALCONST DirectX::XMVECTORF32 OffWhite   = { 0.361306787f, 0.361306787f, 0.361306787f, 1.f };
         XMGLOBALCONST DirectX::XMVECTORF32 White      = { 0.955973506f, 0.955973506f, 0.955973506f, 1.f };
     };
+
+    namespace ColorsHDR
+    {
+        XMGLOBALCONST DirectX::XMVECTORF32 Background = { 0.052860655f * 2.f, 0.052860655f * 2.f, 0.052860655f * 2.f, 1.f };
+        XMGLOBALCONST DirectX::XMVECTORF32 Green = { 0.005181516f * 2.f, 0.201556236f * 2.f, 0.005181516f * 2.f, 1.f };
+        XMGLOBALCONST DirectX::XMVECTORF32 Blue = { 0.001517635f * 2.f, 0.114435382f * 2.f, 0.610495627f * 2.f, 1.f };
+        XMGLOBALCONST DirectX::XMVECTORF32 Orange = { 0.545724571f * 2.f, 0.026241219f * 2.f, 0.001517635f * 2.f, 1.f };
+        XMGLOBALCONST DirectX::XMVECTORF32 DarkGrey = { 0.033104762f * 2.f, 0.033104762f * 2.f, 0.033104762f * 2.f, 1.f };
+        XMGLOBALCONST DirectX::XMVECTORF32 LightGrey = { 0.194617808f * 2.f, 0.194617808f * 2.f, 0.194617808f * 2.f, 1.f };
+        XMGLOBALCONST DirectX::XMVECTORF32 OffWhite = { 0.361306787f * 2.f, 0.361306787f * 2.f, 0.361306787f * 2.f, 1.f };
+        XMGLOBALCONST DirectX::XMVECTORF32 White = { 0.955973506f * 2.f, 0.955973506f * 2.f, 0.955973506f * 2.f, 1.f };
+    };
 }

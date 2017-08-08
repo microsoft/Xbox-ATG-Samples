@@ -8,6 +8,7 @@
 #include "DeviceResources.h"
 
 using namespace DirectX;
+using namespace DX;
 
 using Microsoft::WRL::ComPtr;
 
@@ -83,7 +84,7 @@ namespace ScreenRotation
 };
 
 // Constructor for DeviceResources.
-DX::DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depthBufferFormat, UINT backBufferCount, D3D_FEATURE_LEVEL minFeatureLevel) :
+DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depthBufferFormat, UINT backBufferCount, D3D_FEATURE_LEVEL minFeatureLevel) :
     m_screenViewport{},
     m_backBufferFormat(backBufferFormat),
     m_depthBufferFormat(depthBufferFormat),
@@ -99,7 +100,7 @@ DX::DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT d
 }
 
 // Configures the Direct3D device, and stores handles to it and the device context.
-void DX::DeviceResources::CreateDeviceResources() 
+void DeviceResources::CreateDeviceResources() 
 {
     UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
@@ -195,7 +196,7 @@ void DX::DeviceResources::CreateDeviceResources()
     }
 #endif
 
-    DX::ThrowIfFailed(hr);
+    ThrowIfFailed(hr);
 
 #ifndef NDEBUG
     ComPtr<ID3D11Debug> d3dDebug;
@@ -221,12 +222,12 @@ void DX::DeviceResources::CreateDeviceResources()
     }
 #endif
 
-    DX::ThrowIfFailed(device.As(&m_d3dDevice));
-    DX::ThrowIfFailed(context.As(&m_d3dContext));
+    ThrowIfFailed(device.As(&m_d3dDevice));
+    ThrowIfFailed(context.As(&m_d3dContext));
 }
 
 // These resources need to be recreated every time the window size is changed.
-void DX::DeviceResources::CreateWindowSizeDependentResources() 
+void DeviceResources::CreateWindowSizeDependentResources() 
 {
     if (!m_window)
     {
@@ -272,7 +273,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
         }
         else
         {
-            DX::ThrowIfFailed(hr);
+            ThrowIfFailed(hr);
         }
     }
     else
@@ -281,13 +282,13 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 
         // This sequence obtains the DXGI factory that was used to create the Direct3D device above.
         ComPtr<IDXGIDevice3> dxgiDevice;
-        DX::ThrowIfFailed(m_d3dDevice.As(&dxgiDevice));
+        ThrowIfFailed(m_d3dDevice.As(&dxgiDevice));
 
         ComPtr<IDXGIAdapter> dxgiAdapter;
-        DX::ThrowIfFailed(dxgiDevice->GetAdapter(dxgiAdapter.GetAddressOf()));
+        ThrowIfFailed(dxgiDevice->GetAdapter(dxgiAdapter.GetAddressOf()));
 
         ComPtr<IDXGIFactory2> dxgiFactory;
-        DX::ThrowIfFailed(dxgiAdapter->GetParent(IID_PPV_ARGS(dxgiFactory.GetAddressOf())));
+        ThrowIfFailed(dxgiAdapter->GetParent(IID_PPV_ARGS(dxgiFactory.GetAddressOf())));
 
         DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
         swapChainDesc.Width = backBufferWidth;
@@ -302,7 +303,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
         swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
 
         ComPtr<IDXGISwapChain1> swapChain;
-        DX::ThrowIfFailed(dxgiFactory->CreateSwapChainForCoreWindow(
+        ThrowIfFailed(dxgiFactory->CreateSwapChainForCoreWindow(
             m_d3dDevice.Get(),
             m_window,
             &swapChainDesc,
@@ -310,11 +311,11 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
             swapChain.GetAddressOf()
             ));
 
-        DX::ThrowIfFailed(swapChain.As(&m_swapChain));
+        ThrowIfFailed(swapChain.As(&m_swapChain));
 
         // Ensure that DXGI does not queue more than one frame at a time. This both reduces latency and
         // ensures that the application will only render after each VSync, minimizing power consumption.
-        DX::ThrowIfFailed(dxgiDevice->SetMaximumFrameLatency(1));
+        ThrowIfFailed(dxgiDevice->SetMaximumFrameLatency(1));
     }
 
     // Set the proper orientation for the swap chain, and generate
@@ -339,14 +340,14 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
         break;
     }
 
-    DX::ThrowIfFailed(m_swapChain->SetRotation(m_rotation));
+    ThrowIfFailed(m_swapChain->SetRotation(m_rotation));
 
     // Create a render target view of the swap chain back buffer.
     ComPtr<ID3D11Texture2D> backBuffer;
-    DX::ThrowIfFailed(m_swapChain->GetBuffer(0, IID_PPV_ARGS(backBuffer.GetAddressOf())));
+    ThrowIfFailed(m_swapChain->GetBuffer(0, IID_PPV_ARGS(backBuffer.GetAddressOf())));
 
     CD3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc(D3D11_RTV_DIMENSION_TEXTURE2D, m_backBufferFormat);
-    DX::ThrowIfFailed(m_d3dDevice->CreateRenderTargetView(
+    ThrowIfFailed(m_d3dDevice->CreateRenderTargetView(
         backBuffer.Get(),
         &renderTargetViewDesc,
         m_d3dRenderTargetView.ReleaseAndGetAddressOf()
@@ -365,14 +366,14 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
             );
 
         ComPtr<ID3D11Texture2D> depthStencil;
-        DX::ThrowIfFailed(m_d3dDevice->CreateTexture2D(
+        ThrowIfFailed(m_d3dDevice->CreateTexture2D(
             &depthStencilDesc,
             nullptr,
             depthStencil.GetAddressOf()
             ));
 
         CD3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc(D3D11_DSV_DIMENSION_TEXTURE2D);
-        DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilView(
+        ThrowIfFailed(m_d3dDevice->CreateDepthStencilView(
             depthStencil.Get(),
             &depthStencilViewDesc,
             m_d3dDepthStencilView.ReleaseAndGetAddressOf()
@@ -389,7 +390,7 @@ void DX::DeviceResources::CreateWindowSizeDependentResources()
 }
 
 // This method is called when the CoreWindow is created (or re-created).
-void DX::DeviceResources::SetWindow(IUnknown* window, int width, int height, DXGI_MODE_ROTATION rotation)
+void DeviceResources::SetWindow(IUnknown* window, int width, int height, DXGI_MODE_ROTATION rotation)
 {
     m_window = window;
 
@@ -401,7 +402,7 @@ void DX::DeviceResources::SetWindow(IUnknown* window, int width, int height, DXG
 }
 
 // This method is called when the window changes size
-bool DX::DeviceResources::WindowSizeChanged(int width, int height, DXGI_MODE_ROTATION rotation)
+bool DeviceResources::WindowSizeChanged(int width, int height, DXGI_MODE_ROTATION rotation)
 {
     RECT newRc;
     newRc.left = newRc.top = 0;
@@ -419,7 +420,7 @@ bool DX::DeviceResources::WindowSizeChanged(int width, int height, DXGI_MODE_ROT
 }
 
 // This method is called in the event handler for the DisplayContentsInvalidated event.
-void DX::DeviceResources::ValidateDevice()
+void DeviceResources::ValidateDevice()
 {
     // The D3D Device is no longer valid if the default adapter changed since the device
     // was created or if the device has been removed.
@@ -427,29 +428,29 @@ void DX::DeviceResources::ValidateDevice()
     DXGI_ADAPTER_DESC previousDesc;
     {
         ComPtr<IDXGIDevice3> dxgiDevice;
-        DX::ThrowIfFailed(m_d3dDevice.As(&dxgiDevice));
+        ThrowIfFailed(m_d3dDevice.As(&dxgiDevice));
 
         ComPtr<IDXGIAdapter> deviceAdapter;
-        DX::ThrowIfFailed(dxgiDevice->GetAdapter(deviceAdapter.GetAddressOf()));
+        ThrowIfFailed(dxgiDevice->GetAdapter(deviceAdapter.GetAddressOf()));
 
         ComPtr<IDXGIFactory2> deviceFactory;
-        DX::ThrowIfFailed(deviceAdapter->GetParent(IID_PPV_ARGS(deviceFactory.GetAddressOf())));
+        ThrowIfFailed(deviceAdapter->GetParent(IID_PPV_ARGS(deviceFactory.GetAddressOf())));
 
         ComPtr<IDXGIAdapter1> previousDefaultAdapter;
-        DX::ThrowIfFailed(deviceFactory->EnumAdapters1(0, previousDefaultAdapter.GetAddressOf()));
+        ThrowIfFailed(deviceFactory->EnumAdapters1(0, previousDefaultAdapter.GetAddressOf()));
 
-        DX::ThrowIfFailed(previousDefaultAdapter->GetDesc(&previousDesc));
+        ThrowIfFailed(previousDefaultAdapter->GetDesc(&previousDesc));
     }
 
     DXGI_ADAPTER_DESC currentDesc;
     {
         ComPtr<IDXGIFactory2> currentFactory;
-        DX::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(currentFactory.GetAddressOf())));
+        ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(currentFactory.GetAddressOf())));
 
         ComPtr<IDXGIAdapter1> currentDefaultAdapter;
-        DX::ThrowIfFailed(currentFactory->EnumAdapters1(0, currentDefaultAdapter.GetAddressOf()));
+        ThrowIfFailed(currentFactory->EnumAdapters1(0, currentDefaultAdapter.GetAddressOf()));
 
-        DX::ThrowIfFailed(currentDefaultAdapter->GetDesc(&currentDesc));
+        ThrowIfFailed(currentDefaultAdapter->GetDesc(&currentDesc));
     }
 
     // If the adapter LUIDs don't match, or if the device reports that it has been removed,
@@ -469,7 +470,7 @@ void DX::DeviceResources::ValidateDevice()
 }
 
 // Recreate all device resources and set them back to the current state.
-void DX::DeviceResources::HandleDeviceLost()
+void DeviceResources::HandleDeviceLost()
 {
     if (m_deviceNotify)
     {
@@ -503,7 +504,7 @@ void DX::DeviceResources::HandleDeviceLost()
 
 // Call this method when the app suspends. It provides a hint to the driver that the app 
 // is entering an idle state and that temporary buffers can be reclaimed for use by other apps.
-void DX::DeviceResources::Trim()
+void DeviceResources::Trim()
 {
     ComPtr<IDXGIDevice3> dxgiDevice;
     if (SUCCEEDED(m_d3dDevice.As(&dxgiDevice)))
@@ -513,7 +514,7 @@ void DX::DeviceResources::Trim()
 }
 
 // Present the contents of the swap chain to the screen.
-void DX::DeviceResources::Present() 
+void DeviceResources::Present() 
 {
     // The first argument instructs DXGI to block until VSync, putting the application
     // to sleep until the next VSync. This ensures we don't waste any cycles rendering
@@ -544,13 +545,13 @@ void DX::DeviceResources::Present()
     }
     else
     {
-        DX::ThrowIfFailed(hr);
+        ThrowIfFailed(hr);
     }
 }
 
 // This method acquires the first available hardware adapter.
 // If no such adapter can be found, *ppAdapter will be set to nullptr.
-void DX::DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter)
+void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter)
 {
     *ppAdapter = nullptr;
 
@@ -563,9 +564,9 @@ void DX::DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter)
         creationFlags |= DXGI_CREATE_FACTORY_DEBUG;
     }
 
-    DX::ThrowIfFailed(CreateDXGIFactory2(creationFlags, IID_PPV_ARGS(dxgiFactory.GetAddressOf())));
+    ThrowIfFailed(CreateDXGIFactory2(creationFlags, IID_PPV_ARGS(dxgiFactory.GetAddressOf())));
 #else
-    DX::ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(dxgiFactory.GetAddressOf())));
+    ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(dxgiFactory.GetAddressOf())));
 #endif
 
     ComPtr<IDXGIAdapter1> adapter;
