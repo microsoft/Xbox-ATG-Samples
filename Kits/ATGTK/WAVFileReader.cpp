@@ -496,7 +496,7 @@ static HRESULT LoadAudioFromFile( _In_z_ const wchar_t* szFileName, _Inout_ std:
     }
 
     // Get the file size
-    LARGE_INTEGER FileSize = { 0 };
+    LARGE_INTEGER FileSize = {};
 
 #if (_WIN32_WINNT >= _WIN32_WINNT_VISTA)
     FILE_STANDARD_INFO fileInfo;

@@ -17,7 +17,8 @@ namespace DX
     class DeviceResources
     {
     public:
-        static const unsigned int c_AllowTearing = 0x1;
+        static const unsigned int c_AllowTearing    = 0x1;
+        static const unsigned int c_EnableHDR       = 0x2;
 
         DeviceResources(DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM,
                         DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D24_UNORM_S8_UINT,
@@ -53,12 +54,15 @@ namespace DX
         D3D11_VIEWPORT          GetScreenViewport() const             { return m_screenViewport; }
         UINT                    GetBackBufferCount() const            { return m_backBufferCount; }
         DirectX::XMFLOAT4X4     GetOrientationTransform3D() const     { return m_orientationTransform3D; }
+        DXGI_COLOR_SPACE_TYPE   GetColorSpace() const                 { return m_colorSpace; }
         unsigned int            GetDeviceOptions() const              { return m_options; }
 
     private:
         void GetHardwareAdapter(IDXGIAdapter1** ppAdapter);
+        void UpdateColorSpace();
 
         // Direct3D objects.
+        Microsoft::WRL::ComPtr<IDXGIFactory2>           m_dxgiFactory;
         Microsoft::WRL::ComPtr<ID3D11Device3>           m_d3dDevice;
         Microsoft::WRL::ComPtr<ID3D11DeviceContext2>    m_d3dContext;
         Microsoft::WRL::ComPtr<IDXGISwapChain3>         m_swapChain;
@@ -80,10 +84,14 @@ namespace DX
         IUnknown*                                       m_window;
         D3D_FEATURE_LEVEL                               m_d3dFeatureLevel;
         DXGI_MODE_ROTATION                              m_rotation;
+        DWORD                                           m_dxgiFactoryFlags;
         RECT                                            m_outputSize;
 
         // Transforms used for display orientation.
         DirectX::XMFLOAT4X4                             m_orientationTransform3D;
+
+        // HDR Support
+        DXGI_COLOR_SPACE_TYPE                           m_colorSpace;
 
         // DeviceResources options (see flags above)
         unsigned int                                    m_options;

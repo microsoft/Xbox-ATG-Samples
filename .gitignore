@@ -28,8 +28,9 @@ Release
 x64
 Kits/DirectXTK/Src/Shaders/Compiled/XboxOne*.*
 Kits/DirectXTK12/Src/Shaders/Compiled/XboxOne*.*
-Samples/Graphics/SimplePBR12/Compiled/
-Samples/Tools/errorlookup/errorlookup/project.lock.json
+UWPSamples/Graphics/SimplePBR12/Compiled/
+UWPSamples/Tools/errorlookup/errorlookup/obj/
+UWPSamples/Tools/errorlookup/errorlookup/project.lock.json
 /wiki
 AppPackages
 packages

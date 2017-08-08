@@ -171,7 +171,7 @@ void Sample::Clear()
     PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Clear");
 
     // Clear the views
-    auto renderTarget = m_deviceResources->GetBackBufferRenderTargetView();
+    auto renderTarget = m_deviceResources->GetRenderTargetView();
 
     // Don't need to clear color as the sample draws a fullscreen image background
 

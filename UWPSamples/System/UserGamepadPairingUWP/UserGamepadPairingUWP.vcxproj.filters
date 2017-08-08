@@ -37,7 +37,7 @@
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h">
-      <Filter>Common</Filter>
+      <Filter>ATG Tool Kit</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

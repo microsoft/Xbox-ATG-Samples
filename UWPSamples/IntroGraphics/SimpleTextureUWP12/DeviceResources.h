@@ -17,7 +17,8 @@ namespace DX
     class DeviceResources
     {
     public:
-        static const unsigned int c_AllowTearing = 0x1;
+        static const unsigned int c_AllowTearing    = 0x1;
+        static const unsigned int c_EnableHDR       = 0x2;
 
         DeviceResources(DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM,
                         DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT,
@@ -57,6 +58,7 @@ namespace DX
         UINT                        GetCurrentFrameIndex() const      { return m_backBufferIndex; }
         UINT                        GetBackBufferCount() const        { return m_backBufferCount; }
         DirectX::XMFLOAT4X4         GetOrientationTransform3D() const { return m_orientationTransform3D; }
+        DXGI_COLOR_SPACE_TYPE       GetColorSpace() const             { return m_colorSpace; }
         unsigned int                GetDeviceOptions() const          { return m_options; }
 
         CD3DX12_CPU_DESCRIPTOR_HANDLE GetRenderTargetView() const
@@ -71,6 +73,7 @@ namespace DX
     private:
         void MoveToNextFrame();
         void GetAdapter(IDXGIAdapter1** ppAdapter);
+        void UpdateColorSpace();
 
         const static size_t MAX_BACK_BUFFER_COUNT = 3;
 
@@ -110,7 +113,11 @@ namespace DX
         IUnknown*                                           m_window;
         D3D_FEATURE_LEVEL                                   m_d3dFeatureLevel;
         DXGI_MODE_ROTATION                                  m_rotation;
+        DWORD                                               m_dxgiFactoryFlags;
         RECT                                                m_outputSize;
+
+        // HDR Support
+        DXGI_COLOR_SPACE_TYPE                               m_colorSpace;
 
         // DeviceResources options (see flags above)
         unsigned int                                        m_options;

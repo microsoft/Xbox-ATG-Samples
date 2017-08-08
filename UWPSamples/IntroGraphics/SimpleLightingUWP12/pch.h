@@ -15,7 +15,7 @@
 #include <wrl.h>
 
 #include <d3d12.h>
-#include <dxgi1_5.h>
+#include <dxgi1_6.h>
 #include <DirectXMath.h>
 #include <DirectXColors.h>
 
