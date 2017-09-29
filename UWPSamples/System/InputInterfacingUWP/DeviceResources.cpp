@@ -582,7 +582,7 @@ void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter)
         }
 
 #ifdef _DEBUG
-        WCHAR buff[256] = {};
+        wchar_t buff[256] = {};
         swprintf_s(buff, L"Direct3D Adapter (%u): VID:%04X, PID:%04X - %ls\n", adapterIndex, desc.VendorId, desc.DeviceId, desc.Description);
         OutputDebugStringW(buff);
 #endif
