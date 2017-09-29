@@ -7,4 +7,6 @@
 // Copyright (C) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
 
+#pragma warning(disable : 4996)
+
 #include "pch.h"

@@ -37,7 +37,6 @@
 #include "SpriteFont.h"
 
 #include <winrt/Windows.Gaming.Input.h>
-#include <winrt/ppl.h>
 #include <winrt/Windows.ApplicationModel.h>
 #include <winrt/Windows.ApplicationModel.Core.h>
 #include <winrt/Windows.ApplicationModel.Activation.h>
