@@ -51,6 +51,8 @@ namespace DX
             DirectX::XMStoreFloat4(reinterpret_cast<DirectX::XMFLOAT4*>(m_clearColor), color);
         }
 
+        ID3D12Resource* GetResource() const { return m_resource.Get(); }
+
     private:
         Microsoft::WRL::ComPtr<ID3D12Device>                m_device;
         Microsoft::WRL::ComPtr<ID3D12Resource>              m_resource;
@@ -92,7 +94,7 @@ namespace DX
         void SetWindow(const RECT& rect);
 
         DXGI_FORMAT GetFormat() const { return m_format; }
-
+        
     private:
         DXGI_FORMAT                                         m_format;
 
