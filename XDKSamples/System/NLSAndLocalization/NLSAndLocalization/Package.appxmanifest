@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest"
+         xmlns:mx="http://schemas.microsoft.com/appx/2013/xbox/manifest"
+         IgnorableNamespaces="mx">
+  
+  <Identity Name="53cc0a60-33e5-4059-9db1-647b9a94c2c4"
+            Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
+            Version="1.0.0.0" />
+  
+  <Properties>
+    <DisplayName>NLSAndLocalization</DisplayName>
+    <PublisherDisplayName>Xbox Advanced Technology Group</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>NLSAndLocalization</Description>
+  </Properties>
+  
+  <Prerequisites>
+    <OSMinVersion>6.2</OSMinVersion>
+    <OSMaxVersionTested>6.2</OSMaxVersionTested>
+  </Prerequisites>
+
+  <Resources>
+    <Resource Language="en"/>
+    <Resource Language="en-US"/>
+    <Resource Language="en-GB"/>
+    <Resource Language="fr"/>
+    <Resource Language="fr-FR"/>
+    <Resource Language="de-DE"/>
+    <Resource Language="ja-JP"/>
+  </Resources>
+  
+  <Applications>
+    <Application Id="App" 
+        Executable="$targetnametoken$.exe" 
+        EntryPoint="NLSAndLocalization.App">
+        <VisualElements 
+            DisplayName="NLSAndLocalization"
+            Logo="Assets\Logo.png"
+            SmallLogo="Assets\SmallLogo.png"
+            Description="NLSAndLocalization"
+            ForegroundText="dark"
+            BackgroundColor="#000000">
+            <SplashScreen Image="Assets\SplashScreen.png" />
+            <DefaultTile WideLogo="Assets\WideLogo.png" />
+        </VisualElements>
+        <Extensions>
+          <mx:Extension Category="xbox.system.resources">
+            <mx:XboxSystemResources />
+          </mx:Extension>
+        </Extensions>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="internetClientServer" />
+  </Capabilities>
+  <Extensions>
+    <mx:PackageExtension Category="windows.kinect">
+      <mx:Kinect IsVersionLocked="false">
+        <mx:AudioPipeline Version="1.14.8" />
+        <mx:SpeechPipeline Version="1.14.8" />
+        <mx:VisionPipeline Version="1.14.8" />
+      </mx:Kinect>
+    </mx:PackageExtension>
+  </Extensions>
+</Package>

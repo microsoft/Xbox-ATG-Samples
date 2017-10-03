@@ -1,0 +1,362 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>34df894b-d953-4bb6-bc5c-2cf0f6052aa1</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>9b6def19-f875-4174-baea-6693f2761236</UniqueIdentifier>
+      <Extensions>bmp;dds;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Filter Include="ATG Tool Kit">
+      <UniqueIdentifier>{991acb5a-e7af-4bde-943c-7d976bb6c74e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fonts">
+      <UniqueIdentifier>{5385b425-9a33-4bde-8e6a-f51bf384af51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\mesh">
+      <UniqueIdentifier>{adbbbdf0-b642-453f-8d2e-c9ef39b9ad2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\textures">
+      <UniqueIdentifier>{495be1c6-999b-49e9-9dbb-b50c0468ad5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{1d64bbea-53e4-4fda-8722-c98b3e460431}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FrontPanelScreens">
+      <UniqueIdentifier>{03669fc9-d9b2-4af4-b3aa-06807bc73436}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="FrontPanelDemo.h" />
+    <ClInclude Include="StepTimer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Telemetry.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceResources.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\Serialization.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\FrontPanel\RasterFont.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\FrontPanel\FrontPanelInput.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\FrontPanel\FrontPanelDisplay.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\FileHelpers.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\FrontPanel\BufferDescriptor.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="NavigationHint.h" />
+    <ClInclude Include="FontManager.h" />
+    <ClInclude Include="FrontPanelManager.h" />
+    <ClInclude Include="Dolphin.h" />
+    <ClInclude Include="..\..\..\Kits\ATGTK\FrontPanel\FrontPanelRenderTarget.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ReadData.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\OSHelpers.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="TopLevelScreen.h">
+      <Filter>FrontPanelScreens</Filter>
+    </ClInclude>
+    <ClInclude Include="QuickActionScreen.h">
+      <Filter>FrontPanelScreens</Filter>
+    </ClInclude>
+    <ClInclude Include="QuickActionMappingScreen.h">
+      <Filter>FrontPanelScreens</Filter>
+    </ClInclude>
+    <ClInclude Include="GPURenderScreen.h">
+      <Filter>FrontPanelScreens</Filter>
+    </ClInclude>
+    <ClInclude Include="FontViewerScreen.h">
+      <Filter>FrontPanelScreens</Filter>
+    </ClInclude>
+    <ClInclude Include="PanelScreen.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="FrontPanelDemo.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="DeviceResources.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\FrontPanel\RasterFont.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\FrontPanel\FrontPanelInput.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\FrontPanel\FrontPanelDisplay.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\FrontPanel\BufferDescriptor.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+    <ClCompile Include="NavigationHint.cpp" />
+    <ClCompile Include="FontManager.cpp" />
+    <ClCompile Include="FrontPanelManager.cpp" />
+    <ClCompile Include="Dolphin.cpp" />
+    <ClCompile Include="..\..\..\Kits\ATGTK\FrontPanel\FrontPanelRenderTarget.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+    <ClCompile Include="TopLevelScreen.cpp">
+      <Filter>FrontPanelScreens</Filter>
+    </ClCompile>
+    <ClCompile Include="QuickActionScreen.cpp">
+      <Filter>FrontPanelScreens</Filter>
+    </ClCompile>
+    <ClCompile Include="QuickActionMappingScreen.cpp">
+      <Filter>FrontPanelScreens</Filter>
+    </ClCompile>
+    <ClCompile Include="GPURenderScreen.cpp">
+      <Filter>FrontPanelScreens</Filter>
+    </ClCompile>
+    <ClCompile Include="FontViewerScreen.cpp">
+      <Filter>FrontPanelScreens</Filter>
+    </ClCompile>
+    <ClCompile Include="PanelScreen.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Logo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SmallLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\WideLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust00.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust01.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust02.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust03.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust04.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust05.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust06.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust07.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust08.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust09.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust10.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust11.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust12.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust13.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust14.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust15.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust16.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust17.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust18.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust19.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust20.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust21.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust22.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust23.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust24.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust25.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust26.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust27.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust28.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust29.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust30.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\caust31.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\dolphin.bmp">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\seafloor.bmp">
+      <Filter>Assets\textures</Filter>
+    </Image>
+    <Image Include="Assets\textures\ui2.DDS">
+      <Filter>Assets\textures</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\mesh\Dolphin1.sdkmesh">
+      <Filter>Assets\mesh</Filter>
+    </None>
+    <None Include="Assets\mesh\Dolphin2.sdkmesh">
+      <Filter>Assets\mesh</Filter>
+    </None>
+    <None Include="Assets\mesh\Dolphin3.sdkmesh">
+      <Filter>Assets\mesh</Filter>
+    </None>
+    <None Include="Assets\mesh\seafloor.sdkmesh">
+      <Filter>Assets\mesh</Filter>
+    </None>
+    <None Include="PixelShaders.hlsli">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="VertexShaders.hlsli">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="Assets\ArialNarrow12.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\ArialNarrow16.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\ArialNarrow24.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\ArialNarrow32.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\ArialNarrow64.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\LucidaConsole12.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\LucidaConsole16.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\LucidaConsole24.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\LucidaConsole32.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\LucidaConsole64.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\Segoe_UI_bold12.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\Segoe_UI_bold16.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\Segoe_UI_bold24.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\Segoe_UI_bold32.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\Segoe_UI_bold64.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\Segoe_UI12.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\Segoe_UI16.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\Segoe_UI24.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\Segoe_UI32.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\Segoe_UI64.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\Symbols16.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="Assets\Symbols32.rasterfont">
+      <Filter>Fonts</Filter>
+    </None>
+    <None Include="readme.docx" />
+    <None Include="genfonts.cmd">
+      <Filter>Fonts</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="CausticsPS.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="DolphinVS.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="SeaFloorVS.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

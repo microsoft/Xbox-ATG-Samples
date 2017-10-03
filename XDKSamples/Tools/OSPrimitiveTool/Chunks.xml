@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+  <Chunk Marker="Launch" Id="1000">
+    <FileGroup Include="OSPrimitiveTestXbox.exe" SourcePath="." DestinationPath="\" />
+    <FileGroup Include="*.xml" SourcePath="." DestinationPath="\" />
+    <FileGroup Include="*.bin" SourcePath="." DestinationPath="\" />
+    <FileGroup Include="*.*" SourcePath="Assets" DestinationPath="\Assets" />
+  </Chunk>
+</Package>

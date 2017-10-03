@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest"
+         xmlns:mx="http://schemas.microsoft.com/appx/2013/xbox/manifest"
+         IgnorableNamespaces="mx">
+  
+  <Identity Name="e02a4300-4a99-4942-b968-fcf172750ed6"
+            Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
+            Version="1.0.0.0" />
+  
+  <Properties>
+    <DisplayName>FlightStick</DisplayName>
+    <PublisherDisplayName>Xbox Advanced Technology Group</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>FlightStick</Description>
+  </Properties>
+  
+  <Prerequisites>
+    <OSMinVersion>6.2</OSMinVersion>
+    <OSMaxVersionTested>6.2</OSMaxVersionTested>
+  </Prerequisites>
+  
+  <Resources>
+    <Resource Language="en-us"/>
+  </Resources>
+  
+  <Applications>
+    <Application Id="App" 
+        Executable="$targetnametoken$.exe" 
+        EntryPoint="FlightStick.App">
+        <VisualElements 
+            DisplayName="FlightStick"
+            Logo="Assets\Logo.png"
+            SmallLogo="Assets\SmallLogo.png"
+            Description="FlightStick"
+            ForegroundText="dark"
+            BackgroundColor="#000000">
+            <SplashScreen Image="Assets\SplashScreen.png" />
+            <DefaultTile WideLogo="Assets\WideLogo.png" />
+        </VisualElements>
+        <Extensions>
+          <mx:Extension Category="xbox.system.resources">
+            <mx:XboxSystemResources />
+          </mx:Extension>
+        </Extensions>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="internetClientServer" />
+  </Capabilities>
+  <Extensions>
+    <mx:PackageExtension Category="windows.kinect">
+      <mx:Kinect IsVersionLocked="false">
+        <mx:AudioPipeline Version="1.14.8" />
+        <mx:SpeechPipeline Version="1.14.8" />
+        <mx:VisionPipeline Version="1.14.8" />
+      </mx:Kinect>
+    </mx:PackageExtension>
+      <Extension Category="windows.activatableClass.inProcessServer">
+          <InProcessServer>
+              <Path>Microsoft.Xbox.Input.FlightStick.dll</Path>
+              <ActivatableClass ActivatableClassId="Microsoft.Xbox.Input.FlightStick" ThreadingModel="both" />
+          </InProcessServer>
+      </Extension>
+  </Extensions>
+</Package>

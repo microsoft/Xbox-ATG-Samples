@@ -1,0 +1,22 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DumpTool", "DumpTool.vcxproj", "{EE83F258-D4C7-4AB4-BD6A-71C3643664DE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Durango = Debug|Durango
+		Release|Durango = Release|Durango
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EE83F258-D4C7-4AB4-BD6A-71C3643664DE}.Debug|Durango.ActiveCfg = Debug|Durango
+		{EE83F258-D4C7-4AB4-BD6A-71C3643664DE}.Debug|Durango.Build.0 = Debug|Durango
+		{EE83F258-D4C7-4AB4-BD6A-71C3643664DE}.Release|Durango.ActiveCfg = Release|Durango
+		{EE83F258-D4C7-4AB4-BD6A-71C3643664DE}.Release|Durango.Build.0 = Release|Durango
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
