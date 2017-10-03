@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest"
+         xmlns:mx="http://schemas.microsoft.com/appx/2013/xbox/manifest"
+         IgnorableNamespaces="mx">
+
+  <Identity Name="0cd93a85-00f8-44e3-95fa-04e3b60a9b4c"
+            Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
+            Version="1.0.0.0" />
+
+  <Properties>
+    <DisplayName>MemoryBanks</DisplayName>
+    <PublisherDisplayName>Xbox Advanced Technology Group</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>MemoryBanks</Description>
+  </Properties>
+
+  <Prerequisites>
+    <OSMinVersion>6.2</OSMinVersion>
+    <OSMaxVersionTested>6.2</OSMaxVersionTested>
+  </Prerequisites>
+
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+        Executable="$targetnametoken$.exe"
+        EntryPoint="MemoryBanks.App">
+      <VisualElements
+          DisplayName="MemoryBanks"
+          Logo="Assets\Logo.png"
+          SmallLogo="Assets\SmallLogo.png"
+          Description="MemoryBanks"
+          ForegroundText="dark"
+          BackgroundColor="#000000">
+        <SplashScreen Image="Assets\SplashScreen.png" />
+        <DefaultTile WideLogo="Assets\WideLogo.png" />
+      </VisualElements>
+      <Extensions>
+        <mx:Extension Category="xbox.system.resources">
+          <mx:XboxSystemResources />
+        </mx:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="internetClientServer" />
+  </Capabilities>
+</Package>

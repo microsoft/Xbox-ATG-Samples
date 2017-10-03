@@ -1,0 +1,36 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleTexture", "SimpleTexture.vcxproj", "{A370A52F-DD86-4D93-8E3E-0EC8249A2A57}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK_XboxOneXDK_2015", "..\..\..\Kits\DirectXTK\DirectXTK_XboxOneXDK_2015.vcxproj", "{4FDFDCCD-EE2E-415C-B458-1E8FDB0D85F2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Durango = Debug|Durango
+		Profile|Durango = Profile|Durango
+		Release|Durango = Release|Durango
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A370A52F-DD86-4D93-8E3E-0EC8249A2A57}.Debug|Durango.ActiveCfg = Debug|Durango
+		{A370A52F-DD86-4D93-8E3E-0EC8249A2A57}.Debug|Durango.Build.0 = Debug|Durango
+		{A370A52F-DD86-4D93-8E3E-0EC8249A2A57}.Debug|Durango.Deploy.0 = Debug|Durango
+		{A370A52F-DD86-4D93-8E3E-0EC8249A2A57}.Profile|Durango.ActiveCfg = Profile|Durango
+		{A370A52F-DD86-4D93-8E3E-0EC8249A2A57}.Profile|Durango.Build.0 = Profile|Durango
+		{A370A52F-DD86-4D93-8E3E-0EC8249A2A57}.Profile|Durango.Deploy.0 = Profile|Durango
+		{A370A52F-DD86-4D93-8E3E-0EC8249A2A57}.Release|Durango.ActiveCfg = Release|Durango
+		{A370A52F-DD86-4D93-8E3E-0EC8249A2A57}.Release|Durango.Build.0 = Release|Durango
+		{A370A52F-DD86-4D93-8E3E-0EC8249A2A57}.Release|Durango.Deploy.0 = Release|Durango
+		{4FDFDCCD-EE2E-415C-B458-1E8FDB0D85F2}.Debug|Durango.ActiveCfg = Debug|Durango
+		{4FDFDCCD-EE2E-415C-B458-1E8FDB0D85F2}.Debug|Durango.Build.0 = Debug|Durango
+		{4FDFDCCD-EE2E-415C-B458-1E8FDB0D85F2}.Profile|Durango.ActiveCfg = Profile|Durango
+		{4FDFDCCD-EE2E-415C-B458-1E8FDB0D85F2}.Profile|Durango.Build.0 = Profile|Durango
+		{4FDFDCCD-EE2E-415C-B458-1E8FDB0D85F2}.Release|Durango.ActiveCfg = Release|Durango
+		{4FDFDCCD-EE2E-415C-B458-1E8FDB0D85F2}.Release|Durango.Build.0 = Release|Durango
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

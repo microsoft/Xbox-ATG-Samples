@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>d87847c6-6240-49a1-86ae-47d8037b38d9</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>bd924ec7-35b4-42b8-8c41-60d8451d951e</UniqueIdentifier>
+      <Extensions>bmp;dds;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Filter Include="ATG Tool Kit">
+      <UniqueIdentifier>{3af23210-1c28-4e4f-a47e-fccc6eb70ec7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="de-DE">
+      <UniqueIdentifier>{ef6eeb33-e16b-489f-b797-345ae1d76a2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="en">
+      <UniqueIdentifier>{86c12911-4283-4a85-89e0-80d90b06083d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="en-GB">
+      <UniqueIdentifier>{caab2900-4a17-4593-bfc3-5c77e8552698}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="en-US">
+      <UniqueIdentifier>{f40cc47a-1daa-42a5-a13b-744963f80ff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fr">
+      <UniqueIdentifier>{fa0c3186-2fa1-4c08-bc94-dfdfd21c102b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fr-FR">
+      <UniqueIdentifier>{5ba16bc1-9055-491b-ac39-a430f827ec66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ja-JP">
+      <UniqueIdentifier>{aec18534-afcc-46dc-be47-1ecfb1a976b1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="NLSAndLocalization.h" />
+    <ClInclude Include="StepTimer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Telemetry.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceResources.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Kits\ATGTK\ATGColors.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Kits\ATGTK\TextConsole.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceParser.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="NLSAndLocalization.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="DeviceResources.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Kits\ATGTK\TextConsole.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceParser.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Logo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SmallLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\WideLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Images\de-DE\Image.dds">
+      <Filter>de-DE</Filter>
+    </Image>
+    <Image Include="Assets\Images\en\Image.dds">
+      <Filter>en</Filter>
+    </Image>
+    <Image Include="Assets\Images\en-GB\Image.dds">
+      <Filter>en-GB</Filter>
+    </Image>
+    <Image Include="Assets\Images\en-US\Image.dds">
+      <Filter>en-US</Filter>
+    </Image>
+    <Image Include="Assets\Images\fr\Image.dds">
+      <Filter>fr</Filter>
+    </Image>
+    <Image Include="Assets\Images\fr-FR\Image.dds">
+      <Filter>fr-FR</Filter>
+    </Image>
+    <Image Include="Assets\Images\ja-JP\Image.dds">
+      <Filter>ja-JP</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Resources\de-DE.resources">
+      <Filter>de-DE</Filter>
+    </None>
+    <None Include="Assets\Resources\en.resources">
+      <Filter>en</Filter>
+    </None>
+    <None Include="Assets\Resources\en-GB.resources">
+      <Filter>en-GB</Filter>
+    </None>
+    <None Include="Assets\Resources\en-US.resources">
+      <Filter>en-US</Filter>
+    </None>
+    <None Include="Assets\Resources\fr.resources">
+      <Filter>fr</Filter>
+    </None>
+    <None Include="Assets\Resources\fr-FR.resources">
+      <Filter>fr-FR</Filter>
+    </None>
+    <None Include="Assets\Resources\ja-JP.resources">
+      <Filter>ja-JP</Filter>
+    </None>
+    <None Include="Readme.docx" />
+    <None Include="..\..\..\..\Media\Fonts\SegoeUI_18.spritefont" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="de-DE\Resources.resw">
+      <Filter>de-DE</Filter>
+    </PRIResource>
+    <PRIResource Include="en\Resources.resw">
+      <Filter>en</Filter>
+    </PRIResource>
+    <PRIResource Include="en-GB\Resources.resw">
+      <Filter>en-GB</Filter>
+    </PRIResource>
+    <PRIResource Include="en-US\Resources.resw">
+      <Filter>en-US</Filter>
+    </PRIResource>
+    <PRIResource Include="fr\Resources.resw">
+      <Filter>fr</Filter>
+    </PRIResource>
+    <PRIResource Include="fr-FR\Resources.resw">
+      <Filter>fr-FR</Filter>
+    </PRIResource>
+    <PRIResource Include="ja-JP\Resources.resw">
+      <Filter>ja-JP</Filter>
+    </PRIResource>
+  </ItemGroup>
+</Project>

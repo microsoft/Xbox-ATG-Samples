@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="TestWindow.cpp" />
+    <ClCompile Include="Visualization.cpp" />
+    <ClCompile Include="..\..\..\Kits\ATGTK\FrontPanel\RasterFont.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\FrontPanel\BufferDescriptor.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\CommandLineHelpers.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="TestWindow.h" />
+    <ClInclude Include="Visualization.h" />
+    <ClInclude Include="..\..\..\Kits\ATGTK\FrontPanel\RasterFont.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\FileHelpers.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\Serialization.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\FrontPanel\BufferDescriptor.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\CommandLineHelpers.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\OSHelpers.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="ATG Tool Kit">
+      <UniqueIdentifier>{44506a5a-d3ec-4ca5-be57-6245d14d42b1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="readme.docx" />
+  </ItemGroup>
+</Project>

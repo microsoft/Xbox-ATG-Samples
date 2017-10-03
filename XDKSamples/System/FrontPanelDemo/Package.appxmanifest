@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest"
+         xmlns:mx="http://schemas.microsoft.com/appx/2013/xbox/manifest"
+         IgnorableNamespaces="mx">
+  
+  <Identity Name="5c3fc83c-6a95-46e6-941b-11d8c96783c9"
+            Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
+            Version="1.0.0.0" />
+  
+  <Properties>
+    <DisplayName>FrontPanelDemo</DisplayName>
+    <PublisherDisplayName>Xbox Advanced Technology Group</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>FrontPanelDemo</Description>
+  </Properties>
+  
+  <Prerequisites>
+    <OSMinVersion>6.2</OSMinVersion>
+    <OSMaxVersionTested>6.2</OSMaxVersionTested>
+  </Prerequisites>
+  
+  <Resources>
+    <Resource Language="en-us"/>
+  </Resources>
+  
+  <Applications>
+    <Application Id="App" 
+        Executable="$targetnametoken$.exe" 
+        EntryPoint="FrontPanelDemo.App">
+        <VisualElements 
+            DisplayName="FrontPanelDemo"
+            Logo="Assets\Logo.png"
+            SmallLogo="Assets\SmallLogo.png"
+            Description="FrontPanelDemo"
+            ForegroundText="dark"
+            BackgroundColor="#000000">
+            <SplashScreen Image="Assets\SplashScreen.png" />
+            <DefaultTile WideLogo="Assets\WideLogo.png" />
+        </VisualElements>
+        <Extensions>
+          <mx:Extension Category="xbox.system.resources">
+            <mx:XboxSystemResources />
+          </mx:Extension>
+        </Extensions>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="internetClientServer" />
+  </Capabilities>
+  <Extensions>
+    <mx:PackageExtension Category="windows.kinect">
+      <mx:Kinect IsVersionLocked="false">
+        <mx:AudioPipeline Version="1.14.8" />
+        <mx:SpeechPipeline Version="1.14.8" />
+        <mx:VisionPipeline Version="1.14.8" />
+      </mx:Kinect>
+    </mx:PackageExtension>
+  </Extensions>
+</Package>

@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>b1bebbe1-699b-4610-8d78-82f5a992ba75</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>6d095f79-683b-4843-8e3d-bddefc2f415f</UniqueIdentifier>
+      <Extensions>bmp;dds;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Filter Include="Logging">
+      <UniqueIdentifier>{25ad7249-611b-43b3-a48d-ea09834ba9cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ATG Tool Kit">
+      <UniqueIdentifier>{f0a8a316-4435-40de-abbd-f96ac33b6b11}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="StepTimer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Telemetry.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="XBoxSpecificFiles\DeviceResourcesXbox.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedOSPrimitiveTool.h" />
+    <ClInclude Include="XBoxSpecificFiles\OSPrimitiveToolXbox.h" />
+    <ClInclude Include="PerfRun.h" />
+    <ClInclude Include="Libraries\Logging\FileLogger.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="Libraries\Logging\BaseLogger.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="XBoxSpecificFiles\DeviceResourcesXbox.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="XBoxSpecificFiles\MainXbox.cpp" />
+    <ClCompile Include="SharedOSPrimitiveTool.cpp" />
+    <ClCompile Include="XBoxSpecificFiles\OSPrimitiveToolXbox.cpp" />
+    <ClCompile Include="PerfRun.cpp" />
+    <ClCompile Include="Libraries\Logging\FileLogger.cpp">
+      <Filter>Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="Libraries\Logging\BaseLogger.cpp">
+      <Filter>Logging</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Logo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SmallLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\WideLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Textures\ATGSampleBackground.DDS">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="XBoxSpecificFiles\Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="Chunks.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Readme.docx" />
+  </ItemGroup>
+</Project>

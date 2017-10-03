@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>08894fad-0944-4509-ac54-76e4168a31ba</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>475aafaf-0f93-4d52-b282-35d490d51f5d</UniqueIdentifier>
+      <Extensions>bmp;dds;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Filter Include="ATG Tool Kit">
+      <UniqueIdentifier>{60a91a7d-b3e9-431d-9922-8806484d55b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\RasterFonts">
+      <UniqueIdentifier>{cef3694d-314b-46ce-8c21-9239c8edbf3c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="FrontPanelText.h" />
+    <ClInclude Include="StepTimer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Telemetry.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceResources.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\FrontPanel\RasterFont.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\FileHelpers.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\Serialization.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\FrontPanel\BufferDescriptor.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\FrontPanel\FrontPanelDisplay.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\FrontPanel\FrontPanelInput.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\OSHelpers.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="FrontPanelText.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="DeviceResources.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\FrontPanel\RasterFont.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\FrontPanel\BufferDescriptor.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\FrontPanel\FrontPanelDisplay.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\FrontPanel\FrontPanelInput.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Logo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SmallLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\WideLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Textures\FrontPanelPresent.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Textures\NoFrontPanel.png">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="readme.docx" />
+    <None Include="Assets\ArialBlack12.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\ArialBlack16.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\ArialBlack32.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\ArialBlack64.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\ArialBold12.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\ArialBold16.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\ArialBold32.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\ArialBold64.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\Consolas12.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\Consolas16.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\Consolas32.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\Consolas64.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\Courier12.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\Courier16.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\Courier32.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\Courier64.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\LucidaConsole12.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\LucidaConsole16.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\LucidaConsole32.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\LucidaConsole64.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\MSSansSerif12.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\MSSansSerif16.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\MSSansSerif32.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\MSSansSerif64.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\SegoeUI12.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\SegoeUI16.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\SegoeUI32.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\SegoeUI64.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\Xbox16.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\Xbox18.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\Xbox24.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\Xbox32.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="Assets\Xbox64.rasterfont">
+      <Filter>Assets\RasterFonts</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -12,6 +12,12 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   * ``Tools``
 * ``PCSamples`` contains samples for the classic Win32 desktop PC platform
   * ``IntroGraphics``
+* ``XDKSamples`` contains samples the Xbox One platform using the Xbox One XDK
+  * ``Audio``
+  * ``IntroGraphics``
+  * ``Graphics``
+  * ``System``
+  * ``Tools``
 
 ## Samples by category
 
@@ -20,14 +26,17 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 <table>
  <tr>
   <td>Spatial audio</td>
-  <td><a href="UWPSamples/Audio/SimpleSpatialPlaySoundUWP">Simple playback</a></td>
-  <td><a href="UWPSamples/Audio/SimplePlay3DSpatialSoundUWP">3D playback</a></td>
-  <td><a href="UWPSamples/Audio/AdvancedSpatialSoundsUWP">Advanced audio</a></td>
+  <td><a href="UWPSamples/Audio/SimpleSpatialPlaySoundUWP">Simple playback UWP</a></td>
+  <td><a href="XDKSamples/Audio/SimpleSpatialPlaySoundXDK">Simple playback XDK</a></td>
+  <td><a href="UWPSamples/Audio/SimplePlay3DSpatialSoundUWP">3D playback UWP</a></td>
+  <td><a href="UWPSamples/Audio/AdvancedSpatialSoundsUWP">Advanced audio UWP</a></td>
+  <td><a href="XDKSamples/Audio/AdvancedSpatialSoundsXDK">Advanced audio XDK</a></td>
  </tr>
  <tr>
   <td>XAudio2</td>
-  <td><a href="UWPSamples/Audio/SimplePlaySoundUWP">Basic audio playback</a></td>
-  <td><a href="UWPSamples/Audio/SimplePlay3DSoundUWP">3D playback</a></td>
+  <td><a href="UWPSamples/Audio/SimplePlaySoundUWP">Basic audio UWP</a></td>
+  <td><a href="XDKSamples/Audio/SimplePlaySound">Basic audio XDK</a></td>
+  <td><a href="UWPSamples/Audio/SimplePlay3DSoundUWP">3D playback UWP</a></td>
  </tr>
  <tr>
   <td>WASAPI</td>
@@ -43,6 +52,8 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td>Basic drawing</td>
   <td><a href="UWPSamples/IntroGraphics/SimpleTriangleUWP">UWP DX11</a></td>
   <td><a href="UWPSamples/IntroGraphics/SimpleTriangleUWP12">UWP DX12</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleTriangle">XDK DX11</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleTriangle12">XDK DX12</a></td>
   <td><a href="PCSamples/IntroGraphics/SimpleTrianglePC">PC DX11</a></td>
   <td><a href="PCSamples/IntroGraphics/SimpleTrianglePC12">PC DX12</a></td>
  </tr>
@@ -50,6 +61,8 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td>Basic texturing</td>
   <td><a href="UWPSamples/IntroGraphics/SimpleTextureUWP">UWP DX11</a></td>
   <td><a href="UWPSamples/IntroGraphics/SimpleTextureUWP12">UWP DX12</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleTexture">XDK DX11</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleTexture12">XDK DX12</a></td>
   <td><a href="PCSamples/IntroGraphics/SimpleTexturePC">PC DX11</a></td>
   <td><a href="PCSamples/IntroGraphics/SimpleTexturePC12">PC DX12</a></td>
  </tr>
@@ -57,21 +70,29 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td>Basic lighting</td>
   <td><a href="UWPSamples/IntroGraphics/SimpleLightingUWP">UWP DX11</a></td>
   <td><a href="UWPSamples/IntroGraphics/SimpleLightingUWP12">UWP DX12</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleLighting">XDK DX11</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleLighting12">XDK DX12</a></td>
  </tr>
  <tr>
   <td>Bezier</td>
   <td><a href="UWPSamples/IntroGraphics/SimpleBezierUWP">UWP DX11</a></td>
   <td><a href="UWPSamples/IntroGraphics/SimpleBezierUWP12">UWP DX12</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleBezier">XDK DX11</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleBezier12">XDK DX12</a></td>
  </tr>
  <tr>
   <td>DirectCompute</td>
   <td><a href="UWPSamples/IntroGraphics/SimpleComputeUWP">UWP DX11</a></td>
   <td><a href="UWPSamples/IntroGraphics/SimpleComputeUWP12">UWP DX12</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleCompute">XDK DX11</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleCompute12">XDK DX12</a></td>
  </tr>
  <tr>
   <td>DirectX Tool Kit</td>
   <td><a href="UWPSamples/IntroGraphics/DirectXTKSimpleSampleUWP">UWP DX11</a></td>
   <td><a href="UWPSamples/IntroGraphics/DirectXTKSimpleSampleUWP12">UWP DX12</a></td>
+  <td><a href="XDKSamples/IntroGraphics/DirectXTKSimpleSample">XDK DX11</a></td>
+  <td><a href="XDKSamples/IntroGraphics/DirectXTKSimpleSample12">XDK DX12</a></td>
   <td><a href="PCSamples/IntroGraphics/DirectXTKSimpleSamplePC">PC DX11</a></td>
   <td><a href="PCSamples/IntroGraphics/DirectXTKSimpleSamplePC12">PC DX12</a></td>
  </tr>
@@ -79,11 +100,20 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td>Instancing</td>
   <td><a href="UWPSamples/IntroGraphics/SimpleInstancingUWP">UWP DX11</a></td>
   <td><a href="UWPSamples/IntroGraphics/SimpleInstancingUWP12">UWP DX12</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleInstancing">XDK DX11</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleInstancing12">XDK DX12</a></td>
  </tr>
  <tr>
   <td>Multisample Antialiasing</td>
   <td><a href="UWPSamples/IntroGraphics/SimpleMSAA_UWP">UWP DX11</a></td>
   <td><a href="UWPSamples/IntroGraphics/SimpleMSAA_UWP12">UWP DX12</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleMSAA">XDK DX11</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleMSAA12">XDK DX12</a></td>
+ </tr>
+ <tr>
+  <td>Xbox One Device Setup</td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleDeviceAndSwapChain">XDK DX11</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleDeviceAndSwapChain12">XDK DX12</a></td>
  </tr>
 </table>
 
@@ -91,7 +121,14 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 
 <table>
  <tr>
-  <td><a href="UWPSamples/Graphics/SimplePBR12_UWP">Physically Based Rendering</a></td>
+  <td>Physically Based Rendering</td>
+  <td><a href="UWPSamples/Graphics/SimplePBR12_UWP">UWP</a></td>
+  <td><a href="XDKSamples/Graphics/SimplePBR12_Xbox">XDK</a></td>
+ </tr>
+ <tr>
+  <td>High-Dynamic Range Rendering</td>
+  <td><a href="XDKSamples/Graphics/SimpleHDR">XDK DX11</a></td>
+  <td><a href="XDKSamples/Graphics/SimpleHDR12">XDK DX12</a></td>
  </tr>
 </table>
 
@@ -99,35 +136,85 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 
 <table>
  <tr>
+  <td>UWP</td>
   <td><a href="UWPSamples/System/CPUSets">CPU Sets</a></td>
   <td><a href="UWPSamples/System/MemoryStatisticsUWP">Memory Statistics</a></td>
-  <td><a href="UWPSamples/System/SystemInfoUWP">System Information</a></td>
-  <td><a href="UWPSamples/System/CollisionUWP">DirectXMath</a></td>
+ </tr>
+ <tr>
+  <td>XDK</td>
+  <td><a href="XDKSamples/System/AsynchronousIO">Async I/O</a></td>
+  <td><a href="XDKSamples/System/DataBreakpoints">Data Breakpoints</a></td>
+  <td><a href="XDKSamples/System/MemoryBanks">Memory Banks</a></td>
+ </tr>
+</table>
+
+<table>
+ <tr>
+  <td>System Information</td>
+  <td><a href="UWPSamples/System/SystemInfoUWP">UWP</a></td>
+  <td><a href="XDKSamples/System/SystemInfo">XDK</a></td>
+ </tr>
+ <tr>
+  <td>DirectXMath</td>
+  <td><a href="UWPSamples/System/CollisionUWP">UWP</a></td>
+  <td><a href="XDKSamples/System/Collision">XDK</a></td>
  </tr>
 </table>
 
 <table>
  <tr>
   <td>Gamepad</td>
-  <td><a href="UWPSamples/System/GamepadUWP">C++/CX</a></td>
-  <td><a href="UWPSamples/System/GamepadCppWinRT_UWP">C++/WinRT</a></td>
-  <td><a href="UWPSamples/System/GamepadVibrationUWP">Vibration</a></td>
-  <td><a href="UWPSamples/System/RawGameControllerUWP">Raw</a></td>
+  <td><a href="UWPSamples/System/GamepadUWP">UWP</a></td>
+  <td><a href="XDKSamples/System/Gamepad">XDK</a></td>
+  <td><a href="UWPSamples/System/GamepadCppWinRT_UWP">UWP (C++/WinRT)</a></td>
+  <td><a href="XDKSamples/System/GamepadCppWinRT">XDK (C++/WinRT)</a></td>
+ </tr>
+ <tr>
+  <td>Gamepad Vibration</td>
+  <td><a href="UWPSamples/System/GamepadVibrationUWP">UWP</a></td>
+  <td><a href="XDKSamples/System/GamepadVibration">XDK</a></td>
+ </tr>
+ <tr>
+  <td>Raw Game Controller</td>
+  <td><a href="UWPSamples/System/RawGameControllerUWP">UWP</a></td>
+ </tr>
+ <tr>
+  <td>FlightStick</td>
+  <td><a href="XDKSamples/System/FlightStick">XDK</a></td>
  </tr>
  <tr>
   <td>Input</td>
-  <td><a href="UWPSamples/System/InputInterfacingUWP">Interfacing</a></td>
-  <td><a href="UWPSamples/System/MouseCursor">Mouse</a></td>
-  <td><a href="UWPSamples/System/UserGamepadPairingUWP">User-pairing</a></td>
+  <td><a href="UWPSamples/System/InputInterfacingUWP">Interfacing UWP</a></td>
+  <td><a href="UWPSamples/System/MouseCursor">Mouse UWP</a></td>
+  <td><a href="UWPSamples/System/UserGamepadPairingUWP">User-pairing UWP</a></td>
  </tr>
+</table>
+
+<table>
  <tr>
   <td>Process Lifetime Management</td>
-  <td><a href="UWPSamples/System/SimplePLM_UWP">PLM</a></td>
+  <td><a href="UWPSamples/System/SimplePLM_UWP">UWP PLM</a></td>
+  <td><a href="XDKSamples/System/SimplePLM">XDK PLM</a></td>
   <td><a href="UWPSamples/System/ExtendedExecutionUWP">Extended Execution</a></td>
  </tr>
+</table>
+
+<table>
  <tr>
   <td>Localization</td>
-  <td><a href="UWPSamples/System/NLSAndLocalizationUWP">NLS</a></td>
+  <td><a href="UWPSamples/System/NLSAndLocalizationUWP">UWP</a></td>
+  <td><a href="XDKSamples/System/NLSAndLocalization">XDK</a></td>
+ </tr>
+</table>
+
+<table>
+ <tr>
+  <td>Xbox One X Front Panel</td>
+  <td><a href="XDKSamples/System/SimpleFrontPanel">Basic</a></td>
+  <td><a href="XDKSamples/System/FrontPanelText">Text</a></td>
+  <td><a href="XDKSamples/System/FrontPanelDemo">Demo</a></td>
+  <td><a href="XDKSamples/System/FrontPanelDolphin">Dolphin</a></td>
+  <td><a href="XDKSamples/System/FrontPanelGame">Game</a></td>
  </tr>
 </table>
 
@@ -136,6 +223,22 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 <table>
  <tr>
   <td><a href="UWPSamples/Tools/errorlookup/errorlookup">Error lookup</a></td>
+ </tr>
+</table>
+
+<table>
+ <tr>
+  <td><a href="XDKSamples\Tools\DumpTool">CrashDump</a></td>
+  <td><a href="XDKSamples\Tools\SymbolProxyClient">Symbol Proxy</a></td>
+  <td><a href="XDKSamples\Tools\OSPrimitiveTool">OS Primitive</a></td>
+  <td><a href="XDKSamples\Tools\xtexconv">TexConv for Xbox</a></td>
+ </tr>
+</table>
+
+<table>
+ <tr>
+  <td><a href="XDKSamples\Tools\RasterFontGen">FrontPanel Font</a></td>
+  <td><a href="XDKSamples\Tools\RasterFontViewer">FrontPanel Font Viewer</a></td>
  </tr>
 </table>
 
@@ -148,6 +251,11 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 Use of the Visual Studio 2017 update v15.3 is recommended.
 
 > The *Windows 10 SDK (10.0.14393.0)* is required to support ``WindowsTargetPlatformMinVersion`` set the Windows 10 Anniversary Update in many of the samples that work on both versions of Windows 10.
+
+## XDK apps
+* Xbox One Development Kit
+* Xbox One XDK (specific version requirements covered in each sample's readme)
+* Visual Studio 2015 or Visual Studio 2017 (_via upgrade in place_)
 
 ## PC apps
 * Visual Studio 2015 Update 3 -or- Visual Studio 2017 (_via upgrade in place_) with the *Desktop development with C++* workload and *Windows 8.1 SDK* component.
