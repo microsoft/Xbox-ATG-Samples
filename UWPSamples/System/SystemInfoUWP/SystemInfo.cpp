@@ -11,6 +11,8 @@
 #include "ATGColors.h"
 #include "ControllerFont.h"
 
+extern void ExitSample();
+
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
@@ -93,7 +95,7 @@ void Sample::Update(DX::StepTimer const&)
 
         if (pad.IsViewPressed())
         {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
         }
     }
     else
@@ -106,7 +108,7 @@ void Sample::Update(DX::StepTimer const&)
 
     if (kb.Escape)
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
 
     if (m_keyboardButtons.IsKeyPressed(Keyboard::Right)
@@ -371,17 +373,30 @@ void Sample::Render()
 
             using namespace Windows::Foundation::Metadata;
 
-            bool isfoundation = ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 1, 0);
+            // https://docs.microsoft.com/en-us/uwp/extension-sdks/windows-universal-sdk
+
+            bool isfoundation1 = ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 1, 0);
+            bool isfoundation2 = ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 2, 0);
+            bool isfoundation3 = ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 3, 0);
             bool isuniversal1 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 1, 0);
             bool isuniversal2 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2, 0);
             bool isuniversal3 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3, 0);
             bool isuniversal4 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4, 0);
+            bool isuniversal5 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5, 0);
             bool isphone = ApiInformation::IsApiContractPresent("Windows.Phone.PhoneContract", 1, 0);
             bool isstore = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 1, 0);
             bool isstore2 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 2, 0);
+            bool xliveStorage = ApiInformation::IsApiContractPresent("Windows.Gaming.XboxLive.StorageApiContract", 1, 0);
+            bool xliveSecure = ApiInformation::IsApiContractPresent("Windows.Networking.XboxLive.XboxLiveSecureSocketsContract", 1, 0);
 
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"FoundationContract 1.0", left, y, m_scale);
-            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isfoundation ? L"true" : L"false", right, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isfoundation1 ? L"true" : L"false", right, y, m_scale);
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"FoundationContract 2.0", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isfoundation2 ? L"true" : L"false", right, y, m_scale);
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"FoundationContract 3.0", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isfoundation3 ? L"true" : L"false", right, y, m_scale);
 
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UniversalApiContract 1.0", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), isuniversal1 ? L"true" : L"false", right, y, m_scale);
@@ -395,6 +410,9 @@ void Sample::Render()
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UniversalApiContract 4.0", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), isuniversal4 ? L"true" : L"false", right, y, m_scale);
 
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UniversalApiContract 5.0", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isuniversal5 ? L"true" : L"false", right, y, m_scale);
+
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"PhoneContract 1.0", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), isphone ? L"true" : L"false", right, y, m_scale);
 
@@ -403,6 +421,12 @@ void Sample::Render()
 
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"StoreContract 2.0", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), isstore2 ? L"true" : L"false", right, y, m_scale);
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"XboxLive StorageApiContract 1.0", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), xliveStorage ? L"true" : L"false", right, y, m_scale);
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"XboxLive SecureSocketsContract 1.0", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), xliveSecure ? L"true" : L"false", right, y, m_scale);
         }
         break;
 
@@ -602,6 +626,29 @@ void Sample::Render()
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Rotation", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), rotation, right, y, m_scale) * 1.25f;
 
+
+                #if defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+                ComPtr<IDXGIOutput6> output6;
+                if (SUCCEEDED(output.As(&output6)))
+                {
+                    DXGI_OUTPUT_DESC1 outputDesc6;
+                    DX::ThrowIfFailed(output6->GetDesc1(&outputDesc6));
+
+                    const wchar_t* colorSpace = L"sRGB";
+
+                    switch (outputDesc6.ColorSpace)
+                    {
+                    case DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020: colorSpace = L"HDR10"; break;
+                    case DXGI_COLOR_SPACE_RGB_FULL_G10_NONE_P709: colorSpace = L"Linear"; break;
+                    }
+
+                    y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"DXGI_OUTPUT_DESC1", mid, y, ATG::Colors::OffWhite, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"ColorSpace", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), colorSpace, right, y, m_scale);
+                }
+                #endif
+
                 y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"DXGI_ADAPTER_DESC", mid, y, ATG::Colors::OffWhite, m_scale);
 
                 ComPtr<IDXGIAdapter> adapter;
@@ -691,6 +738,25 @@ void Sample::Render()
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DoublePrecisionFloatShaderOps", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), doubles.DoublePrecisionFloatShaderOps ? L"true" : L"false", right, y, m_scale);
             }
+
+            D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS d3d10compute = {};
+            if (FAILED(device->CheckFeatureSupport(D3D11_FEATURE_D3D10_X_HARDWARE_OPTIONS, &d3d10compute, sizeof(d3d10compute))))
+            {
+                memset(&d3d10compute, 0, sizeof(d3d10compute));
+            }
+
+            const wchar_t* directcompute = L"No";
+            if (m_deviceResources->GetDeviceFeatureLevel() >= D3D_FEATURE_LEVEL_11_0)
+            {
+                directcompute = L"5.0";
+            }
+            else if (d3d10compute.ComputeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x)
+            {
+                directcompute = (m_deviceResources->GetDeviceFeatureLevel() >= D3D_FEATURE_LEVEL_10_1) ? L"4.1" : L"4.0";
+            }
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DirectCompute", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), directcompute, right, y, m_scale);
 
             D3D11_FEATURE_DATA_D3D11_OPTIONS d3d11opts = {};
             if (SUCCEEDED(device->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS, &d3d11opts, sizeof(d3d11opts))))
@@ -907,6 +973,10 @@ void Sample::Render()
                 {
                 case D3D_SHADER_MODEL_5_1: shaderModelVer = L"5.1"; break;
                 case D3D_SHADER_MODEL_6_0: shaderModelVer = L"6.0"; break;
+
+                #if defined(NTDDI_WIN10_RS3) && (NTDDI_VERSION >= NTDDI_WIN10_RS3)
+                case D3D_SHADER_MODEL_6_1: shaderModelVer = L"6.1"; break;
+                #endif
                 }
 
                 wchar_t buff[64] = {};
@@ -985,7 +1055,22 @@ void Sample::Render()
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"MaxGPUVirtualAddressBitsPerResource", left, y, m_scale);
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
                 }
+            }
+        }
+        break;
 
+    case InfoPage::DIRECT3D12_OPT:
+        {
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 12 Optional Features", mid, y, ATG::Colors::LightGrey, m_scale);
+
+            auto device = m_deviceResources->GetD3DDevice12();
+
+            if (!device)
+            {
+                y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"Not supported", mid, y, ATG::Colors::Orange, m_scale);
+            }
+            else
+            {
                 // Optional Direct3D 12 features for Windows 10 Anniversary Update
                 D3D12_FEATURE_DATA_D3D12_OPTIONS1 d3d12opts1 = {};
                 if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS1, &d3d12opts1, sizeof(d3d12opts1))))
@@ -999,7 +1084,97 @@ void Sample::Render()
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Int64ShaderOps", left, y, m_scale);
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts1.Int64ShaderOps ? L"true" : L"false", right, y, m_scale);
                 }
-           }
+
+                // Optional Direct3D 12 features for Windows 10 Creators Update
+                #if defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+                D3D12_FEATURE_DATA_D3D12_OPTIONS2 d3d12opts2 = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS2, &d3d12opts2, sizeof(d3d12opts2))))
+                {
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DepthBoundsTestSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts2.DepthBoundsTestSupported ? L"true" : L"false", right, y, m_scale);
+
+                    const wchar_t* psmpTier = L"Unknown";
+                    switch (d3d12opts2.ProgrammableSamplePositionsTier)
+                    {
+                    case D3D12_PROGRAMMABLE_SAMPLE_POSITIONS_TIER_NOT_SUPPORTED: psmpTier = L"Not supported"; break;
+                    case D3D12_PROGRAMMABLE_SAMPLE_POSITIONS_TIER_1: psmpTier = L"Tier 1"; break;
+                    case D3D12_PROGRAMMABLE_SAMPLE_POSITIONS_TIER_2: psmpTier = L"Tier 2"; break;
+                    }
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"ProgrammableSamplePositionsTier", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), psmpTier, right, y, m_scale);
+                }
+                #endif
+
+                // Optional Direct3D 12 features for Windows 10 Fall Creators Update
+                #if defined(NTDDI_WIN10_RS3) && (NTDDI_VERSION >= NTDDI_WIN10_RS3)
+                D3D12_FEATURE_DATA_D3D12_OPTIONS3 d3d12opts3 = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS3, &d3d12opts3, sizeof(d3d12opts3))))
+                {
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"CopyQueueTimestampQueriesSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts3.CopyQueueTimestampQueriesSupported ? L"true" : L"false", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"CastingFullyTypedFormatSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts3.CastingFullyTypedFormatSupported ? L"true" : L"false", right, y, m_scale);
+
+                    d3d12opts3.WriteBufferImmediateSupportFlags = static_cast<D3D12_COMMAND_LIST_SUPPORT_FLAGS>(0xFFFFFFFF);
+                    wchar_t vbSupportFlags[128] = {};
+                    if (d3d12opts3.WriteBufferImmediateSupportFlags & D3D12_COMMAND_LIST_SUPPORT_FLAG_DIRECT)
+                    {
+                        wcscat_s(vbSupportFlags, L"DIRECT ");
+                    }
+                    if (d3d12opts3.WriteBufferImmediateSupportFlags & D3D12_COMMAND_LIST_SUPPORT_FLAG_BUNDLE)
+                    {
+                        wcscat_s(vbSupportFlags, L"BUNDLE ");
+                    }
+                    if (d3d12opts3.WriteBufferImmediateSupportFlags & D3D12_COMMAND_LIST_SUPPORT_FLAG_COMPUTE)
+                    {
+                        wcscat_s(vbSupportFlags, L"COMPUTE ");
+                    }
+                    if (d3d12opts3.WriteBufferImmediateSupportFlags & D3D12_COMMAND_LIST_SUPPORT_FLAG_COPY)
+                    {
+                        wcscat_s(vbSupportFlags, L"COPY ");
+                    }
+                    if (d3d12opts3.WriteBufferImmediateSupportFlags & D3D12_COMMAND_LIST_SUPPORT_FLAG_VIDEO_DECODE)
+                    {
+                        wcscat_s(vbSupportFlags, L"VDECODE ");
+                    }
+                    if (d3d12opts3.WriteBufferImmediateSupportFlags & D3D12_COMMAND_LIST_SUPPORT_FLAG_VIDEO_PROCESS)
+                    {
+                        wcscat_s(vbSupportFlags, L"VPROCESS");
+                    }
+                    if (!*vbSupportFlags)
+                    {
+                        wcscat_s(vbSupportFlags, L"None");
+                    }
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"WriteBufferImmediateSupportFlags", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), vbSupportFlags, right, y, m_scale);
+
+                    const wchar_t* vinstTier  = L"Unknown";
+                    switch (d3d12opts3.ViewInstancingTier)
+                    {
+                    case D3D12_VIEW_INSTANCING_TIER_NOT_SUPPORTED: vinstTier = L"Not supported"; break;
+                    case D3D12_VIEW_INSTANCING_TIER_1: vinstTier = L"Tier 1"; break;
+                    case D3D12_VIEW_INSTANCING_TIER_2: vinstTier = L"Tier 2"; break;
+                    case D3D12_VIEW_INSTANCING_TIER_3: vinstTier = L"Tier 3"; break;
+                    }
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"ViewInstancingTier", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), vinstTier, right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"BarycentricsSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts3.BarycentricsSupported ? L"true" : L"false", right, y, m_scale);
+                }
+
+                D3D12_FEATURE_DATA_EXISTING_HEAPS d3d12heaps = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_EXISTING_HEAPS, &d3d12heaps, sizeof(d3d12heaps))))
+                {
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Existing Heaps", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12heaps.Supported ? L"true" : L"false", right, y, m_scale);
+                }
+                #endif
+            }
         }
         break;
     }

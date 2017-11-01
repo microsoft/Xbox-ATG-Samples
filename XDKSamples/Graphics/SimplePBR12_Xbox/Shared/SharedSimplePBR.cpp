@@ -23,6 +23,7 @@
 #include "../UWP/SimplePBRUWP12.h" // get sample definition
 #endif
 
+extern void ExitSample();
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -146,7 +147,7 @@ void SharedSimplePBR::Update(DX::StepTimer const& timer)
 
         if (pad.IsViewPressed())
         {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
         }
     }
     else
@@ -220,25 +221,12 @@ void SharedSimplePBR::Render()
 
     PIXEndEvent(commandList); // Render HDR
 
-    PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Tonemap HDR to SDR backbuffer");
-    {
-        auto rtv = static_cast<D3D12_CPU_DESCRIPTOR_HANDLE>(deviceResources->GetRenderTargetView());
-        commandList->OMSetRenderTargets(1, &rtv, FALSE, NULL);
-
-        m_hdrScene->EndScene(commandList);
-
-        // Tonemap
-        m_toneMap->SetHDRSourceTexture(m_srvPile->GetGpuHandle(StaticDescriptors::SceneTex));
-        m_toneMap->Process(commandList);
-    }
-    PIXEndEvent(commandList); // Tonemap
-    
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Render HUD");
     {
         m_hudBatch->Begin(commandList);
 
         m_smallFont->DrawString(m_hudBatch.get(), L"SimplePBR Sample",
-            XMFLOAT2(float(safe.left), float(safe.top)), ATG::Colors::LightGrey);
+            XMFLOAT2(float(safe.left), float(safe.top)), ATG::ColorsHDR::LightGrey);
 
         const wchar_t* legendStr = (m_gamepadConnected) ?
             L"[RThumb] [LThumb]: Move Camera   [View] Exit "
@@ -249,11 +237,48 @@ void SharedSimplePBR::Render()
             legendStr,
             XMFLOAT2(float(safe.left),
                 float(safe.bottom) - m_smallFont->GetLineSpacing()),
-            ATG::Colors::LightGrey);
+            ATG::ColorsHDR::LightGrey);
 
         m_hudBatch->End();
     }
     PIXEndEvent(commandList); // HUD
+
+    m_hdrScene->EndScene(commandList);
+
+    PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Tonemap");
+
+#if defined(_XBOX_ONE) && defined(_TITLE)
+
+    // Generate both HDR10 and tonemapped SDR signal
+    D3D12_CPU_DESCRIPTOR_HANDLE rtvDescriptors[2] = { deviceResources->GetRenderTargetView(), deviceResources->GetGameDVRRenderTargetView() };
+    commandList->OMSetRenderTargets(2, rtvDescriptors, FALSE, nullptr);
+
+    m_HDR10->SetHDRSourceTexture(m_srvPile->GetGpuHandle(StaticDescriptors::SceneTex));
+    m_HDR10->Process(commandList);
+
+#else
+
+    {
+        auto rtv = static_cast<D3D12_CPU_DESCRIPTOR_HANDLE>(deviceResources->GetRenderTargetView());
+        commandList->OMSetRenderTargets(1, &rtv, FALSE, NULL);
+
+        if (deviceResources->GetColorSpace() == DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020)
+        {
+            // HDR10 signal
+            m_HDR10->SetHDRSourceTexture(m_srvPile->GetGpuHandle(StaticDescriptors::SceneTex));
+            m_HDR10->Process(commandList);
+        }
+        else
+        {
+            // Tonemap for SDR signal
+            m_toneMap->SetHDRSourceTexture(m_srvPile->GetGpuHandle(StaticDescriptors::SceneTex));
+            m_toneMap->Process(commandList);
+        }
+    }
+
+#endif
+
+    PIXEndEvent(commandList); // Tonemap
 
     PIXEndEvent(commandList); // Render
 }
@@ -308,21 +333,34 @@ void SharedSimplePBR::CreateDeviceDependentResources()
     {
         RenderTargetState backBufferRts(Sample::GetBackBufferFormat(), Sample::GetDepthFormat());
 
-        // HUD
-        DirectX::SpriteBatchPipelineStateDescription hudpd(
-            backBufferRts,
-            &CommonStates::AlphaBlend);
+        // Create HDR10 color space effect
+#if defined(_XBOX_ONE) && defined(_TITLE)
+        backBufferRts.numRenderTargets = 2;
+        backBufferRts.rtvFormats[1] = m_sample->m_deviceResources->GetGameDVRFormat();
 
-        m_hudBatch = std::make_unique<SpriteBatch>(device, resourceUpload, hudpd);
+        m_HDR10 = std::make_unique<ToneMapPostProcess>(device, backBufferRts,
+            ToneMapPostProcess::ACESFilmic, ToneMapPostProcess::SRGB, true);
+#else
+        m_HDR10 = std::make_unique<ToneMapPostProcess>(device, backBufferRts,
+            ToneMapPostProcess::None, ToneMapPostProcess::ST2084);
 
         // Create tone mapping effect
         m_toneMap = std::make_unique<ToneMapPostProcess>(device, backBufferRts,
             ToneMapPostProcess::ACESFilmic, ToneMapPostProcess::SRGB);
-   }
+#endif
+
+    }
 
     // Pipeline state - for rendering to HDR buffer
     {
         RenderTargetState hdrBufferRts(Sample::GetHDRRenderFormat(), Sample::GetDepthFormat());
+
+        // HUD
+        DirectX::SpriteBatchPipelineStateDescription hudpd(
+            hdrBufferRts,
+            &CommonStates::AlphaBlend);
+
+        m_hudBatch = std::make_unique<SpriteBatch>(device, resourceUpload, hudpd);
 
         // Sky rendering batch
         m_spriteBatch = std::make_unique<DirectX::SpriteBatch>(device, resourceUpload, SpriteBatchPipelineStateDescription(hdrBufferRts, &CommonStates::Opaque));
@@ -422,6 +460,7 @@ void SharedSimplePBR::OnDeviceLost()
 
     m_spriteBatch.reset();
     m_toneMap.reset();
+    m_HDR10.reset();
 
     m_hdrScene->ReleaseDevice();
     m_rtvHeap.reset();

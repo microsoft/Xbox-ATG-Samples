@@ -34,6 +34,8 @@ public:
     inline static DXGI_FORMAT GetBackBufferFormat() { return DXGI_FORMAT_R10G10B10A2_UNORM; }
     inline static DXGI_FORMAT GetDepthFormat() { return DXGI_FORMAT_D32_FLOAT; }
 
+    bool RequestHDRMode() const { return m_deviceResources ? (m_deviceResources->GetDeviceOptions() & DX::DeviceResources::c_EnableHDR) != 0 : false; }
+
 private:
 
     void Update(DX::StepTimer const& timer);

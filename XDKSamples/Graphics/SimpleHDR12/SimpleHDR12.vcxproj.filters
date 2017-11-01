@@ -46,9 +46,6 @@
     <ClInclude Include="..\..\..\Kits\ATGTK\ReadData.h">
       <Filter>Standard Sample Files\ATG Tool Kit</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h">
-      <Filter>Standard Sample Files\ATG Tool Kit</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Kits\ATGTK\HDR\HDRCommon.h">
       <Filter>HDR</Filter>
     </ClInclude>

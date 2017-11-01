@@ -9,7 +9,10 @@
 #include "Collision.h"
 
 #include "ATGColors.h"
+#include "ControllerFont.h"
 #include "DebugDraw.h"
+
+extern void ExitSample();
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -127,7 +130,7 @@ void Sample::Update(DX::StepTimer const& timer)
 
         if (pad.IsViewPressed())
         {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
         }
 
         if (m_gamePadButtons.menu == GamePad::ButtonStateTracker::PRESSED)
@@ -262,6 +265,13 @@ void Sample::Render()
 
         m_font->DrawString(m_sprites.get(), m_name.c_str(), XMFLOAT2(float(safeRect.left), float(safeRect.top)), ATG::Colors::White);
 
+        DX::DrawControllerString(m_sprites.get(),
+            m_font.get(), m_ctrlFont.get(),
+            L"[View] Exit   [Menu] Help",
+            XMFLOAT2(float(safeRect.left),
+                float(safeRect.bottom) - m_font->GetLineSpacing()),
+            ATG::Colors::LightGrey);
+
         m_sprites->End();
     }
 
@@ -331,6 +341,8 @@ void Sample::CreateDeviceDependentResources()
     m_sprites = std::make_unique<SpriteBatch>(context);
 
     m_font = std::make_unique<SpriteFont>(device, L"SegoeUI_18.spritefont");
+
+    m_ctrlFont = std::make_unique<SpriteFont>(device, L"XboxOneControllerLegendSmall.spritefont");
 
     m_effect = std::make_unique<BasicEffect>(device);
     m_effect->SetVertexColorEnabled(true);

@@ -49,15 +49,13 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
-#include "FullScreenQuad.h"
+#include "FullScreenQuad\FullScreenQuad.h"
 #include "RenderTexture.h"
 
 // A basic sample implementation that creates a D3D12 device and provides a render loop.
 class Sample
 {
-#pragma region Standard Sample Defines
 public:
-
     Sample();
 
     // Initialization and management
@@ -78,10 +76,10 @@ private:
     void Clear();
 
     void CreateDeviceDependentResources();
-    void CreateWindowSizeDependentResources();
     void InitializeSpriteFonts(ID3D12Device* d3dDevice, DirectX::ResourceUploadBatch& resourceUpload, DirectX::RenderTargetState& rtState);
 
-    // Standard sample defines
+#pragma region Standard Sample Defines
+
     std::unique_ptr<DX::DeviceResources>                m_deviceResources;
     uint64_t                                            m_frame;
     DX::StepTimer                                       m_timer;
@@ -94,9 +92,7 @@ private:
     std::unique_ptr<DirectX::SpriteFont>                m_controllerFont;
     std::unique_ptr<DirectX::SpriteBatch>               m_fontBatch;
     std::unique_ptr<DirectX::SpriteBatch>               m_spriteBatch;
-    std::unique_ptr<DirectX::CommonStates>              m_states;
     std::unique_ptr<DirectX::BasicEffect>               m_lineEffect;
-    Microsoft::WRL::ComPtr<ID3D11InputLayout>           m_inputLayout;
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>> m_primitiveBatch;
     std::unique_ptr<DX::FullScreenQuad>                 m_fullScreenQuad;
 
@@ -109,9 +105,10 @@ private:
     bool                                                m_bShowOnlyPaperWhite;                  // If enabled, only the block with value 1.0f (paper white) will be rendered. Seeing bright values next to white can have the effect of perceiving white as gray
     double                                              m_countDownToBright;                    // The countdown before rendering bright values at the start of the sample, so that eyes can adjust to what paper white looks like, to realize the difference between white and bright
     float                                               m_current2084CurveRenderingNits;        // In the mode when rendering the curve, use this as the adjustable value indicated on the graph
-    const int                                           g_CustomInputValueIndex = 3;            // Index of input values set by left/right sticks, others use fixed values
-    static const int                                    NUM_INPUT_VALUES = 4;
-    float                                               m_hdrSceneValues[NUM_INPUT_VALUES] = { 0.5f, 1.0f, 6.0f, 10.0f };   // Values that will be rendering to the HDR scene buffer  
+
+    static const int                                    c_CustomInputValueIndex = 3;            // Index of input values set by left/right sticks, others use fixed values
+    static const int                                    c_NumInputValues = 4;
+    float                                               m_hdrSceneValues[c_NumInputValues];     // Values that will be rendering to the HDR scene buffer  
     std::unique_ptr<DX::RenderTexture>                  m_hdrScene;
 
     struct HDR10Data
@@ -123,8 +120,6 @@ private:
     void Render2084Curve();
     void RenderUI();
     void PrepareSwapChainBuffers();                                                             // Takes as input the HDR scene values and outputs an HDR and SDR signal to two seperate swapchains
-
-    inline DirectX::XMVECTOR MakeColor(float value) { DirectX::XMVECTORF32 color = { value, value, value, 1.0f }; return color; }
 
 #pragma endregion
 

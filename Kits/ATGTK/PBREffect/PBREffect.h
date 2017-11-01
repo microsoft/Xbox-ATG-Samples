@@ -16,7 +16,8 @@ namespace ATG
     {
     public:
         explicit PBREffect(_In_ ID3D12Device* device, int effectFlags, 
-            const DirectX::EffectPipelineStateDescription& pipelineDescription);
+            const DirectX::EffectPipelineStateDescription& pipelineDescription,
+            bool generateVelocity = false);
         PBREffect(PBREffect&& moveFrom);
         PBREffect& operator= (PBREffect&& moveFrom);
 
@@ -61,6 +62,9 @@ namespace ATG
             int numRadianceMips,
             _In_ D3D12_GPU_DESCRIPTOR_HANDLE irradiance,
             _In_ D3D12_GPU_DESCRIPTOR_HANDLE sampler);
+
+        // Render target size, required for velocity buffer output
+        void __cdecl SetRenderTargetSizeInPixels(int width, int height);
 
     private:
         // Private implementation.

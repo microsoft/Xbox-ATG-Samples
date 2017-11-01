@@ -99,6 +99,11 @@ public:
         dispatcher->AcceleratorKeyActivated +=
             ref new TypedEventHandler<CoreDispatcher^, AcceleratorKeyEventArgs^>(this, &ViewProvider::OnAcceleratorKeyActivated);
 
+        auto navigation = Windows::UI::Core::SystemNavigationManager::GetForCurrentView();
+
+        navigation->BackRequested +=
+            ref new EventHandler<BackRequestedEventArgs^>(this, &ViewProvider::OnBackRequested);
+
         auto currentDisplayInformation = DisplayInformation::GetForCurrentView();
 
         currentDisplayInformation->DpiChanged +=
@@ -197,7 +202,7 @@ protected:
 
     void OnSuspending(Platform::Object^ sender, SuspendingEventArgs^ args)
     {
-        SuspendingDeferral^ deferral = args->SuspendingOperation->GetDeferral();
+        auto deferral = args->SuspendingOperation->GetDeferral();
 
         //We use a deferral when suspending so we can wait() on the result of the extended execution request. calling wait() on the 
         //core window thread will throw an exception.
@@ -266,6 +271,13 @@ protected:
 
             args->Handled = true;
         }
+    }
+
+    void OnBackRequested(Platform::Object^, Windows::UI::Core::BackRequestedEventArgs^ args)
+    {
+        // UWP on Xbox One triggers a back request whenever the B button is pressed
+        // which can result in the app being suspended if unhandled
+        args->Handled = true;
     }
 
     void OnDpiChanged(DisplayInformation^ sender, Object^ args)
@@ -401,11 +413,22 @@ public:
 
 // Entry point
 [Platform::MTAThread]
-int main(Platform::Array<Platform::String^>^ argv)
+int __cdecl main(Platform::Array<Platform::String^>^ /*argv*/)
 {
-    UNREFERENCED_PARAMETER(argv);
+    if (!XMVerifyCPUSupport())
+    {
+        throw std::exception("XMVerifyCPUSupport");
+    }
 
     auto viewProviderFactory = ref new ViewProviderFactory();
     CoreApplication::Run(viewProviderFactory);
     return 0;
 }
+
+
+// Exit helper
+void ExitSample()
+{
+    Windows::ApplicationModel::Core::CoreApplication::Exit();
+}
+

@@ -12,11 +12,14 @@
 #include "ATGColors.h"
 #include <Windows.Gaming.Input.h>
 
+extern void ExitSample();
+
 using namespace DirectX;
 using namespace Windows::Gaming::Input;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
 using namespace Platform::Collections;
+
 using Microsoft::WRL::ComPtr;
 
 namespace
@@ -462,6 +465,17 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
     {
         m_effect->Start();
     }
+
+    // UWP on Xbox One triggers a back request whenever the B button is pressed
+    // which can result in the app being suspended if unhandled
+    using namespace Windows::UI::Core;
+
+    auto navigation = SystemNavigationManager::GetForCurrentView();
+
+    navigation->BackRequested += ref new EventHandler<BackRequestedEventArgs^>([](Platform::Object^, BackRequestedEventArgs^ args)
+    {
+        args->Handled = true;
+    });
 }
 
 #pragma region Frame Update
@@ -561,7 +575,7 @@ void Sample::Update(DX::StepTimer const& )
 
     if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::View) == RequiredUINavigationButtons::View)
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
 
     if (!m_selectPressed)

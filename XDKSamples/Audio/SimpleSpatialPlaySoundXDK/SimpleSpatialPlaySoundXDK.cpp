@@ -18,121 +18,121 @@ static const LPCWSTR g_FileList[] = {
 
 static const int numFiles = 2;
 
+extern void ExitSample();
+
 using namespace DirectX;
-
-
 using Microsoft::WRL::ComPtr;
 
-VOID CALLBACK SpatialWorkCallback(_Inout_ PTP_CALLBACK_INSTANCE Instance, _Inout_opt_ PVOID Context, _Inout_ PTP_WORK Work)
+namespace
 {
-	HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
-	Sample * Sink = (Sample *)Context;
-	Work;
-	Instance;
+    VOID CALLBACK SpatialWorkCallback(_Inout_ PTP_CALLBACK_INSTANCE Instance, _Inout_opt_ PVOID Context, _Inout_ PTP_WORK Work)
+    {
+        HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+        Sample * Sink = (Sample *)Context;
+        Work;
+        Instance;
 
-	while (Sink->m_bThreadActive)
-	{
-		while (Sink->m_bPlayingSound && Sink->m_Renderer->IsActive())
-		{
-			// Wait for a signal from the audio-engine to start the next processing pass 
-			if (WaitForSingleObject(Sink->m_Renderer->m_bufferCompletionEvent, 100) != WAIT_OBJECT_0)
-			{
-				//make a call to stream to see why we didn't get a signal after 100ms
-				hr = Sink->m_Renderer->m_SpatialAudioStream->Reset();
+        while (Sink->m_bThreadActive)
+        {
+            while (Sink->m_bPlayingSound && Sink->m_Renderer->IsActive())
+            {
+                // Wait for a signal from the audio-engine to start the next processing pass 
+                if (WaitForSingleObject(Sink->m_Renderer->m_bufferCompletionEvent, 100) != WAIT_OBJECT_0)
+                {
+                    //make a call to stream to see why we didn't get a signal after 100ms
+                    hr = Sink->m_Renderer->m_SpatialAudioStream->Reset();
 
-				//if we have a stream error, set the renderer state to reset
-				if (hr != S_OK)
-				{
-					Sink->m_Renderer->Reset();
-				}
-				continue;
-			}
+                    //if we have a stream error, set the renderer state to reset
+                    if (hr != S_OK)
+                    {
+                        Sink->m_Renderer->Reset();
+                    }
+                    continue;
+                }
 
-			UINT32 frameCount;
-			UINT32 availableObjectCount;
-
-
-			// Begin the process of sending object data and metadata 
-			// Get the number of active object that can be used to send object-data 
-			// Get the number of frame count that each buffer be filled with  
-			hr = Sink->m_Renderer->m_SpatialAudioStream->BeginUpdatingAudioObjects(
-				&availableObjectCount,
-				&frameCount);
-
-			//if we have a stream error, set the renderer state to reset
-			if (hr != S_OK)
-			{
-				Sink->m_Renderer->Reset();
-			}
-
-			Sink->availableObjects = availableObjectCount;
-
-			for (int chan = 0; chan < MAX_CHANNELS; chan++)
-			{
-				//Activate the object if not yet done
-				if (Sink->WavChannels[chan].object == nullptr)
-				{
-					// If this method called more than activeObjectCount times 
-					// It will fail with this error HRESULT_FROM_WIN32(ERROR_NO_MORE_ITEMS) 
-					hr = Sink->m_Renderer->m_SpatialAudioStream->ActivateSpatialAudioObject(
-						Sink->WavChannels[chan].objType,
-						&Sink->WavChannels[chan].object);
-					if (FAILED(hr))
-					{
-						continue;
-					}
-
-				}
-
-				//Get the object buffer
-				BYTE* buffer = nullptr;
-				UINT32 bytecount;
-				hr = Sink->WavChannels[chan].object->GetBuffer(&buffer, &bytecount);
-				if (FAILED(hr))
-				{
-					continue;
-				}
-
-				Sink->WavChannels[chan].object->SetVolume(Sink->WavChannels[chan].volume);
-
-				UINT32 readsize = bytecount;
-
-				for (UINT32 i = 0; i < readsize; i++)
-				{
-					UINT32 fileLoc = Sink->WavChannels[chan].curBufferLoc;
-					if (chan < Sink->numChannels)
-					{
-						buffer[i] = Sink->WavChannels[chan].wavBuffer[fileLoc];
-					}
-					else
-					{
-						buffer[i] = 0;
-					}
-
-					Sink->WavChannels[chan].curBufferLoc++;
-					if (Sink->WavChannels[chan].curBufferLoc == Sink->WavChannels[chan].buffersize)
-					{
-						Sink->WavChannels[chan].curBufferLoc = 0;
-					}
+                UINT32 frameCount;
+                UINT32 availableObjectCount;
 
 
-				}
-			}
+                // Begin the process of sending object data and metadata 
+                // Get the number of active object that can be used to send object-data 
+                // Get the number of frame count that each buffer be filled with  
+                hr = Sink->m_Renderer->m_SpatialAudioStream->BeginUpdatingAudioObjects(
+                    &availableObjectCount,
+                    &frameCount);
 
-			// Let the audio-engine know that the object data are available for processing now 
-			hr = Sink->m_Renderer->m_SpatialAudioStream->EndUpdatingAudioObjects();
-			if (FAILED(hr))
-			{
-				Sink->m_Renderer->Reset();
-				continue;
-			}
-		}
-	}
+                //if we have a stream error, set the renderer state to reset
+                if (hr != S_OK)
+                {
+                    Sink->m_Renderer->Reset();
+                }
 
+                Sink->availableObjects = availableObjectCount;
+
+                for (int chan = 0; chan < MAX_CHANNELS; chan++)
+                {
+                    //Activate the object if not yet done
+                    if (Sink->WavChannels[chan].object == nullptr)
+                    {
+                        // If this method called more than activeObjectCount times 
+                        // It will fail with this error HRESULT_FROM_WIN32(ERROR_NO_MORE_ITEMS) 
+                        hr = Sink->m_Renderer->m_SpatialAudioStream->ActivateSpatialAudioObject(
+                            Sink->WavChannels[chan].objType,
+                            &Sink->WavChannels[chan].object);
+                        if (FAILED(hr))
+                        {
+                            continue;
+                        }
+
+                    }
+
+                    //Get the object buffer
+                    BYTE* buffer = nullptr;
+                    UINT32 bytecount;
+                    hr = Sink->WavChannels[chan].object->GetBuffer(&buffer, &bytecount);
+                    if (FAILED(hr))
+                    {
+                        continue;
+                    }
+
+                    Sink->WavChannels[chan].object->SetVolume(Sink->WavChannels[chan].volume);
+
+                    UINT32 readsize = bytecount;
+
+                    for (UINT32 i = 0; i < readsize; i++)
+                    {
+                        UINT32 fileLoc = Sink->WavChannels[chan].curBufferLoc;
+                        if (chan < Sink->numChannels)
+                        {
+                            buffer[i] = Sink->WavChannels[chan].wavBuffer[fileLoc];
+                        }
+                        else
+                        {
+                            buffer[i] = 0;
+                        }
+
+                        Sink->WavChannels[chan].curBufferLoc++;
+                        if (Sink->WavChannels[chan].curBufferLoc == Sink->WavChannels[chan].buffersize)
+                        {
+                            Sink->WavChannels[chan].curBufferLoc = 0;
+                        }
+
+
+                    }
+                }
+
+                // Let the audio-engine know that the object data are available for processing now 
+                hr = Sink->m_Renderer->m_SpatialAudioStream->EndUpdatingAudioObjects();
+                if (FAILED(hr))
+                {
+                    Sink->m_Renderer->Reset();
+                    continue;
+                }
+            }
+        }
+
+    }
 }
-
-
-
 
 Sample::Sample() :
     m_frame(0)
@@ -226,7 +226,7 @@ void Sample::Update(DX::StepTimer const& timer)
 
 		if (pad.IsViewPressed())
 		{
-			Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
 		}
 		if (m_gamePadButtons.a == m_gamePadButtons.RELEASED)
 		{

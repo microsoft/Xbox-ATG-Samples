@@ -211,6 +211,9 @@
     <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
       <Filter>Assets\Fonts</Filter>
     </None>
+    <None Include="..\..\..\Kits\ATGTK\PBREffect\PixelPacking_Velocity.hlsli">
+      <Filter>ATG Tool Kit\PBREffect</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_PSConstant.hlsl">
@@ -227,6 +230,12 @@
     </FxCompile>
     <FxCompile Include="..\..\..\Kits\ATGTK\Skybox\SkyboxEffect_VS.hlsl">
       <Filter>ATG Tool Kit\Skybox</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_PSTexturedVelocity.hlsl">
+      <Filter>ATG Tool Kit\PBREffect</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_VSConstantVelocity.hlsl">
+      <Filter>ATG Tool Kit\PBREffect</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

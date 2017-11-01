@@ -236,6 +236,7 @@
   <ItemGroup>
     <None Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_Common.hlsli" />
     <None Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_Math.hlsli" />
+    <None Include="..\..\..\Kits\ATGTK\PBREffect\PixelPacking_Velocity.hlsli" />
     <None Include="..\..\..\Kits\ATGTK\Skybox\SkyboxEffect_Common.hlsli" />
     <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">true</DeploymentContent>
@@ -320,6 +321,26 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">PSTextured</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">Pixel</ShaderType>
     </FxCompile>
+    <FxCompile Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_PSTexturedVelocity.hlsl">
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">%(Filename)</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">%(ProjectDir)Compiled\XboxOne%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">
+      </ObjectFileOutput>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">PSTexturedVelocity</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">Pixel</ShaderType>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">%(ProjectDir)Compiled\XboxOne%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">
+      </ObjectFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">%(ProjectDir)Compiled\XboxOne%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">
+      </ObjectFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">%(Filename)</VariableName>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">%(Filename)</VariableName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">PSTexturedVelocity</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">PSTexturedVelocity</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">Pixel</ShaderType>
+    </FxCompile>
     <FxCompile Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_VSConstant.hlsl">
       <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">%(Filename)</VariableName>
       <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">%(ProjectDir)Compiled\XboxOne%(Filename).inc</HeaderFileOutput>
@@ -338,6 +359,26 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">VSConstant</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">Vertex</ShaderType>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">VSConstant</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_VSConstantVelocity.hlsl">
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">%(Filename)</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">%(ProjectDir)Compiled\XboxOne%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">
+      </ObjectFileOutput>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">VSConstantVelocity</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">Vertex</ShaderType>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">%(ProjectDir)Compiled\XboxOne%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">
+      </ObjectFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">%(ProjectDir)Compiled\XboxOne%(Filename).inc</HeaderFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">
+      </ObjectFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">%(Filename)</VariableName>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">%(Filename)</VariableName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">VSConstantVelocity</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">VSConstantVelocity</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="..\..\..\Kits\ATGTK\Skybox\SkyboxEffect_PS.hlsl">

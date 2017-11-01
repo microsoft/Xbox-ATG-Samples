@@ -27,7 +27,7 @@
 #define DRAW_POINT_MIN_SCALE 2.f
 
 static const LPCWSTR g_bedFileList[] = {
-	L"assets\\Jungle_RainThunder_5.1_mixdown.wav",
+    L"assets\\Jungle_RainThunder_5.1_mixdown.wav",
     L"assets\\Jungle_RainThunder_SideSurroundL-R.wav",
     L"assets\\Jungle_RainThunder_TopFrontL-R.wav",
     L"assets\\Jungle_RainThunder_TopRearL-R.wav",
@@ -92,189 +92,191 @@ static const LPCWSTR g_travelTypeNames[] = {
     nullptr
 };
 
+extern void ExitSample();
+
 using namespace DirectX;
 using namespace Windows::System::Threading;
 using namespace Windows::Media::Devices;
 using Microsoft::WRL::ComPtr;
 
-
-VOID CALLBACK SpatialWorkCallback(_Inout_ PTP_CALLBACK_INSTANCE Instance, _Inout_opt_ PVOID Context, _Inout_ PTP_WORK Work)
+namespace
 {
-	HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
-	Sample * Sink = (Sample *)Context;
-	Work;
-	Instance;
+    VOID CALLBACK SpatialWorkCallback(_Inout_ PTP_CALLBACK_INSTANCE Instance, _Inout_opt_ PVOID Context, _Inout_ PTP_WORK Work)
+    {
+        HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+        Sample * Sink = (Sample *)Context;
+        Work;
+        Instance;
 
-	while (Sink->m_threadActive)
-	{
-		while (Sink->m_playingSound && Sink->m_renderer->IsActive())
-		{
-			// Wait for a signal from the audio-engine to start the next processing pass 
-			if (WaitForSingleObject(Sink->m_renderer->m_bufferCompletionEvent, 100) != WAIT_OBJECT_0)
-			{
-				//make a call to stream to see why we didn't get a signal after 100ms
-				hr = Sink->m_renderer->m_SpatialAudioStream->Reset();
-
-				//if we have an error, tell the renderer to reset
-				if (hr != S_OK)
-				{
-					Sink->m_renderer->Reset();
-				}
-				continue;
-			}
-
-
-			UINT32 frameCount;
-			UINT32 availableObjectCount;
-
-			// Begin the process of sending object data and metadata 
-			// Get the number of active object that can be used to send object-data 
-			// Get the number of frame count that each buffer be filled with  
-			hr = Sink->m_renderer->m_SpatialAudioStream->BeginUpdatingAudioObjects(
-				&availableObjectCount,
-				&frameCount);
-			//if we have an error, tell the renderer to reset
-			if (hr != S_OK)
-			{
-				Sink->m_renderer->Reset();
-			}
-
-			Sink->m_availableObjects = availableObjectCount;
-
-			//Update the bed
-            for (int chan = 0; chan < MAX_CHANNELS; chan++)
-			{
-				//Activate the object if not yet done
-				if (Sink->m_bedChannels[chan].object == nullptr)
-				{
-					// If this method called more than activeObjectCount times 
-					// It will fail with this error HRESULT_FROM_WIN32(ERROR_NO_MORE_ITEMS) 
-					hr = Sink->m_renderer->m_SpatialAudioStream->ActivateSpatialAudioObject(
-						Sink->m_bedChannels[chan].objType,
-						&Sink->m_bedChannels[chan].object);
-					if (FAILED(hr))
-					{
-						continue;
-					}
-
-				}
-
-				//Get the object buffer
-				BYTE* buffer = nullptr;
-				UINT32 bytecount;
-				hr = Sink->m_bedChannels[chan].object->GetBuffer(&buffer, &bytecount);
-				if (FAILED(hr))
-				{
-					continue;
-				}
-
-				Sink->m_bedChannels[chan].object->SetVolume(Sink->m_bedChannels[chan].volume);
-
-                for (UINT32 i = 0; i < frameCount * 4; i++)
-				{
-					UINT32 fileLoc = Sink->m_bedChannels[chan].curBufferLoc;
-					if (chan < Sink->m_numChannels)
-					{
-						buffer[i] = Sink->m_bedChannels[chan].wavBuffer[fileLoc];
-					}
-					else
-					{
-						buffer[i] = 0;
-					}
-
-                    Sink->m_bedChannels[chan].curBufferLoc++;
-					if (Sink->m_bedChannels[chan].curBufferLoc == Sink->m_bedChannels[chan].bufferSize)
-					{
-						Sink->m_bedChannels[chan].curBufferLoc = 0;
-					}
-				}
-			}
-
-            //Update the point sounds
-            bool deleteSound = false;
-            AcquireSRWLockExclusive(&Sink->SRWLock);
-            for (std::vector<PointSound>::iterator it = Sink->m_pointSounds.begin(); it != Sink->m_pointSounds.end(); it++)
+        while (Sink->m_threadActive)
+        {
+            while (Sink->m_playingSound && Sink->m_renderer->IsActive())
             {
-                //Activate the object if not yet done
-                if (it->object == nullptr)
+                // Wait for a signal from the audio-engine to start the next processing pass 
+                if (WaitForSingleObject(Sink->m_renderer->m_bufferCompletionEvent, 100) != WAIT_OBJECT_0)
                 {
-                    // If this method called more than activeObjectCount times 
-                    // It will fail with this error HRESULT_FROM_WIN32(ERROR_NO_MORE_ITEMS) 
-                    hr = Sink->m_renderer->m_SpatialAudioStream->ActivateSpatialAudioObject(
-                        AudioObjectType_Dynamic,
-                        &it->object);
+                    //make a call to stream to see why we didn't get a signal after 100ms
+                    hr = Sink->m_renderer->m_SpatialAudioStream->Reset();
+
+                    //if we have an error, tell the renderer to reset
+                    if (hr != S_OK)
+                    {
+                        Sink->m_renderer->Reset();
+                    }
+                    continue;
+                }
+
+
+                UINT32 frameCount;
+                UINT32 availableObjectCount;
+
+                // Begin the process of sending object data and metadata 
+                // Get the number of active object that can be used to send object-data 
+                // Get the number of frame count that each buffer be filled with  
+                hr = Sink->m_renderer->m_SpatialAudioStream->BeginUpdatingAudioObjects(
+                    &availableObjectCount,
+                    &frameCount);
+                //if we have an error, tell the renderer to reset
+                if (hr != S_OK)
+                {
+                    Sink->m_renderer->Reset();
+                }
+
+                Sink->m_availableObjects = availableObjectCount;
+
+                //Update the bed
+                for (int chan = 0; chan < MAX_CHANNELS; chan++)
+                {
+                    //Activate the object if not yet done
+                    if (Sink->m_bedChannels[chan].object == nullptr)
+                    {
+                        // If this method called more than activeObjectCount times 
+                        // It will fail with this error HRESULT_FROM_WIN32(ERROR_NO_MORE_ITEMS) 
+                        hr = Sink->m_renderer->m_SpatialAudioStream->ActivateSpatialAudioObject(
+                            Sink->m_bedChannels[chan].objType,
+                            &Sink->m_bedChannels[chan].object);
+                        if (FAILED(hr))
+                        {
+                            continue;
+                        }
+
+                    }
+
+                    //Get the object buffer
+                    BYTE* buffer = nullptr;
+                    UINT32 bytecount;
+                    hr = Sink->m_bedChannels[chan].object->GetBuffer(&buffer, &bytecount);
                     if (FAILED(hr))
                     {
                         continue;
                     }
-                }
 
-                //Get the object buffer
-                BYTE* buffer = nullptr;
-                UINT32 bytecount;
-                hr = it->object->GetBuffer(&buffer, &bytecount);
-                if (FAILED(hr))
-                {
-                    continue;
-                }
-
-                if (!it->isPlaying)
-                {
-                    // Set end of stream for the last buffer  
-                    hr = it->object->SetEndOfStream(0);
-
-                    // Last block of data in the object, release the audio object, 
-                    // so the resources can be recycled and used for another object 
-                    it->object = nullptr;
-                    it->curBufferLoc = 0;
-
-                    deleteSound = true;
-                }
-                else
-                {
-                    it->object->SetPosition(it->posX, it->posY, it->posZ);
-                    it->object->SetVolume(it->volume);
+                    Sink->m_bedChannels[chan].object->SetVolume(Sink->m_bedChannels[chan].volume);
 
                     for (UINT32 i = 0; i < frameCount * 4; i++)
                     {
-                        UINT32 fileLoc = it->curBufferLoc;
-                        buffer[i] = it->wavBuffer[fileLoc];
-                        it->curBufferLoc++;
-                        if (it->curBufferLoc == it->bufferSize)
+                        UINT32 fileLoc = Sink->m_bedChannels[chan].curBufferLoc;
+                        if (chan < Sink->m_numChannels)
                         {
-                            it->curBufferLoc = 0;
+                            buffer[i] = Sink->m_bedChannels[chan].wavBuffer[fileLoc];
+                        }
+                        else
+                        {
+                            buffer[i] = 0;
+                        }
+
+                        Sink->m_bedChannels[chan].curBufferLoc++;
+                        if (Sink->m_bedChannels[chan].curBufferLoc == Sink->m_bedChannels[chan].bufferSize)
+                        {
+                            Sink->m_bedChannels[chan].curBufferLoc = 0;
                         }
                     }
                 }
+
+                //Update the point sounds
+                bool deleteSound = false;
+                AcquireSRWLockExclusive(&Sink->SRWLock);
+                for (std::vector<PointSound>::iterator it = Sink->m_pointSounds.begin(); it != Sink->m_pointSounds.end(); it++)
+                {
+                    //Activate the object if not yet done
+                    if (it->object == nullptr)
+                    {
+                        // If this method called more than activeObjectCount times 
+                        // It will fail with this error HRESULT_FROM_WIN32(ERROR_NO_MORE_ITEMS) 
+                        hr = Sink->m_renderer->m_SpatialAudioStream->ActivateSpatialAudioObject(
+                            AudioObjectType_Dynamic,
+                            &it->object);
+                        if (FAILED(hr))
+                        {
+                            continue;
+                        }
+                    }
+
+                    //Get the object buffer
+                    BYTE* buffer = nullptr;
+                    UINT32 bytecount;
+                    hr = it->object->GetBuffer(&buffer, &bytecount);
+                    if (FAILED(hr))
+                    {
+                        continue;
+                    }
+
+                    if (!it->isPlaying)
+                    {
+                        // Set end of stream for the last buffer  
+                        hr = it->object->SetEndOfStream(0);
+
+                        // Last block of data in the object, release the audio object, 
+                        // so the resources can be recycled and used for another object 
+                        it->object = nullptr;
+                        it->curBufferLoc = 0;
+
+                        deleteSound = true;
+                    }
+                    else
+                    {
+                        it->object->SetPosition(it->posX, it->posY, it->posZ);
+                        it->object->SetVolume(it->volume);
+
+                        for (UINT32 i = 0; i < frameCount * 4; i++)
+                        {
+                            UINT32 fileLoc = it->curBufferLoc;
+                            buffer[i] = it->wavBuffer[fileLoc];
+                            it->curBufferLoc++;
+                            if (it->curBufferLoc == it->bufferSize)
+                            {
+                                it->curBufferLoc = 0;
+                            }
+                        }
+                    }
+                }
+
+                if (deleteSound)
+                {
+                    Sink->m_pointSounds.pop_back();
+                }
+
+                ReleaseSRWLockExclusive(&Sink->SRWLock);
+
+                // Let the audio-engine know that the object data are available for processing now 
+                hr = Sink->m_renderer->m_SpatialAudioStream->EndUpdatingAudioObjects();
+                if (FAILED(hr))
+                {
+                    Sink->m_renderer->Reset();
+                }
             }
-
-            if (deleteSound)
-            {
-                Sink->m_pointSounds.pop_back();
-            }
-
-            ReleaseSRWLockExclusive(&Sink->SRWLock);
-
-			// Let the audio-engine know that the object data are available for processing now 
-			hr = Sink->m_renderer->m_SpatialAudioStream->EndUpdatingAudioObjects();
-			if (FAILED(hr))
-			{
-				Sink->m_renderer->Reset();
-			}
-		}
-	}
-
+        }
+    }
 }
-
 
 Sample::Sample()
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
-	m_fileLoaded = false;
-	m_renderer = nullptr;
-	m_threadActive = false;
-	m_playingSound = false;
+    m_fileLoaded = false;
+    m_renderer = nullptr;
+    m_threadActive = false;
+    m_playingSound = false;
     m_usedObjects = 0;
 }
 
@@ -292,7 +294,7 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
     m_deviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
     
-    srand((unsigned int)time(NULL));
+    srand((unsigned int)time(nullptr));
 
     m_boundingBox = BoundingBox(XMFLOAT3(), XMFLOAT3((MAX_X - MIN_X) / 2, (MAX_Y - MIN_Y) / 2, (MAX_Z - MIN_Z) / 2));
 
@@ -469,93 +471,93 @@ void XM_CALLCONV Sample::DrawListener(FXMVECTOR color)
 // Updates the world.
 void Sample::Update(DX::StepTimer const& timer)
 {
-	PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
+    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
 
-	float elapsedTime = float(timer.GetElapsedSeconds());
-	elapsedTime;
+    float elapsedTime = float(timer.GetElapsedSeconds());
+    elapsedTime;
 
-	auto kb = m_keyboard->GetState();
-	m_keyboardButtons.Update(kb);
+    auto kb = m_keyboard->GetState();
+    m_keyboardButtons.Update(kb);
 
-	//Are we resetting the renderer?  This will happen if we get an invalid stream 
-	//  which can happen when render mode changes or device changes
-	if (m_renderer->IsResetting())
-	{
-		//clear out renderer
-		m_renderer == NULL;
+    //Are we resetting the renderer?  This will happen if we get an invalid stream 
+    //  which can happen when render mode changes or device changes
+    if (m_renderer->IsResetting())
+    {
+        //clear out renderer
+        m_renderer.Reset();
 
-		// Create a new ISAC instance
-		m_renderer = Microsoft::WRL::Make<ISACRenderer>();
+        // Create a new ISAC instance
+        m_renderer = Microsoft::WRL::Make<ISACRenderer>();
 
-		// Initialize Default Audio Device
-		m_renderer->InitializeAudioDeviceAsync();
+        // Initialize Default Audio Device
+        m_renderer->InitializeAudioDeviceAsync();
 
-		//Reset all the Objects that were being used
-		for (int chan = 0; chan < MAX_CHANNELS; chan++)
-		{
-			m_bedChannels[chan].object = nullptr;
-		}
-		for (std::vector<PointSound>::iterator it = m_pointSounds.begin(); it != m_pointSounds.end(); it++)
-		{
-			it->object = nullptr;
-		}
-	}
-	else if(m_renderer->IsActive() && m_pointSounds.size() > m_renderer->GetMaxDynamicObjects())
-	{ 
-		//If we reactivated or available object changed and had more active objects than we do now, clear out those we cannot render
-		while (m_pointSounds.size() > m_renderer->GetMaxDynamicObjects())
-		{
-			m_pointSounds.pop_back();
-			m_usedObjects--;
-		}
-	}
+        //Reset all the Objects that were being used
+        for (int chan = 0; chan < MAX_CHANNELS; chan++)
+        {
+            m_bedChannels[chan].object = nullptr;
+        }
+        for (std::vector<PointSound>::iterator it = m_pointSounds.begin(); it != m_pointSounds.end(); it++)
+        {
+            it->object = nullptr;
+        }
+    }
+    else if(m_renderer->IsActive() && m_pointSounds.size() > m_renderer->GetMaxDynamicObjects())
+    { 
+        //If we reactivated or available object changed and had more active objects than we do now, clear out those we cannot render
+        while (m_pointSounds.size() > m_renderer->GetMaxDynamicObjects())
+        {
+            m_pointSounds.pop_back();
+            m_usedObjects--;
+        }
+    }
 
 
-	if (kb.Escape)
-	{
-		if (m_threadActive)
-		{
-			m_threadActive = false;
-			m_playingSound = false;
-			WaitForThreadpoolWorkCallbacks(m_workThread, FALSE);
-			CloseThreadpoolWork(m_workThread);
-		}
-		m_renderer->m_SpatialAudioStream->Stop();
+    if (kb.Escape)
+    {
+        if (m_threadActive)
+        {
+            m_threadActive = false;
+            m_playingSound = false;
+            WaitForThreadpoolWorkCallbacks(m_workThread, FALSE);
+            CloseThreadpoolWork(m_workThread);
+        }
+        m_renderer->m_SpatialAudioStream->Stop();
 
-		Windows::ApplicationModel::Core::CoreApplication::Exit();
-	}
+        ExitSample();
+    }
 
-	if (m_keyboardButtons.IsKeyReleased(DirectX::Keyboard::Keys::P))
-	{
-		m_playingSound = !m_playingSound;
-	}
+    if (m_keyboardButtons.IsKeyReleased(DirectX::Keyboard::Keys::P))
+    {
+        m_playingSound = !m_playingSound;
+    }
 
-	if (m_keyboardButtons.IsKeyReleased(DirectX::Keyboard::Keys::Space))
-	{
-		if (m_fileLoaded && m_renderer && m_renderer->IsActive())
-		{
-			//Start spatial worker thread
-			if (!m_threadActive)
-			{
-				m_threadActive = true;
-				m_playingSound = true;
-				m_workThread = CreateThreadpoolWork(SpatialWorkCallback, this, nullptr);
-				SubmitThreadpoolWork(m_workThread);
-			}
-			else
-			{
-				m_threadActive = false;
-				m_playingSound = false;
-				WaitForThreadpoolWorkCallbacks(m_workThread, FALSE);
-				CloseThreadpoolWork(m_workThread);
-				while (m_pointSounds.size() > 0)
-				{
-					m_pointSounds.pop_back();
-					m_usedObjects--;
-				}
-			}
-		}
-	}
+    if (m_keyboardButtons.IsKeyReleased(DirectX::Keyboard::Keys::Space))
+    {
+        if (m_fileLoaded && m_renderer && m_renderer->IsActive())
+        {
+            //Start spatial worker thread
+            if (!m_threadActive)
+            {
+                m_threadActive = true;
+                m_playingSound = true;
+                m_workThread = CreateThreadpoolWork(SpatialWorkCallback, this, nullptr);
+                SubmitThreadpoolWork(m_workThread);
+            }
+            else
+            {
+                m_threadActive = false;
+                m_playingSound = false;
+                WaitForThreadpoolWorkCallbacks(m_workThread, FALSE);
+                CloseThreadpoolWork(m_workThread);
+                while (m_pointSounds.size() > 0)
+                {
+                    m_pointSounds.pop_back();
+                    m_usedObjects--;
+                }
+            }
+        }
+    }
 
     if (m_keyboardButtons.IsKeyReleased(DirectX::Keyboard::Keys::Up))
     {
@@ -658,44 +660,44 @@ void Sample::Render()
 
     auto context = m_deviceResources->GetD3DDeviceContext();
     PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Render");
-	auto rect = m_deviceResources->GetOutputSize();
-	auto safeRect = SimpleMath::Viewport::ComputeTitleSafeArea(rect.right, rect.bottom);
+    auto rect = m_deviceResources->GetOutputSize();
+    auto safeRect = SimpleMath::Viewport::ComputeTitleSafeArea(rect.right, rect.bottom);
 
-	XMFLOAT2 pos(float(safeRect.left), float(safeRect.top));
+    XMFLOAT2 pos(float(safeRect.left), float(safeRect.top));
 
-	m_spriteBatch->Begin();
+    m_spriteBatch->Begin();
 
-	wchar_t str[256] = { 0 };
-	swprintf_s(str, L"Advanced Spatial Playback");
-	m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-	pos.y += 30;
-	if (!m_renderer->IsActive())
-	{
-		swprintf_s(str, L"Spatial Renderer Not Available");
-		m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-		pos.y += 60;
-	}
-	else
-	{
-		swprintf_s(str, L"State: %s", (m_threadActive) ? ((m_playingSound) ? L"Playing" : L"Paused") : L"Stopped");
-		m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-		pos.y += 30;
-		swprintf_s(str, L"Use Spacebar to start/stop playback and 'p' to pause/unpause");
-		m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-		pos.y += 30;
-		swprintf_s(str, L"Use UP/DOWN to add/remove a sound");
-		m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-		pos.y += 60;
-		swprintf_s(str, L"Available Dynamic Objects: %d", m_availableObjects - m_usedObjects);
-		m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-		pos.y += 30;
-		swprintf_s(str, L"Used Dynamic Objects: %d", m_usedObjects);
-		m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-		pos.y += 30;
-		swprintf_s(str, L"Total Objects: %d", 12 + m_usedObjects);
-		m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-		pos.y += 60;
-	}
+    wchar_t str[256] = { 0 };
+    swprintf_s(str, L"Advanced Spatial Playback");
+    m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
+    pos.y += 30;
+    if (!m_renderer->IsActive())
+    {
+        swprintf_s(str, L"Spatial Renderer Not Available");
+        m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
+        pos.y += 60;
+    }
+    else
+    {
+        swprintf_s(str, L"State: %s", (m_threadActive) ? ((m_playingSound) ? L"Playing" : L"Paused") : L"Stopped");
+        m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
+        pos.y += 30;
+        swprintf_s(str, L"Use Spacebar to start/stop playback and 'p' to pause/unpause");
+        m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
+        pos.y += 30;
+        swprintf_s(str, L"Use UP/DOWN to add/remove a sound");
+        m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
+        pos.y += 60;
+        swprintf_s(str, L"Available Dynamic Objects: %d", m_availableObjects - m_usedObjects);
+        m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
+        pos.y += 30;
+        swprintf_s(str, L"Used Dynamic Objects: %d", m_usedObjects);
+        m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
+        pos.y += 30;
+        swprintf_s(str, L"Total Objects: %d", 12 + m_usedObjects);
+        m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
+        pos.y += 60;
+    }
 
     //float tempx = pos.x;
     
@@ -816,9 +818,9 @@ void Sample::CreateDeviceDependentResources()
 {
     auto device = m_deviceResources->GetD3DDevice();
 
-	auto context = m_deviceResources->GetD3DDeviceContext();
+    auto context = m_deviceResources->GetD3DDeviceContext();
 
-	m_spriteBatch = std::make_unique<SpriteBatch>(context);
+    m_spriteBatch = std::make_unique<SpriteBatch>(context);
 
     m_states = std::make_unique<CommonStates>(device);
 
@@ -841,7 +843,7 @@ void Sample::CreateDeviceDependentResources()
 
     m_batch = std::make_unique<PrimitiveBatch<VertexPositionColor>>(m_deviceResources->GetD3DDeviceContext());
 
-	m_font = std::make_unique<SpriteFont>(device, L"SegoeUI_18.spritefont");
+    m_font = std::make_unique<SpriteFont>(device, L"SegoeUI_18.spritefont");
 
     CreateDDSTextureFromFile(device, L"callout_circle.DDS", nullptr, m_circle.ReleaseAndGetAddressOf());
 }
@@ -849,13 +851,13 @@ void Sample::CreateDeviceDependentResources()
 // Allocate all memory resources that change on a window SizeChanged event.
 void Sample::CreateWindowSizeDependentResources()
 {
-	m_spriteBatch->SetRotation(m_deviceResources->GetRotation());
+    m_spriteBatch->SetRotation(m_deviceResources->GetRotation());
 }
 
 void Sample::OnDeviceLost()
 {
-	m_spriteBatch.reset();
-	m_font.reset();
+    m_spriteBatch.reset();
+    m_font.reset();
     m_states.reset();
     m_batch.reset();
     m_batchEffect.reset();

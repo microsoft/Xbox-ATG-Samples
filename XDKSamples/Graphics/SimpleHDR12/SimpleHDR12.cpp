@@ -47,20 +47,76 @@
 
 #include "pch.h"
 #include "SimpleHDR12.h"
-#include "HDRCommon.h"
+
+#include "HDR\HDRCommon.h"
+
 #include "ControllerFont.h"
-#include <ppltasks.h>
 #include "ReadData.h"
 
+#include <ppltasks.h>
 
 extern void ExitSample();
 
 using namespace DX;
 using namespace DirectX;
 using namespace SimpleMath;
-using namespace Colors;
-using Microsoft::WRL::ComPtr;
 
+using Microsoft::WRL::ComPtr;
+using DirectX::Colors::Black;
+using DirectX::Colors::White;
+
+namespace
+{
+    inline DirectX::XMVECTOR MakeColor(float value) { DirectX::XMVECTORF32 color = { value, value, value, 1.0f }; return color; }
+
+    // Clamp value between 0 and 1
+    inline float Clamp(float value)
+    {
+        return std::min(std::max(value, 0.0f), 1.0f);
+    }
+
+    // Applies the sRGB gamma curve to a linear value. This function is only used to output UI values
+    float LinearToSRGB(float hdrSceneValue)
+    {
+        const float Cutoff = 0.0031308f;
+        const float Linear = 12.92f;
+        const float Scale = 1.055f;
+        const float Bias = 0.055f;
+        const float Gamma = 2.4f;
+        const float InvGamma = 1.0f / Gamma;
+
+        // clamp values [0..1]
+        hdrSceneValue = Clamp(hdrSceneValue);
+
+        // linear piece for dark values
+        if (hdrSceneValue < Cutoff)
+        {
+            return hdrSceneValue * Linear;
+        }
+
+        return Scale * std::pow(hdrSceneValue, InvGamma) - Bias;
+    }
+}
+
+Sample::Sample() :
+    m_frame(0),
+    m_bRender2084Curve(false),
+    m_bShowOnlyPaperWhite(true),
+    m_countDownToBright(5),
+    m_current2084CurveRenderingNits(500.0f),
+    m_hdrSceneValues{ 0.5f, 1.0f, 6.0f, 10.0f },
+    m_HDR10Data{ 100.f }
+{
+    // Renders only 2D, so no need for a depth buffer.
+    m_deviceResources = std::make_unique<DX::DeviceResources>(
+        DXGI_FORMAT_B8G8R8A8_UNORM_SRGB /* SDR swapchain format */,
+        DXGI_FORMAT_UNKNOWN,
+        2,
+        DX::DeviceResources::c_Enable4K_UHD);
+
+    m_hdrScene = std::make_unique<DX::RenderTexture>(DXGI_FORMAT_R16G16B16A16_FLOAT);
+    m_hdrScene->SetClearColor(Black);
+}
 
 #pragma region HDR
 
@@ -73,9 +129,6 @@ void Sample::Initialize(IUnknown* window)
     // so we can do other initalizations in the meanwhile
     auto determineHDRAction = Windows::Xbox::Graphics::Display::DisplayConfiguration::TrySetHdrModeAsync();
     auto determineHDRTask = Concurrency::create_task(determineHDRAction);
-
-    m_hdrScene = std::make_unique<DX::RenderTexture>(DXGI_FORMAT_R16G16B16A16_FLOAT);
-    m_hdrScene->SetClearColor(Black);
 
     // Regular sample initialization
     Init(window);
@@ -152,8 +205,7 @@ void Sample::PrepareSwapChainBuffers()
 
     // Set RTVs
     D3D12_CPU_DESCRIPTOR_HANDLE rtvDescriptor[2] = {m_deviceResources->GetHDR10RenderTargetView(), m_deviceResources->GetGameDVRRenderTargetView() };
-    auto dsvDescriptor = m_deviceResources->GetDepthStencilView();
-    d3dCommandList->OMSetRenderTargets(2, rtvDescriptor, FALSE, &dsvDescriptor);
+    d3dCommandList->OMSetRenderTargets(2, rtvDescriptor, FALSE, nullptr);
 
     // Update constant buffer and render
     auto hdr10Data = m_graphicsMemory->AllocateConstant<HDR10Data>(m_HDR10Data);
@@ -161,35 +213,6 @@ void Sample::PrepareSwapChainBuffers()
     m_fullScreenQuad->Draw(d3dCommandList, m_d3dPrepareSwapChainBufferPSO.Get(), hdrSRV, hdr10Data.GpuAddress());
 
     PIXEndEvent(d3dCommandList);
-}
-
-
-// Clamp value between 0 and 1
-inline float Clamp(float value)
-{
-    return std::min(std::max(value, 0.0f), 1.0f);
-}
-
-// Applies the sRGB gamma curve to a linear value. This function is only used to output UI values
-float LinearToSRGB(float hdrSceneValue)
-{
-    const float Cutoff = 0.0031308f;
-    const float Linear = 12.92f;
-    const float Scale = 1.055f;
-    const float Bias = 0.055f;
-    const float Gamma = 2.4f;
-    const float InvGamma = 1.0f / Gamma;
-
-    // clamp values [0..1]
-    hdrSceneValue = Clamp(hdrSceneValue);
-
-    // linear piece for dark values
-    if (hdrSceneValue < Cutoff)
-    {
-        return hdrSceneValue * Linear;
-    }
-
-    return Scale * std::pow(hdrSceneValue, InvGamma) - Bias;
 }
 
 
@@ -205,7 +228,7 @@ void Sample::RenderHDRScene()
     m_spriteBatch->SetViewport(viewportUI);
     m_fontBatch->SetViewport(viewportUI);
 
-    const long step = static_cast<long>(1920.0f / (NUM_INPUT_VALUES + 2.0f));
+    const long step = static_cast<long>(1920.0f / (c_NumInputValues + 2.0f));
 
     float startX = 115;
 
@@ -213,11 +236,11 @@ void Sample::RenderHDRScene()
     XMUINT2 dummyTextureSize = { 1, 1 };
     auto dummyTexture = m_resourceDescriptorHeap->GetGpuHandle(static_cast<int>(ResourceDescriptors::HDRScene));
 
-    RECT position = { 0 };
+    RECT position = {};
     position.left = static_cast<long>(startX);  
 
     // Render each block with the specific HDR scene value
-    for (int i = 0; i < NUM_INPUT_VALUES; i++)
+    for (int i = 0; i < c_NumInputValues; i++)
     {        
         XMVECTOR hdrSceneColor = MakeColor(m_hdrSceneValues[i]);
 
@@ -260,7 +283,7 @@ void Sample::RenderHDRScene()
 
     fontPos.x = startX + 100.0f;
 
-    for (int i = 0; i < NUM_INPUT_VALUES; i++)
+    for (int i = 0; i < c_NumInputValues; i++)
     {
         float hdrSceneValue = m_hdrSceneValues[i];
         float sdrGamma = LinearToSRGB(hdrSceneValue);
@@ -362,7 +385,7 @@ void Sample::Render2084Curve()
     }
 
     // Render the lines indication the current selection
-    float normalizedLinearValue = m_current2084CurveRenderingNits / g_MaxNitsFor2084;
+    float normalizedLinearValue = m_current2084CurveRenderingNits / c_MaxNitsFor2084;
     float normalizedNonLinearValue = LinearToST2084(normalizedLinearValue);
     float x = normalizedLinearValue * viewportWidth;
     float y = viewportHeight - (normalizedNonLinearValue * viewportHeight);
@@ -404,11 +427,11 @@ void Sample::Render2084Curve()
     m_textFont->DrawString(m_fontBatch.get(), L"10K", fontPos, White, 0.0f, g_XMZero, 0.4f); fontPos.y += 20;     // Spec defines 10K nits
 
     // Max HDR scene value changes as white paper nits change
-    float hdrSceneValue = CalcHDRSceneValue(g_MaxNitsFor2084, m_HDR10Data.PaperWhiteNits);
+    float hdrSceneValue = CalcHDRSceneValue(c_MaxNitsFor2084, m_HDR10Data.PaperWhiteNits);
     swprintf_s(strText, L"%1.0f", hdrSceneValue);
     m_textFont->DrawString(m_fontBatch.get(), strText, fontPos, White, 0.0f, g_XMZero, 0.4f); fontPos.y += 20;
 
-    normalizedLinearValue = m_current2084CurveRenderingNits / g_MaxNitsFor2084;
+    normalizedLinearValue = m_current2084CurveRenderingNits / c_MaxNitsFor2084;
     normalizedNonLinearValue = LinearToST2084(normalizedLinearValue);
     hdrSceneValue = CalcHDRSceneValue(m_current2084CurveRenderingNits, m_HDR10Data.PaperWhiteNits);
 
@@ -440,7 +463,7 @@ void Sample::Render2084Curve()
 
     // Render blocks
     const long size = 150;
-    RECT position = { 0 };
+    RECT position = {};
     position.left = 1920 - size * 4;
     position.top = 50;
     position.right = position.left + size;
@@ -580,12 +603,12 @@ void Sample::Update(DX::StepTimer const& timer)
     
     if (gamepad.IsConnected())
     {
+        m_gamePadButtons.Update(gamepad);
+
         if (gamepad.IsViewPressed())
         {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
         }
-
-        m_gamePadButtons.Update(gamepad);
 
         if (m_gamePadButtons.a == GamePad::ButtonStateTracker::PRESSED)
         {
@@ -600,7 +623,7 @@ void Sample::Update(DX::StepTimer const& timer)
         if (m_gamePadButtons.dpadDown == GamePad::ButtonStateTracker::PRESSED ||
             m_gamePadButtons.dpadLeft == GamePad::ButtonStateTracker::PRESSED)
         {
-            m_HDR10Data.PaperWhiteNits -= 20.0f;;
+            m_HDR10Data.PaperWhiteNits -= 20.0f;
             m_HDR10Data.PaperWhiteNits = std::max(m_HDR10Data.PaperWhiteNits, 80.0f);
         }
 
@@ -608,25 +631,25 @@ void Sample::Update(DX::StepTimer const& timer)
             m_gamePadButtons.dpadRight == GamePad::ButtonStateTracker::PRESSED)
         {
             m_HDR10Data.PaperWhiteNits += 20.0f;
-            m_HDR10Data.PaperWhiteNits = std::min(m_HDR10Data.PaperWhiteNits, g_MaxNitsFor2084);
+            m_HDR10Data.PaperWhiteNits = std::min(m_HDR10Data.PaperWhiteNits, c_MaxNitsFor2084);
         }
 
-        const float fastNitsDelta = 25.0f;
-        const float slowNitsDelta = 1.0f;
-        const float fastSceneValueDelta = 0.05f;
-        const float slowSceneValueDelta = 0.005f;
+        const float c_fastNitsDelta = 25.0f;
+        const float c_slowNitsDelta = 1.0f;
+        const float c_fastSceneValueDelta = 0.05f;
+        const float c_slowSceneValueDelta = 0.005f;
 
         if (gamepad.IsLeftThumbStickDown() || gamepad.IsLeftThumbStickLeft())
         {
             if (m_bRender2084Curve)
             {
-                m_current2084CurveRenderingNits -= fastNitsDelta;
+                m_current2084CurveRenderingNits -= c_fastNitsDelta;
                 m_current2084CurveRenderingNits = std::max(m_current2084CurveRenderingNits, 0.0f);
             }
             else
             {
-                m_hdrSceneValues[g_CustomInputValueIndex] -= fastSceneValueDelta;
-                m_hdrSceneValues[g_CustomInputValueIndex] = std::max(m_hdrSceneValues[g_CustomInputValueIndex], 0.0f);
+                m_hdrSceneValues[c_CustomInputValueIndex] -= c_fastSceneValueDelta;
+                m_hdrSceneValues[c_CustomInputValueIndex] = std::max(m_hdrSceneValues[c_CustomInputValueIndex], 0.0f);
             }
         }
 
@@ -634,13 +657,13 @@ void Sample::Update(DX::StepTimer const& timer)
         {
             if (m_bRender2084Curve)
             {
-                m_current2084CurveRenderingNits -= slowNitsDelta;
+                m_current2084CurveRenderingNits -= c_slowNitsDelta;
                 m_current2084CurveRenderingNits = std::max(m_current2084CurveRenderingNits, 0.0f);
             }
             else
             {
-                m_hdrSceneValues[g_CustomInputValueIndex] -= slowSceneValueDelta;
-                m_hdrSceneValues[g_CustomInputValueIndex] = std::max(m_hdrSceneValues[g_CustomInputValueIndex], 0.0f);
+                m_hdrSceneValues[c_CustomInputValueIndex] -= c_slowSceneValueDelta;
+                m_hdrSceneValues[c_CustomInputValueIndex] = std::max(m_hdrSceneValues[c_CustomInputValueIndex], 0.0f);
             }
         }
 
@@ -648,13 +671,13 @@ void Sample::Update(DX::StepTimer const& timer)
         {
             if (m_bRender2084Curve)
             {
-                m_current2084CurveRenderingNits += fastNitsDelta;
-                m_current2084CurveRenderingNits = std::min(m_current2084CurveRenderingNits, g_MaxNitsFor2084);
+                m_current2084CurveRenderingNits += c_fastNitsDelta;
+                m_current2084CurveRenderingNits = std::min(m_current2084CurveRenderingNits, c_MaxNitsFor2084);
             }
             else
             {
-                m_hdrSceneValues[g_CustomInputValueIndex] += fastSceneValueDelta;
-                m_hdrSceneValues[g_CustomInputValueIndex] = std::min(m_hdrSceneValues[g_CustomInputValueIndex], 125.0f);
+                m_hdrSceneValues[c_CustomInputValueIndex] += c_fastSceneValueDelta;
+                m_hdrSceneValues[c_CustomInputValueIndex] = std::min(m_hdrSceneValues[c_CustomInputValueIndex], 125.0f);
             }
         }
 
@@ -662,13 +685,13 @@ void Sample::Update(DX::StepTimer const& timer)
         {
             if (m_bRender2084Curve)
             {
-                m_current2084CurveRenderingNits += slowNitsDelta;
-                m_current2084CurveRenderingNits = std::min(m_current2084CurveRenderingNits, g_MaxNitsFor2084);
+                m_current2084CurveRenderingNits += c_slowNitsDelta;
+                m_current2084CurveRenderingNits = std::min(m_current2084CurveRenderingNits, c_MaxNitsFor2084);
             }
             else
             {
-                m_hdrSceneValues[g_CustomInputValueIndex] += slowSceneValueDelta;
-                m_hdrSceneValues[g_CustomInputValueIndex] = std::min(m_hdrSceneValues[g_CustomInputValueIndex], 125.0f);
+                m_hdrSceneValues[c_CustomInputValueIndex] += c_slowSceneValueDelta;
+                m_hdrSceneValues[c_CustomInputValueIndex] = std::min(m_hdrSceneValues[c_CustomInputValueIndex], 125.0f);
             }
         }
     }
@@ -683,27 +706,13 @@ void Sample::Update(DX::StepTimer const& timer)
 
 #pragma region Direct3D Resources
 
-Sample::Sample() :
-    m_frame(0)
-{
-    // Use gamma-correct rendering.
-    m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM_SRGB, DXGI_FORMAT_D32_FLOAT, 2, DX::DeviceResources::c_Enable4K_UHD);
-}
-
 // Initialize the Direct3D resources required to run.
 void Sample::Init(IUnknown* window)
 {
-    m_HDR10Data.PaperWhiteNits = 100.0f;
-    m_countDownToBright = 5;
-    m_bShowOnlyPaperWhite = true;
-    m_bRender2084Curve = false;
-    m_current2084CurveRenderingNits = 500.0f;
-
     m_gamePad = std::make_unique<GamePad>();
     m_deviceResources->SetWindow(window);
     m_deviceResources->CreateDeviceResources();
     CreateDeviceDependentResources();
-    CreateWindowSizeDependentResources();
     m_deviceResources->CreateWindowSizeDependentResources();
 }
 
@@ -717,14 +726,12 @@ void Sample::Clear()
     m_hdrScene->TransitionTo(d3dCommandList, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
     auto rtvDescriptor = m_rtvDescriptorHeap->GetCpuHandle(static_cast<int>(ResourceDescriptors::HDRScene));
-    auto dsvDescriptor = m_deviceResources->GetDepthStencilView();
-    d3dCommandList->OMSetRenderTargets(1, &rtvDescriptor, FALSE, &dsvDescriptor);
+    d3dCommandList->OMSetRenderTargets(1, &rtvDescriptor, FALSE, nullptr);
 
     // Use linear clear color for gamma-correct rendering.
     d3dCommandList->ClearRenderTargetView(m_deviceResources->GetHDR10RenderTargetView(), Black, 0, nullptr);
     d3dCommandList->ClearRenderTargetView(m_deviceResources->GetGameDVRRenderTargetView(), Black, 0, nullptr);
     d3dCommandList->ClearRenderTargetView(rtvDescriptor, Black, 0, nullptr);
-    d3dCommandList->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
     // Set the viewport and scissor rect.
     auto viewport = m_deviceResources->GetScreenViewport();
@@ -761,7 +768,7 @@ void Sample::CreateDeviceDependentResources()
 
     m_graphicsMemory = std::make_unique<GraphicsMemory>(d3dDevice);
 
-    m_fullScreenQuad = std::make_unique<FullScreenQuad>();
+    m_fullScreenQuad = std::make_unique<DX::FullScreenQuad>();
     m_fullScreenQuad->Initialize(d3dDevice);
 
     // Create descriptor heap for RTVs 
@@ -780,15 +787,12 @@ void Sample::CreateDeviceDependentResources()
     resourceUpload.Begin();
 
     // Create HDR backbuffer resources
-    auto outputSize = m_deviceResources->GetOutputSize();
-    int width = outputSize.right - outputSize.left;
-    int height = outputSize.bottom - outputSize.top;
-
     m_hdrScene->SetDevice(d3dDevice,
         m_resourceDescriptorHeap->GetCpuHandle(static_cast<int>(ResourceDescriptors::HDRScene)),
         m_rtvDescriptorHeap->GetCpuHandle(static_cast<int>(RTVDescriptors::HDRScene)));
 
-    m_hdrScene->SizeResources(width, height);
+    auto size = m_deviceResources->GetOutputSize();
+    m_hdrScene->SetWindow(size);
 
     // Init fonts
     RenderTargetState rtState(m_hdrScene->GetFormat(), m_deviceResources->GetDepthBufferFormat());
@@ -807,7 +811,7 @@ void Sample::CreateDeviceDependentResources()
     {       
         D3D12_RASTERIZER_DESC state = CommonStates::CullNone;
         state.MultisampleEnable = FALSE;
-        EffectPipelineStateDescription pd(&VertexPositionColor::InputLayout, CommonStates::Opaque, CommonStates::DepthDefault, state, rtState, D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
+        EffectPipelineStateDescription pd(&VertexPositionColor::InputLayout, CommonStates::Opaque, CommonStates::DepthNone, state, rtState, D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
         m_lineEffect = std::make_unique<BasicEffect>(d3dDevice, EffectFlags::VertexColor, pd);
         m_primitiveBatch = std::make_unique<PrimitiveBatch<VertexPositionColor>>(d3dDevice);
     }
@@ -836,11 +840,6 @@ void Sample::CreateDeviceDependentResources()
 
     auto uploadResourcesFinished = resourceUpload.End(m_deviceResources->GetCommandQueue());   
     uploadResourcesFinished.wait();     // Wait for resources to upload
-}
-
-// Allocate all memory resources that change on a window SizeChanged event.
-void Sample::CreateWindowSizeDependentResources()
-{
 }
 
 // Initialize all the fonts used

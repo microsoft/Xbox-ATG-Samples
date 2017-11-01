@@ -54,24 +54,24 @@ public:
 
         m_sample = std::make_unique<Sample>();
 
-		// Sample Usage Telemetry
-		//
-		// Disable or remove this code block to opt-out of sample usage telemetry
-		//
-		if (ATG::EventRegisterATGSampleTelemetry() == ERROR_SUCCESS)
-		{
-			wchar_t exeName[MAX_PATH + 1] = {};
-			if (!GetModuleFileNameW(nullptr, exeName, MAX_PATH))
-			{
-				wcscpy_s(exeName, L"Unknown");
-			}
-			wchar_t fname[_MAX_FNAME] = {};
-			wchar_t ext[_MAX_EXT] = {};
-			(void)_wsplitpath_s(exeName, nullptr, 0, nullptr, 0, fname, _MAX_FNAME, ext, _MAX_EXT);
-			(void)_wmakepath_s(exeName, nullptr, nullptr, fname, ext); // keep only the filename + extension
+        // Sample Usage Telemetry
+        //
+        // Disable or remove this code block to opt-out of sample usage telemetry
+        //
+        if (ATG::EventRegisterATGSampleTelemetry() == ERROR_SUCCESS)
+        {
+            wchar_t exeName[MAX_PATH + 1] = {};
+            if (!GetModuleFileNameW(nullptr, exeName, MAX_PATH))
+            {
+                wcscpy_s(exeName, L"Unknown");
+            }
+            wchar_t fname[_MAX_FNAME] = {};
+            wchar_t ext[_MAX_EXT] = {};
+            (void)_wsplitpath_s(exeName, nullptr, 0, nullptr, 0, fname, _MAX_FNAME, ext, _MAX_EXT);
+            (void)_wmakepath_s(exeName, nullptr, nullptr, fname, ext); // keep only the filename + extension
 
-			ATG::EventWriteSampleLoaded(exeName);
-		}
+            ATG::EventWriteSampleLoaded(exeName);
+        }
     }
 
     virtual void Uninitialize()
@@ -194,7 +194,7 @@ protected:
 
     void OnSuspending(Platform::Object^ sender, SuspendingEventArgs^ args)
     {
-        SuspendingDeferral^ deferral = args->SuspendingOperation->GetDeferral();
+        auto deferral = args->SuspendingOperation->GetDeferral();
 
         create_task([this, deferral]()
         {
@@ -372,10 +372,8 @@ public:
 
 // Entry point
 [Platform::MTAThread]
-int main(Platform::Array<Platform::String^>^ argv)
+int __cdecl main(Platform::Array<Platform::String^>^ /*argv*/)
 {
-    UNREFERENCED_PARAMETER(argv);
-
     if (!XMVerifyCPUSupport())
     {
         throw std::exception("XMVerifyCPUSupport");
@@ -384,4 +382,11 @@ int main(Platform::Array<Platform::String^>^ argv)
     auto viewProviderFactory = ref new ViewProviderFactory();
     CoreApplication::Run(viewProviderFactory);
     return 0;
+}
+
+
+// Exit helper
+void ExitSample()
+{
+    Windows::ApplicationModel::Core::CoreApplication::Exit();
 }

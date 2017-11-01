@@ -17,7 +17,10 @@ using Microsoft::WRL::ComPtr;
 Sample::Sample() :
     m_frame(0)
 {
-    m_deviceResources = std::make_unique<DX::DeviceResources>(GetBackBufferFormat(), GetDepthFormat(), 2, DX::DeviceResources::c_Enable4K_UHD);
+    m_deviceResources = std::make_unique<DX::DeviceResources>(
+        GetBackBufferFormat(), GetDepthFormat(), 2,
+        DX::DeviceResources::c_Enable4K_UHD | DX::DeviceResources::c_EnableHDR);
+
     m_sharedSimplePBR = std::make_unique<SharedSimplePBR>(this);
 }
 

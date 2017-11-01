@@ -4,7 +4,8 @@
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
-  IgnorableNamespaces="uap mp">
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap mp rescap">
 
   <Identity
     Name="a9047f90-ffb3-4392-a926-185c1bc7416d"
@@ -45,5 +46,8 @@
 
   <Capabilities>
     <Capability Name="internetClient" />
+
+<!-- For Xbox One, you can remove this rescap after setting the app type to 'Game' in DevHome for this package -->
+    <rescap:Capability Name="expandedResources" />
   </Capabilities>
 </Package>

@@ -10,12 +10,17 @@
 #include "pch.h"
 #include "MouseCursor.h"
 
+extern void ExitSample();
+
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
 using Microsoft::WRL::ComPtr;
 
-#define ROTATION_GAIN 0.004f // sensitivity adjustment
+namespace
+{
+    const float c_RotationGain = 0.004f; // sensitivity adjustment
+}
 
 Sample::Sample() :
     m_isAbsolute(true),
@@ -370,7 +375,7 @@ void Sample::UpdatePointer( Windows::Foundation::Point screen )
 void Sample::UpdateCamera( Vector3 movement )
 {
     // Adjust pitch and yaw based on the mouse movement
-    Vector3 rotationDelta = movement * ROTATION_GAIN;
+    Vector3 rotationDelta = movement * c_RotationGain;
     m_pitch += rotationDelta.y;
     m_yaw += rotationDelta.x;
 

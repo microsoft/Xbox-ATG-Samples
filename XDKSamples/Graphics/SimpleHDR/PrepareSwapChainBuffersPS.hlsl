@@ -11,9 +11,8 @@
 //--------------------------------------------------------------------------------------
 
 #include "HDRCommon.hlsli"
+#include "FullScreenQuad.hlsli"
 
-SamplerState PointSampler       : register(s0);     // Point sample the HDR scene
-Texture2D<float4> HDRScene      : register(t0);     // HDR scene with linear values using Rec.709 primaries
 float4 PaperWhiteNits           : register(b0);     // Defines how bright white is (in nits), which controls how bright the SDR range in the image will be, e.g. 200 nits
 
 
@@ -22,12 +21,6 @@ float4 TonemapHDR2SDR(float4 hdrSceneValue)
 {
     return saturate(hdrSceneValue);
 }
-
-struct Interpolants
-{
-    float4 color    : COLOR;
-    float2 texCoord : TEXCOORD;
-};
 
 struct PSOut
 {
@@ -40,12 +33,12 @@ struct PSOut
 //  - Rec.2020 color primaries
 //  - Quantized using ST.2084 curve
 //  - 10-bit per channel
-PSOut main(Interpolants In)
+PSOut main(Interpolators In)
 {
     PSOut output;
 
     // Input is linear values using sRGB / Rec.709 color primaries
-    float4 hdrSceneValues = HDRScene.Sample(PointSampler, In.texCoord);
+    float4 hdrSceneValues = Texture.Sample(PointSampler, In.TexCoord);
 
     output.HDR10 = ConvertToHDR10(hdrSceneValues, PaperWhiteNits.x);
     output.GameDVR = TonemapHDR2SDR(hdrSceneValues);

@@ -21,70 +21,70 @@
 namespace DX
 {
     // The ST.2084 spec defines max nits as 10,000 nits
-    const float g_MaxNitsFor2084 = 10000.0f;
+    const float c_MaxNitsFor2084 = 10000.0f;
 
     // Apply the ST.2084 curve to normalized linear values and outputs normalized non-linear values
-    float LinearToST2084(float normalizedLinearValue)
+    inline float LinearToST2084(float normalizedLinearValue)
     {
         float ST2084 = pow((0.8359375f + 18.8515625f * pow(abs(normalizedLinearValue), 0.1593017578f)) / (1.0f + 18.6875f * pow(abs(normalizedLinearValue), 0.1593017578f)), 78.84375f);
         return ST2084;  // Don't clamp between [0..1], so we can still perform operations on scene values higher than 10,000 nits
     }
 
     // ST.2084 to linear, resulting in a linear normalized value
-    float ST2084ToLinear(float ST2084)
+    inline float ST2084ToLinear(float ST2084)
     {
         float normalizedLinear = pow(__max(pow(abs(ST2084), 1.0f / 78.84375f) - 0.8359375f, 0.0f) / (18.8515625f - 18.6875f * pow(abs(ST2084), 1.0f / 78.84375f)), 1.0f / 0.1593017578f);
         return normalizedLinear;
     }
 
     // Takes as inout the non-normalized value from the HDR scene. This function is only used to output UI values
-    float LinearToST2084(float hdrSceneValue, float paperWhiteNits)
+    inline float LinearToST2084(float hdrSceneValue, float paperWhiteNits)
     {
         // HDR scene will have values zero to larger than 1, e.g. [0..100], but the ST.2084 curve
         // transforms a normalized linear value, so we first need to normalize the HDR scene value.
         // To do this, we need define at what brightness/nits paper white is, i.e. how bright is
         // the value of 1.0f in the HDR scene.
-        float normalizedLinearValue = hdrSceneValue * paperWhiteNits / g_MaxNitsFor2084;
+        float normalizedLinearValue = hdrSceneValue * paperWhiteNits / c_MaxNitsFor2084;
 
         return LinearToST2084(normalizedLinearValue);
     }
 
     // Calculates the normalized linear value going into the ST.2084 curve, using the nits
-    float CalcNormalizedLinearValue(float nits)
+    inline float CalcNormalizedLinearValue(float nits)
     {
-        return nits / g_MaxNitsFor2084;     // Don't clamp between [0..1], so we can still perform operations on scene values higher than 10,000 nits
+        return nits / c_MaxNitsFor2084;     // Don't clamp between [0..1], so we can still perform operations on scene values higher than 10,000 nits
     }
 
     // Calc normalized linear value from hdrScene and paper white nits
-    float CalcNormalizedLinearValue(float hdrSceneValue, float paperWhiteNits)
+    inline float CalcNormalizedLinearValue(float hdrSceneValue, float paperWhiteNits)
     {
-        float normalizedLinearValue = hdrSceneValue * paperWhiteNits / g_MaxNitsFor2084;
+        float normalizedLinearValue = hdrSceneValue * paperWhiteNits / c_MaxNitsFor2084;
         return normalizedLinearValue;       // Don't clamp between [0..1], so we can still perform operations on scene values higher than 10,000 nits
     }
 
     // Calculates the brightness in nits for a certain normalized linear value
-    float CalcNits(float normalizedLinearValue)
+    inline float CalcNits(float normalizedLinearValue)
     {
-        return normalizedLinearValue * g_MaxNitsFor2084;
+        return normalizedLinearValue * c_MaxNitsFor2084;
     }
 
     // Calculates the brightness in nits for a certain linear value in the HDR scene
-    float CalcNits(float hdrSceneValue, float paperWhiteNits)
+    inline float CalcNits(float hdrSceneValue, float paperWhiteNits)
     {
         float normalizedLinear = CalcNormalizedLinearValue(hdrSceneValue, paperWhiteNits);
         return CalcNits(normalizedLinear);
     }
 
     // Calc the value that the HDR scene has to use to output a certain brightness
-    float CalcHDRSceneValue(float nits, float paperWhiteNits)
+    inline float CalcHDRSceneValue(float nits, float paperWhiteNits)
     {
         return nits / paperWhiteNits;
     }
 
     // Calc HDR scene value from normalized value and paper white nits
-    float CalcHDRSceneValueFromNormalizedValue(float normalizedLinearValue, float paperWhiteNits)
+    inline float CalcHDRSceneValueFromNormalizedValue(float normalizedLinearValue, float paperWhiteNits)
     {
-        float hdrSceneValue = normalizedLinearValue * g_MaxNitsFor2084 / paperWhiteNits;
+        float hdrSceneValue = normalizedLinearValue * c_MaxNitsFor2084 / paperWhiteNits;
         return hdrSceneValue;
     }
 }
