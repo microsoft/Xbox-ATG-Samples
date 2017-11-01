@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="HDR">
+      <UniqueIdentifier>{4a14417f-1b2c-49d8-9b26-1ca4a44d6f21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Standard Sample Files">
+      <UniqueIdentifier>{ed9d4925-c4b4-46f5-a791-2760e0b9f74e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Standard Sample Files\Assets">
+      <UniqueIdentifier>8598162a-7be6-4e60-8c82-0bce2876260c</UniqueIdentifier>
+      <Extensions>bmp;dds;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Filter Include="Standard Sample Files\ATG Tool Kit">
+      <UniqueIdentifier>3d986fb9-4e9a-4855-89b7-b5ca7fde4fdc</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Standard Sample Files\Common">
+      <UniqueIdentifier>29010aa5-0dd5-4a74-b1a3-5ac8cfbeb6d3</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Standard Sample Files\Common\Telemetry">
+      <UniqueIdentifier>18bb767a-606b-4f16-a08b-e481eb8e9150</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Standard Sample Files\Common\Telemetry\ARM">
+      <UniqueIdentifier>6cc1abdf-7f08-463a-833e-01fc60dc0f1b</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Standard Sample Files\Common\Telemetry\Win32">
+      <UniqueIdentifier>f0fc6f05-6002-4a55-9615-7cb2c5989070</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Standard Sample Files\Common\Telemetry\x64">
+      <UniqueIdentifier>319febdf-023a-4b44-a9d9-d580c47a3e99</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Standard Sample Files\Shaders">
+      <UniqueIdentifier>{70f0e92d-e2da-401f-8cc4-d1542c880907}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Standard Sample Files\ATG Tool Kit\FullScreenQuad">
+      <UniqueIdentifier>{6b21fc29-b3cf-47cc-a590-270ed8605e08}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="StepTimer.h">
+      <Filter>Standard Sample Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceResources.h">
+      <Filter>HDR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h">
+      <Filter>Standard Sample Files\ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ReadData.h">
+      <Filter>Standard Sample Files\ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleHDR_UWP.h">
+      <Filter>HDR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\HDR\HDRCommon.h">
+      <Filter>HDR</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\FullScreenQuad\FullScreenQuad.h">
+      <Filter>Standard Sample Files\ATG Tool Kit\FullScreenQuad</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="DeviceResources.cpp">
+      <Filter>HDR</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleHDR_UWP.cpp">
+      <Filter>HDR</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\FullScreenQuad\FullScreenQuad.cpp">
+      <Filter>Standard Sample Files\ATG Tool Kit\FullScreenQuad</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Logo.png">
+      <Filter>Standard Sample Files\Assets</Filter>
+    </Image>
+    <Image Include="Assets\SmallLogo.png">
+      <Filter>Standard Sample Files\Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.png">
+      <Filter>Standard Sample Files\Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Standard Sample Files\Assets</Filter>
+    </Image>
+    <Image Include="Assets\WideLogo.png">
+      <Filter>Standard Sample Files\Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Kits\Telemetry\ARM\ATGTelemetryUWP.dll">
+      <Filter>Standard Sample Files\Common\Telemetry\ARM</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\Win32\ATGTelemetryUWP.dll">
+      <Filter>Standard Sample Files\Common\Telemetry\Win32</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\x64\ATGTelemetryUWP.dll">
+      <Filter>Standard Sample Files\Common\Telemetry\x64</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\Courier_36.spritefont">
+      <Filter>Standard Sample Files\Assets</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
+      <Filter>Standard Sample Files\Assets</Filter>
+    </None>
+    <None Include="..\..\..\Kits\ATGTK\HDR\HDRCommon.hlsli">
+      <Filter>HDR</Filter>
+    </None>
+    <None Include="..\..\..\Kits\ATGTK\FullScreenQuad\FullScreenQuad.hlsli">
+      <Filter>Standard Sample Files\ATG Tool Kit\FullScreenQuad</Filter>
+    </None>
+    <None Include="Readme.docx" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="ColorPS.hlsl">
+      <Filter>Standard Sample Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PrepareSwapChainBuffersPS.hlsl">
+      <Filter>HDR</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\Kits\ATGTK\FullScreenQuad\FullScreenQuadPS.hlsl">
+      <Filter>Standard Sample Files\ATG Tool Kit\FullScreenQuad</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\..\Kits\ATGTK\FullScreenQuad\FullScreenQuadVS.hlsl">
+      <Filter>Standard Sample Files\ATG Tool Kit\FullScreenQuad</Filter>
+    </FxCompile>
+    <FxCompile Include="ToneMapSDRPS.hlsl">
+      <Filter>HDR</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
