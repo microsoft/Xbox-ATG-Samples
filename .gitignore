@@ -23,12 +23,14 @@ ARM
 Bin
 ipch
 Debug
+Durango
 Profile
 Release
 x64
 Kits/DirectXTK/Src/Shaders/Compiled/XboxOne*.*
 Kits/DirectXTK12/Src/Shaders/Compiled/XboxOne*.*
-UWPSamples/Graphics/SimplePBR12/Compiled/
+UWPSamples/Graphics/SimplePBR12_UWP/Compiled/
+XDKSamples/Graphics/SimplePBR12_Xbox/Compiled/
 UWPSamples/Tools/errorlookup/errorlookup/obj/
 UWPSamples/Tools/errorlookup/errorlookup/project.lock.json
 /wiki
