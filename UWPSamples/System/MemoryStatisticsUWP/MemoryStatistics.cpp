@@ -11,6 +11,8 @@
 #include "ATGColors.h"
 #include "ControllerFont.h"
 
+extern void ExitSample();
+
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
@@ -93,7 +95,7 @@ void Sample::Update(DX::StepTimer const& timer)
 
         if (pad.IsViewPressed())
         {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
         }
 
         if (m_gamePadButtons.dpadRight == GamePad::ButtonStateTracker::PRESSED)
@@ -124,7 +126,7 @@ void Sample::Update(DX::StepTimer const& timer)
 
     if (kb.Escape)
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
 
     if (kb.Right)

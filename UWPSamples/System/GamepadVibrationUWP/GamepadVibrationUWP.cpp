@@ -11,6 +11,8 @@
 #include "ATGColors.h"
 #include "ControllerFont.h"
 
+extern void ExitSample();
+
 using namespace DirectX;
 using namespace Windows::Gaming::Input;
 using namespace Windows::Foundation;
@@ -275,7 +277,7 @@ void Sample::Update(DX::StepTimer const&)
 
     if ((m_reading.Buttons & GamepadButtons::View) == GamepadButtons::View)
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
 
     if (!m_dPadPressed)

@@ -111,6 +111,11 @@ public:
         dispatcher->AcceleratorKeyActivated +=
             ref new TypedEventHandler<CoreDispatcher^, AcceleratorKeyEventArgs^>(this, &ViewProvider::OnAcceleratorKeyActivated);
 
+        auto navigation = Windows::UI::Core::SystemNavigationManager::GetForCurrentView();
+
+        navigation->BackRequested +=
+            ref new EventHandler<BackRequestedEventArgs^>(this, &ViewProvider::OnBackRequested);
+
         auto currentDisplayInformation = DisplayInformation::GetForCurrentView();
 
         currentDisplayInformation->DpiChanged +=
@@ -279,6 +284,13 @@ protected:
 
             args->Handled = true;
         }
+    }
+
+    void OnBackRequested(Platform::Object^, Windows::UI::Core::BackRequestedEventArgs^ args)
+    {
+        // UWP on Xbox One triggers a back request whenever the B button is pressed
+        // which can result in the app being suspended if unhandled
+        args->Handled = true;
     }
 
     void OnDpiChanged(DisplayInformation^ sender, Object^ args)

@@ -9,6 +9,8 @@
 #include "ExtendedExecutionOnSuspend.h"
 #include <ppltasks.h>
 
+extern void ExitSample();
+
 using namespace DirectX;
 using namespace Windows::ApplicationModel;
 using namespace Windows::UI::Core;
@@ -166,7 +168,7 @@ void Sample::Update(DX::StepTimer const&)
 
         if (pad.IsViewPressed())
         {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
         }
         if (m_gamePadButtons.a == GamePad::ButtonStateTracker::PRESSED)
         {
@@ -187,7 +189,7 @@ void Sample::Update(DX::StepTimer const&)
 
     if (kb.Escape)
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
     if (m_keyboardButtons.IsKeyPressed(Keyboard::N))
     {

@@ -92,15 +92,16 @@ private:
     double                                              m_countDownToBright;                    // The countdown before rendering bright values at the start of the sample, so that eyes can adjust to what paper white looks like, to realize the difference between white and bright
     float                                               m_currentPaperWhiteNits;                // Current brightness for paper white
 
-    const int                                           g_CustomInputValueIndex = 3;            // Index of input values set by left/right sticks, others use fixed values
-    static const int                                    NUM_INPUT_VALUES = 4;
-    float                                               m_hdrSceneValues[NUM_INPUT_VALUES] = { 0.5f, 1.0f, 6.0f, 10.0f };   // Values that will be rendering to the HDR scene buffer  
+    static const int                                    c_CustomInputValueIndex = 3;            // Index of input values set by left/right sticks, others use fixed values
+    static const int                                    c_NumInputValues = 4;
+    float                                               m_hdrSceneValues[c_NumInputValues];     // Values that will be rendering to the HDR scene buffer  
 
     // Rendering the HDR scene
     Microsoft::WRL::ComPtr<ID3D11PixelShader>           m_d3dColorPS;                           // Simple shader to output only color, useful to oupput very specific HDR color values
     Microsoft::WRL::ComPtr<ID3D11Texture2D>             m_d3dHDRSceneTexture;                   // HDR values will be rendered into this buffer
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView>      m_d3dHDRSceneRTV;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>    m_d3dHDRSceneSRV;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>    m_defaultTex;
 
     float m_current2084CurveRenderingNits;                                                      // In the mode when rendering the curve, use this as the adjustable value indicated on the graph
 
@@ -115,8 +116,5 @@ private:
     Microsoft::WRL::ComPtr<ID3D11Buffer>                m_d3dNitsForPaperWhiteCB;               // Define the nit value of "paper white", e.g. 100 nits    
 
     void Create2084CurveResources();
-
-    inline DirectX::XMVECTOR MakeColor(float value) { DirectX::XMVECTORF32 color = { value, value, value, 1.0f }; return color; }
-
 };
 

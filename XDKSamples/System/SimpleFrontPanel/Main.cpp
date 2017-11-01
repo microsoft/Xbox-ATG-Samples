@@ -52,7 +52,7 @@ public:
         //
         if (EventRegisterATGSampleTelemetry() == ERROR_SUCCESS)
         {
-            wchar_t exePath[MAX_PATH+1];
+            wchar_t exePath[MAX_PATH + 1] = {};
             if (!GetModuleFileNameW(nullptr, exePath, MAX_PATH))
             {
                 wcscpy_s(exePath, L"Unknown");
@@ -137,7 +137,7 @@ public:
 
 // Entry point
 [Platform::MTAThread]
-int main(Platform::Array<Platform::String^>^ /*argv*/)
+int __cdecl main(Platform::Array<Platform::String^>^ /*argv*/)
 {
     // Default main thread to CPU 0
     SetThreadAffinityMask(GetCurrentThread(), 0x1);

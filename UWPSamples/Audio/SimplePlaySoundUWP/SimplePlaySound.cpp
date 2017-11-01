@@ -10,14 +10,19 @@
 
 #include "WAVFileReader.h"
 
-static const LPCWSTR g_FileList[] = {
-    L"71_setup_sweep_xbox.wav",
-    L"musicmono.wav",
-    L"musicmono_adpcm.wav",
-    L"musicmono_xwma.wav",
-    L"sine.wav",
-    nullptr
-};
+namespace
+{
+    const wchar_t* g_FileList[] = {
+        L"71_setup_sweep_xbox.wav",
+        L"musicmono.wav",
+        L"musicmono_adpcm.wav",
+        L"musicmono_xwma.wav",
+        L"sine.wav",
+        nullptr
+    };
+}
+
+extern void ExitSample();
 
 using namespace DirectX;
 
@@ -54,7 +59,7 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
 
 #ifdef _DEBUG
     // Enable debugging features
-    XAUDIO2_DEBUG_CONFIGURATION debug = { 0 };
+    XAUDIO2_DEBUG_CONFIGURATION debug = {};
     debug.TraceMask = XAUDIO2_LOG_ERRORS | XAUDIO2_LOG_WARNINGS;
     debug.BreakMask = XAUDIO2_LOG_ERRORS;
     m_pXAudio2->SetDebugConfiguration(&debug, 0);
@@ -89,14 +94,14 @@ void Sample::Update(DX::StepTimer const&)
     {
         if (pad.IsViewPressed())
         {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
         }
     }
 
     auto kb = m_keyboard->GetState();
     if (kb.Escape)
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
 
     // Check to see if buffer has finished playing, then move on to next sound

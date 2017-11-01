@@ -8,6 +8,8 @@
 #include "pch.h"
 #include "DirectXTKSimpleSample.h"
 
+extern void ExitSample();
+
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
@@ -112,7 +114,7 @@ void Sample::Update(DX::StepTimer const& timer)
     {
         if (pad.IsViewPressed())
         {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
         }
     }
 

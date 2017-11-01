@@ -39,15 +39,20 @@ cbuffer PBR_Constants : register(b0)
     float4x4 PBR_World                  : packoffset(c1);
     float3x3 PBR_WorldInverseTranspose  : packoffset(c5);
     float4x4 PBR_WorldViewProj          : packoffset(c8);
+    float4x4 PBR_PrevWorldViewProj      : packoffset(c12);
 
-    float3 PBR_LightDirection[3]        : packoffset(c12);
-    float3 PBR_LightColor[3]            : packoffset(c15);   // "Specular and diffuse light" in PBR
+    float3 PBR_LightDirection[3]        : packoffset(c16);
+    float3 PBR_LightColor[3]            : packoffset(c19);   // "Specular and diffuse light" in PBR
  
-    float3 PBR_ConstantAlbedo           : packoffset(c18);   // Constant values if not a textured effect
-    float  PBR_ConstantMetallic         : packoffset(c19.x);
-    float  PBR_ConstantRoughness        : packoffset(c19.y);
+    float3 PBR_ConstantAlbedo           : packoffset(c22);   // Constant values if not a textured effect
+    float  PBR_ConstantMetallic         : packoffset(c23.x);
+    float  PBR_ConstantRoughness        : packoffset(c23.y);
 
-    int PBR_NumRadianceMipLevels        : packoffset(c19.z);
+    int PBR_NumRadianceMipLevels        : packoffset(c23.z);
+
+    // Size of render target
+    float PBR_TargetWidth               : packoffset(c23.w);
+    float PBR_TargetHeight              : packoffset(c24.x);
 };
 
 // Vertex formats
@@ -78,12 +83,19 @@ struct PSInputPixelLightingTxTangent
     float4 Diffuse    : COLOR0;
 };
 
+
 // Common vertex shader code
 struct CommonVSOutputPixelLighting
 {
     float4 Pos_ps;
     float3 Pos_ws;
     float3 Normal_ws;
+};
+
+struct VSOut_Velocity
+{
+    VSOutputPixelLightingTxTangent current;
+    float4 prevPosition                     : TEXCOORD4;
 };
 
 CommonVSOutputPixelLighting ComputeCommonVSOutputPixelLighting(float4 position, float3 normal, float4x4 world, float4x4 worldViewProj, float3x3 worldInverseT)

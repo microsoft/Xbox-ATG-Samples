@@ -27,12 +27,6 @@ float4 TonemapHDR2SDR(float4 hdrSceneValue)
     return saturate(hdrSceneValue);
 }
 
-struct Interpolants
-{
-    float4 color    : COLOR;
-    float2 texCoord : TEXCOORD;
-};
-
 struct PSOut
 {
     float4 HDR10    : SV_Target0;       // HDR10 buffer using Rec.2020 color primaries with ST.2084 curve

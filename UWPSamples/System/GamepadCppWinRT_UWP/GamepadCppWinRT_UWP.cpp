@@ -46,6 +46,17 @@ void Sample::Initialize(::IUnknown* window, int width, int height, DXGI_MODE_ROT
     
     m_currentGamepad = GetLastGamepad();
     m_currentGamepadNeedsRefresh = false;
+
+    // UWP on Xbox One triggers a back request whenever the B button is pressed
+    // which can result in the app being suspended if unhandled
+    using namespace winrt::Windows::UI::Core;
+
+    auto navigation = SystemNavigationManager::GetForCurrentView();
+
+    navigation.BackRequested([](const winrt::Windows::Foundation::IInspectable&, const BackRequestedEventArgs& args)
+    {
+        args.Handled(true);
+    });
 }
 
 void Sample::OnGamepadAdded(winrt::Windows::Foundation::IInspectable const &, Gamepad const & args)

@@ -11,6 +11,8 @@
 #include "ATGColors.h"
 #include "ControllerFont.h"
 
+extern void ExitSample();
+
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
@@ -135,7 +137,7 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
     XAUDIO2_EFFECT_DESCRIPTOR effects[] = { { m_reverbEffect.Get(), TRUE, 1 } };
     XAUDIO2_EFFECT_CHAIN effectChain = { 1, effects };
 
-    DX::ThrowIfFailed(m_XAudio2->CreateSubmixVoice(&m_submixVoice, 1, m_deviceDetails.InputSampleRate, 0, 0, NULL, &effectChain));
+    DX::ThrowIfFailed(m_XAudio2->CreateSubmixVoice(&m_submixVoice, 1, m_deviceDetails.InputSampleRate, 0, 0, nullptr, &effectChain));
 
     SetReverb(0);
 
@@ -268,7 +270,7 @@ void Sample::PlayFile(const wchar_t* filename)
     const XAUDIO2_VOICE_SENDS sendList = { 2, sendDescriptors };
 
     // Create the source voice
-    DX::ThrowIfFailed(m_XAudio2->CreateSourceVoice(&m_sourceVoice, waveData.wfx, 0, XAUDIO2_DEFAULT_FREQ_RATIO, NULL, &sendList));
+    DX::ThrowIfFailed(m_XAudio2->CreateSourceVoice(&m_sourceVoice, waveData.wfx, 0, XAUDIO2_DEFAULT_FREQ_RATIO, nullptr, &sendList));
 
     // Submit the wave sample data using an XAUDIO2_BUFFER structure
     XAUDIO2_BUFFER buffer = {0};
@@ -389,7 +391,7 @@ void Sample::DrawCircle(X3DAUDIO_VECTOR position, float radius)
     float scale = (radius / 390) + (position.z / 200);
 
     m_spriteBatch->Begin();
-    m_spriteBatch->Draw(m_circleTexture.Get(), pos, NULL, ATG::Colors::White, 0, XMFLOAT2(394, 394), scale);
+    m_spriteBatch->Draw(m_circleTexture.Get(), pos, nullptr, ATG::Colors::White, 0, XMFLOAT2(394, 394), scale);
     m_spriteBatch->End();
 
     PIXEndEvent(context);
@@ -562,7 +564,7 @@ void Sample::Update(DX::StepTimer const& )
 
         if (pad.IsViewPressed())
         {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
         }
 
         float height = 0.f;
@@ -652,7 +654,7 @@ void Sample::Update(DX::StepTimer const& )
 
     if (kb.Escape)
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
 
     //Adjust reverb setting

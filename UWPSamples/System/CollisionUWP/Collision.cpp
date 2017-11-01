@@ -9,7 +9,10 @@
 #include "Collision.h"
 
 #include "ATGColors.h"
+#include "ControllerFont.h"
 #include "DebugDraw.h"
+
+extern void ExitSample();
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -55,6 +58,7 @@ namespace
 }
 
 Sample::Sample() :
+    m_ctrlConnected(false),
     m_showHelp(false)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
@@ -124,11 +128,12 @@ void Sample::Update(DX::StepTimer const& timer)
     auto pad = m_gamePad->GetState(0);
     if (pad.IsConnected())
     {
+        m_ctrlConnected = true;
         m_gamePadButtons.Update(pad);
 
         if (pad.IsViewPressed())
         {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
         }
 
         if (m_gamePadButtons.menu == GamePad::ButtonStateTracker::PRESSED)
@@ -163,6 +168,7 @@ void Sample::Update(DX::StepTimer const& timer)
     }
     else
     {
+        m_ctrlConnected = false;
         m_gamePadButtons.Reset();
 
         if (!m_showHelp)
@@ -183,7 +189,7 @@ void Sample::Update(DX::StepTimer const& timer)
     }
     else if (m_keyboardButtons.IsKeyPressed(Keyboard::Escape))
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
     else if (!m_showHelp)
     {
@@ -305,6 +311,17 @@ void Sample::Render()
 
         m_font->DrawString(m_sprites.get(), m_name.c_str(), XMFLOAT2(float(safeRect.left), float(safeRect.top)), ATG::Colors::White);
 
+        const wchar_t* legend = (m_ctrlConnected) ?
+            L"[View] Exit   [Menu] Help"
+            : L"Esc - Exit   F1 - Help";
+
+        DX::DrawControllerString(m_sprites.get(),
+            m_font.get(), m_ctrlFont.get(),
+            legend,
+            XMFLOAT2(float(safeRect.left),
+                float(safeRect.bottom) - m_font->GetLineSpacing()),
+            ATG::Colors::LightGrey);
+
         m_sprites->End();
     }
 
@@ -401,6 +418,8 @@ void Sample::CreateDeviceDependentResources()
 
     m_font = std::make_unique<SpriteFont>(device, L"SegoeUI_18.spritefont");
 
+    m_ctrlFont = std::make_unique<SpriteFont>(device, L"XboxOneControllerLegendSmall.spritefont");
+
     m_effect = std::make_unique<BasicEffect>(device);
     m_effect->SetVertexColorEnabled(true);
 
@@ -440,6 +459,7 @@ void Sample::OnDeviceLost()
     m_effect.reset();
     m_batch.reset();
     m_font.reset();
+    m_ctrlFont.reset();
     m_sprites.reset();
     m_layout.Reset();
 

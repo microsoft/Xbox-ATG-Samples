@@ -64,6 +64,7 @@ private:
     std::unique_ptr<DirectX::BasicEffect>       m_effect;
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>> m_batch;
     std::unique_ptr<DirectX::SpriteFont>        m_font;
+    std::unique_ptr<DirectX::SpriteFont>        m_ctrlFont;
     std::unique_ptr<DirectX::SpriteBatch>       m_sprites;
 
     Microsoft::WRL::ComPtr<ID3D11InputLayout>   m_layout;

@@ -11,6 +11,8 @@
 
 using namespace DirectX;
 
+extern void ExitSample();
+
 using Microsoft::WRL::ComPtr;
 using namespace Windows::Devices::Enumeration;
 using namespace Windows::Media::Devices;
@@ -137,7 +139,7 @@ void Sample::Update(DX::StepTimer const&)
 
         if (pad.IsViewPressed())
         {
-            Windows::ApplicationModel::Core::CoreApplication::Exit();
+            ExitSample();
         }
     }
     else
@@ -150,7 +152,7 @@ void Sample::Update(DX::StepTimer const&)
 
     if (kb.Escape)
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
 
     if (m_finishInit)

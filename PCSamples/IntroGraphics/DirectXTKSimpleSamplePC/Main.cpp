@@ -169,8 +169,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     auto pInter = reinterpret_cast<const PDEV_BROADCAST_DEVICEINTERFACE>(pDev);
                     if (pInter->dbcc_classguid == KSCATEGORY_AUDIO)
                     {
-                        if (g_sample)
-                            g_sample->NewAudioDevice();
+                        if (sample)
+                            sample->NewAudioDevice();
                     }
                 }
             }
@@ -187,8 +187,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     auto pInter = reinterpret_cast<const PDEV_BROADCAST_DEVICEINTERFACE>(pDev);
                     if (pInter->dbcc_classguid == KSCATEGORY_AUDIO)
                     {
-                        if (g_sample)
-                            g_sample->NewAudioDevice();
+                        if (sample)
+                            sample->NewAudioDevice();
                     }
                 }
             }
@@ -198,8 +198,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         return 0;
 
     case WM_PAINT:
-        hdc = BeginPaint(hWnd, &ps);
-        EndPaint(hWnd, &ps);
+        if (s_in_sizemove && sample)
+        {
+            sample->Tick();
+        }
+        else
+        {
+            hdc = BeginPaint(hWnd, &ps);
+            EndPaint(hWnd, &ps);
+        }
         break;
 
     case WM_SIZE:

@@ -38,10 +38,13 @@ public:
 
         m_sample = std::make_unique<Sample>();
 
-        // Telemetry Code
+        // Sample Usage Telemetry
+        //
+        // Disable or remove this code block to opt-out of sample usage telemetry
+        //
         if (EventRegisterATGSampleTelemetry() == ERROR_SUCCESS)
         {
-            wchar_t exePath[MAX_PATH+1];
+            wchar_t exePath[MAX_PATH + 1] = {};
             if (!GetModuleFileNameW(nullptr, exePath, MAX_PATH))
             {
                 wcscpy_s(exePath, L"Unknown");

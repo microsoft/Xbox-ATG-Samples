@@ -19,15 +19,20 @@ namespace
 {
 #if defined(_XBOX_ONE) && defined(_TITLE)
 #include "Compiled/XboxOnePBREffect_VSConstant.inc"
-         
+#include "Compiled/XboxOnePBREffect_VSConstantVelocity.inc"
+
 #include "Compiled/XboxOnePBREffect_PSConstant.inc"
 #include "Compiled/XboxOnePBREffect_PSTextured.inc"
+#include "Compiled/XboxOnePBREffect_PSTexturedVelocity.inc"
          
 #else    
 #include "Compiled/PBREffect_VSConstant.inc"
-       
+#include "Compiled/PBREffect_VSConstantVelocity.inc"
+
 #include "Compiled/PBREffect_PSConstant.inc"
 #include "Compiled/PBREffect_PSTextured.inc"
+#include "Compiled/PBREffect_PSTexturedVelocity.inc"
+
 #endif
 }
 
@@ -38,16 +43,20 @@ struct PBREffectConstants
     XMMATRIX world;
     XMVECTOR worldInverseTranspose[3];
     XMMATRIX worldViewProj;
+    XMMATRIX prevWorldViewProj; // for velocity generation
 
     XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];           
     XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
     
-    // New PBR Parameters
+    // PBR Parameters
     XMVECTOR Albedo;
     float    Metallic;
     float    Roughness;
+    int      numRadianceMipLevels;
 
-    int     numRadianceMipLevels;
+    // Size of render target 
+    float   targetWidth;
+    float   targetHeight;
 };
 
 static_assert( ( sizeof(PBREffectConstants) % 16 ) == 0, "CB size not padded correctly" );
@@ -58,9 +67,9 @@ struct PBREffectTraits
 {
     typedef PBREffectConstants ConstantBufferType;
 
-    static const int VertexShaderCount = 1;
-    static const int PixelShaderCount = 2;
-    static const int ShaderPermutationCount = 2;
+    static const int VertexShaderCount = 2;
+    static const int PixelShaderCount = 3;
+    static const int ShaderPermutationCount = 3;
     static const int RootSignatureCount = 1;
 };
 
@@ -69,14 +78,21 @@ struct PBREffectTraits
 class ATG::PBREffect::Impl : public EffectBase<PBREffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription);
+    Impl(_In_ ID3D12Device* device, 
+        int effectFlags, 
+        const EffectPipelineStateDescription& pipelineDescription,
+        bool generateVelocity);
+
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 
-    int GetPipelineStatePermutation(bool textureEnabled) const;
+    int GetPipelineStatePermutation(bool textureEnabled, bool velocityEnabled) const;
 
     static const int MaxDirectionalLights = 3;
     
     int flags;
+
+    // When PBR moves into DirectXTK, this could become an effect flag.
+    bool doGenerateVelocity;
 
     enum RootParameterIndex
     {
@@ -98,7 +114,7 @@ public:
 const D3D12_SHADER_BYTECODE EffectBase<PBREffectTraits>::VertexShaderBytecode[] =
 {
     { PBREffect_VSConstant, sizeof(PBREffect_VSConstant) },
-
+    { PBREffect_VSConstantVelocity, sizeof(PBREffect_VSConstantVelocity) },
 };
 
 
@@ -106,6 +122,7 @@ const int EffectBase<PBREffectTraits>::VertexShaderIndices[] =
 {
     0,      // basic
     0,      // textured
+    1,      // textured + velocity
 };
 
 
@@ -113,6 +130,7 @@ const D3D12_SHADER_BYTECODE EffectBase<PBREffectTraits>::PixelShaderBytecode[] =
 {
     { PBREffect_PSConstant, sizeof(PBREffect_PSConstant) },
     { PBREffect_PSTextured, sizeof(PBREffect_PSTextured) },
+    { PBREffect_PSTexturedVelocity, sizeof(PBREffect_PSTexturedVelocity) }
 };
 
 
@@ -120,16 +138,18 @@ const int EffectBase<PBREffectTraits>::PixelShaderIndices[] =
 {
     0,      // basic
     1,      // textured
+    2,      // textured + velocity
 };
 
 // Global pool of per-device PBREffect resources. Required by EffectBase<>, but not used.
 SharedResourcePool<ID3D12Device*, EffectBase<PBREffectTraits>::DeviceResources> EffectBase<PBREffectTraits>::deviceResourcesPool;
 
 // Constructor.
-PBREffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
+PBREffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool generateVelocity)
     : EffectBase(device),
       flags(effectFlags),
-    descriptors{}
+      doGenerateVelocity(generateVelocity),
+      descriptors{}
 {
     static_assert( _countof(EffectBase<PBREffectTraits>::VertexShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch" );
     static_assert( _countof(EffectBase<PBREffectTraits>::VertexShaderBytecode) == PBREffectTraits::VertexShaderCount, "array/max mismatch" );
@@ -189,7 +209,8 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPi
     mRootSignature = GetRootSignature(0, rsigDesc);
 
     // Create pipeline state
-    int sp = GetPipelineStatePermutation((effectFlags & EffectFlags::Texture) != 0);
+    int sp = GetPipelineStatePermutation((effectFlags & EffectFlags::Texture) != 0,
+                                         doGenerateVelocity);
     int vi = EffectBase<PBREffectTraits>::VertexShaderIndices[sp];
     int pi = EffectBase<PBREffectTraits>::PixelShaderIndices[sp];
    
@@ -202,11 +223,12 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPi
 }
 
 
-int PBREffect::Impl::GetPipelineStatePermutation(bool textureEnabled) const
+int PBREffect::Impl::GetPipelineStatePermutation(bool textureEnabled, bool velocityEnabled) const
 {
     int permutation = 0;
 
     if (textureEnabled) permutation += 1;
+    if (velocityEnabled) permutation = 2; // only textured velocity is supported
 
     return permutation;
 }
@@ -215,9 +237,12 @@ int PBREffect::Impl::GetPipelineStatePermutation(bool textureEnabled) const
 // Sets our state onto the D3D device.
 void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
+    // Store old wvp for velocity calculation in shader
+    constants.prevWorldViewProj = constants.worldViewProj;
+
     // Compute derived parameter values.
     matrices.SetConstants(dirtyFlags, constants.worldViewProj);        
-       
+
     // World inverse transpose matrix.
     if (dirtyFlags & EffectDirtyFlags::WorldInverseTranspose)
     {
@@ -275,8 +300,11 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 }
 
 // Public constructor.
-PBREffect::PBREffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
-    : pImpl(new Impl(device, effectFlags, pipelineDescription))
+PBREffect::PBREffect(_In_ ID3D12Device* device, 
+                     int effectFlags, 
+                    const EffectPipelineStateDescription& pipelineDescription, 
+                    bool generateVelocity)
+    : pImpl(new Impl(device, effectFlags, pipelineDescription, generateVelocity))
 {
 }
 
@@ -437,6 +465,13 @@ void PBREffect::SetIBLTextures(_In_ D3D12_GPU_DESCRIPTOR_HANDLE radiance,
 
     pImpl->descriptors[Impl::RootParameterIndex::IrradianceTexture] = irradiance;
 
+    pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
+}
+
+void PBREffect::SetRenderTargetSizeInPixels(int width, int height)
+{
+    pImpl->constants.targetWidth = static_cast<float>(width);
+    pImpl->constants.targetHeight = static_cast<float>(height);
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 

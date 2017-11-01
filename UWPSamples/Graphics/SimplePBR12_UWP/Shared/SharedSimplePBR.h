@@ -67,6 +67,7 @@ private:
 
     std::unique_ptr<DirectX::SpriteBatch>           m_spriteBatch;
     std::unique_ptr<DirectX::ToneMapPostProcess>    m_toneMap;
+    std::unique_ptr<DirectX::ToneMapPostProcess>    m_HDR10;
 
     // Render target view for tonemapping
     std::unique_ptr<DX::RenderTexture>              m_hdrScene;

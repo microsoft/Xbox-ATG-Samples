@@ -22,7 +22,7 @@ ISACRenderer::ISACRenderer() :
 	m_SpatialAudioClient(nullptr),
 	m_SpatialAudioStream(nullptr),
 	m_ISACrenderstate( RenderState::Inactive ),
-	m_bufferCompletionEvent( NULL )
+	m_bufferCompletionEvent(nullptr)
 {
 
 }

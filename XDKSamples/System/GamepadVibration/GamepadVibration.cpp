@@ -11,9 +11,12 @@
 #include "ATGColors.h"
 #include "ControllerFont.h"
 
+extern void ExitSample();
+
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
+
 using namespace Windows::Xbox::Input;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
@@ -286,7 +289,7 @@ void Sample::Update(DX::StepTimer const& )
 
     if (m_reading->IsViewPressed)
     {
-        Windows::ApplicationModel::Core::CoreApplication::Exit();
+        ExitSample();
     }
 
     if (!m_dPadPressed)

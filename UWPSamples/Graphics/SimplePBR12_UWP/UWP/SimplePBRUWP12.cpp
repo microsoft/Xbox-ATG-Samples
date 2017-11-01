@@ -18,7 +18,11 @@ using Microsoft::WRL::ComPtr;
 
 Sample::Sample()
 {
-    m_deviceResources = std::make_unique<DX::DeviceResources>(GetBackBufferFormat(), GetDepthFormat());
+    m_deviceResources = std::make_unique<DX::DeviceResources>(
+        GetBackBufferFormat(), GetDepthFormat(), 2,
+        D3D_FEATURE_LEVEL_11_0,
+        DX::DeviceResources::c_EnableHDR);
+
     m_deviceResources->RegisterDeviceNotify(this);
     m_sharedSimplePBR = std::make_unique<SharedSimplePBR>(this);
 }

@@ -42,12 +42,17 @@ public:
         CoreApplication::Resuming +=
             ref new EventHandler<Platform::Object^>(this, &ViewProvider::OnResuming);
 
+        Windows::ApplicationModel::Core::CoreApplication::DisableKinectGpuReservation = true;
+
         m_sample = std::make_unique<Sample>();
 
-        // Telemetry Code
+        // Sample Usage Telemetry
+        //
+        // Disable or remove this code block to opt-out of sample usage telemetry
+        //
         if (EventRegisterATGSampleTelemetry() == ERROR_SUCCESS)
         {
-            wchar_t exePath[MAX_PATH+1];
+            wchar_t exePath[MAX_PATH + 1] = {};
             if (!GetModuleFileNameW(nullptr, exePath, MAX_PATH))
             {
                 wcscpy_s(exePath, L"Unknown");
@@ -95,7 +100,7 @@ protected:
 
     void OnSuspending(Platform::Object^ sender, SuspendingEventArgs^ args)
     {
-        SuspendingDeferral^ deferral = args->SuspendingOperation->GetDeferral();
+        auto deferral = args->SuspendingOperation->GetDeferral();
 
         create_task([this, deferral]()
         {
@@ -132,14 +137,19 @@ public:
 
 // Entry point
 [Platform::MTAThread]
-int main(Platform::Array<Platform::String^>^ argv)
+int __cdecl main(Platform::Array<Platform::String^>^ /*argv*/)
 {
-    UNREFERENCED_PARAMETER(argv);
-
     // Default main thread to CPU 0
     SetThreadAffinityMask(GetCurrentThread(), 0x1);
 
     auto viewProviderFactory = ref new ViewProviderFactory();
     CoreApplication::Run(viewProviderFactory);
     return 0;
+}
+
+
+// Exit helper
+void ExitSample()
+{
+    Windows::ApplicationModel::Core::CoreApplication::Exit();
 }
