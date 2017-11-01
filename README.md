@@ -32,16 +32,31 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td><a href="UWPSamples/Audio/AdvancedSpatialSoundsUWP">Advanced audio UWP</a></td>
   <td><a href="XDKSamples/Audio/AdvancedSpatialSoundsXDK">Advanced audio XDK</a></td>
  </tr>
+</table>
+
+<table>
  <tr>
-  <td>XAudio2</td>
-  <td><a href="UWPSamples/Audio/SimplePlaySoundUWP">Basic audio UWP</a></td>
-  <td><a href="XDKSamples/Audio/SimplePlaySound">Basic audio XDK</a></td>
-  <td><a href="UWPSamples/Audio/SimplePlay3DSoundUWP">3D playback UWP</a></td>
+  <td>XAudio2: Basic audio</td>
+  <td><a href="UWPSamples/Audio/SimplePlaySoundUWP">UWP</a></td>
+  <td><a href="XDKSamples/Audio/SimplePlaySound">XDK</a></td>
  </tr>
  <tr>
-  <td>WASAPI</td>
-  <td><a href="UWPSamples/Audio/SimpleWASAPIPlaySoundUWP">Playback</a></td>
-  <td><a href="UWPSamples/Audio/SimpleWASAPICaptureUWP">Capture</a></td>
+  <td>XAudio2: 3D playback</td>
+  <td><a href="UWPSamples/Audio/SimplePlay3DSoundUWP">UWP</a></td>
+  <td><a href="XDKSamples/Audio/SimplePlay3DSoundXDK">XDK</a></td>
+ </tr>
+</table>
+
+<table>
+ <tr>
+  <td>WASAPI: Playback</td>
+  <td><a href="UWPSamples/Audio/SimpleWASAPIPlaySoundUWP">UWP</a></td>
+  <td><a href="XDKSamples/Audio/SimpleWASAPIPlaySoundXDK">XDK</a></td>
+ </tr>
+ <tr>
+  <td>WASAPI: Capture</td>
+  <td><a href="UWPSamples/Audio/SimpleWASAPICaptureUWP">UWP</a></td>
+  <td><a href="XDKSamples/Audio/SimpleWASAPICaptureXDK">XDK</a></td>
  </tr>
 </table>
 
@@ -127,6 +142,8 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
  </tr>
  <tr>
   <td>High-Dynamic Range Rendering</td>
+  <td><a href="UWPSamples/Graphics/SimpleHDR_UWP">UWP DX11</a></td>
+  <td><a href="UWPSamples/Graphics/SimpleHDR_UWP12">UWP DX12</a></td>
   <td><a href="XDKSamples/Graphics/SimpleHDR">XDK DX11</a></td>
   <td><a href="XDKSamples/Graphics/SimpleHDR12">XDK DX12</a></td>
  </tr>
