@@ -4,7 +4,7 @@ DirectXTK - the DirectX Tool Kit for DirectX 12
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-September 22, 2017
+November 1, 2017
 
 This package contains the "DirectX Tool Kit", a collection of helper classes for 
 writing Direct3D 12 C++ code for Universal Windows Platform (UWP) apps, Win32 desktop
@@ -13,7 +13,7 @@ applications for Windows 10, and Xbox One exclusive apps.
 This code is designed to build with Visual Studio 2015 Update 3 or Visual Studio 2017.
 It is recommended that you make use of VS 2015 Update 3, Windows Tools 1.4.1, and the
 Windows 10 Anniversary Update SDK (14393) or VS 2017 with the Windows 10
-Creators Update SDK (15063).
+Fall Creators Update SDK (16299).
 
 Inc\
     Public Header Files (in the DirectX C++ namespace):
@@ -94,9 +94,23 @@ COMPARISONS TO DIRECTX 11 VERSION
   to the DirectX 11 version
 
 
+-------------
+RELEASE NOTES
+-------------
+
+* The VS 2017 projects make use of /permissive- for improved C++ standard conformance. Use of a Windows 10 SDK prior to
+  the Fall Creators Update (16299) or an Xbox One XDK prior to June 2017 QFE 4 may result in failures due to problems
+  with the system headers. You can work around these by deleting /permissive- from the project files which is found
+  in the <AdditionalOptions> element.
+
+
 ---------------
 RELEASE HISTORY
 ---------------
+
+November 1, 2017
+    VS 2017 updated for Windows 10 Fall Creators Update SDK (16299)
+    Updated D3DX12 internal copy to latest version
 
 September 22, 2017
     Updated for VS 2017 15.3 update /permissive- changes
