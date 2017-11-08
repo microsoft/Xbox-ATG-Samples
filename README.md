@@ -262,12 +262,12 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 # Requirements
 
 ## UWP apps
-* Windows 10 Creators Update (Build 15063)
-* Visual Studio 2017 with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, *Windows 10 SDK (10.0.15063.0)*, and *Windows 10 SDK (10.0.14393.0)*.
+* Windows 10 Anniversary Update (Build 14393), Creators Update (Build 15063), or Fall Creators Update (Build 16299)
+* Visual Studio 2017 with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, *Windows 10 SDK ([10.0.16299.0](https://blogs.msdn.microsoft.com/chuckw/2017/10/11/windows-10-fall-creators-update-sdk/))*, and *Windows 10 SDK (10.0.14393.0)*.
 
-Use of the Visual Studio 2017 update v15.3 is recommended.
+Use of the Visual Studio 2017 update [v15.4](https://blogs.msdn.microsoft.com/visualstudio/2017/10/10/visual-studio-2017-version-15-4-released/) is recommended.
 
-> The *Windows 10 SDK (10.0.14393.0)* is required to support ``WindowsTargetPlatformMinVersion`` set the Windows 10 Anniversary Update in many of the samples that work on both versions of Windows 10.
+> The *Windows 10 SDK (10.0.14393.0)* is required to support ``WindowsTargetPlatformMinVersion`` set to the Windows 10 Anniversary Update in many of the samples.
 
 ## XDK apps
 * Xbox One Development Kit
