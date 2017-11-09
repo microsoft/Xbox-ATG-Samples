@@ -25,10 +25,6 @@ namespace
     const DXGI_FORMAT c_backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
     const DXGI_FORMAT c_depthBufferFormat = DXGI_FORMAT_D32_FLOAT;
 
-    // This is a workaround for a bug in the Windows 10 validation layer when using sRGB formats.
-    const DXGI_FORMAT c_msaaFormat = DXGI_FORMAT_B8G8R8A8_TYPELESS;
-    const DXGI_FORMAT c_resolveFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
-
     unsigned int c_targetSampleCount = 4;
 }
 
@@ -152,7 +148,7 @@ void Sample::Render()
         PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Resolve");
 
         auto backBuffer = m_deviceResources->GetRenderTarget();
-        context->ResolveSubresource(backBuffer, 0, m_msaaRenderTarget.Get(), 0, c_resolveFormat);
+        context->ResolveSubresource(backBuffer, 0, m_msaaRenderTarget.Get(), 0, c_backBufferFormat);
 
         PIXEndEvent(context);
 
@@ -333,7 +329,7 @@ void Sample::CreateWindowSizeDependentResources()
 
     // Create an MSAA render target.
     CD3D11_TEXTURE2D_DESC renderTargetDesc(
-        c_msaaFormat,
+        c_backBufferFormat,
         backBufferWidth,
         backBufferHeight,
         1, // The render target view has only one texture.

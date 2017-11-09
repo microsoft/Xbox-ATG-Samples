@@ -262,12 +262,8 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 # Requirements
 
 ## UWP apps
-* Windows 10 Creators Update (Build 15063)
-* Visual Studio 2017 with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, *Windows 10 SDK (10.0.15063.0)*, and *Windows 10 SDK (10.0.14393.0)*.
-
-Use of the Visual Studio 2017 update v15.3 is recommended.
-
-> The *Windows 10 SDK (10.0.14393.0)* is required to support ``WindowsTargetPlatformMinVersion`` set the Windows 10 Anniversary Update in many of the samples that work on both versions of Windows 10.
+* Windows 10 Anniversary Update (Build 14393), Creators Update (Build 15063), or Fall Creators Update (Build 16299)
+* Visual Studio 2017 ([v15.4](https://blogs.msdn.microsoft.com/visualstudio/2017/10/10/visual-studio-2017-version-15-4-released/) update) with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, and *Windows 10 SDK ([10.0.16299.0](https://blogs.msdn.microsoft.com/chuckw/2017/10/11/windows-10-fall-creators-update-sdk/))*.
 
 ## XDK apps
 * Xbox One Development Kit
@@ -283,7 +279,7 @@ Use of the Visual Studio 2017 update v15.3 is recommended.
 
 When compiling and running a sample, the file name of the sample executable will be sent to Microsoft to help track sample usage. To opt-out of this data collection, you can remove the block of code in ``Main.cpp`` labeled _Sample Usage Telemetry_.
 
-For more information about Microsoft’s privacy policies in general, see the [Microsoft Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement/).
+For more information about Microsoft's privacy policies in general, see the [Microsoft Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement/).
 
 # Code of Conduct
 
