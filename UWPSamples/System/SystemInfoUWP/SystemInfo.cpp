@@ -18,6 +18,9 @@ using namespace DirectX::SimpleMath;
 
 using Microsoft::WRL::ComPtr;
 
+#include <libloaderapi2.h>
+extern "C" IMAGE_DOS_HEADER __ImageBase;
+
 namespace
 {
     inline float XM_CALLCONV DrawStringCenter(SpriteBatch* batch, SpriteFont* font, const wchar_t* text, float mid, float y, FXMVECTOR color, float scale)
@@ -194,7 +197,7 @@ void Sample::Render()
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"wProcessorArchitecture", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), arch, right, y, m_scale);
 
-            wchar_t buff[128] = { 0 };
+            wchar_t buff[128] = {};
             swprintf_s(buff, L"%u", info.wProcessorLevel);
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"wProcessorLevel", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
@@ -241,7 +244,7 @@ void Sample::Render()
                 auto ppc = static_cast<uint32_t>(info.PeakPrivateCommitUsage / (1024 * 1024));
                 auto tc = static_cast<uint32_t>(info.TotalCommitUsage / (1024 * 1024));
 
-                wchar_t buff[128] = { 0 };
+                wchar_t buff[128] = {};
                 swprintf_s(buff, L"%u (MiB)", ac);
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"AvailableCommit", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
@@ -276,7 +279,7 @@ void Sample::Render()
                 auto tvirt = static_cast<uint32_t>(info.ullTotalVirtual / (1024 * 1024));
                 auto avirt = static_cast<uint32_t>(info.ullAvailVirtual / (1024 * 1024));
 
-                wchar_t buff[128] = { 0 };
+                wchar_t buff[128] = {};
                 swprintf_s(buff, L"%u / %u (MB)", aphys, tphys);
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Physical Memory", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
@@ -363,6 +366,60 @@ void Sample::Render()
             {
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"SystemFirmwareVersion", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), easinfo->SystemFirmwareVersion->Data(), right, y, m_scale);
+            }
+        }
+        break;
+
+    case InfoPage::GAMINGDEVICEINFO:
+        {
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"GetGamingDeviceModelInformation", mid, y, ATG::Colors::LightGrey, m_scale);
+
+            #if defined(NTDDI_WIN10_RS3) && (NTDDI_VERSION >= NTDDI_WIN10_RS3)
+
+            // Requires the linker settings to include /DELAYLOAD:api-ms-win-gaming-deviceinformation-l1-1-0.dll
+            //
+            // Note: You can avoid the need for delay loading if you require 10.0.16299 as your minimum OS version
+            //       and/or you restrict your package to the Xbox device family
+
+            if (QueryOptionalDelayLoadedAPI(reinterpret_cast<HMODULE>(&__ImageBase),
+                "api-ms-win-gaming-deviceinformation-l1-1-0.dll",
+                "GetGamingDeviceModelInformation",
+                0))
+            {
+                GAMING_DEVICE_MODEL_INFORMATION info = {};
+                GetGamingDeviceModelInformation(&info);
+
+                wchar_t buff[128] = {};
+                swprintf_s(buff, L"%08X", info.vendorId);
+
+                switch (info.vendorId)
+                {
+                case GAMING_DEVICE_VENDOR_ID_MICROSOFT: wcscat_s(buff, L" (Microsoft)"); break;
+                }
+
+                DrawStringLeft(m_batch.get(), m_smallFont.get(), L"VendorId", left, y, m_scale);
+                y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
+
+                swprintf_s(buff, L"%08X", info.deviceId);
+
+                if (info.vendorId == GAMING_DEVICE_VENDOR_ID_MICROSOFT)
+                {
+                    switch (info.deviceId)
+                    {
+                    case GAMING_DEVICE_DEVICE_ID_XBOX_ONE: wcscat_s(buff, L" (Xbox One)"); break;
+                    case GAMING_DEVICE_DEVICE_ID_XBOX_ONE_S: wcscat_s(buff, L" (Xbox One S)"); break;
+                    case GAMING_DEVICE_DEVICE_ID_XBOX_ONE_X: wcscat_s(buff, L" (Xbox One X)"); break;
+                    case GAMING_DEVICE_DEVICE_ID_XBOX_ONE_X_DEVKIT: wcscat_s(buff, L" (Xbox One X Dev Kit)"); break;
+                    }
+                }
+
+                DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DeviceId", left, y, m_scale);
+                y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
+            }
+            else
+            #endif
+            {
+                y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"This API requires Windows 10 (16299) or later", mid, y, ATG::Colors::Orange, m_scale);
             }
         }
         break;
@@ -495,7 +552,7 @@ void Sample::Render()
                     size += info->Size;
                 }
 
-                wchar_t buff[128] = { 0 };
+                wchar_t buff[128] = {};
                 swprintf_s(buff, L"%zu", logicalProcessors);
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Total logical processors", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
@@ -546,7 +603,7 @@ void Sample::Render()
 
             auto displayInformation = DisplayInformation::GetForCurrentView();
 
-            wchar_t buff[128] = { 0 };
+            wchar_t buff[128] = {};
             swprintf_s(buff, L"%u %%", displayInformation->ResolutionScale);
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Resolution Scale", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
@@ -609,7 +666,7 @@ void Sample::Render()
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DeviceName", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), outputDesc.DeviceName, right, y, m_scale);
 
-                wchar_t buff[128] = { 0 };
+                wchar_t buff[128] = {};
                 swprintf_s(buff, L"%u,%u,%u,%u", outputDesc.DesktopCoordinates.left, outputDesc.DesktopCoordinates.top, outputDesc.DesktopCoordinates.right, outputDesc.DesktopCoordinates.bottom );
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DesktopCoordinates", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
