@@ -39,6 +39,10 @@
 #include <dxgidebug.h>
 #endif
 
+#if defined(NTDDI_WIN10_RS3) && (NTDDI_VERSION >= NTDDI_WIN10_RS3)
+#include "Gamingdeviceinformation.h"
+#endif
+
 #include "DDSTextureLoader.h"
 #include "GamePad.h"
 #include "Keyboard.h"
