@@ -46,20 +46,20 @@
     dcl_2d s0
     dcl_cube s1
 
-#line 92 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 93 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     nrm r0.xyz, t2  // ::worldNormal<0,1,2>
     add r1.xyz, -t1, c10
     nrm r2.xyz, r1  // ::eyeVector<0,1,2>
 
-#line 98
+#line 99
     dp3 r0.w, -r2, r0
     add r0.w, r0.w, r0.w
     mad r1.xyz, r0, -r0.w, -r2  // ::envcoord<0,1,2>
 
-#line 89
+#line 90
     texld r2, t0, s0
 
-#line 100
+#line 101
     texld r1, r1, s1
 
 #line 36 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
@@ -78,20 +78,20 @@
     mov r3.xyz, c2  // Parameters::DiffuseColor<0,1,2>
     mad r0.xyz, r0, r3, c3  // ::result<0,1,2>
 
-#line 89 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 90 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     mul r2, r2, t3  // ::color<0,1,2,3>
 
-#line 96
+#line 97
     mul r0.xyz, r0, r2  // ::color<0,1,2>
 
-#line 108
+#line 109
     mad r1.xyz, r1, r2.w, -r0
     mad r0.xyz, c1.x, r1, r0  // ::color<0,1,2>
 
-#line 100
+#line 101
     mul r0.w, r1.w, r2.w  // ::envmap<3>
 
-#line 109
+#line 110
     mad r0.xyz, c0, r0.w, r0  // ::color<0,1,2>
 
 #line 20 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
@@ -149,10 +149,10 @@ ret
 
 const BYTE EnvironmentMapEffect_PSEnvMapPixelLighting[] =
 {
-     68,  88,  66,  67, 252, 201, 
-    117, 228,   6, 186, 229,  21, 
-    122, 165,  68,   7,  74,  35, 
-     92, 125,   1,   0,   0,   0, 
+     68,  88,  66,  67,  72,   4, 
+    176, 110,  49, 146,  41,  47, 
+    193, 161, 156,  20, 164,   7, 
+    167,   0,   1,   0,   0,   0, 
     132,  13,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      32,   8,   0,   0, 208,  12, 
@@ -216,16 +216,16 @@ const BYTE EnvironmentMapEffect_PSEnvMapPixelLighting[] =
     192,   5,   0,   0,   0,   0, 
     255, 255, 204,   5,   0,   0, 
       0,   0, 255, 255, 216,   5, 
-      0,   0,  92,   0,   0,   0, 
-    228,   5,   0,   0,  91,   0, 
+      0,   0,  93,   0,   0,   0, 
+    228,   5,   0,   0,  92,   0, 
       0,   0, 240,   5,   0,   0, 
-     91,   0,   0,   0,   0,   6, 
-      0,   0,  98,   0,   0,   0, 
-     12,   6,   0,   0,  98,   0, 
+     92,   0,   0,   0,   0,   6, 
+      0,   0,  99,   0,   0,   0, 
+     12,   6,   0,   0,  99,   0, 
       0,   0,  28,   6,   0,   0, 
-     98,   0,   0,   0,  44,   6, 
-      0,   0,  89,   0,   0,   0, 
-     64,   6,   0,   0, 100,   0, 
+     99,   0,   0,   0,  44,   6, 
+      0,   0,  90,   0,   0,   0, 
+     64,   6,   0,   0, 101,   0, 
       0,   0,  80,   6,   0,   0, 
      36,   0,   1,   0,  96,   6, 
       0,   0,  36,   0,   1,   0, 
@@ -240,14 +240,14 @@ const BYTE EnvironmentMapEffect_PSEnvMapPixelLighting[] =
     216,   6,   0,   0,  46,   0, 
       1,   0, 236,   6,   0,   0, 
      46,   0,   1,   0, 248,   6, 
-      0,   0,  89,   0,   0,   0, 
-     12,   7,   0,   0,  96,   0, 
+      0,   0,  90,   0,   0,   0, 
+     12,   7,   0,   0,  97,   0, 
       0,   0,  28,   7,   0,   0, 
-    108,   0,   0,   0,  44,   7, 
-      0,   0, 108,   0,   0,   0, 
-     64,   7,   0,   0, 100,   0, 
+    109,   0,   0,   0,  44,   7, 
+      0,   0, 109,   0,   0,   0, 
+     64,   7,   0,   0, 101,   0, 
       0,   0,  84,   7,   0,   0, 
-    109,   0,   0,   0, 100,   7, 
+    110,   0,   0,   0, 100,   7, 
       0,   0,  20,   0,   2,   0, 
     120,   7,   0,   0,  20,   0, 
       2,   0, 140,   7,   0,   0, 

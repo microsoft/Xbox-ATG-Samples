@@ -77,8 +77,6 @@ public:
         RootParameterCount
     };
 
-    bool biasedVertexNormals;
-
     EffectLights lights;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
@@ -86,7 +84,7 @@ public:
     D3D12_GPU_DESCRIPTOR_HANDLE environmentMap;
     D3D12_GPU_DESCRIPTOR_HANDLE environmentMapSampler;
 
-    int GetPipelineStatePermutation(bool fresnelEnabled, bool specularEnabled, bool preferPerPixelLighting) const;
+    int GetPipelineStatePermutation(bool fresnelEnabled, bool specularEnabled, bool preferPerPixelLighting, bool biasedVertexNormals) const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -283,8 +281,6 @@ EnvironmentMapEffect::Impl::Impl(
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
 
-    biasedVertexNormals = (effectFlags & EffectFlags::BiasedVertexNormals) != 0;
-
     if (effectFlags & EffectFlags::VertexColor)
     {
         DebugTrace("ERROR: EnvironmentMapEffect does not implement EffectFlags::VertexColor\n");
@@ -302,7 +298,8 @@ EnvironmentMapEffect::Impl::Impl(
     int sp = GetPipelineStatePermutation(
         fresnelEnabled,
         specularEnabled,
-        (effectFlags & EffectFlags::PerPixelLightingBit) != 0);
+        (effectFlags & EffectFlags::PerPixelLightingBit) != 0,
+        (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
 
     assert(sp >= 0 && sp < EnvironmentMapEffectTraits::ShaderPermutationCount);
     int vi = EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices[sp];
@@ -321,7 +318,9 @@ EnvironmentMapEffect::Impl::Impl(
 }
 
 
-int EnvironmentMapEffect::Impl::GetPipelineStatePermutation(bool fresnelEnabled, bool specularEnabled, bool preferPerPixelLighting) const
+int EnvironmentMapEffect::Impl::GetPipelineStatePermutation(
+    bool fresnelEnabled, bool specularEnabled,
+    bool preferPerPixelLighting, bool biasedVertexNormals) const
 {
     int permutation = 0;
 
@@ -343,7 +342,7 @@ int EnvironmentMapEffect::Impl::GetPipelineStatePermutation(bool fresnelEnabled,
     }
     else
     {
-        // Supporte specular?
+        // Support specular?
         if (specularEnabled)
         {
             permutation += 4;
@@ -376,7 +375,6 @@ void EnvironmentMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandLi
     commandList->SetGraphicsRootSignature(mRootSignature);
 
     // Set the textures
-    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
     if (!texture.ptr || !environmentMap.ptr)
     {
         DebugTrace("ERROR: Missing texture(s) for EnvironmentMapEffect (texture %llu, environmentMap %llu)\n", texture.ptr, environmentMap.ptr);
@@ -387,6 +385,8 @@ void EnvironmentMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandLi
         DebugTrace("ERROR: Missing sampler(s) for EnvironmentMapEffect (sampler %llu, environmentMap %llu)\n", textureSampler.ptr, environmentMapSampler.ptr);
         throw std::exception("EnvironmentMapEffect");
     }
+
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSampler, textureSampler);
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::CubemapSRV, environmentMap);

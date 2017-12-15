@@ -63,7 +63,7 @@
     max r0.x, r0.x, c13.x
     min oT0.w, r0.x, c13.y  // ::VSBasicPixelLightingVc<3>
 
-#line 410 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 411 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT2.w, v2.w, c1.w  // ::VSBasicPixelLightingVc<10>
 
 #line 85 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
@@ -71,11 +71,11 @@
     dp4 r0.y, v0, c10  // ::vout<1>
     dp4 r0.z, v0, c12  // ::vout<3>
 
-#line 402 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 403 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicPixelLightingVc<11,12>
     mov oPos.w, r0.z  // ::VSBasicPixelLightingVc<14>
 
-#line 409
+#line 410
     mov oT2.xyz, v2  // ::VSBasicPixelLightingVc<7,8,9>
 
 // approximately 20 instruction slots used
@@ -111,10 +111,10 @@ ret
 
 const BYTE BasicEffect_VSBasicPixelLightingVc[] =
 {
-     68,  88,  66,  67, 127,  42, 
-    211, 113, 119, 151, 186,  29, 
-     57,   7, 251, 106,   1,  27, 
-    221,  48,   1,   0,   0,   0, 
+     68,  88,  66,  67, 194,  37, 
+     15, 126, 151, 171, 162, 110, 
+    172,  89,  25,  77, 100, 242, 
+    116, 253,   1,   0,   0,   0, 
     104,   9,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
       4,   6,   0,   0, 104,   8, 
@@ -193,15 +193,15 @@ const BYTE BasicEffect_VSBasicPixelLightingVc[] =
       1,   0, 224,   4,   0,   0, 
      14,   0,   1,   0, 240,   4, 
       0,   0,  14,   0,   1,   0, 
-      0,   5,   0,   0, 154,   1, 
+      0,   5,   0,   0, 155,   1, 
       2,   0,  16,   5,   0,   0, 
      85,   0,   0,   0,  32,   5, 
       0,   0,  85,   0,   0,   0, 
      48,   5,   0,   0,  85,   0, 
       0,   0,  64,   5,   0,   0, 
-    146,   1,   2,   0,  80,   5, 
-      0,   0, 146,   1,   2,   0, 
-    100,   5,   0,   0, 153,   1, 
+    147,   1,   2,   0,  80,   5, 
+      0,   0, 147,   1,   2,   0, 
+    100,   5,   0,   0, 154,   1, 
       2,   0, 112,   5,   0,   0, 
      86,  83,  66,  97, 115, 105, 
      99,  80, 105, 120, 101, 108, 

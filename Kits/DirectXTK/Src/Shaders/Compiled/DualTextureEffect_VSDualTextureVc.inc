@@ -48,7 +48,7 @@
     dcl_texcoord2 v2  // vin<6,7>
     dcl_texcoord3 v3  // vin<8,9,10,11>
 
-#line 49 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 43 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 oPos.z, v0, c5  // ::VSDualTextureVc<14>
 
 #line 14
@@ -59,7 +59,7 @@
 #line 72 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\DualTextureEffect.fx"
     mul oT0, v3, c1  // ::VSDualTextureVc<0,1,2,3>
 
-#line 49 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 43 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c3  // ::vout<0>
     dp4 r0.y, v0, c4  // ::vout<1>
     dp4 r0.z, v0, c6  // ::vout<3>
@@ -68,7 +68,7 @@
     mad oPos.xy, r0.z, c0, r0  // ::VSDualTextureVc<12,13>
     mov oPos.w, r0.z  // ::VSDualTextureVc<15>
 
-#line 51 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 45 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mov oT1.xyz, c7.x  // ::VSDualTextureVc<4,5,6>
 
 #line 70 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\DualTextureEffect.fx"
@@ -102,10 +102,10 @@ ret
 
 const BYTE DualTextureEffect_VSDualTextureVc[] =
 {
-     68,  88,  66,  67, 233,  83, 
-    115,  81, 128, 139,   8, 115, 
-    150,  50, 128, 143,  64,  79, 
-    118,  95,   1,   0,   0,   0, 
+     68,  88,  66,  67, 142, 106, 
+    146,  14, 173, 249,  57, 173, 
+     61, 176, 211, 188, 147, 135, 
+    218,  71,   1,   0,   0,   0, 
     244,   7,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      40,   5,   0,   0, 196,   6, 
@@ -158,20 +158,20 @@ const BYTE DualTextureEffect_VSDualTextureVc[] =
       0,   0,   0,   0, 255, 255, 
     208,   3,   0,   0,   0,   0, 
     255, 255, 220,   3,   0,   0, 
-     49,   0,   0,   0, 232,   3, 
+     43,   0,   0,   0, 232,   3, 
       0,   0,  14,   0,   0,   0, 
     248,   3,   0,   0,  14,   0, 
       0,   0,   8,   4,   0,   0, 
      14,   0,   0,   0,  24,   4, 
       0,   0,  72,   0,   1,   0, 
-     40,   4,   0,   0,  49,   0, 
+     40,   4,   0,   0,  43,   0, 
       0,   0,  56,   4,   0,   0, 
-     49,   0,   0,   0,  72,   4, 
-      0,   0,  49,   0,   0,   0, 
+     43,   0,   0,   0,  72,   4, 
+      0,   0,  43,   0,   0,   0, 
      88,   4,   0,   0,  63,   0, 
       1,   0, 104,   4,   0,   0, 
      63,   0,   1,   0, 124,   4, 
-      0,   0,  51,   0,   0,   0, 
+      0,   0,  45,   0,   0,   0, 
     136,   4,   0,   0,  70,   0, 
       1,   0, 148,   4,   0,   0, 
      70,   0,   1,   0, 160,   4, 

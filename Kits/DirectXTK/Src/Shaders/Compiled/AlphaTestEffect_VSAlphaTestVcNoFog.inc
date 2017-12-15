@@ -43,13 +43,13 @@
     dcl_texcoord1 v1  // vin<4,5>
     dcl_texcoord2 v2  // vin<6,7,8,9>
 
-#line 49 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 43 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 oPos.z, v0, c4  // ::VSAlphaTestVcNoFog<8>
 
 #line 82 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
     mul oT0, v2, c1  // ::VSAlphaTestVcNoFog<0,1,2,3>
 
-#line 49 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 43 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c2  // ::vout<0>
     dp4 r0.y, v0, c3  // ::vout<1>
     dp4 r0.z, v0, c5  // ::vout<3>
@@ -82,10 +82,10 @@ ret
 
 const BYTE AlphaTestEffect_VSAlphaTestVcNoFog[] =
 {
-     68,  88,  66,  67,  48, 147, 
-    202, 173, 242, 175, 212,  27, 
-     43, 132, 220, 253,  13,  33, 
-     54,  89,   1,   0,   0,   0, 
+     68,  88,  66,  67, 106,   5, 
+     49,  27, 249, 111, 188,  70, 
+    158, 124,  69, 161, 111,  42, 
+    252, 236,   1,   0,   0,   0, 
      64,   6,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      52,   4,   0,   0,  88,   5, 
@@ -134,13 +134,13 @@ const BYTE AlphaTestEffect_VSAlphaTestVcNoFog[] =
     255, 255,  24,   3,   0,   0, 
       0,   0, 255, 255,  36,   3, 
       0,   0,   0,   0, 255, 255, 
-     48,   3,   0,   0,  49,   0, 
+     48,   3,   0,   0,  43,   0, 
       0,   0,  60,   3,   0,   0, 
      82,   0,   1,   0,  76,   3, 
-      0,   0,  49,   0,   0,   0, 
-     92,   3,   0,   0,  49,   0, 
+      0,   0,  43,   0,   0,   0, 
+     92,   3,   0,   0,  43,   0, 
       0,   0, 108,   3,   0,   0, 
-     49,   0,   0,   0, 124,   3, 
+     43,   0,   0,   0, 124,   3, 
       0,   0,  74,   0,   1,   0, 
     140,   3,   0,   0,  74,   0, 
       1,   0, 160,   3,   0,   0, 

@@ -127,14 +127,14 @@
     dp4 r0.y, v0, c22  // ::vout<1>
     dp4 r0.z, v0, c24  // ::vout<3>
 
-#line 206 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 207 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicVertexLightingTx<10,11>
     mov oPos.w, r0.z  // ::VSBasicVertexLightingTx<13>
 
 #line 46 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mov oT0.w, c1.w  // ::VSBasicVertexLightingTx<3>
 
-#line 213 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 214 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mov oT2.xy, v2  // ::VSBasicVertexLightingTx<8,9>
 
 // approximately 63 instruction slots used
@@ -208,10 +208,10 @@ ret
 
 const BYTE BasicEffect_VSBasicVertexLightingTx[] =
 {
-     68,  88,  66,  67, 226, 130, 
-     61, 191, 198,  60,   5,  84, 
-    126, 228,  76, 152, 208,  24, 
-    164,  45,   1,   0,   0,   0, 
+     68,  88,  66,  67, 223, 109, 
+    229,  30, 195, 112,  94,  93, 
+     65,  85, 155, 176, 186,  36, 
+    104, 132,   1,   0,   0,   0, 
      36,  19,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      12,  11,   0,   0,  36,  18, 
@@ -338,11 +338,11 @@ const BYTE BasicEffect_VSBasicVertexLightingTx[] =
       0,   0,  28,  10,   0,   0, 
      63,   0,   0,   0,  44,  10, 
       0,   0,  63,   0,   0,   0, 
-     60,  10,   0,   0, 206,   0, 
+     60,  10,   0,   0, 207,   0, 
       2,   0,  76,  10,   0,   0, 
-    206,   0,   2,   0,  96,  10, 
+    207,   0,   2,   0,  96,  10, 
       0,   0,  46,   0,   0,   0, 
-    108,  10,   0,   0, 213,   0, 
+    108,  10,   0,   0, 214,   0, 
       2,   0, 120,  10,   0,   0, 
      80,  97, 114,  97, 109, 101, 
     116, 101, 114, 115,   0,  68, 

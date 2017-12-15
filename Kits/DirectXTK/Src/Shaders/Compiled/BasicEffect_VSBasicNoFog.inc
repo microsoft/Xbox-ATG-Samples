@@ -38,17 +38,17 @@
     vs_2_0
     dcl_texcoord v0  // vin<0,1,2,3>
 
-#line 49 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 43 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 oPos.z, v0, c4  // ::VSBasicNoFog<6>
     dp4 r0.x, v0, c2  // ::vout<0>
     dp4 r0.y, v0, c3  // ::vout<1>
     dp4 r0.z, v0, c5  // ::vout<3>
 
-#line 56 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 57 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicNoFog<4,5>
     mov oPos.w, r0.z  // ::VSBasicNoFog<7>
 
-#line 50 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 44 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mov oT0, c1  // ::VSBasicNoFog<0,1,2,3>
 
 // approximately 7 instruction slots used
@@ -68,10 +68,10 @@ ret
 
 const BYTE BasicEffect_VSBasicNoFog[] =
 {
-     68,  88,  66,  67, 192, 213, 
-     36, 185, 113,  26, 128, 104, 
-     70, 236, 179,  37, 122,   5, 
-    165,  47,   1,   0,   0,   0, 
+     68,  88,  66,  67, 102, 153, 
+    146, 208, 197,  39, 191,  60, 
+    183,  42, 182, 137, 165, 248, 
+     10,  91,   1,   0,   0,   0, 
     252,   4,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     144,   3,   0,   0, 116,   4, 
@@ -117,15 +117,15 @@ const BYTE BasicEffect_VSBasicNoFog[] =
      46, 102, 120,   0,  40,   0, 
       0,   0,  92,   0,   0,   0, 
       0,   0, 255, 255, 156,   2, 
-      0,   0,  49,   0,   0,   0, 
-    168,   2,   0,   0,  49,   0, 
+      0,   0,  43,   0,   0,   0, 
+    168,   2,   0,   0,  43,   0, 
       0,   0, 184,   2,   0,   0, 
-     49,   0,   0,   0, 200,   2, 
-      0,   0,  49,   0,   0,   0, 
-    216,   2,   0,   0,  56,   0, 
+     43,   0,   0,   0, 200,   2, 
+      0,   0,  43,   0,   0,   0, 
+    216,   2,   0,   0,  57,   0, 
       1,   0, 232,   2,   0,   0, 
-     56,   0,   1,   0, 252,   2, 
-      0,   0,  50,   0,   0,   0, 
+     57,   0,   1,   0, 252,   2, 
+      0,   0,  44,   0,   0,   0, 
       8,   3,   0,   0,  86,  83, 
      66,  97, 115, 105,  99,  78, 
     111,  70, 111, 103,   0,  68, 
