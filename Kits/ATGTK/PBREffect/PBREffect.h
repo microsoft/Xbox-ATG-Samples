@@ -47,9 +47,7 @@ namespace ATG
         void XM_CALLCONV SetConstantAlbedo(DirectX::FXMVECTOR value);
         void __cdecl     SetConstantMetallic(float value);
         void __cdecl     SetConstantRoughness(float value);
-#ifdef DEBUG
-        void __cdecl     SetDebugFlags(bool diffuse, bool D, bool F, bool G);
-#endif
+
         // Texture settings.
         void __cdecl SetSurfaceTextures(
             _In_ D3D12_GPU_DESCRIPTOR_HANDLE albedo,

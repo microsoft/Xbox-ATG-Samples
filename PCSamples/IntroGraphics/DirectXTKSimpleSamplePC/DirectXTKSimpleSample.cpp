@@ -401,6 +401,10 @@ void Sample::CreateWindowSizeDependentResources()
         );
 
     m_batchEffect->SetProjection(m_projection);
+
+    // This is optional for Direct3D 11, but performs slightly better
+    auto viewport = m_deviceResources->GetScreenViewport();
+    m_sprites->SetViewport(viewport);
 }
 
 void Sample::OnDeviceLost()

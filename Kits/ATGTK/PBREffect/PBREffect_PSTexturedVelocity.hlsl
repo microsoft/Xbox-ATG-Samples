@@ -12,7 +12,7 @@
 
 struct PSOut_Velocity
 {
-    float3 color : SV_Target0;
+    float4 color : SV_Target0;
     packed_velocity_t velocity : SV_Target1;
 };
 
@@ -32,11 +32,13 @@ PSOut_Velocity PSTexturedVelocity(VSOut_Velocity pin)
     float3 N = PeturbNormal( localNormal, pin.current.NormalWS, pin.current.TangentWS);
 
     // Get albedo, then roughness, metallic and ambient occlusion
-    float3 albedo = PBR_AlbedoTexture.Sample(PBR_SurfaceSampler, pin.current.TexCoord).rgb;
+    float4 albedo = PBR_AlbedoTexture.Sample(PBR_SurfaceSampler, pin.current.TexCoord);
     float3 RMA = PBR_RMATexture.Sample(PBR_SurfaceSampler, pin.current.TexCoord);
   
     // Shade surface
-    output.color = PBR_LightSurface(V, N, 3, PBR_LightColor, PBR_LightDirection, albedo, RMA.x, RMA.y, RMA.z);
+    float3 color = PBR_LightSurface(V, N, 3, PBR_LightColor, PBR_LightDirection, albedo.rgb, RMA.x, RMA.y, RMA.z);
+
+    output.color = float4(color, albedo.w);
     
     // Calculate velocity of this point
     float4 prevPos = pin.prevPosition;

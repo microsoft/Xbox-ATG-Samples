@@ -12,7 +12,6 @@
 #include <..\Src\EffectCommon.h>
 
 using namespace DirectX;
-using namespace ATG;
 
 // Include the precompiled shader code.
 namespace
@@ -145,7 +144,7 @@ const int EffectBase<PBREffectTraits>::PixelShaderIndices[] =
 SharedResourcePool<ID3D12Device*, EffectBase<PBREffectTraits>::DeviceResources> EffectBase<PBREffectTraits>::deviceResourcesPool;
 
 // Constructor.
-PBREffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool generateVelocity)
+ATG::PBREffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool generateVelocity)
     : EffectBase(device),
       flags(effectFlags),
       doGenerateVelocity(generateVelocity),
@@ -223,7 +222,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPi
 }
 
 
-int PBREffect::Impl::GetPipelineStatePermutation(bool textureEnabled, bool velocityEnabled) const
+int ATG::PBREffect::Impl::GetPipelineStatePermutation(bool textureEnabled, bool velocityEnabled) const
 {
     int permutation = 0;
 
@@ -235,7 +234,7 @@ int PBREffect::Impl::GetPipelineStatePermutation(bool textureEnabled, bool veloc
 
 
 // Sets our state onto the D3D device.
-void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
+void ATG::PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
     // Store old wvp for velocity calculation in shader
     constants.prevWorldViewProj = constants.worldViewProj;
@@ -300,7 +299,7 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 }
 
 // Public constructor.
-PBREffect::PBREffect(_In_ ID3D12Device* device, 
+ATG::PBREffect::PBREffect(_In_ ID3D12Device* device,
                      int effectFlags, 
                     const EffectPipelineStateDescription& pipelineDescription, 
                     bool generateVelocity)
@@ -310,14 +309,14 @@ PBREffect::PBREffect(_In_ ID3D12Device* device,
 
 
 // Move constructor.
-PBREffect::PBREffect(PBREffect&& moveFrom)
+ATG::PBREffect::PBREffect(PBREffect&& moveFrom)
   : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 
 // Move assignment.
-PBREffect& PBREffect::operator= (PBREffect&& moveFrom)
+ATG::PBREffect& ATG::PBREffect::operator= (ATG::PBREffect&& moveFrom)
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;
@@ -325,18 +324,18 @@ PBREffect& PBREffect::operator= (PBREffect&& moveFrom)
 
 
 // Public destructor.
-PBREffect::~PBREffect()
+ATG::PBREffect::~PBREffect()
 {
 }
 
 // IEffect methods.
-void PBREffect::Apply(_In_ ID3D12GraphicsCommandList* commandList)
+void ATG::PBREffect::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
     pImpl->Apply(commandList);
 }
 
 // Camera settings.
-void XM_CALLCONV PBREffect::SetWorld(FXMMATRIX value)
+void XM_CALLCONV ATG::PBREffect::SetWorld(FXMMATRIX value)
 {
     pImpl->matrices.world = value;
 
@@ -344,7 +343,7 @@ void XM_CALLCONV PBREffect::SetWorld(FXMMATRIX value)
 }
 
 
-void XM_CALLCONV PBREffect::SetView(FXMMATRIX value)
+void XM_CALLCONV ATG::PBREffect::SetView(FXMMATRIX value)
 {
     pImpl->matrices.view = value;
 
@@ -352,7 +351,7 @@ void XM_CALLCONV PBREffect::SetView(FXMMATRIX value)
 }
 
 
-void XM_CALLCONV PBREffect::SetProjection(FXMMATRIX value)
+void XM_CALLCONV ATG::PBREffect::SetProjection(FXMMATRIX value)
 {
     pImpl->matrices.projection = value;
 
@@ -360,7 +359,7 @@ void XM_CALLCONV PBREffect::SetProjection(FXMMATRIX value)
 }
 
 
-void XM_CALLCONV PBREffect::SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection)
+void XM_CALLCONV ATG::PBREffect::SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATRIX projection)
 {
     pImpl->matrices.world = world;
     pImpl->matrices.view = view;
@@ -369,7 +368,7 @@ void XM_CALLCONV PBREffect::SetMatrices(FXMMATRIX world, CXMMATRIX view, CXMMATR
     pImpl->dirtyFlags |= EffectDirtyFlags::WorldViewProj | EffectDirtyFlags::WorldInverseTranspose | EffectDirtyFlags::EyePosition | EffectDirtyFlags::FogVector;
 }
 
-void XM_CALLCONV PBREffect::SetLightDirection(int whichLight, FXMVECTOR value)
+void XM_CALLCONV ATG::PBREffect::SetLightDirection(int whichLight, FXMVECTOR value)
 {
     pImpl->constants.lightDirection[whichLight] = value;
 
@@ -377,7 +376,7 @@ void XM_CALLCONV PBREffect::SetLightDirection(int whichLight, FXMVECTOR value)
 }
 
 
-void XM_CALLCONV PBREffect::SetLightColorAndIntensity(int whichLight, FXMVECTOR value)
+void XM_CALLCONV ATG::PBREffect::SetLightColorAndIntensity(int whichLight, FXMVECTOR value)
 {
     pImpl->constants.lightDiffuseColor[whichLight] = value;
 
@@ -385,7 +384,7 @@ void XM_CALLCONV PBREffect::SetLightColorAndIntensity(int whichLight, FXMVECTOR 
 }
  
 
-void PBREffect::EnableDefaultLighting()
+void ATG::PBREffect::EnableDefaultLighting()
 {
     static const XMVECTORF32 defaultDirections[Impl::MaxDirectionalLights] =
     {
@@ -410,40 +409,28 @@ void PBREffect::EnableDefaultLighting()
 
 
 // PBR Settings
-void PBREffect::SetConstantAlbedo(FXMVECTOR value)
+void ATG::PBREffect::SetConstantAlbedo(FXMVECTOR value)
 {
     pImpl->constants.Albedo = value;
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-void PBREffect::SetConstantMetallic(float value)
+void ATG::PBREffect::SetConstantMetallic(float value)
 {
     pImpl->constants.Metallic = value;
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-void PBREffect::SetConstantRoughness(float value)
+void ATG::PBREffect::SetConstantRoughness(float value)
 {
     pImpl->constants.Roughness = value;
 
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-#ifdef DEBUG
-void PBREffect::SetDebugFlags(bool diffuse, bool D, bool F, bool G)
-{
-    pImpl->constants.enable_Diffuse = diffuse;
-    pImpl->constants.enable_Specular_D = D;
-    pImpl->constants.enable_Specular_F = F;
-    pImpl->constants.enable_Specular_G = G;
-
-    pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
-}
-#endif
-
-void PBREffect::SetSurfaceTextures(_In_ D3D12_GPU_DESCRIPTOR_HANDLE albedo,
+void ATG::PBREffect::SetSurfaceTextures(_In_ D3D12_GPU_DESCRIPTOR_HANDLE albedo,
     _In_ D3D12_GPU_DESCRIPTOR_HANDLE normal,
     _In_ D3D12_GPU_DESCRIPTOR_HANDLE RMA,
     _In_ D3D12_GPU_DESCRIPTOR_HANDLE sampler)
@@ -454,7 +441,7 @@ void PBREffect::SetSurfaceTextures(_In_ D3D12_GPU_DESCRIPTOR_HANDLE albedo,
     pImpl->descriptors[Impl::RootParameterIndex::SurfaceSampler] =   sampler;
 }
 
-void PBREffect::SetIBLTextures(_In_ D3D12_GPU_DESCRIPTOR_HANDLE radiance,
+void ATG::PBREffect::SetIBLTextures(_In_ D3D12_GPU_DESCRIPTOR_HANDLE radiance,
                                 int numRadianceMips,
                                 _In_ D3D12_GPU_DESCRIPTOR_HANDLE irradiance,
                                 _In_ D3D12_GPU_DESCRIPTOR_HANDLE sampler)
@@ -468,7 +455,7 @@ void PBREffect::SetIBLTextures(_In_ D3D12_GPU_DESCRIPTOR_HANDLE radiance,
     pImpl->dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
 }
 
-void PBREffect::SetRenderTargetSizeInPixels(int width, int height)
+void ATG::PBREffect::SetRenderTargetSizeInPixels(int width, int height)
 {
     pImpl->constants.targetWidth = static_cast<float>(width);
     pImpl->constants.targetHeight = static_cast<float>(height);
@@ -477,7 +464,7 @@ void PBREffect::SetRenderTargetSizeInPixels(int width, int height)
 
 //--------------------------------------------------------------------------------------
 // PBR 
-const D3D12_INPUT_ELEMENT_DESC VertexPositionNormalTextureTangent::InputElements[] =
+const D3D12_INPUT_ELEMENT_DESC ATG::VertexPositionNormalTextureTangent::InputElements[] =
 {
     { "SV_Position", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
     { "NORMAL",      0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
@@ -485,10 +472,10 @@ const D3D12_INPUT_ELEMENT_DESC VertexPositionNormalTextureTangent::InputElements
     { "TANGENT",     0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 };
 
-static_assert(sizeof(VertexPositionNormalTextureTangent) == 48, "Vertex struct/layout mismatch");
+static_assert(sizeof(ATG::VertexPositionNormalTextureTangent) == 48, "Vertex struct/layout mismatch");
 
-const D3D12_INPUT_LAYOUT_DESC VertexPositionNormalTextureTangent::InputLayout =
+const D3D12_INPUT_LAYOUT_DESC ATG::VertexPositionNormalTextureTangent::InputLayout =
 {
-    VertexPositionNormalTextureTangent::InputElements,
-    VertexPositionNormalTextureTangent::InputElementCount
+    ATG::VertexPositionNormalTextureTangent::InputElements,
+    ATG::VertexPositionNormalTextureTangent::InputElementCount
 };

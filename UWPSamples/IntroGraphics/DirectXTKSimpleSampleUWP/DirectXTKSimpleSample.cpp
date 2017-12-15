@@ -397,13 +397,19 @@ void Sample::CreateWindowSizeDependentResources()
         100.0f
         );
 
+    // For UWP apps, your projection matrix needs to include orientation handling
     Matrix orientationMatrix = m_deviceResources->GetOrientationTransform3D();
 
     m_projection = perspectiveMatrix * orientationMatrix;
 
     m_batchEffect->SetProjection(m_projection);
 
+    // For UWP apps, SpriteBatch needs to handle orientation
     m_sprites->SetRotation(m_deviceResources->GetRotation());
+
+    // This is optional for Direct3D 11, but performs slightly better
+    auto viewport = m_deviceResources->GetScreenViewport();
+    m_sprites->SetViewport(viewport);
 }
 
 void Sample::OnDeviceLost()

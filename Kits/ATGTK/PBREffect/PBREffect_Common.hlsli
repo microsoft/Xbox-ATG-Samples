@@ -95,7 +95,7 @@ struct CommonVSOutputPixelLighting
 struct VSOut_Velocity
 {
     VSOutputPixelLightingTxTangent current;
-    float4 prevPosition                     : TEXCOORD4;
+    float4                         prevPosition : TEXCOORD4;
 };
 
 CommonVSOutputPixelLighting ComputeCommonVSOutputPixelLighting(float4 position, float3 normal, float4x4 world, float4x4 worldViewProj, float3x3 worldInverseT)

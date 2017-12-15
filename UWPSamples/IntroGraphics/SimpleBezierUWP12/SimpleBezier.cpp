@@ -9,6 +9,7 @@
 #include "SimpleBezier.h"
 
 #include "ATGColors.h"
+#include "ControllerFont.h"
 #include "ReadData.h"
 
 extern void ExitSample();
@@ -21,6 +22,14 @@ using Microsoft::WRL::ComPtr;
 // Global variables
 namespace
 {
+    // Legend descriptors
+    enum Descriptors
+    {
+        Font1,
+        CtrlFont1,
+        Count,
+    };
+
     // Help menu text
     const wchar_t* c_sampleTitle = L"Simple Bezier Sample";
     const wchar_t* c_sampleDescription = L"Demonstrates how to create hull and domain shaders to draw a\ntessellated Bezier surface representing a Mobius strip.";
@@ -134,6 +143,7 @@ Sample::Sample()
     , m_partitionMode(PartitionMode::PartitionInteger)
     , m_mappedConstantData(nullptr)
     , m_showHelp(false)
+    , m_ctrlConnected(false)
 {
     // Use gamma-correct rendering.
     m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM_SRGB);
@@ -179,10 +189,12 @@ void Sample::Update(DX::StepTimer const&)
     auto pad = m_gamePad->GetState(0);
     if (pad.IsConnected())
     {
+        m_ctrlConnected = true;
         m_gamePadButtons.Update(pad);
     }
     else
     {
+        m_ctrlConnected = false;
         m_gamePadButtons.Reset();
     }
 
@@ -312,6 +324,31 @@ void Sample::Render()
 
         // Draw the mesh
         commandList->DrawInstanced(_countof(c_mobiusStrip), 1, 0, 0);
+
+        // Draw the legend
+        ID3D12DescriptorHeap* fontHeaps[] = { m_fontDescriptors->Heap() };
+        commandList->SetDescriptorHeaps(_countof(fontHeaps), fontHeaps);
+
+        auto size = m_deviceResources->GetOutputSize();
+        auto safe = SimpleMath::Viewport::ComputeTitleSafeArea(size.right, size.bottom);
+
+        m_batch->Begin(commandList);
+
+        wchar_t str[64] = {};
+        swprintf_s(str, L"Subdivisions: %.2f   Partition Mode: %ls", m_subdivs,
+            m_partitionMode == PartitionMode::PartitionInteger ? L"Integer" :
+            (m_partitionMode == PartitionMode::PartitionFractionalEven ? L"Fractional Even" : L"Fractional Odd"));
+        m_smallFont->DrawString(m_batch.get(), str, XMFLOAT2(float(safe.left), float(safe.top)), ATG::Colors::LightGrey);
+
+        const wchar_t* legend = m_ctrlConnected ?
+            L"[LThumb] Rotate   [RT][LT] Increase/decrease subdivisions\n[A][B][X] Change partition mode   [Y] Toggle wireframe   [View] Exit   [Menu] Help"
+            : L"Left/Right - Rotate   Up/Down - Increase/decrease subdivisions\n1/2/3 - Change partition mode   W - Toggle wireframe   Esc - Exit   F1 - Help";
+        DX::DrawControllerString(m_batch.get(), m_smallFont.get(), m_ctrlFont.get(),
+            legend,
+            XMFLOAT2(float(safe.left), float(safe.bottom) - 2 * m_smallFont->GetLineSpacing()),
+            ATG::Colors::LightGrey);
+
+        m_batch->End();
     }
 
     PIXEndEvent(commandList);
@@ -406,11 +443,29 @@ void Sample::CreateDeviceDependentResources()
     XMStoreFloat4x4(&m_worldMatrix, world);
     XMStoreFloat4x4(&m_viewMatrix, view);
     XMStoreFloat3(&m_cameraEye, c_cameraEye);
+    
+    // UI resources
+    m_fontDescriptors = std::make_unique<DescriptorHeap>(device,
+        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
+        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, Descriptors::Count);
 
     RenderTargetState rtState(m_deviceResources->GetBackBufferFormat(), m_deviceResources->GetDepthBufferFormat());
+    SpriteBatchPipelineStateDescription pd(rtState, &CommonStates::AlphaBlend);
 
     ResourceUploadBatch uploadBatch(device);
     uploadBatch.Begin();
+
+    m_batch = std::make_unique<SpriteBatch>(device, uploadBatch, pd);
+
+    m_smallFont = std::make_unique<SpriteFont>(device, uploadBatch,
+        L"SegoeUI_18.spritefont",
+        m_fontDescriptors->GetCpuHandle(Descriptors::Font1),
+        m_fontDescriptors->GetGpuHandle(Descriptors::Font1));
+
+    m_ctrlFont = std::make_unique<SpriteFont>(device, uploadBatch,
+        L"XboxOneControllerLegendSmall.spritefont",
+        m_fontDescriptors->GetCpuHandle(Descriptors::CtrlFont1),
+        m_fontDescriptors->GetGpuHandle(Descriptors::CtrlFont1));
 
     m_help->RestoreDevice(device, uploadBatch, rtState);
 
@@ -562,6 +617,9 @@ void Sample::CreateWindowSizeDependentResources()
     XMFLOAT4X4 orient = m_deviceResources->GetOrientationTransform3D();
 
     XMStoreFloat4x4(&m_projectionMatrix, projection * XMLoadFloat4x4(&orient));
+    
+    m_batch->SetViewport(m_deviceResources->GetScreenViewport());
+    m_batch->SetRotation(m_deviceResources->GetRotation());
 
     m_help->SetWindow(size);
 }
@@ -583,6 +641,11 @@ void Sample::OnDeviceLost()
     m_controlPointVB.Reset();
     m_cbPerFrame.Reset();
     m_mappedConstantData = nullptr;
+
+    m_batch.reset();
+    m_smallFont.reset();
+    m_ctrlFont.reset();
+    m_fontDescriptors.reset();
 
     m_help->ReleaseDevice();
 }

@@ -33,6 +33,9 @@
 
 #include "GamePad.h"
 #include "GraphicsMemory.h"
+#include "SimpleMath.h"
+#include "SpriteBatch.h"
+#include "SpriteFont.h"
 
 namespace DX
 {

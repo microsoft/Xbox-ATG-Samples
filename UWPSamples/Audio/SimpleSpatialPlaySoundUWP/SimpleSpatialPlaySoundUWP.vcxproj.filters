@@ -67,9 +67,8 @@
     <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
       <Filter>Assets</Filter>
     </None>
-    <None Include="SimpleSpatialPlaySoundUWP_TemporaryKey.pfx" />
     <None Include="Readme.docx" />
-  <None Include="..\..\..\Kits\Telemetry\ARM\ATGTelemetryUWP.dll">
+    <None Include="..\..\..\Kits\Telemetry\ARM\ATGTelemetryUWP.dll">
       <Filter>Common\Telemetry\ARM</Filter>
     </None>
     <None Include="..\..\..\Kits\Telemetry\x64\ATGTelemetryUWP.dll">
@@ -90,5 +89,5 @@
     <Filter Include="Common\Telemetry\x64">
       <UniqueIdentifier>{debde8dc-79ad-43c5-bf6a-656a5faeba3a}</UniqueIdentifier>
     </Filter>
-</ItemGroup>
+  </ItemGroup>
 </Project>

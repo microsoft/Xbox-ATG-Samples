@@ -19,7 +19,8 @@ Sample::Sample() :
     m_frame(0)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_D32_FLOAT, 2,
-        DX::DeviceResources::c_Enable4K_UHD);
+        DX::DeviceResources::c_Enable4K_UHD
+        | DX::DeviceResources::c_FastSemantics);
 }
 
 // Initialize the Direct3D resources required to run.
@@ -346,6 +347,10 @@ void Sample::CreateWindowSizeDependentResources()
         );
 
     m_batchEffect->SetProjection(m_projection);
+
+    // This is optional for 'stock' Direct3D 11, but is required for 11.X Fast Semantics
+    auto viewport = m_deviceResources->GetScreenViewport();
+    m_sprites->SetViewport(viewport);
 }
 #pragma endregion
 
