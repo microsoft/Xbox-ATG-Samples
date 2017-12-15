@@ -232,6 +232,7 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td><a href="XDKSamples/System/FrontPanelDemo">Demo</a></td>
   <td><a href="XDKSamples/System/FrontPanelDolphin">Dolphin</a></td>
   <td><a href="XDKSamples/System/FrontPanelGame">Game</a></td>
+  <td><a href="XDKSamples/System/FrontPanelLogo">Logo</a></td>
  </tr>
 </table>
 
@@ -263,7 +264,7 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 
 ## UWP apps
 * Windows 10 Anniversary Update (Build 14393), Creators Update (Build 15063), or Fall Creators Update (Build 16299)
-* Visual Studio 2017 ([v15.4](https://blogs.msdn.microsoft.com/visualstudio/2017/10/10/visual-studio-2017-version-15-4-released/) update) with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, and *Windows 10 SDK ([10.0.16299.0](https://blogs.msdn.microsoft.com/chuckw/2017/10/11/windows-10-fall-creators-update-sdk/))*.
+* Visual Studio 2017 ([v15.4](https://blogs.msdn.microsoft.com/visualstudio/2017/10/10/visual-studio-2017-version-15-4-released/) or [15.5](https://blogs.msdn.microsoft.com/chuckw/2017/12/05/vs-2017-15-5-update/) update) with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, and *Windows 10 SDK ([10.0.16299.0](https://blogs.msdn.microsoft.com/chuckw/2017/10/11/windows-10-fall-creators-update-sdk/))*.
 
 ## XDK apps
 * Xbox One Development Kit
