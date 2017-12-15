@@ -36,6 +36,7 @@
 	{
 	public:
 		WASAPIRenderer();
+        ~WASAPIRenderer();
 
 		HRESULT SetProperties( DEVICEPROPS props );
 		HRESULT InitializeAudioDeviceAsync();
@@ -54,8 +55,6 @@
 		STDMETHOD(ActivateCompleted)( IActivateAudioInterfaceAsyncOperation *operation );
 
 	private:
-		~WASAPIRenderer();
-
 		HRESULT OnStartPlayback( IMFAsyncResult* pResult );
 		HRESULT OnStopPlayback( IMFAsyncResult* pResult );
 		HRESULT OnPausePlayback( IMFAsyncResult* pResult );

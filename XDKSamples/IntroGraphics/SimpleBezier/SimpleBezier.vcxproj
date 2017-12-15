@@ -168,6 +168,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h" />
+    <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h" />
     <ClInclude Include="..\..\..\Kits\ATGTK\ControllerHelp.h" />
     <ClInclude Include="..\..\..\Kits\ATGTK\ReadData.h" />
     <ClInclude Include="SimpleBezier.h" />
@@ -220,6 +221,16 @@
     </None>
     <None Include="..\..\..\Media\Fonts\SegoeUI_36.spritefont">
       <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\Media\Fonts\XboxOneControllerLegend.spritefont">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">true</DeploymentContent>
     </None>
     <None Include="Assets\SimpleBezier.hlsli" />
     <None Include="Readme.docx" />
@@ -297,9 +308,9 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">BEZIER_HS_PARTITION=\"integer\"</PreprocessorDefinitions>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">SolidColorPS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">Pixel</ShaderType>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">BezierPS</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">SolidColorPS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">Pixel</ShaderType>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">BezierPS</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">SolidColorPS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">Pixel</ShaderType>
     </FxCompile>
   </ItemGroup>

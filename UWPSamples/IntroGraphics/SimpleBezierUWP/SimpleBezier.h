@@ -59,6 +59,7 @@ private:
     DX::StepTimer                           m_timer;
 
     // Input devices
+    bool									m_ctrlConnected;
     std::unique_ptr<DirectX::GamePad>       m_gamePad;
     std::unique_ptr<DirectX::Keyboard>      m_keyboard;
 
@@ -97,7 +98,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_rasterizerStateSolid;
     Microsoft::WRL::ComPtr<ID3D11RasterizerState>   m_rasterizerStateWireframe;
 
-    //Control variables
+    // Control variables
     float                                           m_subdivs;
     bool                                            m_drawWires;
     PartitionMode                                   m_partitionMode;
@@ -106,6 +107,11 @@ private:
     DirectX::XMFLOAT4X4                             m_viewMatrix;
     DirectX::XMFLOAT4X4                             m_projectionMatrix;
     DirectX::XMFLOAT3                               m_cameraEye;
+
+    // Legend and help UI
+    std::unique_ptr<DirectX::SpriteBatch>           m_batch;
+    std::unique_ptr<DirectX::SpriteFont>            m_smallFont;
+    std::unique_ptr<DirectX::SpriteFont>            m_ctrlFont;
 
     std::unique_ptr<ATG::Help>                      m_help;
     bool                                            m_showHelp;

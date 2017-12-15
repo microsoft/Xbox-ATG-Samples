@@ -133,7 +133,7 @@ HRESULT ISACRenderer::ActivateCompleted( IActivateAudioInterfaceAsyncOperation *
 		{
 			objectFormat,
 			objectmask,
-			m_MaxDynamicObjects,
+			0,
 			m_MaxDynamicObjects,
 			AudioCategory_GameEffects,
 			m_bufferCompletionEvent,

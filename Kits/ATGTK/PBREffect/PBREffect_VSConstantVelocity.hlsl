@@ -20,7 +20,7 @@ VSOut_Velocity VSConstantVelocity(VSInputNmTxTangent vin)
     vout.current.PositionPS = cout.Pos_ps;
     vout.current.PositionWS = float4(cout.Pos_ws, 1);
     vout.current.NormalWS = cout.Normal_ws;
-    vout.current.Diffuse = float4(PBR_ConstantAlbedo,1);
+    vout.current.Diffuse = float4(PBR_ConstantAlbedo, 1);
     vout.current.TexCoord = vin.TexCoord;
     vout.current.TangentWS = normalize(mul(vin.Tangent.xyz, PBR_WorldInverseTranspose));
     vout.prevPosition = mul(vin.Position, PBR_PrevWorldViewProj);

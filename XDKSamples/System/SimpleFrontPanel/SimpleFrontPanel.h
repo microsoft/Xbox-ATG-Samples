@@ -62,36 +62,36 @@ private:
     void CaptureFrontPanelScreen(const wchar_t *fileName);
 
     // Device resources.
-    std::unique_ptr<DX::DeviceResources>           m_deviceResources;
-                                                   
-    // Rendering loop timer.                       
-    uint64_t                                       m_frame;
-    DX::StepTimer                                  m_timer;
-                                                   
-    // Input devices.                              
-    std::unique_ptr<DirectX::GamePad>              m_gamePad;
-                                                   
-    DirectX::GamePad::ButtonStateTracker           m_gamePadButtons;
-                                                   
-    // DirectXTK objects.                          
-    std::unique_ptr<DirectX::GraphicsMemory>            m_graphicsMemory;
-    std::unique_ptr<DirectX::SpriteBatch>               m_batch;
-    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>    m_background;
+    std::unique_ptr<DX::DeviceResources>             m_deviceResources;
+
+    // Rendering loop timer.
+    uint64_t                                         m_frame;
+    DX::StepTimer                                    m_timer;
+
+    // Input devices.
+    std::unique_ptr<DirectX::GamePad>                m_gamePad;
+
+    DirectX::GamePad::ButtonStateTracker             m_gamePadButtons;
+
+    // DirectXTK objects.
+    std::unique_ptr<DirectX::GraphicsMemory>         m_graphicsMemory;
+    std::unique_ptr<DirectX::SpriteBatch>            m_batch;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_background;
 
     // XboxFrontPanel objects
-    Microsoft::WRL::ComPtr<IXboxFrontPanelControl> m_frontPanelControl;
+    Microsoft::WRL::ComPtr<IXboxFrontPanelControl>   m_frontPanelControl;
 
-    uint32_t                                       m_screenWidth;
-    uint32_t                                       m_screenHeight;
-    
+    uint32_t                                         m_screenWidth;
+    uint32_t                                         m_screenHeight;
+
     // Tracks the buttons states from the previous update in order to facilitate "button held" events
-    XBOX_FRONT_PANEL_BUTTONS                       m_rememberedButtons; 
-    std::unique_ptr<uint8_t>                       m_panelBuffer;
+    XBOX_FRONT_PANEL_BUTTONS                         m_rememberedButtons; 
+    std::unique_ptr<uint8_t>                         m_panelBuffer;
 
     // The m_dirty member will be set whenever there are changes to front panel pixels.
     // This way we will only call IXboxFrontPanelControl::PresentBuffer() when there
     // are changes to pixels. Note that it is only necessary to present to the front
     // panel when there are changes to the pixels.
-    bool                                           m_dirty;
-    bool                                           m_checkerboard;
+    bool                                             m_dirty;
+    bool                                             m_checkerboard;
 };

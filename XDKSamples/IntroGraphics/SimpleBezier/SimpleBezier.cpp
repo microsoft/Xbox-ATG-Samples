@@ -10,6 +10,7 @@
 
 #include "DirectXHelpers.h"
 #include "ATGColors.h"
+#include "ControllerFont.h"
 #include "ReadData.h"
 
 extern void ExitSample();
@@ -342,6 +343,29 @@ void Sample::Render()
 
         // Draw the mesh
         context->Draw(_countof(c_mobiusStrip), 0);
+
+        // Draw the UI        
+        context->HSSetShader(nullptr, nullptr, 0);
+        context->DSSetShader(nullptr, nullptr, 0);
+
+        auto size = m_deviceResources->GetOutputSize();
+        auto safe = SimpleMath::Viewport::ComputeTitleSafeArea(size.right, size.bottom);
+
+        m_batch->Begin();
+
+        wchar_t str[64] = {};
+        swprintf_s(str, L"Subdivisions: %.2f   Partition Mode: %ls", m_subdivs,
+            m_partitionMode == PartitionMode::PartitionInteger ? L"Integer" :
+            (m_partitionMode == PartitionMode::PartitionFractionalEven ? L"Fractional Even" : L"Fractional Odd"));
+        m_smallFont->DrawString(m_batch.get(), str, XMFLOAT2(float(safe.left), float(safe.top)), ATG::Colors::LightGrey);
+
+        DX::DrawControllerString(m_batch.get(), m_smallFont.get(), m_ctrlFont.get(),
+            L"[LThumb] Rotate   [RT][LT] Increase/decrease subdivisions   [A][B][X] Change partition mode   [Y] Toggle wireframe   [View] Exit   [Menu] Help",
+            XMFLOAT2(float(safe.left), float(safe.bottom) - m_smallFont->GetLineSpacing()),
+            ATG::Colors::LightGrey);
+
+        m_batch->End();
+
     }
 
     PIXEndEvent(context);
@@ -411,6 +435,8 @@ void Sample::CreateDeviceDependentResources()
     XMStoreFloat4x4(&m_worldMatrix, world);
     XMStoreFloat4x4(&m_viewMatrix, view);
     XMStoreFloat3(&m_cameraEye, c_cameraEye);
+    
+    m_batch = std::make_unique<SpriteBatch>(context);
 
     m_help->RestoreDevice(context);
 }
@@ -496,9 +522,17 @@ void Sample::CreateShaders()
 void Sample::CreateWindowSizeDependentResources()
 {
     auto size = m_deviceResources->GetOutputSize();
+    auto device = m_deviceResources->GetD3DDevice();
 
     XMMATRIX projection = XMMatrixPerspectiveFovLH(XM_PIDIV4, float(size.right) / float(size.bottom), 0.01f, 100.0f);
     XMStoreFloat4x4(&m_projectionMatrix, projection);
+
+    m_batch->SetViewport(m_deviceResources->GetScreenViewport());
+
+    m_smallFont = std::make_unique<SpriteFont>(device, (size.bottom > 1080)
+        ? L"SegoeUI_36.spritefont" : L"SegoeUI_18.spritefont");
+    m_ctrlFont = std::make_unique<SpriteFont>(device, (size.bottom > 1080)
+        ? L"XboxOneControllerLegend.spritefont" : L"XboxOneControllerLegendSmall.spritefont");
 
     m_help->SetWindow(size);
 }

@@ -33,11 +33,16 @@
 #include <dxgidebug.h>
 #endif
 
+#include "CommonStates.h"
 #include "GamePad.h"
 #include "GraphicsMemory.h"
 #include "Keyboard.h"
 #include "DirectXHelpers.h"
 #include "DescriptorHeap.h"
+#include "ResourceUploadBatch.h"
+#include "SimpleMath.h"
+#include "SpriteBatch.h"
+#include "SpriteFont.h"
 
 namespace DX
 {

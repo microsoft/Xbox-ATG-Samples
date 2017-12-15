@@ -21,5 +21,5 @@ float4 PSConstant(PSInputPixelLightingTxTangent pin) : SV_Target0
     float3 output = PBR_LightSurface(V, N, 3, PBR_LightColor, PBR_LightDirection,
                                 PBR_ConstantAlbedo, PBR_ConstantRoughness, PBR_ConstantMetallic, AO);
     
-    return float4(output,1);
+    return float4(output, 1);
 }

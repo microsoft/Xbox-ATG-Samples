@@ -63,7 +63,7 @@ void RenderTexture::SetDevice(_In_ ID3D12Device* device, D3D12_CPU_DESCRIPTOR_HA
             throw std::exception("CheckFeatureSupport");
         }
 
-        UINT required = D3D12_FORMAT_SUPPORT1_TEXTURE2D | D3D12_FORMAT_SUPPORT1_SHADER_SAMPLE | D3D12_FORMAT_SUPPORT1_RENDER_TARGET;
+        UINT required = D3D12_FORMAT_SUPPORT1_TEXTURE2D | D3D12_FORMAT_SUPPORT1_RENDER_TARGET;
         if ((formatSupport.Support1 & required) != required)
         {
 #ifdef _DEBUG
@@ -178,7 +178,7 @@ void RenderTexture::SetDevice(_In_ ID3D11Device* device)
             throw std::exception("CheckFormatSupport");
         }
 
-        UINT32 required = D3D11_FORMAT_SUPPORT_TEXTURE2D | D3D11_FORMAT_SUPPORT_SHADER_SAMPLE | D3D11_FORMAT_SUPPORT_RENDER_TARGET;
+        UINT32 required = D3D11_FORMAT_SUPPORT_TEXTURE2D | D3D11_FORMAT_SUPPORT_RENDER_TARGET;
         if ((formatSupport & required) != required)
         {
 #ifdef _DEBUG

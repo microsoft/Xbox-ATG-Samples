@@ -20,7 +20,7 @@ VSOutputPixelLightingTxTangent VSConstant(VSInputNmTxTangent vin)
     vout.PositionPS = cout.Pos_ps;
     vout.PositionWS = float4(cout.Pos_ws, 1);
     vout.NormalWS = cout.Normal_ws;
-    vout.Diffuse = float4(PBR_ConstantAlbedo,1);
+    vout.Diffuse = float4(PBR_ConstantAlbedo, 1);
     vout.TexCoord = vin.TexCoord;
     vout.TangentWS = normalize(mul(vin.Tangent.xyz, PBR_WorldInverseTranspose));
 

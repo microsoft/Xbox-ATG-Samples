@@ -23,11 +23,11 @@ float4 PSTextured(PSInputPixelLightingTxTangent pin) : SV_Target0
     float3 N = PeturbNormal( localNormal, pin.NormalWS, pin.TangentWS);
 
     // Get albedo, then roughness, metallic and ambient occlusion
-    float3 albedo = PBR_AlbedoTexture.Sample(PBR_SurfaceSampler, pin.TexCoord).rgb;
+    float4 albedo = PBR_AlbedoTexture.Sample(PBR_SurfaceSampler, pin.TexCoord);
     float3 RMA = PBR_RMATexture.Sample(PBR_SurfaceSampler, pin.TexCoord);
   
     // Shade surface
-    float3 output = PBR_LightSurface(V, N, 3, PBR_LightColor, PBR_LightDirection, albedo, RMA.x, RMA.y, RMA.z);
+    float3 output = PBR_LightSurface(V, N, 3, PBR_LightColor, PBR_LightDirection, albedo.rgb, RMA.x, RMA.y, RMA.z);
 
-    return float4(output, 1);
+    return float4(output, albedo.w);
 }

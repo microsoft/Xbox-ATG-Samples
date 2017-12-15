@@ -53,6 +53,9 @@ namespace ATG
         // Loads a buffer from a file
         BufferDesc LoadWICFromFile(_In_z_ const wchar_t* filename, std::unique_ptr<uint8_t[]>& data, unsigned int frameindex = 0);
 
+        // Loads a buffer from a file directly into the display buffer
+        BufferDesc LoadWICFromFile(_In_z_ const wchar_t *filename, unsigned int frameIndex = 0);
+
         // Determine whether the front panel is available
         bool IsAvailable() const { return m_frontPanelControl; }
 
@@ -61,10 +64,10 @@ namespace ATG
 
     private:
         Microsoft::WRL::ComPtr<IXboxFrontPanelControl> m_frontPanelControl;
-        unsigned int m_displayWidth;
-        unsigned int m_displayHeight;
-        std::unique_ptr<uint8_t[]> m_buffer;
+        unsigned int                                   m_displayWidth;
+        unsigned int                                   m_displayHeight;
+        std::unique_ptr<uint8_t[]>                     m_buffer;
 
-        static FrontPanelDisplay *s_frontPanelDisplayInstance;
+        static FrontPanelDisplay                      *s_frontPanelDisplayInstance;
     };
 }

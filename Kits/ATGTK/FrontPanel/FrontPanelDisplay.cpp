@@ -27,7 +27,7 @@ namespace
 #define DDS_HEADER_FLAGS_TEXTURE        0x00001007  // DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT 
 #define DDS_HEADER_FLAGS_MIPMAP         0x00020000  // DDSD_MIPMAPCOUNT
 #define DDS_HEADER_FLAGS_PITCH          0x00000008  // DDSD_PITCH
-#define DDS_SURFACE_FLAGS_TEXTURE       0x00001000 // DDSCAPS_TEXTURE
+#define DDS_SURFACE_FLAGS_TEXTURE       0x00001000  // DDSCAPS_TEXTURE
 
 #pragma pack(push, 1)
     struct DDS_PIXELFORMAT
@@ -484,5 +484,17 @@ BufferDesc FrontPanelDisplay::LoadWICFromFile(_In_z_ const wchar_t* filename, st
     result.size = imageSize;
     result.width = m_displayWidth;
     result.height = m_displayHeight;
+    return result;
+}
+
+BufferDesc FrontPanelDisplay::LoadWICFromFile(_In_z_ const wchar_t* filename, unsigned int frameindex)
+{
+    BufferDesc result = LoadWICFromFile(filename, m_buffer, frameindex);
+
+    // LoadWicFromFile is robust and will scale the image dimensions to fit the front panel...
+    // ...assert here if this is not true:
+    assert(m_displayWidth == result.width);
+    assert(m_displayHeight == result.height);
+
     return result;
 }
