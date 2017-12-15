@@ -48,7 +48,7 @@
     dcl_texcoord3 v3  // vin<9,10,11,12>
     dcl_texcoord4 v4  // vin<13,14,15,16>
 
-#line 52 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 53 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     mul r0, v3, c243.x
     mova a0, r0.yxzw
     mul r1, v4.y, c26[a0.x]
@@ -56,11 +56,11 @@
     mad r0, c26[a0.z], v4.z, r1  // ::skinning<0,3,6,9>
     mad r0, c26[a0.w], v4.w, r0  // ::skinning<0,3,6,9>
 
-#line 56
+#line 57
     dp3 r1.x, v1, r0  // ::Skin<0>
     dp4 r0.x, v0, r0  // Skin::vin<0>
 
-#line 52
+#line 53
     mul r2, v4.y, c27[a0.x]
     mul r3, v4.y, c28[a0.x]
     mad r3, c28[a0.y], v4.x, r3  // ::skinning<2,5,8,11>
@@ -70,7 +70,7 @@
     mad r3, c28[a0.w], v4.w, r3  // ::skinning<2,5,8,11>
     mad r2, c27[a0.w], v4.w, r2  // ::skinning<1,4,7,10>
 
-#line 56
+#line 57
     dp3 r1.y, v1, r2  // ::Skin<1>
     dp4 r0.y, v0, r2  // Skin::vin<1>
     dp3 r1.z, v1, r3  // ::Skin<2>
@@ -132,14 +132,14 @@
     dp4 r1.y, r0, c23  // ::vout<1>
     dp4 r0.x, r0, c25  // ::vout<3>
 
-#line 220 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 221 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     mad oPos.xy, r0.x, c242, r1  // ::VSSkinnedOneLightFourBones<10,11>
     mov oPos.w, r0.x  // ::VSSkinnedOneLightFourBones<13>
 
 #line 46 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mov oT0.w, c0.w  // ::VSSkinnedOneLightFourBones<3>
 
-#line 224 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 225 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     mov oT2.xy, v2  // ::VSSkinnedOneLightFourBones<8,9>
 
 // approximately 64 instruction slots used
@@ -219,10 +219,10 @@ ret
 
 const BYTE SkinnedEffect_VSSkinnedOneLightFourBones[] =
 {
-     68,  88,  66,  67, 167,  52, 
-     58,  16,  93, 182,  59,  35, 
-     10,  21, 149,  26,  98,  26, 
-     69,   5,   1,   0,   0,   0, 
+     68,  88,  66,  67,  58,  96, 
+    130, 150, 141, 219,  73,  30, 
+    204, 215, 167, 127, 135, 246, 
+    113,   7,   1,   0,   0,   0, 
      64,  22,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     232,  12,   0,   0, 244,  20, 
@@ -283,32 +283,32 @@ const BYTE SkinnedEffect_VSSkinnedOneLightFourBones[] =
       0,   0,   0,   0, 255, 255, 
     168,   8,   0,   0,   0,   0, 
     255, 255, 180,   8,   0,   0, 
-     52,   0,   0,   0, 192,   8, 
-      0,   0,  52,   0,   0,   0, 
-    208,   8,   0,   0,  52,   0, 
+     53,   0,   0,   0, 192,   8, 
+      0,   0,  53,   0,   0,   0, 
+    208,   8,   0,   0,  53,   0, 
       0,   0, 220,   8,   0,   0, 
-     52,   0,   0,   0, 240,   8, 
-      0,   0,  52,   0,   0,   0, 
-      8,   9,   0,   0,  52,   0, 
+     53,   0,   0,   0, 240,   8, 
+      0,   0,  53,   0,   0,   0, 
+      8,   9,   0,   0,  53,   0, 
       0,   0,  32,   9,   0,   0, 
-     56,   0,   0,   0,  56,   9, 
-      0,   0,  55,   0,   0,   0, 
-     72,   9,   0,   0,  52,   0, 
-      0,   0,  88,   9,   0,   0, 
-     52,   0,   0,   0, 108,   9, 
-      0,   0,  52,   0,   0,   0, 
-    128,   9,   0,   0,  52,   0, 
-      0,   0, 152,   9,   0,   0, 
-     52,   0,   0,   0, 176,   9, 
-      0,   0,  52,   0,   0,   0, 
-    200,   9,   0,   0,  52,   0, 
-      0,   0, 224,   9,   0,   0, 
-     52,   0,   0,   0, 248,   9, 
+     57,   0,   0,   0,  56,   9, 
       0,   0,  56,   0,   0,   0, 
-     16,  10,   0,   0,  55,   0, 
+     72,   9,   0,   0,  53,   0, 
+      0,   0,  88,   9,   0,   0, 
+     53,   0,   0,   0, 108,   9, 
+      0,   0,  53,   0,   0,   0, 
+    128,   9,   0,   0,  53,   0, 
+      0,   0, 152,   9,   0,   0, 
+     53,   0,   0,   0, 176,   9, 
+      0,   0,  53,   0,   0,   0, 
+    200,   9,   0,   0,  53,   0, 
+      0,   0, 224,   9,   0,   0, 
+     53,   0,   0,   0, 248,   9, 
+      0,   0,  57,   0,   0,   0, 
+     16,  10,   0,   0,  56,   0, 
       0,   0,  32,  10,   0,   0, 
-     56,   0,   0,   0,  48,  10, 
-      0,   0,  55,   0,   0,   0, 
+     57,   0,   0,   0,  48,  10, 
+      0,   0,  56,   0,   0,   0, 
      64,  10,   0,   0,  59,   0, 
       1,   0,  80,  10,   0,   0, 
      59,   0,   1,   0,  96,  10, 
@@ -352,11 +352,11 @@ const BYTE SkinnedEffect_VSSkinnedOneLightFourBones[] =
      16,  12,   0,   0,  63,   0, 
       1,   0,  32,  12,   0,   0, 
      63,   0,   1,   0,  48,  12, 
-      0,   0, 220,   0,   0,   0, 
-     64,  12,   0,   0, 220,   0, 
+      0,   0, 221,   0,   0,   0, 
+     64,  12,   0,   0, 221,   0, 
       0,   0,  84,  12,   0,   0, 
      46,   0,   1,   0,  96,  12, 
-      0,   0, 224,   0,   0,   0, 
+      0,   0, 225,   0,   0,   0, 
     108,  12,   0,   0,  80,  97, 
     114,  97, 109, 101, 116, 101, 
     114, 115,   0,  68, 105, 102, 

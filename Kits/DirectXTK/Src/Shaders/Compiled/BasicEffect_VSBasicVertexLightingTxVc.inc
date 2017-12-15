@@ -126,7 +126,7 @@
     mov r1.xyz, c1  // Parameters::DiffuseColor<0,1,2>
     mad r0.xyz, r0, r1, c2  // ::result<0,1,2>
 
-#line 242 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 243 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT0.xyz, r0, v3  // ::VSBasicVertexLightingTxVc<0,1,2>
     mul oT0.w, v3.w, c1.w  // ::VSBasicVertexLightingTxVc<3>
 
@@ -135,11 +135,11 @@
     dp4 r0.y, v0, c22  // ::vout<1>
     dp4 r0.z, v0, c24  // ::vout<3>
 
-#line 234 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 235 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicVertexLightingTxVc<10,11>
     mov oPos.w, r0.z  // ::VSBasicVertexLightingTxVc<13>
 
-#line 241
+#line 242
     mov oT2.xy, v2  // ::VSBasicVertexLightingTxVc<8,9>
 
 // approximately 64 instruction slots used
@@ -215,10 +215,10 @@ ret
 
 const BYTE BasicEffect_VSBasicVertexLightingTxVc[] =
 {
-     68,  88,  66,  67,  41, 130, 
-     30, 171, 115,  93,  44,  75, 
-    156,  10,  11,  22,  36, 193, 
-     68, 175,   1,   0,   0,   0, 
+     68,  88,  66,  67, 152,  74, 
+     77, 122,   0, 199,  54, 255, 
+      5,  88,  33, 157,  13,  97, 
+    107,  40,   1,   0,   0,   0, 
      12,  20,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     164,  11,   0,   0, 236,  18, 
@@ -343,16 +343,16 @@ const BYTE BasicEffect_VSBasicVertexLightingTxVc[] =
       0,   0,  46,   0,   0,   0, 
     128,  10,   0,   0,  46,   0, 
       0,   0, 140,  10,   0,   0, 
-    242,   0,   2,   0, 160,  10, 
-      0,   0, 242,   0,   2,   0, 
+    243,   0,   2,   0, 160,  10, 
+      0,   0, 243,   0,   2,   0, 
     176,  10,   0,   0,  63,   0, 
       0,   0, 192,  10,   0,   0, 
      63,   0,   0,   0, 208,  10, 
       0,   0,  63,   0,   0,   0, 
-    224,  10,   0,   0, 234,   0, 
+    224,  10,   0,   0, 235,   0, 
       2,   0, 240,  10,   0,   0, 
-    234,   0,   2,   0,   4,  11, 
-      0,   0, 241,   0,   2,   0, 
+    235,   0,   2,   0,   4,  11, 
+      0,   0, 242,   0,   2,   0, 
      16,  11,   0,   0,  80,  97, 
     114,  97, 109, 101, 116, 101, 
     114, 115,   0,  68, 105, 102, 

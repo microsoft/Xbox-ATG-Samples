@@ -44,7 +44,7 @@
     dcl t3  // pin<9,10,11,12>
     dcl_2d s0
 
-#line 379 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 380 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     texld r0, t0, s0
     add r1.xyz, -t1, c12
     dp3 r1.w, r1, r1
@@ -54,7 +54,7 @@
     mad r2.xyz, r1, r1.w, -c3
     nrm r3.xyz, r2  // ::halfVectors<0,1,2>
 
-#line 382 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 383 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     nrm r2.xyz, t2  // ::worldNormal<0,1,2>
 
 #line 37 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
@@ -99,7 +99,7 @@
     mad r1.xyz, r1.z, c11, r3
     mul r1.xyz, r1, c2  // ::result<3,4,5>
 
-#line 379 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 380 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     mul r0, r0, t3  // ::color<0,1,2,3>
 
 #line 26 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
@@ -185,10 +185,10 @@ ret
 
 const BYTE SkinnedEffect_PSSkinnedPixelLighting[] =
 {
-     68,  88,  66,  67,  58, 118, 
-     42, 165, 123, 218,  82,  67, 
-    110,   5, 134, 109, 101, 121, 
-    104, 101,   1,   0,   0,   0, 
+     68,  88,  66,  67, 100, 184, 
+     70, 239,   6, 236,  87, 181, 
+    227,  83, 190,  68, 206, 172, 
+    163,  74,   1,   0,   0,   0, 
     248,  16,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     212,   9,   0,   0,  68,  16, 
@@ -249,15 +249,15 @@ const BYTE SkinnedEffect_PSSkinnedPixelLighting[] =
       0,   0,   0,   0, 255, 255, 
     140,   6,   0,   0,   0,   0, 
     255, 255, 152,   6,   0,   0, 
-    123,   1,   0,   0, 164,   6, 
-      0,   0, 125,   1,   0,   0, 
-    180,   6,   0,   0, 125,   1, 
+    124,   1,   0,   0, 164,   6, 
+      0,   0, 126,   1,   0,   0, 
+    180,   6,   0,   0, 126,   1, 
       0,   0, 196,   6,   0,   0, 
-    125,   1,   0,   0, 212,   6, 
+    126,   1,   0,   0, 212,   6, 
       0,   0,  33,   0,   1,   0, 
     224,   6,   0,   0,  33,   0, 
       1,   0, 244,   6,   0,   0, 
-    126,   1,   0,   0,   0,   7, 
+    127,   1,   0,   0,   0,   7, 
       0,   0,  37,   0,   1,   0, 
      12,   7,   0,   0,  33,   0, 
       1,   0,  28,   7,   0,   0, 
@@ -293,7 +293,7 @@ const BYTE SkinnedEffect_PSSkinnedPixelLighting[] =
       0,   0,  47,   0,   1,   0, 
     128,   8,   0,   0,  47,   0, 
       1,   0, 148,   8,   0,   0, 
-    123,   1,   0,   0, 164,   8, 
+    124,   1,   0,   0, 164,   8, 
       0,   0,  26,   0,   2,   0, 
     180,   8,   0,   0,  46,   0, 
       1,   0, 196,   8,   0,   0, 

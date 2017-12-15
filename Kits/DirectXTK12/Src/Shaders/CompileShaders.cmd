@@ -9,6 +9,8 @@ rem Copyright (c) Microsoft Corporation. All rights reserved.
 setlocal
 set error=0
 
+set FXCOPTS=/nologo /WX /Ges /Zi /Zpc /Qstrip_reflect /Qstrip_debug
+
 if %1.==xbox. goto continuexbox
 if %1.==. goto continuepc
 echo usage: CompileShaders [xbox]
@@ -31,6 +33,8 @@ if not exist %XBOXFXC% goto needxdk
 goto continue
 
 :continuepc
+set PCOPTS=/force_rootsig_ver rootsig_1_0
+
 set PCFXC="%WindowsSdkBinPath%%WindowsSDKVersion%\x86\fxc.exe"
 if exist %PCFXC% goto continue
 set PCFXC="%WindowsSdkDir%bin\%WindowsSDKVersion%\x86\fxc.exe"
@@ -39,7 +43,6 @@ if exist %PCFXC% goto continue
 set PCFXC=fxc.exe
 
 :continue
-
 call :CompileShader%1 AlphaTestEffect vs VSAlphaTest
 call :CompileShader%1 AlphaTestEffect vs VSAlphaTestNoFog
 call :CompileShader%1 AlphaTestEffect vs VSAlphaTestVc
@@ -147,6 +150,27 @@ call :CompileShader%1 NormalMapEffect ps PSNormalPixelLightingTxNoFog
 call :CompileShader%1 NormalMapEffect ps PSNormalPixelLightingTxNoSpec
 call :CompileShader%1 NormalMapEffect ps PSNormalPixelLightingTxNoFogSpec
 
+call :CompileShader%1 PBREffect vs VSConstant
+call :CompileShader%1 PBREffect vs VSConstantVelocity
+call :CompileShader%1 PBREffect vs VSConstantBn
+call :CompileShader%1 PBREffect vs VSConstantVelocityBn
+
+call :CompileShader%1 PBREffect ps PSConstant
+call :CompileShader%1 PBREffect ps PSTextured
+call :CompileShader%1 PBREffect ps PSTexturedEmissive
+call :CompileShader%1 PBREffect ps PSTexturedVelocity
+call :CompileShader%1 PBREffect ps PSTexturedEmissiveVelocity
+
+call :CompileShader%1 DebugEffect vs VSDebug
+call :CompileShader%1 DebugEffect vs VSDebugBn
+call :CompileShader%1 DebugEffect vs VSDebugVc
+call :CompileShader%1 DebugEffect vs VSDebugVcBn
+
+call :CompileShader%1 DebugEffect ps PSHemiAmbient
+call :CompileShader%1 DebugEffect ps PSRGBNormals
+call :CompileShader%1 DebugEffect ps PSRGBTangents
+call :CompileShader%1 DebugEffect ps PSRGBBiTangents
+
 call :CompileShader%1 SpriteEffect vs SpriteVertexShader
 call :CompileShader%1 SpriteEffect ps SpritePixelShader
 
@@ -203,42 +227,42 @@ endlocal
 exit /b
 
 :CompileShader
-set fxc=%PCFXC% /nologo %1.fx /T%2_5_0 /Zi /Zpc /force_rootsig_ver rootsig_1_0 /Qstrip_reflect /Qstrip_debug /E%3 /FhCompiled\%1_%3.inc /FdCompiled\%1_%3.pdb /Vn%1_%3
+set fxc=%PCFXC% %1.fx %FXCOPTS% /T%2_5_0 %PCOPTS% /E%3 /FhCompiled\%1_%3.inc /FdCompiled\%1_%3.pdb /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileShaderHLSL
-set fxc=%PCFXC% /nologo %1.hlsl /T%2_5_0 /Zi /Zpc /force_rootsig_ver rootsig_1_0 /Qstrip_reflect /Qstrip_debug /E%3 /FhCompiled\%1_%3.inc /FdCompiled\%1_%3.pdb /Vn%1_%3
+set fxc=%PCFXC% %1.hlsl %FXCOPTS% /T%2_5_0 %PCOPTS% /E%3 /FhCompiled\%1_%3.inc /FdCompiled\%1_%3.pdb /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileComputeShader
-set fxc=%PCFXC% /nologo %1.hlsl /Tcs_5_0 /Zi /Zpc /force_rootsig_ver rootsig_1_0 /Qstrip_reflect /Qstrip_debug /E%2 /FhCompiled\%1_%2.inc /FdCompiled\%1_%2.pdb /Vn%1_%2
+set fxc=%PCFXC% %1.hlsl %FXCOPTS% /Tcs_5_0 %PCOPTS% /E%2 /FhCompiled\%1_%2.inc /FdCompiled\%1_%2.pdb /Vn%1_%2
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileShaderxbox
-set fxc=%XBOXFXC% /nologo %1.fx /T%2_5_0 /Zi /Zpc /Qstrip_reflect /Qstrip_debug %XBOXOPTS% /E%3 /FhCompiled\XboxOne%1_%3.inc /FdCompiled\XboxOne%1_%3.pdb /Vn%1_%3
+set fxc=%XBOXFXC% %1.fx %FXCOPTS% /T%2_5_0 %XBOXOPTS% /E%3 /FhCompiled\XboxOne%1_%3.inc /FdCompiled\XboxOne%1_%3.pdb /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileShaderHLSLxbox
-set fxc=%XBOXFXC% /nologo %1.hlsl /T%2_5_0 /Zi /Zpc /Qstrip_reflect /Qstrip_debug %XBOXOPTS% /E%3 /FhCompiled\XboxOne%1_%3.inc /FdCompiled\XboxOne%1_%3.pdb /Vn%1_%3
+set fxc=%XBOXFXC% %1.hlsl %FXCOPTS% /T%2_5_0 %XBOXOPTS% /E%3 /FhCompiled\XboxOne%1_%3.inc /FdCompiled\XboxOne%1_%3.pdb /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileComputeShaderxbox
-set fxc==%XBOXFXC% /nologo %1.hlsl /Tcs_5_0 /Zi /Zpc /Qstrip_reflect /Qstrip_debug /D__XBOX_DISABLE_SHADER_NAME_EMPLACEMENT /E%2 /FhCompiled\XboxOne%1_%2.inc /FdCompiled\XboxOne%1_%2.pdb /Vn%1_%2
+set fxc==%XBOXFXC% %1.hlsl %FXCOPTS% /Tcs_5_0 %XBOXOPTS% /E%2 /FhCompiled\XboxOne%1_%2.inc /FdCompiled\XboxOne%1_%2.pdb /Vn%1_%2
 echo.
 echo %fxc%
 %fxc% || set error=1

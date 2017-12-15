@@ -123,7 +123,7 @@
     mov r1.xyz, c1  // Parameters::DiffuseColor<0,1,2>
     mad r0.xyz, r0, r1, c2  // ::result<0,1,2>
 
-#line 185 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 186 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT0.xyz, r0, v2  // ::VSBasicVertexLightingVc<0,1,2>
     mul oT0.w, v2.w, c1.w  // ::VSBasicVertexLightingVc<3>
 
@@ -132,7 +132,7 @@
     dp4 r0.y, v0, c22  // ::vout<1>
     dp4 r0.z, v0, c24  // ::vout<3>
 
-#line 178 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 179 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicVertexLightingVc<8,9>
     mov oPos.w, r0.z  // ::VSBasicVertexLightingVc<11>
 
@@ -206,10 +206,10 @@ ret
 
 const BYTE BasicEffect_VSBasicVertexLightingVc[] =
 {
-     68,  88,  66,  67, 172, 211, 
-    161, 241, 101, 209, 216, 199, 
-     95, 212, 215,  95, 236,   1, 
-     60, 232,   1,   0,   0,   0, 
+     68,  88,  66,  67,  36, 147, 
+    101, 144,  97,   7, 128,  93, 
+     80, 155,  85,   0,  11,  84, 
+    122,  59,   1,   0,   0,   0, 
      48,  19,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      52,  11,   0,   0,  80,  18, 
@@ -332,15 +332,15 @@ const BYTE BasicEffect_VSBasicVertexLightingVc[] =
       0,   0,   8,  10,   0,   0, 
      46,   0,   0,   0,  28,  10, 
       0,   0,  46,   0,   0,   0, 
-     40,  10,   0,   0, 185,   0, 
+     40,  10,   0,   0, 186,   0, 
       2,   0,  60,  10,   0,   0, 
-    185,   0,   2,   0,  76,  10, 
+    186,   0,   2,   0,  76,  10, 
       0,   0,  63,   0,   0,   0, 
      92,  10,   0,   0,  63,   0, 
       0,   0, 108,  10,   0,   0, 
      63,   0,   0,   0, 124,  10, 
-      0,   0, 178,   0,   2,   0, 
-    140,  10,   0,   0, 178,   0, 
+      0,   0, 179,   0,   2,   0, 
+    140,  10,   0,   0, 179,   0, 
       2,   0, 160,  10,   0,   0, 
      80,  97, 114,  97, 109, 101, 
     116, 101, 114, 115,   0,  68, 

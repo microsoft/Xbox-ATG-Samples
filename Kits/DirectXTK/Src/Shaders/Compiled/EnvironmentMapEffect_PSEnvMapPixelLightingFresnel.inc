@@ -46,20 +46,20 @@
     dcl_2d s0
     dcl_cube s1
 
-#line 92 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 93 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     nrm r0.xyz, t2  // ::worldNormal<0,1,2>
     add r1.xyz, -t1, c10
     nrm r2.xyz, r1  // ::eyeVector<0,1,2>
 
-#line 98
+#line 99
     dp3 r0.w, -r2, r0
     add r0.w, r0.w, r0.w
     mad r1.xyz, r0, -r0.w, -r2  // ::envcoord<0,1,2>
 
-#line 89
+#line 90
     texld r3, t0, s0
 
-#line 100
+#line 101
     texld r1, r1, s1
 
 #line 36 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
@@ -78,13 +78,13 @@
     mov r5.xyz, c2  // Parameters::DiffuseColor<0,1,2>
     mad r4.xyz, r4, r5, c3  // ::result<0,1,2>
 
-#line 89 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 90 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     mul r3, r3, t3  // ::color<0,1,2,3>
 
-#line 96
+#line 97
     mul r4.xyz, r4, r3  // ::color<0,1,2>
 
-#line 55
+#line 56
     dp3 r4.w, r2, r0  // ::viewAngle<0>
     abs r4.w, r4.w
     add r4.w, -r4.w, c12.x
@@ -92,14 +92,14 @@
     pow r4.w, r0.x, c1.y
     mul r4.w, r4.w, c1.x  // ::ComputeFresnelFactor<0>
 
-#line 108
+#line 109
     mad r0.xyz, r1, r3.w, -r4
     mad r0.xyz, r4.w, r0, r4  // ::color<0,1,2>
 
-#line 100
+#line 101
     mul r0.w, r1.w, r3.w  // ::envmap<3>
 
-#line 109
+#line 110
     mad r0.xyz, c0, r0.w, r0  // ::color<0,1,2>
 
 #line 20 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
@@ -164,10 +164,10 @@ ret
 
 const BYTE EnvironmentMapEffect_PSEnvMapPixelLightingFresnel[] =
 {
-     68,  88,  66,  67, 109, 154, 
-    179, 107, 184, 119, 137,  38, 
-    235,  37, 108, 115, 228, 117, 
-     24, 176,   1,   0,   0,   0, 
+     68,  88,  66,  67,  88,  39, 
+    246,  14, 199, 227,  17,  26, 
+    102,  47,  72, 191, 195,   4, 
+    152, 181,   1,   0,   0,   0, 
      88,  15,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      56,   9,   0,   0, 164,  14, 
@@ -231,16 +231,16 @@ const BYTE EnvironmentMapEffect_PSEnvMapPixelLightingFresnel[] =
     124,   6,   0,   0,   0,   0, 
     255, 255, 136,   6,   0,   0, 
       0,   0, 255, 255, 148,   6, 
-      0,   0,  92,   0,   0,   0, 
-    160,   6,   0,   0,  91,   0, 
+      0,   0,  93,   0,   0,   0, 
+    160,   6,   0,   0,  92,   0, 
       0,   0, 172,   6,   0,   0, 
-     91,   0,   0,   0, 188,   6, 
-      0,   0,  98,   0,   0,   0, 
-    200,   6,   0,   0,  98,   0, 
+     92,   0,   0,   0, 188,   6, 
+      0,   0,  99,   0,   0,   0, 
+    200,   6,   0,   0,  99,   0, 
       0,   0, 216,   6,   0,   0, 
-     98,   0,   0,   0, 232,   6, 
-      0,   0,  89,   0,   0,   0, 
-    252,   6,   0,   0, 100,   0, 
+     99,   0,   0,   0, 232,   6, 
+      0,   0,  90,   0,   0,   0, 
+    252,   6,   0,   0, 101,   0, 
       0,   0,  12,   7,   0,   0, 
      36,   0,   1,   0,  28,   7, 
       0,   0,  36,   0,   1,   0, 
@@ -255,22 +255,22 @@ const BYTE EnvironmentMapEffect_PSEnvMapPixelLightingFresnel[] =
     148,   7,   0,   0,  46,   0, 
       1,   0, 168,   7,   0,   0, 
      46,   0,   1,   0, 180,   7, 
-      0,   0,  89,   0,   0,   0, 
-    200,   7,   0,   0,  96,   0, 
+      0,   0,  90,   0,   0,   0, 
+    200,   7,   0,   0,  97,   0, 
       0,   0, 216,   7,   0,   0, 
-     55,   0,   0,   0, 232,   7, 
-      0,   0,  57,   0,   0,   0, 
-    248,   7,   0,   0,  57,   0, 
+     56,   0,   0,   0, 232,   7, 
+      0,   0,  58,   0,   0,   0, 
+    248,   7,   0,   0,  58,   0, 
       0,   0,   4,   8,   0,   0, 
-     57,   0,   0,   0,  20,   8, 
-      0,   0,  57,   0,   0,   0, 
-     36,   8,   0,   0,  57,   0, 
+     58,   0,   0,   0,  20,   8, 
+      0,   0,  58,   0,   0,   0, 
+     36,   8,   0,   0,  58,   0, 
       0,   0,  52,   8,   0,   0, 
-    108,   0,   0,   0,  68,   8, 
-      0,   0, 108,   0,   0,   0, 
-     88,   8,   0,   0, 100,   0, 
+    109,   0,   0,   0,  68,   8, 
+      0,   0, 109,   0,   0,   0, 
+     88,   8,   0,   0, 101,   0, 
       0,   0, 108,   8,   0,   0, 
-    109,   0,   0,   0, 124,   8, 
+    110,   0,   0,   0, 124,   8, 
       0,   0,  20,   0,   2,   0, 
     144,   8,   0,   0,  20,   0, 
       2,   0, 164,   8,   0,   0, 

@@ -84,7 +84,7 @@
     mov r2.xyz, c1  // Parameters::DiffuseColor<0,1,2>
     mad r1.xyz, r1, r2, c2  // ::result<0,1,2>
 
-#line 295 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 296 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT0.xyz, r1, v2  // ::VSBasicOneLightVc<0,1,2>
 
 #line 42 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
@@ -103,7 +103,7 @@
     max r0.x, r0.x, c19.x
     min oT1.w, r0.x, c19.y  // ::VSBasicOneLightVc<7>
 
-#line 295 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 296 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mul oT0.w, v2.w, c1.w  // ::VSBasicOneLightVc<3>
 
 #line 63 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
@@ -111,7 +111,7 @@
     dp4 r0.y, v0, c16  // ::vout<1>
     dp4 r0.z, v0, c18  // ::vout<3>
 
-#line 288 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 289 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicOneLightVc<8,9>
     mov oPos.w, r0.z  // ::VSBasicOneLightVc<11>
 
@@ -169,10 +169,10 @@ ret
 
 const BYTE BasicEffect_VSBasicOneLightVc[] =
 {
-     68,  88,  66,  67, 178, 181, 
-     24, 148, 228, 174, 240, 114, 
-    226,  20, 186, 240, 154, 185, 
-    120,  75,   1,   0,   0,   0, 
+     68,  88,  66,  67,  84, 153, 
+    248,  94,  83, 110, 132, 243, 
+     80, 194,  50, 208, 220, 195, 
+    182, 160,   1,   0,   0,   0, 
      52,  15,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     108,   9,   0,   0,  84,  14, 
@@ -267,7 +267,7 @@ const BYTE BasicEffect_VSBasicOneLightVc[] =
       0,   0,  46,   0,   0,   0, 
     176,   7,   0,   0,  46,   0, 
       0,   0, 188,   7,   0,   0, 
-     39,   1,   1,   0, 208,   7, 
+     40,   1,   1,   0, 208,   7, 
       0,   0,  42,   0,   0,   0, 
     224,   7,   0,   0,  42,   0, 
       0,   0, 240,   7,   0,   0, 
@@ -279,13 +279,13 @@ const BYTE BasicEffect_VSBasicOneLightVc[] =
       0,   0,  14,   0,   2,   0, 
      64,   8,   0,   0,  14,   0, 
       2,   0,  80,   8,   0,   0, 
-     39,   1,   1,   0,  96,   8, 
+     40,   1,   1,   0,  96,   8, 
       0,   0,  63,   0,   0,   0, 
     112,   8,   0,   0,  63,   0, 
       0,   0, 128,   8,   0,   0, 
      63,   0,   0,   0, 144,   8, 
-      0,   0,  32,   1,   1,   0, 
-    160,   8,   0,   0,  32,   1, 
+      0,   0,  33,   1,   1,   0, 
+    160,   8,   0,   0,  33,   1, 
       1,   0, 180,   8,   0,   0, 
      80,  97, 114,  97, 109, 101, 
     116, 101, 114, 115,   0,  68, 

@@ -48,20 +48,20 @@
     dcl_texcoord3 v3  // vin<9,10,11,12>
     dcl_texcoord4 v4  // vin<13,14,15,16>
 
-#line 52 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 53 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     mul r0.x, v3.x, c243.x
     mova a0.x, r0.x
     mul r0, v4.x, c26[a0.x]  // ::skinning<0,3,6,9>
 
-#line 56
+#line 57
     dp3 r1.x, v1, r0  // ::Skin<0>
     dp4 r0.x, v0, r0  // Skin::vin<0>
 
-#line 52
+#line 53
     mul r2, v4.x, c27[a0.x]  // ::skinning<1,4,7,10>
     mul r3, v4.x, c28[a0.x]  // ::skinning<2,5,8,11>
 
-#line 56
+#line 57
     dp3 r1.y, v1, r2  // ::Skin<1>
     dp4 r0.y, v0, r2  // Skin::vin<1>
     dp3 r1.z, v1, r3  // ::Skin<2>
@@ -149,14 +149,14 @@
     dp4 r1.y, r0, c23  // ::vout<1>
     dp4 r0.x, r0, c25  // ::vout<3>
 
-#line 61 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 62 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     mad oPos.xy, r0.x, c242, r1  // ::VSSkinnedVertexLightingOneBone<10,11>
     mov oPos.w, r0.x  // ::VSSkinnedVertexLightingOneBone<13>
 
 #line 46 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mov oT0.w, c0.w  // ::VSSkinnedVertexLightingOneBone<3>
 
-#line 65 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 66 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     mov oT2.xy, v2  // ::VSSkinnedVertexLightingOneBone<8,9>
 
 // approximately 75 instruction slots used
@@ -243,10 +243,10 @@ ret
 
 const BYTE SkinnedEffect_VSSkinnedVertexLightingOneBone[] =
 {
-     68,  88,  66,  67,  62,  73, 
-    119, 200,  69, 171, 153,  69, 
-     17, 172,  31, 162,  40, 108, 
-    125, 176,   1,   0,   0,   0, 
+     68,  88,  66,  67, 124, 186, 
+     86, 198, 146, 186, 205,  93, 
+    252, 106, 160,  35, 112, 252, 
+     80, 253,   1,   0,   0,   0, 
      60,  23,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     108,  13,   0,   0, 240,  21, 
@@ -307,20 +307,20 @@ const BYTE SkinnedEffect_VSSkinnedVertexLightingOneBone[] =
       0,   0,   0,   0, 255, 255, 
     244,   8,   0,   0,   0,   0, 
     255, 255,   0,   9,   0,   0, 
-     52,   0,   0,   0,  12,   9, 
-      0,   0,  52,   0,   0,   0, 
-     28,   9,   0,   0,  52,   0, 
+     53,   0,   0,   0,  12,   9, 
+      0,   0,  53,   0,   0,   0, 
+     28,   9,   0,   0,  53,   0, 
       0,   0,  40,   9,   0,   0, 
-     56,   0,   0,   0,  60,   9, 
-      0,   0,  55,   0,   0,   0, 
-     76,   9,   0,   0,  52,   0, 
-      0,   0,  92,   9,   0,   0, 
-     52,   0,   0,   0, 112,   9, 
+     57,   0,   0,   0,  60,   9, 
       0,   0,  56,   0,   0,   0, 
-    132,   9,   0,   0,  55,   0, 
+     76,   9,   0,   0,  53,   0, 
+      0,   0,  92,   9,   0,   0, 
+     53,   0,   0,   0, 112,   9, 
+      0,   0,  57,   0,   0,   0, 
+    132,   9,   0,   0,  56,   0, 
       0,   0, 148,   9,   0,   0, 
-     56,   0,   0,   0, 164,   9, 
-      0,   0,  55,   0,   0,   0, 
+     57,   0,   0,   0, 164,   9, 
+      0,   0,  56,   0,   0,   0, 
     180,   9,   0,   0,  59,   0, 
       1,   0, 196,   9,   0,   0, 
      59,   0,   1,   0, 212,   9, 
@@ -388,11 +388,11 @@ const BYTE SkinnedEffect_VSSkinnedVertexLightingOneBone[] =
     148,  12,   0,   0,  63,   0, 
       1,   0, 164,  12,   0,   0, 
      63,   0,   1,   0, 180,  12, 
-      0,   0,  61,   0,   0,   0, 
-    196,  12,   0,   0,  61,   0, 
+      0,   0,  62,   0,   0,   0, 
+    196,  12,   0,   0,  62,   0, 
       0,   0, 216,  12,   0,   0, 
      46,   0,   1,   0, 228,  12, 
-      0,   0,  65,   0,   0,   0, 
+      0,   0,  66,   0,   0,   0, 
     240,  12,   0,   0,  80,  97, 
     114,  97, 109, 101, 116, 101, 
     114, 115,   0,  68, 105, 102, 

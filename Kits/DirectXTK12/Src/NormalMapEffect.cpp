@@ -70,7 +70,6 @@ public:
     };
 
     bool specularMap;
-    bool biasedVertexNormals;
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
     D3D12_GPU_DESCRIPTOR_HANDLE specular;
@@ -79,7 +78,7 @@ public:
 
     EffectLights lights;
 
-    int GetPipelineStatePermutation(bool vertexColorEnabled) const;
+    int GetPipelineStatePermutation(bool vertexColorEnabled, bool biasedVertexNormals) const;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -152,15 +151,15 @@ const int EffectBase<NormalMapEffectTraits>::VertexShaderIndices[] =
     5,     // pixel lighting + texture + vertex color, no specular
     5,     // pixel lighting + texture + vertex color, no fog or specular
 
-    2,     // pixel lighting (biased vertex normal/tangent) + texture
-    2,     // pixel lighting (biased vertex normal/tangent) + texture, no fog
-    3,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color
-    3,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no fog
+    2,     // pixel lighting (biased vertex normal) + texture
+    2,     // pixel lighting (biased vertex normal) + texture, no fog
+    3,     // pixel lighting (biased vertex normal) + texture + vertex color
+    3,     // pixel lighting (biased vertex normal) + texture + vertex color, no fog
 
-    6,     // pixel lighting (biased vertex normal/tangent) + texture, no specular
-    6,     // pixel lighting (biased vertex normal/tangent) + texture, no fog or specular
-    7,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no specular
-    7,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no fog or specular
+    6,     // pixel lighting (biased vertex normal) + texture, no specular
+    6,     // pixel lighting (biased vertex normal) + texture, no fog or specular
+    7,     // pixel lighting (biased vertex normal) + texture + vertex color, no specular
+    7,     // pixel lighting (biased vertex normal) + texture + vertex color, no fog or specular
 };
 
 
@@ -187,15 +186,15 @@ const int EffectBase<NormalMapEffectTraits>::PixelShaderIndices[] =
     2,     // pixel lighting + texture + vertex color, no specular
     3,     // pixel lighting + texture + vertex color, no fog or specular
 
-    0,      // pixel lighting (biased vertex normal/tangent) + texture
-    1,      // pixel lighting (biased vertex normal/tangent) + texture, no fog
-    0,      // pixel lighting (biased vertex normal/tangent) + texture + vertex color
-    1,      // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no fog
+    0,      // pixel lighting (biased vertex normal) + texture
+    1,      // pixel lighting (biased vertex normal) + texture, no fog
+    0,      // pixel lighting (biased vertex normal) + texture + vertex color
+    1,      // pixel lighting (biased vertex normal) + texture + vertex color, no fog
 
-    2,     // pixel lighting (biased vertex normal/tangent) + texture, no specular
-    3,     // pixel lighting (biased vertex normal/tangent) + texture, no fog or specular
-    2,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no specular
-    3,     // pixel lighting (biased vertex normal/tangent) + texture + vertex color, no fog or specular
+    2,     // pixel lighting (biased vertex normal) + texture, no specular
+    3,     // pixel lighting (biased vertex normal) + texture, no fog or specular
+    2,     // pixel lighting (biased vertex normal) + texture + vertex color, no specular
+    3,     // pixel lighting (biased vertex normal) + texture + vertex color, no fog or specular
 };
 
 // Global pool of per-device NormalMapEffect resources.
@@ -260,11 +259,11 @@ NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Ef
     assert(mRootSignature != 0);
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
-    biasedVertexNormals = (effectFlags & EffectFlags::BiasedVertexNormals) != 0;
 
     // Create pipeline state.
     int sp = GetPipelineStatePermutation(
-        (effectFlags & EffectFlags::VertexColor) != 0);
+        (effectFlags & EffectFlags::VertexColor) != 0,
+        (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
     assert(sp >= 0 && sp < NormalMapEffectTraits::ShaderPermutationCount);
 
     int vi = EffectBase<NormalMapEffectTraits>::VertexShaderIndices[sp];
@@ -283,7 +282,7 @@ NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Ef
 }
 
 
-int NormalMapEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled) const
+int NormalMapEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled, bool biasedVertexNormals) const
 {
     int permutation = 0;
 
@@ -307,7 +306,7 @@ int NormalMapEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled) 
 
     if (biasedVertexNormals)
     {
-        // Compressed normals & tangents need to be scaled and biased in the vertex shader.
+        // Compressed normals need to be scaled and biased in the vertex shader.
         permutation += 8;
     }
 
@@ -329,12 +328,13 @@ void NormalMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     commandList->SetGraphicsRootSignature(mRootSignature);
 
     // Set the texture
-    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
     if (!texture.ptr || !sampler.ptr || !normal.ptr)
     {
         DebugTrace("ERROR: Missing texture(s) or sampler for NormalMapEffect (texture %llu, normal %llu, sampler %llu)\n", texture.ptr, normal.ptr, sampler.ptr);
         throw std::exception("NormalMapEffect");
     }
+
+    // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureNormalSRV, normal);
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSampler, sampler);
