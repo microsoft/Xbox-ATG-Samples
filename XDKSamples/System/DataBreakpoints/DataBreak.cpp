@@ -174,7 +174,7 @@ namespace ATG
             {
                 std::thread *dataBreakThread;
 
-                dataBreakThread = new std::thread(DataBreakThread, params);
+                dataBreakThread = new std::thread(DataBreakThread, std::ref(params));
                 dataBreakThread->join();
             }
             else
@@ -206,7 +206,7 @@ namespace ATG
             {
                 std::thread *dataBreakThread;
 
-                dataBreakThread = new std::thread(DataBreakThread, params);
+                dataBreakThread = new std::thread(DataBreakThread, std::ref(params));
                 dataBreakThread->join();
             }
             else
