@@ -284,9 +284,12 @@ void Sample::CreateDevice()
     }
     else
 #endif
+
+    {
 #ifdef _DEBUG
         OutputDebugStringA("INFO: Swapchain using 1080p (1920 x 1080)\n");
 #endif
+    }
 
     // Initialize device dependent objects here (independent of window size).
     m_graphicsMemory = std::make_unique<GraphicsMemory>(m_d3dDevice.Get());
