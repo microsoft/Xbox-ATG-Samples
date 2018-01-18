@@ -6,6 +6,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
 
+#pragma once
+
 #ifndef _M_X64
 #error This tool is only supported for x64 native
 #endif
