@@ -19,9 +19,9 @@ using namespace DirectX::SimpleMath;
 using Microsoft::WRL::ComPtr;
 
 Sample::Sample() :
-    m_frameMemoryUsage{0},
-    m_preRunMemoryUsage{0},
-    m_temporaryTextBuffer{0},
+    m_frameMemoryUsage{},
+    m_preRunMemoryUsage{},
+    m_temporaryTextBuffer{},
     m_temporaryTextTime(0.f),
     m_gamepadPresent(false)
     {

@@ -9,6 +9,7 @@
 #include "SimpleWASAPIPlaySoundXDK.h"
 
 #include "ATGColors.h"
+#include "ControllerFont.h"
 
 extern void ExitSample();
 
@@ -17,6 +18,7 @@ using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
 Sample::Sample() :
+    m_frame(0),
 	m_playPressed(false)
 {
     // Renders only 2D, so no need for a depth buffer.
@@ -117,15 +119,17 @@ void Sample::Render()
 
     m_spriteBatch->Begin();
 
-    wchar_t str[128] = { 0 };
-	swprintf_s(str, L"Simple WASAPI Playback:");
-	m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-	pos.y += 30;
+	m_font->DrawString(m_spriteBatch.get(), L"Simple WASAPI Playback:", pos, ATG::Colors::White);
+	pos.y += m_font->GetLineSpacing() * 1.5f;
+
+    wchar_t str[128] = {};
 	swprintf_s(str, L"Audio Source - Test tone at 440hz : %s", (m_wm->IsPlaying())? L"Is Playing" : L"Is Stopped");
     m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-	pos.y += 230;
-	swprintf_s(str, L"Press A to start/stop playback");
-	m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
+
+    DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"Press [A] to start/stop playback   [View] Exit",
+        XMFLOAT2(float(safeRect.left), float(safeRect.bottom) - m_font->GetLineSpacing()),
+        ATG::Colors::LightGrey);
+
     m_spriteBatch->End();
 
     PIXEndEvent(context);
@@ -189,6 +193,9 @@ void Sample::CreateDeviceDependentResources()
 
     m_font = std::make_unique<SpriteFont>(device, L"SegoeUI_18.spritefont");
     m_font->SetDefaultCharacter(L' ');
+
+    m_ctrlFont = std::make_unique<SpriteFont>(device, L"XboxOneControllerLegendSmall.spritefont");
+
     m_graphicsMemory = std::make_unique<GraphicsMemory>(device, m_deviceResources->GetBackBufferCount());
 }
 

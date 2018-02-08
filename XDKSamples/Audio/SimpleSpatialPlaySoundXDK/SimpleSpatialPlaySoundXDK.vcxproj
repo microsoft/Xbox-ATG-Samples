@@ -164,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h" />
+    <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h" />
     <ClInclude Include="..\..\..\Kits\ATGTK\WAVFileReader.h" />
     <ClInclude Include="ISACRenderer.h" />
     <ClInclude Include="SimpleSpatialPlaySoundXDK.h" />
@@ -202,6 +203,11 @@
   <ItemGroup>
     <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\Media\Fonts\XboxOneControllerSmall.spritefont">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">true</DeploymentContent>
     </None>
     <None Include="Readme.docx" />
   </ItemGroup>

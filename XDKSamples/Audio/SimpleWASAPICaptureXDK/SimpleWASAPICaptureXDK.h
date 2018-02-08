@@ -10,7 +10,6 @@
 #include "DeviceResources.h"
 #include "StepTimer.h"
 #include "WASAPIManager.h"
-#include <vector>
 
 // A basic sample implementation that creates a D3D11 device and
 // provides a render loop.
@@ -29,9 +28,6 @@ public:
     // Messages
     void OnSuspending();
     void OnResuming();
-
-    // Properties
-    bool RequestHDRMode() const { return m_deviceResources ? (m_deviceResources->GetDeviceOptions() & DX::DeviceResources::c_EnableHDR) != 0 : false; }
 
 private:
 	std::wstring convertBoolToEnabled(bool bIsEnabled)
@@ -58,6 +54,7 @@ private:
     // Render objects
     std::unique_ptr<DirectX::SpriteBatch>   m_spriteBatch;
     std::unique_ptr<DirectX::SpriteFont>    m_font;
+    std::unique_ptr<DirectX::SpriteFont>    m_ctrlFont;
     
     // WASAPI objects
 	WASAPIManager^							m_wm;

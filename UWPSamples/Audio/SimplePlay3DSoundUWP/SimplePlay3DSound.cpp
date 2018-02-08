@@ -273,7 +273,7 @@ void Sample::PlayFile(const wchar_t* filename)
     DX::ThrowIfFailed(m_XAudio2->CreateSourceVoice(&m_sourceVoice, waveData.wfx, 0, XAUDIO2_DEFAULT_FREQ_RATIO, nullptr, &sendList));
 
     // Submit the wave sample data using an XAUDIO2_BUFFER structure
-    XAUDIO2_BUFFER buffer = {0};
+    XAUDIO2_BUFFER buffer = {};
     buffer.pAudioData = waveData.startAudio;
     buffer.Flags = XAUDIO2_END_OF_STREAM;
     buffer.AudioBytes = waveData.audioBytes;

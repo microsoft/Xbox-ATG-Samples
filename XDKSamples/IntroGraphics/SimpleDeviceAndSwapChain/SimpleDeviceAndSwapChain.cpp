@@ -300,7 +300,7 @@ void Sample::CreateResources()
         DX::ThrowIfFailed(dxgiAdapter->GetParent(IID_GRAPHICS_PPV_ARGS(dxgiFactory.GetAddressOf())));
 
         // Create a descriptor for the swap chain.
-        DXGI_SWAP_CHAIN_DESC1 swapChainDesc = { 0 };
+        DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
         swapChainDesc.Width = backBufferWidth;
         swapChainDesc.Height = backBufferHeight;
         swapChainDesc.Format = c_backBufferFormat;

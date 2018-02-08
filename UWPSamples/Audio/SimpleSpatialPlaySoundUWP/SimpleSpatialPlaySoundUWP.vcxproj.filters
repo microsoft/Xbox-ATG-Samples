@@ -25,6 +25,9 @@
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
     <ClInclude Include="ISACRenderer.h" />
+    <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -89,5 +92,8 @@
     <Filter Include="Common\Telemetry\x64">
       <UniqueIdentifier>{debde8dc-79ad-43c5-bf6a-656a5faeba3a}</UniqueIdentifier>
     </Filter>
+    <None Include="..\..\..\Media\Fonts\XboxOneControllerSmall.spritefont">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
 </Project>

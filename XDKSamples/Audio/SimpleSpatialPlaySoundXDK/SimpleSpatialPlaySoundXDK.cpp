@@ -7,16 +7,21 @@
 
 #include "pch.h"
 #include "SimpleSpatialPlaySoundXDK.h"
-#include "WAVFileReader.h"
+
 #include "ATGColors.h"
+#include "ControllerFont.h"
+#include "WAVFileReader.h"
 
-static const LPCWSTR g_FileList[] = {
-	L"Jungle_RainThunder_mix714.wav",
-	L"ChannelIDs714.wav",
-	nullptr
-};
+namespace
+{
+    const LPCWSTR g_FileList[] =
+    {
+        L"Jungle_RainThunder_mix714.wav",
+        L"ChannelIDs714.wav",
+    };
 
-static const int numFiles = 2;
+    const int numFiles = _countof(g_FileList);
+}
 
 extern void ExitSample();
 
@@ -67,7 +72,7 @@ namespace
                     Sink->m_Renderer->Reset();
                 }
 
-                Sink->availableObjects = availableObjectCount;
+                Sink->m_availableObjects = availableObjectCount;
 
                 for (int chan = 0; chan < MAX_CHANNELS; chan++)
                 {
@@ -102,7 +107,7 @@ namespace
                     for (UINT32 i = 0; i < readsize; i++)
                     {
                         UINT32 fileLoc = Sink->WavChannels[chan].curBufferLoc;
-                        if (chan < Sink->numChannels)
+                        if (chan < Sink->m_numChannels)
                         {
                             buffer[i] = Sink->WavChannels[chan].wavBuffer[fileLoc];
                         }
@@ -135,14 +140,15 @@ namespace
 }
 
 Sample::Sample() :
-    m_frame(0)
+    m_numChannels(0),
+    m_bThreadActive(false),
+    m_bPlayingSound(false),
+    m_availableObjects(0),
+    m_frame(0),
+    m_fileLoaded(false),
+    m_curFile(0)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
-	m_fileLoaded = false;
-	m_Renderer = nullptr;
-	m_bThreadActive = false;
-	m_bPlayingSound = false;
-	m_curFile = 0;
 }
 
 // Initialize the Direct3D resources required to run.
@@ -161,7 +167,6 @@ void Sample::Initialize(IUnknown* window)
  	InitializeSpatialStream();
 
 	SetChannelPosVolumes();
-
 
 	for (UINT32 i = 0; i < MAX_CHANNELS; i++)
 	{
@@ -192,19 +197,16 @@ void Sample::Tick()
 }
 
 // Updates the world.
-void Sample::Update(DX::StepTimer const& timer)
+void Sample::Update(DX::StepTimer const&)
 {
     PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
-
-    float elapsedTime = float(timer.GetElapsedSeconds());
-    elapsedTime;
 
 	//Are we resetting the renderer?  This will happen if we get an invalid stream 
 	//  which can happen when render mode changes or device changes
 	if (m_Renderer->IsResetting())
 	{
 		//clear out renderer
-		m_Renderer == NULL;
+		m_Renderer.Reset();
 
 		// Create a new ISAC instance
 		m_Renderer = Microsoft::WRL::Make<ISACRenderer>();
@@ -333,31 +335,32 @@ void Sample::Render()
 
 	m_spriteBatch->Begin();
 
-	wchar_t str[256] = { 0 };
-	swprintf_s(str, L"Simple Spatial Playback:");
-	m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-	pos.y += 30;
+    float spacing = m_font->GetLineSpacing();
+
+	m_font->DrawString(m_spriteBatch.get(), L"Simple Spatial Playback:", pos, ATG::Colors::White);
+    pos.y += spacing * 1.5f;
+
 	if (!m_Renderer->IsActive())
 	{
-		swprintf_s(str, L"Spatial Renderer Not Available");
-		m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-		pos.y += 60;
+		m_font->DrawString(m_spriteBatch.get(), L"Spatial Renderer Not Available", pos, ATG::Colors::Orange);
+		pos.y += spacing * 2.f;
 	}
 	else
 	{
-		swprintf_s(str, L"   File: %s", g_FileList[m_curFile]);
+        wchar_t str[256] = {};
+        swprintf_s(str, L"   File: %ls", g_FileList[m_curFile]);
 		m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-		pos.y += 30;
-		swprintf_s(str, L"   State: %s", ((m_bPlayingSound) ? L"Playing" : L"Stopped"));
+		pos.y += spacing;
+		swprintf_s(str, L"   State: %ls", ((m_bPlayingSound) ? L"Playing" : L"Stopped"));
 		m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-		pos.y += 30;
-		swprintf_s(str, L"Use 'A' Button to start/stop playback");
-		m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-		pos.y += 30;
-		swprintf_s(str, L"Use 'B' Button to change to next file");
-		m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-		pos.y += 30;
-	}
+		pos.y += spacing * 1.5f;
+
+        DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"Use [A] to start/stop playback", pos, ATG::Colors::White);
+		pos.y += spacing;
+        DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"Use [B] to change to next file", pos, ATG::Colors::White);
+		pos.y += spacing;
+        DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"Use [View] to exit", pos, ATG::Colors::White);
+    }
 	m_spriteBatch->End();
 
     PIXEndEvent(context);
@@ -422,6 +425,8 @@ void Sample::CreateDeviceDependentResources()
 	m_spriteBatch = std::make_unique<SpriteBatch>(context);
 
 	m_font = std::make_unique<SpriteFont>(device, L"SegoeUI_18.spritefont");
+
+    m_ctrlFont = std::make_unique<SpriteFont>(device, L"XboxOneControllerSmall.spritefont");
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -470,10 +475,10 @@ bool Sample::LoadFile(LPCWSTR inFile)
 
 	if ((WavData.wfx->wFormatTag == 1 || WavData.wfx->wFormatTag == 65534) && WavData.wfx->nSamplesPerSec == 48000)
 	{
-		numChannels = WavData.wfx->nChannels;
+		m_numChannels = WavData.wfx->nChannels;
 
-		int numSamples = WavData.audioBytes / (2 * numChannels);
-		for (int i = 0; i < numChannels; i++)
+		int numSamples = WavData.audioBytes / (2 * m_numChannels);
+		for (int i = 0; i < m_numChannels; i++)
 		{
 			WavChannels[i].wavBuffer = new char[numSamples * 4];
 			WavChannels[i].buffersize = numSamples * 4;
@@ -484,20 +489,20 @@ bool Sample::LoadFile(LPCWSTR inFile)
 
 		for (int i = 0; i < numSamples; i++)
 		{
-			for (int j = 0; j < numChannels; j++)
+			for (int j = 0; j < m_numChannels; j++)
 			{
 				int chan = j;
 				tempnew = (float *)WavChannels[chan].wavBuffer;
-				int sample = (i * numChannels) + chan;
+				int sample = (i * m_numChannels) + chan;
 				tempnew[i] = (float)tempdata[sample] / 32768;
 			}
 		}
 	}
 	else if ((WavData.wfx->wFormatTag == 3) && WavData.wfx->nSamplesPerSec == 48000)
 	{
-		numChannels = WavData.wfx->nChannels;
-		int numSamples = WavData.audioBytes / (4 * numChannels);
-		for (int i = 0; i < numChannels; i++)
+		m_numChannels = WavData.wfx->nChannels;
+		int numSamples = WavData.audioBytes / (4 * m_numChannels);
+		for (int i = 0; i < m_numChannels; i++)
 		{
 			WavChannels[i].wavBuffer = new char[numSamples * 4];
 			WavChannels[i].buffersize = numSamples * 4;
@@ -508,11 +513,11 @@ bool Sample::LoadFile(LPCWSTR inFile)
 
 		for (int i = 0; i < numSamples; i++)
 		{
-			for (int j = 0; j < numChannels; j++)
+			for (int j = 0; j < m_numChannels; j++)
 			{
 				int chan = j;
 				tempnew = (float *)WavChannels[chan].wavBuffer;
-				int sample = (i * numChannels) + chan;
+				int sample = (i * m_numChannels) + chan;
 				tempnew[i] = (float)tempdata[sample];
 			}
 		}

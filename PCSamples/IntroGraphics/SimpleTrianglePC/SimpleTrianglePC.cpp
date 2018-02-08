@@ -217,10 +217,10 @@ void Sample::CreateDeviceDependentResources()
         { { -0.5f, -0.5f,  0.5f, 1.0f },{ 0.0f, 0.0f, 1.0f, 1.0f } }   // Left / Blue
     };
 
-    D3D11_SUBRESOURCE_DATA initialData = { 0 };
+    D3D11_SUBRESOURCE_DATA initialData = {};
     initialData.pSysMem = s_vertexData;
 
-    D3D11_BUFFER_DESC bufferDesc = { 0 };
+    D3D11_BUFFER_DESC bufferDesc = {};
     bufferDesc.ByteWidth = sizeof(s_vertexData);
     bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
     bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;

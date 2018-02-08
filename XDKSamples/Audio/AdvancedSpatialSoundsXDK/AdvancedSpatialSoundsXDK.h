@@ -95,12 +95,10 @@ public:
 	void OnSuspending();
 	void OnResuming();
 
-
 	Microsoft::WRL::ComPtr<ISACRenderer>      m_Renderer;
 
 	bool	m_bThreadActive;
 	bool	m_bPlayingSound;
-	int		availableObjects;
 
 	BedChannel                              m_bedChannels[MAX_CHANNELS];
 	std::vector<PointSound>                 m_pointSounds;
@@ -144,6 +142,7 @@ private:
 	DirectX::GamePad::ButtonStateTracker        m_gamePadButtons;
 	std::unique_ptr<DirectX::SpriteBatch>		m_spriteBatch;
 	std::unique_ptr<DirectX::SpriteFont>		m_font;
+    std::unique_ptr<DirectX::SpriteFont>		m_ctrlFont;
 
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>> m_batch;
     Microsoft::WRL::ComPtr<ID3D11InputLayout>       m_batchInputLayout;
@@ -159,6 +158,4 @@ private:
 
 	//worker thread for spatial system
 	PTP_WORK m_workThread;
-
-
 };

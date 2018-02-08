@@ -165,7 +165,7 @@ void Sample::ShutdownCurrentGamepad()
 {
     if (m_currentGamepad && GamepadManager::IsGamepadValid(m_currentGamepad))
     {
-        GamepadVibration vibration = { 0 };
+        GamepadVibration vibration = {};
         m_currentGamepad->SetVibration(vibration);
     }
 }

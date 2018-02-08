@@ -26,12 +26,20 @@ static const float3x3 from709to2020 =
     { 0.0163916f, 0.0880132f, 0.8955950f }
 };
 
+// Color rotation matrix to rotate Rec.2020 color primaries into Rec.709
+static const float3x3 from2020to709 =
+{
+    { 1.6604910f, -0.5876411f, -0.0728499f },
+    { -0.1245505f, 1.1328999f, -0.0083494f },
+    { -0.0181508f, -0.1005789f, 1.1187297f }
+};
+
 // Color rotation matrix to rotate DCI-P3 color primaries into Rec.2020
 static const float3x3 fromP3to2020 =
 {
-    { 0.753845, 0.198593, 0.047562 },
-    { 0.0457456, 0.941777, 0.0124772 },
-    { -0.00121055, 0.0176041, 0.983607 }
+    { 0.753845f, 0.198593f, 0.047562f },
+    { 0.0457456f, 0.941777f, 0.0124772f },
+    { -0.00121055f, 0.0176041f, 0.983607f }
 };
 
 // Rotation matrix describing a custom color space which is bigger than Rec.709, but a little smaller than P3
@@ -68,7 +76,7 @@ float3 LinearToST2084(float3 normalizedLinearValue)
 
 float3 ST2084ToLinear(float3 ST2084)
 {
-    float3 normalizedLinear = pow(max(pow(abs(ST2084), 1.0f / 78.84375f) - 0.8359375f, 0.0f) / (18.8515625f - 18.6875f * pow(abs(ST2084), 1.0f / 78.84375f)), 1.0f / 0.1593017578f);
+    float3 normalizedLinear = pow(abs(max(pow(abs(ST2084), 1.0f / 78.84375f) - 0.8359375f, 0.0f) / (18.8515625f - 18.6875f * pow(abs(ST2084), 1.0f / 78.84375f))), 1.0f / 0.1593017578f);
     return normalizedLinear;
 }
 

@@ -85,10 +85,16 @@ private:
 
 	std::unique_ptr<DirectX::SpriteBatch>   m_spriteBatch;
 	std::unique_ptr<DirectX::SpriteFont>    m_font;
+    std::unique_ptr<DirectX::SpriteFont>    m_ctrlFont;
 
 	// Input devices.
 	std::unique_ptr<DirectX::Keyboard>      m_keyboard;
+    std::unique_ptr<DirectX::GamePad>       m_gamePad;
+
+    DirectX::GamePad::ButtonStateTracker    m_gamePadButtons;
 	DirectX::Keyboard::KeyboardStateTracker m_keyboardButtons;
+
+    bool                                    m_ctrlConnected;
 
 	uint32_t m_bufferSize;
 
@@ -97,5 +103,4 @@ private:
 
 	//worker thread for spatial system
 	PTP_WORK m_workThread;
-
 };

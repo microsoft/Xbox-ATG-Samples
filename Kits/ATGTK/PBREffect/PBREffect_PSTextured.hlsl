@@ -24,10 +24,12 @@ float4 PSTextured(PSInputPixelLightingTxTangent pin) : SV_Target0
 
     // Get albedo, then roughness, metallic and ambient occlusion
     float4 albedo = PBR_AlbedoTexture.Sample(PBR_SurfaceSampler, pin.TexCoord);
+
+	// glTF2 defines metalness as B channel, roughness as G channel, and occlusion as R channel
     float3 RMA = PBR_RMATexture.Sample(PBR_SurfaceSampler, pin.TexCoord);
   
     // Shade surface
-    float3 output = PBR_LightSurface(V, N, 3, PBR_LightColor, PBR_LightDirection, albedo.rgb, RMA.x, RMA.y, RMA.z);
+    float3 output = PBR_LightSurface(V, N, 3, PBR_LightColor, PBR_LightDirection, albedo.rgb, RMA.g, RMA.b, RMA.r);
 
     return float4(output, albedo.w);
 }

@@ -47,7 +47,7 @@ namespace DX
 
         virtual const char* what() const override
         {
-            static char s_str[64] = { 0 };
+            static char s_str[64] = {};
             sprintf_s(s_str, "Failure with HRESULT of %08X", result);
             return s_str;
         }

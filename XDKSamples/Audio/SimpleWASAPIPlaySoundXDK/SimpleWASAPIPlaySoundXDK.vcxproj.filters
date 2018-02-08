@@ -32,6 +32,9 @@
     <ClInclude Include="ToneSampleGenerator.h" />
     <ClInclude Include="WASAPIManager.h" />
     <ClInclude Include="WASAPIRenderer.h" />
+    <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -69,5 +72,8 @@
       <Filter>Assets</Filter>
     </None>
     <None Include="Readme.docx" />
+    <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -507,12 +507,12 @@ void Sample::CreateShaders()
 
 
     // Create vertex buffer.
-    D3D11_BUFFER_DESC vbDesc = { 0 };
+    D3D11_BUFFER_DESC vbDesc = {};
     vbDesc.ByteWidth = sizeof(XMFLOAT3) * ARRAYSIZE(c_mobiusStrip);
     vbDesc.Usage = D3D11_USAGE_DEFAULT;
     vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
-    D3D11_SUBRESOURCE_DATA vbInitData = { 0 };
+    D3D11_SUBRESOURCE_DATA vbInitData = {};
     vbInitData.pSysMem = c_mobiusStrip;
 
     DX::ThrowIfFailed(device->CreateBuffer(&vbDesc, &vbInitData, m_controlPointVB.ReleaseAndGetAddressOf()));

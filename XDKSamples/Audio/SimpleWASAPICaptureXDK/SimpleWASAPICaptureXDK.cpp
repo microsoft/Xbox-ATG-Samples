@@ -9,6 +9,7 @@
 #include "SimpleWASAPICaptureXDK.h"
 
 #include "ATGColors.h"
+#include "ControllerFont.h"
 
 extern void ExitSample();
 
@@ -18,16 +19,22 @@ using Microsoft::WRL::ComPtr;
 using namespace Windows::Media::Devices;
 using namespace Windows::Foundation;
 
-bool g_bListDirty = true;
-int g_CaptureID = 0;
-
-void NotifyListUpdate(int iCaptureID)
+namespace
 {
-	g_CaptureID = iCaptureID;
-	g_bListDirty = true;
+    bool g_bListDirty = true;
+    int g_CaptureID = 0;
+
+    void NotifyListUpdate(int iCaptureID)
+    {
+        g_CaptureID = iCaptureID;
+        g_bListDirty = true;
+    }
 }
 
-Sample::Sample()
+Sample::Sample() :
+    m_bHasCaptured(false),
+    m_keyDown(false),
+    m_frame(0)
 {
     // Renders only 2D, so no need for a depth buffer.
     m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_UNKNOWN);
@@ -51,9 +58,6 @@ void Sample::Initialize(IUnknown* window)
 	m_wm->StartDevice();
 
 	m_wm->SetDeviceChangeCallback(&NotifyListUpdate);
-
-	m_bHasCaptured = false;
-	m_keyDown = false;
 }
 
 #pragma region Frame Update
@@ -172,13 +176,15 @@ void Sample::Render()
 
 	m_spriteBatch->Begin();
 
+    float spacing = m_font->GetLineSpacing();
+
 	m_font->DrawString(m_spriteBatch.get(), L"Audio captured from the selected mic is looped to the default output", pos, ATG::Colors::OffWhite);
-	pos.y += m_font->GetLineSpacing() * 1.f;
+    pos.y += spacing;
 	m_font->DrawString(m_spriteBatch.get(), L"Note that no sample conversion is done!", pos, ATG::Colors::OffWhite);
-	pos.y += m_font->GetLineSpacing() * 1.6f;
+	pos.y += spacing * 1.5f;
 	
 	
-	if (m_deviceList.size() < 1)
+	if (m_deviceList.empty())
 	{
 		m_font->DrawString(m_spriteBatch.get(), L"No capture devices!", pos, ATG::Colors::Orange);
 	}
@@ -196,32 +202,34 @@ void Sample::Render()
 			}
 
 			m_font->DrawString(m_spriteBatch.get(), tempString.c_str(), pos, ATG::Colors::OffWhite);
-			pos.y += m_font->GetLineSpacing() * 1.f;
+			pos.y += spacing;
 		}
 	}
-	
+
+    pos.y += spacing *.5f;
+
 	if (m_bHasCaptured)
 	{
-		m_font->DrawString(m_spriteBatch.get(), L"Press A Button to start / stop playback of last recording", pos, ATG::Colors::OffWhite);
-		pos.y += m_font->GetLineSpacing() * 1.f;
+        DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"Press [A] Button to start / stop playback of last recording", pos);
+        pos.y += spacing;
 	}
 
-	m_font->DrawString(m_spriteBatch.get(), L"Press B Button to start / stop recording", pos, ATG::Colors::OffWhite);
-	pos.y += m_font->GetLineSpacing() * 1.f;
-	m_font->DrawString(m_spriteBatch.get(), L"Press X Button to enable / disable loopback (may cause feedback)", pos, ATG::Colors::OffWhite);
-	pos.y += m_font->GetLineSpacing() * 1.f;
-	m_font->DrawString(m_spriteBatch.get(), L"Press DPad Up/Down to change capture device", pos, ATG::Colors::OffWhite);
-	pos.y += m_font->GetLineSpacing() * 1.f;
+    DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"Press [B] Button to start / stop recording", pos, ATG::Colors::OffWhite);
+	pos.y += spacing;
+    DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"Press [X] Button to enable / disable loopback (may cause feedback)", pos, ATG::Colors::OffWhite);
+	pos.y += spacing;
+    DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"Press [DPad] Up/Down to change capture device", pos, ATG::Colors::OffWhite);
+	pos.y += spacing * 1.5f;
 
 	tempString = L"Capture: " + convertBoolToRunning(m_managerStatus.bCapturing);
 	m_font->DrawString(m_spriteBatch.get(), tempString.c_str(), pos, ATG::Colors::OffWhite);
-	pos.y += m_font->GetLineSpacing() * 1.f;
+	pos.y += spacing;
 	tempString = L"Playback: " + convertBoolToRunning(m_managerStatus.bPlaying);
 	m_font->DrawString(m_spriteBatch.get(), tempString.c_str(), pos, ATG::Colors::OffWhite);
-	pos.y += m_font->GetLineSpacing() * 1.f;
+	pos.y += spacing;
 	tempString = L"Loopback: " + convertBoolToEnabled(m_managerStatus.bLoopback);
 	m_font->DrawString(m_spriteBatch.get(), tempString.c_str(), pos, ATG::Colors::OffWhite);
-	pos.y += m_font->GetLineSpacing() * 1.f;
+	pos.y += spacing;
 
     m_spriteBatch->End();
 
@@ -283,6 +291,9 @@ void Sample::CreateDeviceDependentResources()
 
     m_font = std::make_unique<SpriteFont>(device, L"SegoeUI_18.spritefont");
     m_font->SetDefaultCharacter(L' ');
+
+    m_ctrlFont = std::make_unique<SpriteFont>(device, L"XboxOneControllerSmall.spritefont");
+
     m_graphicsMemory = std::make_unique<GraphicsMemory>(device, m_deviceResources->GetBackBufferCount());
 }
 
