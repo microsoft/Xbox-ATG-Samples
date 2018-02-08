@@ -17,6 +17,19 @@
 using namespace Xbox;
 using Microsoft::WRL::ComPtr;
 
+namespace
+{
+    //--------------------------------------------------------------------------------------
+    // Default XMemAlloc attributes for texture loading
+    //--------------------------------------------------------------------------------------
+    const uint64_t c_XMemAllocAttributes = MAKE_XALLOC_ATTRIBUTES(
+        eXALLOCAllocatorId_MiddlewareReservedMin,
+        0,
+        XALLOC_MEMTYPE_GRAPHICS_WRITECOMBINE_GPU_READONLY,
+        XALLOC_PAGESIZE_64KB,
+        XALLOC_ALIGNMENT_64K);
+}
+
 //=====================================================================================
 // Entry-points
 //=====================================================================================
@@ -41,23 +54,17 @@ HRESULT Xbox::CreateTexture(
         return E_INVALIDARG;
 
     // Allocate graphics memory
-    size_t sizeBytes = (size_t(xbox.GetSize()) + 0xFFF) & ~0xFFF; // 4K boundary
-    size_t alignmentBytes = std::max<size_t>(xbox.GetAlignment(), 4096);
-
-    HRESULT hr = D3DAllocateGraphicsMemory(sizeBytes, alignmentBytes, 0, D3D11_GRAPHICS_MEMORY_ACCESS_CPU_CACHE_COHERENT, grfxMemory);
-    if (FAILED(hr))
-    {
-        *grfxMemory = nullptr;
-        return hr;
-    }
-
-    assert(*grfxMemory != 0);
+    *grfxMemory = XMemAlloc(xbox.GetSize(), c_XMemAllocAttributes);
+    if (!*grfxMemory)
+        return E_OUTOFMEMORY;
 
     // Copy tiled data into graphics memory
     memcpy(*grfxMemory, xbox.GetPointer(), xbox.GetSize());
 
     // Create texture resource
     auto& metadata = xbox.GetMetadata();
+
+    HRESULT hr = E_FAIL;
 
     switch (metadata.dimension)
     {
@@ -129,7 +136,7 @@ HRESULT Xbox::CreateTexture(
 
     if (FAILED(hr))
     {
-        (void)D3DFreeGraphicsMemory(*grfxMemory);
+        XMemFree(grfxMemory, c_XMemAllocAttributes);
         *grfxMemory = nullptr;
     }
 
@@ -217,7 +224,7 @@ HRESULT Xbox::CreateShaderResourceView(
 
     default:
         assert(grfxMemory != 0);
-        (void)D3DFreeGraphicsMemory(*grfxMemory);
+        XMemFree(grfxMemory, c_XMemAllocAttributes);
         *grfxMemory = nullptr;
         return E_FAIL;
     }
@@ -225,7 +232,7 @@ HRESULT Xbox::CreateShaderResourceView(
     hr = d3dDevice->CreateShaderResourceView(resource.Get(), &SRVDesc, ppSRV);
     if (FAILED(hr))
     {
-        (void)D3DFreeGraphicsMemory(*grfxMemory);
+        XMemFree(grfxMemory, c_XMemAllocAttributes);
         *grfxMemory = nullptr;
     }
 
@@ -243,6 +250,6 @@ void Xbox::FreeTextureMemory(ID3D11DeviceX* d3dDevice, void* grfxMemory)
 
     if (grfxMemory)
     {
-        (void)D3DFreeGraphicsMemory(grfxMemory);
+        XMemFree(grfxMemory, c_XMemAllocAttributes);
     }
 }
