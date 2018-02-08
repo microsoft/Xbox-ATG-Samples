@@ -160,7 +160,9 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
  <tr>
   <td>XDK</td>
   <td><a href="XDKSamples/System/AsynchronousIO">Async I/O</a></td>
+  <td><a href="XDKSamples/System/CustomEventProvider">Custom Event Provider</a></td>
   <td><a href="XDKSamples/System/DataBreakpoints">Data Breakpoints</a></td>
+  <td><a href="XDKSamples/System/GameDVR">Game DVR</a></td>
   <td><a href="XDKSamples/System/MemoryBanks">Memory Banks</a></td>
  </tr>
 </table>
@@ -196,14 +198,26 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td><a href="UWPSamples/System/RawGameControllerUWP">UWP</a></td>
  </tr>
  <tr>
+  <td>ArcadeStick</td>
+  <td><a href="XDKSamples/System/ArcadeStick">XDK</a></td>
+ </tr>
+ <tr>
   <td>FlightStick</td>
   <td><a href="XDKSamples/System/FlightStick">XDK</a></td>
+ </tr>
+ <tr>
+  <td>WheelTest</td>
+  <td><a href="XDKSamples/System/WheelTest">XDK</a></td>
  </tr>
  <tr>
   <td>Input</td>
   <td><a href="UWPSamples/System/InputInterfacingUWP">Interfacing UWP</a></td>
   <td><a href="UWPSamples/System/MouseCursor">Mouse UWP</a></td>
-  <td><a href="UWPSamples/System/UserGamepadPairingUWP">User-pairing UWP</a></td>
+ </tr>
+ <tr>
+  <td>User Gamepad Pairing</td>
+  <td><a href="UWPSamples/System/UserGamepadPairingUWP">UWP</a></td>
+  <td><a href="XDKSamples/System/UserGamepadPairing">XDK</a></td>
  </tr>
 </table>
 
