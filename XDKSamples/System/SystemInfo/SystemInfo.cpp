@@ -169,7 +169,7 @@ void Sample::Render()
             SYSTEM_INFO info = {};
             GetNativeSystemInfo(&info);
 
-            wchar_t buff[128] = { 0 };
+            wchar_t buff[128] = {};
             swprintf_s(buff, L"%zX", info.dwActiveProcessorMask);
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"dwActiveProcessorMask", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
@@ -200,7 +200,7 @@ void Sample::Render()
                 auto tvirt = static_cast<uint32_t>(info.ullTotalVirtual / (1024 * 1024));
                 auto avirt = static_cast<uint32_t>(info.ullAvailVirtual / (1024 * 1024));
 
-                wchar_t buff[128] = { 0 };
+                wchar_t buff[128] = {};
                 swprintf_s(buff, L"%u / %u (MB)", aphys, tphys);
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Physical Memory", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
@@ -259,7 +259,7 @@ void Sample::Render()
             D3D11X_GPU_HARDWARE_CONFIGURATION hwConfig = {};
             device->GetGpuHardwareConfiguration(&hwConfig);
 
-            wchar_t buff[128] = { 0 };
+            wchar_t buff[128] = {};
             swprintf_s(buff, L"%I64u", hwConfig.GpuFrequency);
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"GPU Frequency", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);

@@ -141,7 +141,7 @@ void Sample::Render()
 
     m_spriteBatch->Draw(m_background.Get(), m_deviceResources->GetOutputSize());
 
-    wchar_t str[128] = { 0 };
+    wchar_t str[128] = {};
 	swprintf_s(str, L"Simple WASAPI Playback:");
 	m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
 	pos.y += 30;

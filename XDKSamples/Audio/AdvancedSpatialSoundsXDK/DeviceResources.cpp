@@ -171,6 +171,8 @@ void DeviceResources::CreateWindowSizeDependentResources()
     // Create a render target view of the swap chain back buffer.
     ThrowIfFailed(m_swapChain->GetBuffer(0, IID_GRAPHICS_PPV_ARGS(m_renderTarget.ReleaseAndGetAddressOf())));
 
+    m_renderTarget->SetName(L"Render target");
+
     ThrowIfFailed(m_d3dDevice->CreateRenderTargetView(
         m_renderTarget.Get(),
         nullptr,

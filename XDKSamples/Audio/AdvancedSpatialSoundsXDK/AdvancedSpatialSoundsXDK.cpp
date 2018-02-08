@@ -10,14 +10,7 @@
 #include "WAVFileReader.h"
 
 #include "ATGColors.h"
-
-static const LPCWSTR g_FileList[] = {
-    L"Jungle_RainThunder_mix714.wav",
-    L"ChannelIDs714.wav",
-    nullptr
-};
-
-static const int numFiles = 2;
+#include "ControllerFont.h"
 
 #define MAX_X   100
 #define MIN_X   -100
@@ -34,71 +27,63 @@ static const int numFiles = 2;
 #define DRAW_POINT_SCALE 40.f
 #define DRAW_POINT_MIN_SCALE 2.f
 
-static const LPCWSTR g_bedFileList[] = {
-    L"assets\\Jungle_RainThunder_5.1_mixdown.wav",
-    L"assets\\Jungle_RainThunder_SideSurroundL-R.wav",
-    L"assets\\Jungle_RainThunder_TopFrontL-R.wav",
-    L"assets\\Jungle_RainThunder_TopRearL-R.wav",
-    nullptr
-};
+namespace
+{
+    const LPCWSTR g_bedFileList[] = {
+        L"assets\\Jungle_RainThunder_5.1_mixdown.wav",
+        L"assets\\Jungle_RainThunder_SideSurroundL-R.wav",
+        L"assets\\Jungle_RainThunder_TopFrontL-R.wav",
+        L"assets\\Jungle_RainThunder_TopRearL-R.wav",
+    };
 
-static const int g_numBedFiles = 4;
+    const LPCWSTR g_pointFileList[] = {
+        L"assets\\SFX_height_birdHawk01.wav",
+        L"assets\\SFX_height_birdLoon01.wav",
+        L"assets\\SFX_moving_BirdFlap01.wav",
+        L"assets\\SFX_moving_birdFlicker01.wav",
+        L"assets\\SFX_moving_birdFlycatcher01.wav",
+        L"assets\\SFX_moving_birdLark01.wav",
+        L"assets\\SFX_moving_birdLoop01.wav",
+        L"assets\\SFX_moving_birdLoop02.wav",
+        L"assets\\SFX_moving_birdLoop03.wav",
+        L"assets\\SFX_moving_birdLoop04.wav",
+        L"assets\\SFX_moving_birdLoop05.wav",
+        L"assets\\SFX_moving_birdLoop06.wav",
+        L"assets\\SFX_moving_birdSparrow01.wav",
+        L"assets\\SFX_moving_birdSparrow02.wav",
+        L"assets\\SFX_moving_birdWarbler01.wav",
+        L"assets\\SFX_moving_Fly01.wav",
+        L"assets\\SFX_moving_Fly02.wav",
+        L"assets\\SFX_stationary_cicada01.wav",
+        L"assets\\SFX_stationary_grasshopper01.wav",
+        L"assets\\SFX_stationary_grasshopper02.wav",
+    };
 
-static const LPCWSTR g_pointFileList[] = {
-    L"assets\\SFX_height_birdHawk01.wav",
-    L"assets\\SFX_height_birdLoon01.wav",
-    L"assets\\SFX_moving_BirdFlap01.wav",
-    L"assets\\SFX_moving_birdFlicker01.wav",
-    L"assets\\SFX_moving_birdFlycatcher01.wav",
-    L"assets\\SFX_moving_birdLark01.wav",
-    L"assets\\SFX_moving_birdLoop01.wav",
-    L"assets\\SFX_moving_birdLoop02.wav",
-    L"assets\\SFX_moving_birdLoop03.wav",
-    L"assets\\SFX_moving_birdLoop04.wav",
-    L"assets\\SFX_moving_birdLoop05.wav",
-    L"assets\\SFX_moving_birdLoop06.wav",
-    L"assets\\SFX_moving_birdSparrow01.wav",
-    L"assets\\SFX_moving_birdSparrow02.wav",
-    L"assets\\SFX_moving_birdWarbler01.wav",
-    L"assets\\SFX_moving_Fly01.wav",
-    L"assets\\SFX_moving_Fly02.wav",
-    L"assets\\SFX_stationary_cicada01.wav",
-    L"assets\\SFX_stationary_grasshopper01.wav",
-    L"assets\\SFX_stationary_grasshopper02.wav",
-    nullptr
-};
+    const LPCWSTR g_pointFileNames[] = {
+        L"Hawk",
+        L"Loon",
+        L"BirdFlap",
+        L"Flicker",
+        L"Flycatcher",
+        L"Lark",
+        L"Loop 1",
+        L"Loop 2",
+        L"Loop 3",
+        L"Loop 4",
+        L"Loop 5",
+        L"Loop 6",
+        L"Sparrow 1",
+        L"Sparrow 2",
+        L"Warbler",
+        L"Fly 1",
+        L"Fly 2",
+        L"Cicada",
+        L"Grasshopper 1",
+        L"Grasshopper 2",
+    };
 
-static const LPCWSTR g_pointFileNames[] = {
-    L"Hawk",
-    L"Loon",
-    L"BirdFlap",
-    L"Flicker",
-    L"Flycatcher",
-    L"Lark",
-    L"Loop 1",
-    L"Loop 2",
-    L"Loop 3",
-    L"Loop 4",
-    L"Loop 5",
-    L"Loop 6",
-    L"Sparrow 1",
-    L"Sparrow 2",
-    L"Warbler",
-    L"Fly 1",
-    L"Fly 2",
-    L"Cicada",
-    L"Grasshopper 1",
-    L"Grasshopper 2",
-    nullptr
-};
-static const int g_numPointFiles = 20;
-
-static const LPCWSTR g_travelTypeNames[] = {
-    L"Linear",
-    L"Bounce",
-    L"Round",
-    nullptr
-};
+    static_assert(_countof(g_pointFileList) == _countof(g_pointFileNames), "List size mismatch");
+}
 
 extern void ExitSample();
 
@@ -281,16 +266,16 @@ namespace
 }
 
 Sample::Sample() :
-    m_frame(0)
+    m_bThreadActive(false),
+    m_bPlayingSound(false),
+    m_numChannels(0),
+    m_availableObjects(0),
+    m_usedObjects(0),
+    m_frame(0),
+    m_fileLoaded(false),
+    m_curFile(0)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
-    m_fileLoaded = false;
-    m_Renderer = nullptr;
-    m_bThreadActive = false;
-    m_bPlayingSound = false;
-    m_curFile = 0;
-    m_usedObjects = 0;
-    m_availableObjects = 0;
 }
 
 // Initialize the Direct3D resources required to run.
@@ -487,13 +472,9 @@ void XM_CALLCONV Sample::DrawListener(FXMVECTOR color)
 
 
 // Updates the world.
-void Sample::Update(DX::StepTimer const& timer)
+void Sample::Update(DX::StepTimer const&)
 {
     PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
-
-    float elapsedTime = float(timer.GetElapsedSeconds());
-
-    elapsedTime;
 
     //Are we resetting the renderer?  This will happen if we get an invalid stream 
     //  which can happen when render mode changes or device changes
@@ -566,7 +547,7 @@ void Sample::Update(DX::StepTimer const& timer)
             if (m_usedObjects < m_availableObjects && m_bThreadActive && m_bPlayingSound)
             {
                 PointSound tempChannel;
-                int randIndex = rand() % g_numPointFiles;
+                int randIndex = rand() % _countof(g_pointFileList);
                 if (LoadPointFile(g_pointFileList[randIndex], &tempChannel))
                 {
                     tempChannel.soundIndex = randIndex;
@@ -676,36 +657,41 @@ void Sample::Render()
 
     m_spriteBatch->Begin();
 
-    wchar_t str[256] = { 0 };
-    swprintf_s(str, L"Advanced Spatial Playback");
-    m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-    pos.y += 30;
+    float spacing = m_font->GetLineSpacing();
+
+    m_font->DrawString(m_spriteBatch.get(), L"Advanced Spatial Playback", pos, ATG::Colors::White);
+    pos.y += spacing * 1.5f;
     if (!m_Renderer->IsActive())
     {
-        swprintf_s(str, L"Spatial Renderer Not Available");
-        m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-        pos.y += 60;
+        m_font->DrawString(m_spriteBatch.get(), L"Spatial Renderer Not Available", pos, ATG::Colors::White);
+        pos.y += spacing * 2.f;
     }
     else
     {
-        swprintf_s(str, L"State: %s", ((m_bPlayingSound) ? L"Playing" : L"Stopped"));
+        wchar_t str[256] = {};
+        swprintf_s(str, L"State: %ls", ((m_bPlayingSound) ? L"Playing" : L"Stopped"));
         m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-        pos.y += 30;
-        swprintf_s(str, L"Use A button to start/stop playback");
-        m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-        pos.y += 30;
-        swprintf_s(str, L"Use Dpad UP/DOWN to add/remove a sound");
-        m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-        pos.y += 60;
+        pos.y += spacing * 1.5f;
+
+        DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"Use [A] button to start/stop playback", pos, ATG::Colors::White);
+        pos.y += spacing;
+
+        DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"Use [Dpad] UP/DOWN to add/remove a sound", pos, ATG::Colors::White);
+        pos.y += spacing;
+
+        DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"Use [View] to exit", pos, ATG::Colors::White);
+        pos.y += spacing * 2.f;
+
         swprintf_s(str, L"Available Dynamic Objects: %d", m_availableObjects - m_usedObjects);
         m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-        pos.y += 30;
+        pos.y += spacing;
+
         swprintf_s(str, L"Used Dynamic Objects: %d", m_usedObjects);
         m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-        pos.y += 30;
+        pos.y += spacing;
+
         swprintf_s(str, L"Total Objects: %d", m_usedObjects + MAX_CHANNELS);
         m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-        pos.y += 60;
     }
 
     DrawRoom(Colors::Green);
@@ -814,6 +800,8 @@ void Sample::CreateDeviceDependentResources()
 
     m_font = std::make_unique<SpriteFont>(device, L"SegoeUI_18.spritefont");
 
+    m_ctrlFont = std::make_unique<SpriteFont>(device, L"XboxOneControllerSmall.spritefont");
+
     CreateDDSTextureFromFile(device, L"callout_circle.DDS", nullptr, m_circle.ReleaseAndGetAddressOf());
 }
 
@@ -860,7 +848,7 @@ bool Sample::LoadBed()
     LPCWSTR inFile;
     int channelCount = 0;
 
-    for (int fileIndex = 0; fileIndex < g_numBedFiles; fileIndex++)
+    for (int fileIndex = 0; fileIndex < _countof(g_bedFileList); fileIndex++)
     {
         inFile = g_bedFileList[fileIndex];
 

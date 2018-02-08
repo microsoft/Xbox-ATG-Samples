@@ -12,7 +12,6 @@ namespace DX
     public:
         static const unsigned int c_FastSemantics   = 0x1;
         static const unsigned int c_Enable4K_UHD    = 0x2;
-        static const unsigned int c_EnableHDR       = 0x4;
 
         DeviceResources(DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM,
                         DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT,
@@ -43,12 +42,6 @@ namespace DX
         UINT                    GetBackBufferCount() const              { return m_backBufferCount; }
         unsigned int            GetDeviceOptions() const                { return m_options; }
 
-        // Direct3D HDR Game DVR support for Xbox One.
-        IDXGISwapChain1*        GetGameDVRSwapChain() const             { return m_swapChainGameDVR.Get(); }
-        ID3D11Texture2D*        GetGameDVRRenderTarget() const          { return m_d3dGameDVRRenderTarget.Get(); }
-        ID3D11RenderTargetView*	GetGameDVRRenderTargetView() const      { return m_d3dGameDVRRenderTargetView.Get(); }
-        DXGI_FORMAT             GetGameDVRFormat() const                { return m_gameDVRFormat; }
-
     private:
         // Direct3D objects.
         Microsoft::WRL::ComPtr<ID3D11DeviceX>           m_d3dDevice;
@@ -74,11 +67,5 @@ namespace DX
 
         // DeviceResources options (see flags above)
         unsigned int                                    m_options;
-
-        // Direct3D HDR Game DVR support for Xbox One.
-        Microsoft::WRL::ComPtr<IDXGISwapChain1>         m_swapChainGameDVR;
-        Microsoft::WRL::ComPtr<ID3D11Texture2D>         m_d3dGameDVRRenderTarget;
-        Microsoft::WRL::ComPtr<ID3D11RenderTargetView>  m_d3dGameDVRRenderTargetView;
-        DXGI_FORMAT                                     m_gameDVRFormat;
     };
 }

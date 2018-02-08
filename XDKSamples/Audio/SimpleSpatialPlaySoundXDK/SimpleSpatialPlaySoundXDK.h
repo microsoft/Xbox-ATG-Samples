@@ -51,13 +51,12 @@ public:
 
 	Microsoft::WRL::ComPtr<ISACRenderer>      m_Renderer;
 
-	int		numChannels;
+	int		m_numChannels;
 	Audiochannel WavChannels[MAX_CHANNELS];
 	bool	m_bThreadActive;
 	bool	m_bPlayingSound;
-	int		availableObjects;
-
-
+	int		m_availableObjects;
+    
 private:
 
     void Update(DX::StepTimer const& timer);
@@ -83,6 +82,7 @@ private:
     DirectX::GamePad::ButtonStateTracker        m_gamePadButtons;
 	std::unique_ptr<DirectX::SpriteBatch>		m_spriteBatch;
 	std::unique_ptr<DirectX::SpriteFont>		m_font;
+    std::unique_ptr<DirectX::SpriteFont>        m_ctrlFont;
 
     // DirectXTK objects.
     std::unique_ptr<DirectX::GraphicsMemory>    m_graphicsMemory;

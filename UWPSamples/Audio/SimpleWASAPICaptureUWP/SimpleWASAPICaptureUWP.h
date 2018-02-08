@@ -11,7 +11,7 @@
 #include "StepTimer.h"
 #include "WASAPICapture.h"
 #include "WASAPIRenderer.h"
-#include <vector>
+#include "CBuffer.h"
 
 // A basic sample implementation that creates a D3D11 device and
 // provides a render loop.
@@ -57,6 +57,9 @@ private:
     // Render objects
     std::unique_ptr<DirectX::SpriteBatch>   m_spriteBatch;
     std::unique_ptr<DirectX::SpriteFont>    m_font;
+    std::unique_ptr<DirectX::SpriteFont>    m_ctrlFont;
+
+    bool                                    m_ctrlConnected;
     
     // WASAPI objects
     Microsoft::WRL::ComPtr<WASAPICapture>           m_captureInterface;
@@ -64,7 +67,7 @@ private:
     std::vector<Windows::Devices::Enumeration::DeviceInformation^> m_captureDevices;
     Windows::Devices::Enumeration::DeviceWatcher^   m_captureWatcher;
     Platform::String^                               m_currentId;
-    CBuffer* 					                    m_captureBuffer;
+    std::unique_ptr<CBuffer>                        m_captureBuffer;
     WAVEFORMATEX*                                   m_renderFormat;
 
     // Rendering loop timer.

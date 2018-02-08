@@ -29,9 +29,6 @@ public:
     void OnSuspending();
     void OnResuming();
 
-    // Properties
-    bool RequestHDRMode() const { return m_deviceResources ? (m_deviceResources->GetDeviceOptions() & DX::DeviceResources::c_EnableHDR) != 0 : false; }
-
 private:
 
     void Update(DX::StepTimer const& timer);
@@ -57,6 +54,7 @@ private:
     // Render objects.
     std::unique_ptr<DirectX::SpriteBatch>		m_spriteBatch;
     std::unique_ptr<DirectX::SpriteFont>		m_font;
+    std::unique_ptr<DirectX::SpriteFont>		m_ctrlFont;
 
 	WASAPIManager^								m_wm;
 	bool 										m_playPressed;

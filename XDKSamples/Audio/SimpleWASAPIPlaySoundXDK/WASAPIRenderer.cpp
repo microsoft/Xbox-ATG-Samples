@@ -227,7 +227,7 @@ HRESULT WASAPIRenderer::ConfigureDeviceInternal()
     HRESULT hr = S_OK;
 
     // Opt into HW Offloading.  If the endpoint does not support offload it will return AUDCLNT_E_ENDPOINT_OFFLOAD_NOT_CAPABLE
-    AudioClientProperties audioProps = {0};
+    AudioClientProperties audioProps = {};
     audioProps.cbSize = sizeof( AudioClientProperties );
     audioProps.bIsOffload = m_DeviceProps.IsHWOffload;
 	audioProps.eCategory = AudioCategory_ForegroundOnlyMedia;

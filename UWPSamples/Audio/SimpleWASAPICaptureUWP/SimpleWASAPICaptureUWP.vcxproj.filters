@@ -41,6 +41,9 @@
     <ClInclude Include="DeviceState.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="WASAPIRenderer.h" />
+    <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -86,6 +89,9 @@
     </None>
     <None Include="..\..\..\Kits\Telemetry\x64\ATGTelemetryUWP.dll">
       <Filter>Common\Telemetry\x64</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\XboxOneControllerSmall.spritefont">
+      <Filter>Assets</Filter>
     </None>
   </ItemGroup>
 </Project>

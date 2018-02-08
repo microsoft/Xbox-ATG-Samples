@@ -33,7 +33,7 @@ namespace DX
     // ST.2084 to linear, resulting in a linear normalized value
     inline float ST2084ToLinear(float ST2084)
     {
-        float normalizedLinear = pow(__max(pow(abs(ST2084), 1.0f / 78.84375f) - 0.8359375f, 0.0f) / (18.8515625f - 18.6875f * pow(abs(ST2084), 1.0f / 78.84375f)), 1.0f / 0.1593017578f);
+        float normalizedLinear = pow(std::max(pow(abs(ST2084), 1.0f / 78.84375f) - 0.8359375f, 0.0f) / (18.8515625f - 18.6875f * pow(abs(ST2084), 1.0f / 78.84375f)), 1.0f / 0.1593017578f);
         return normalizedLinear;
     }
 

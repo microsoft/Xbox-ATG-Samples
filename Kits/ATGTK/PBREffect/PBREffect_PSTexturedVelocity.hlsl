@@ -33,10 +33,12 @@ PSOut_Velocity PSTexturedVelocity(VSOut_Velocity pin)
 
     // Get albedo, then roughness, metallic and ambient occlusion
     float4 albedo = PBR_AlbedoTexture.Sample(PBR_SurfaceSampler, pin.current.TexCoord);
+
+	// glTF2 defines metalness as B channel, roughness as G channel, and occlusion as R channel
     float3 RMA = PBR_RMATexture.Sample(PBR_SurfaceSampler, pin.current.TexCoord);
   
     // Shade surface
-    float3 color = PBR_LightSurface(V, N, 3, PBR_LightColor, PBR_LightDirection, albedo.rgb, RMA.x, RMA.y, RMA.z);
+    float3 color = PBR_LightSurface(V, N, 3, PBR_LightColor, PBR_LightDirection, albedo.rgb, RMA.g, RMA.b, RMA.r);
 
     output.color = float4(color, albedo.w);
     

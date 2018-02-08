@@ -188,7 +188,7 @@ HRESULT WASAPIRenderer::ConfigureDeviceInternal()
 
     HRESULT hr = S_OK;
 
-    AudioClientProperties audioProps = {0};
+    AudioClientProperties audioProps = {};
     audioProps.cbSize = sizeof( AudioClientProperties );
     audioProps.eCategory = AudioCategory_ForegroundOnlyMedia;
 	

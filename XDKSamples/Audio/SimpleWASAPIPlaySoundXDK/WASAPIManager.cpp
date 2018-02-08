@@ -131,7 +131,7 @@ void WASAPIManager::InitializeDevice()
         m_DeviceStateChangeToken = m_StateChangedEvent->StateChangedEvent += ref new DeviceStateChangedHandler( this, &WASAPIManager::OnDeviceStateChange );
 
         // Configure user based properties
-        DEVICEPROPS props = { 0 };
+        DEVICEPROPS props = {};
         int BufferSize = 0;
         props.IsBackground = false;
         props.hnsBufferDuration = static_cast<REFERENCE_TIME>(BufferSize);

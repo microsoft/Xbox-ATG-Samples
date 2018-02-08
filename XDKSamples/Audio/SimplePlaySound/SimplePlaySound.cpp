@@ -55,7 +55,7 @@ void Sample::Initialize(IUnknown* window)
 
 #ifdef _DEBUG
     // Enable debugging features
-    XAUDIO2_DEBUG_CONFIGURATION debug = { 0 };
+    XAUDIO2_DEBUG_CONFIGURATION debug = {};
     debug.TraceMask = XAUDIO2_LOG_ERRORS | XAUDIO2_LOG_WARNINGS;
     debug.BreakMask = XAUDIO2_LOG_ERRORS;
     m_pXAudio2->SetDebugConfiguration(&debug, 0);
@@ -143,7 +143,7 @@ void Sample::Render()
 
     m_spriteBatch->Draw(m_background.Get(), m_deviceResources->GetOutputSize());
 
-    wchar_t str[128] = { 0 };
+    wchar_t str[128] = {};
     swprintf_s(str, L"Playing: %ls", g_FileList[m_currentFile]);
 
     m_font->DrawString(m_spriteBatch.get(), str, pos);
@@ -290,7 +290,7 @@ void Sample::Play(const wchar_t* szFilename)
     DX::ThrowIfFailed(m_pXAudio2->CreateSourceVoice(&m_pSourceVoice, waveData.wfx, 0, XAUDIO2_DEFAULT_FREQ_RATIO));
 
     // Submit wave data
-    XAUDIO2_BUFFER buffer = { 0 };
+    XAUDIO2_BUFFER buffer = {};
     buffer.pAudioData = waveData.startAudio;
     buffer.Flags = XAUDIO2_END_OF_STREAM;       // Indicates all the audio data is being submitted at once
     buffer.AudioBytes = waveData.audioBytes;
@@ -307,7 +307,7 @@ void Sample::Play(const wchar_t* szFilename)
         //
         // xWMA includes seek tables which must be provided
         //
-        XAUDIO2_BUFFER_WMA xwmaBuffer = { 0 };
+        XAUDIO2_BUFFER_WMA xwmaBuffer = {};
         xwmaBuffer.pDecodedPacketCumulativeBytes = waveData.seek;
         xwmaBuffer.PacketCount = waveData.seekCount;
 

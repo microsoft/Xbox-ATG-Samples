@@ -30,9 +30,6 @@ public:
     void OnSuspending();
     void OnResuming();
 
-    // Properties
-    bool RequestHDRMode() const { return m_deviceResources ? (m_deviceResources->GetDeviceOptions() & DX::DeviceResources::c_EnableHDR) != 0 : false; }
-
 private:
 
     void Update(DX::StepTimer const& timer);

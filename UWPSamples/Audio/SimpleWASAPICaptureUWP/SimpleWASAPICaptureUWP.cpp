@@ -7,7 +7,9 @@
 
 #include "pch.h"
 #include "SimpleWASAPICaptureUWP.h"
+
 #include "ATGColors.h"
+#include "ControllerFont.h"
 
 using namespace DirectX;
 
@@ -18,7 +20,12 @@ using namespace Windows::Devices::Enumeration;
 using namespace Windows::Media::Devices;
 using namespace Windows::Foundation;
 
-Sample::Sample()
+Sample::Sample() :
+    m_ctrlConnected(false),
+    m_renderFormat(nullptr),
+    m_readInput(true),
+    m_finishInit(true),
+    m_isRendererSet(false)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
@@ -44,10 +51,6 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
     HRESULT hr = MFStartup(MF_VERSION, MFSTARTUP_LITE);
     DX::ThrowIfFailed(hr);
     
-    m_readInput = true;
-    m_currentId = nullptr;
-    m_isRendererSet = false;
-
     // Set up device watchers for audio capture devices
     m_captureWatcher = DeviceInformation::CreateWatcher(Windows::Media::Devices::MediaDevice::GetAudioCaptureSelector());
     
@@ -103,7 +106,7 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
 
     m_captureWatcher->Start();
     m_finishInit = true;
-    m_captureBuffer = new CBuffer(32768);
+    m_captureBuffer.reset(new CBuffer(32768));
 
     //Start default capture device
     m_currentId = MediaDevice::GetDefaultAudioCaptureId(AudioDeviceRole::Default);
@@ -135,6 +138,8 @@ void Sample::Update(DX::StepTimer const&)
     auto pad = m_gamePad->GetState(0);
     if (pad.IsConnected())
     {
+        m_ctrlConnected = true;
+
         m_gamePadButtons.Update(pad);
 
         if (pad.IsViewPressed())
@@ -144,6 +149,8 @@ void Sample::Update(DX::StepTimer const&)
     }
     else
     {
+        m_ctrlConnected = false;
+
         m_gamePadButtons.Reset();
     }
 
@@ -172,7 +179,7 @@ void Sample::Update(DX::StepTimer const&)
             if (m_renderInterface->GetDeviceStateEvent()->GetState() == DeviceState::DeviceStateInitialized)
             {
                 m_renderFormat = m_renderInterface->GetMixFormat();
-                m_renderInterface->StartPlaybackAsync(m_captureBuffer);
+                m_renderInterface->StartPlaybackAsync(m_captureBuffer.get());
                 m_isRendererSet = true;
             }
 
@@ -180,7 +187,7 @@ void Sample::Update(DX::StepTimer const&)
             {
                 m_captureBuffer->SetSourceFormat(m_captureInterface->GetMixFormat());
                 m_captureBuffer->SetRenderFormat(m_renderFormat);
-                m_captureInterface->StartCaptureAsync(m_captureBuffer);
+                m_captureInterface->StartCaptureAsync(m_captureBuffer.get());
 
                 m_finishInit = false;
             }
@@ -278,38 +285,41 @@ void Sample::Render()
     auto safeRect = SimpleMath::Viewport::ComputeTitleSafeArea(rect.right, rect.bottom);
 
     XMFLOAT2 pos(float(safeRect.left), float(safeRect.top));
-    wchar_t rateString[32];
 
     m_spriteBatch->Begin();
 
+    float spacing = m_font->GetLineSpacing();
+
     m_font->DrawString(m_spriteBatch.get(), L"Audio captured from the selected mic is looped to the default output", pos, ATG::Colors::OffWhite);
-    pos.y += m_font->GetLineSpacing() * 1.f;
+    pos.y += spacing;
     m_font->DrawString(m_spriteBatch.get(), L"Note that no sample conversion is done!", pos, ATG::Colors::OffWhite);
-    pos.y += m_font->GetLineSpacing() * 1.6f;
+    pos.y += spacing;
 
     // Draw the sample rates
-    swprintf(rateString, 32, L"Render rate: %dHz", m_renderInterface->GetMixFormat()->nSamplesPerSec);
+    wchar_t rateString[32] = {};
+    swprintf_s(rateString, L"Render rate: %dHz", m_renderInterface->GetMixFormat()->nSamplesPerSec);
     m_font->DrawString(m_spriteBatch.get(), rateString, pos, ATG::Colors::Orange);
-    pos.y += m_font->GetLineSpacing() * 1.f;
+    pos.y += spacing;
 
-    if (m_captureDevices.size() == 0)
+    if (m_captureDevices.empty())
     {
-        swprintf(rateString, 32, L"Capture rate: N/A");
+        swprintf_s(rateString, L"Capture rate: N/A");
     }
     else
     {
-        swprintf(rateString, 32, L"Capture rate: %dHz", m_captureInterface->GetMixFormat()->nSamplesPerSec);
+        swprintf_s(rateString, L"Capture rate: %dHz", m_captureInterface->GetMixFormat()->nSamplesPerSec);
     }
     
     m_font->DrawString(m_spriteBatch.get(), rateString, pos, ATG::Colors::Orange);
-    pos.y += m_font->GetLineSpacing() * 1.5f;
+    pos.y += spacing * 1.5f;
 
     m_font->DrawString(m_spriteBatch.get(), L"Select your capture device:", pos, ATG::Colors::OffWhite);
-    pos.y += m_font->GetLineSpacing() * 1.f;
+    pos.y += spacing;
 
-    if (m_captureDevices.size() == 0)
+    if (m_captureDevices.empty())
     {
         m_font->DrawString(m_spriteBatch.get(), L"No capture devices!", pos, ATG::Colors::Orange);
+        pos.y += spacing;
     }
     else
     {
@@ -324,9 +334,17 @@ void Sample::Render()
 
             pos.x = float(safeRect.left + 36);
             m_font->DrawString(m_spriteBatch.get(), (*it)->Name->Data(), pos, ATG::Colors::Green);
-            pos.y += m_font->GetLineSpacing() * 1.1f;
+            pos.y += spacing * 1.1f;
         }
     }
+
+    pos.y += spacing * .5f;
+
+    const wchar_t* str = m_ctrlConnected
+        ? L"Press [DPad] Up/Down to change capture device"
+        : L"Press Up/Down to change capture device";
+
+    DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), str, pos, ATG::Colors::OffWhite);
 
     m_spriteBatch->End();
 
@@ -421,6 +439,8 @@ void Sample::CreateDeviceDependentResources()
 
     m_font = std::make_unique<SpriteFont>(device, L"SegoeUI_18.spritefont");
     m_font->SetDefaultCharacter(L' ');
+
+    m_ctrlFont = std::make_unique<SpriteFont>(device, L"XboxOneControllerSmall.spritefont");
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -433,6 +453,7 @@ void Sample::OnDeviceLost()
 {
     m_spriteBatch.reset();
     m_font.reset();
+    m_ctrlFont.reset();
 }
 
 void Sample::OnDeviceRestored()

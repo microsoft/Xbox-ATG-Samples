@@ -32,6 +32,7 @@ public:
     ViewProvider() :
         m_exit(false),
         m_visible(true),
+        m_in_sizemove(false),
         m_DPI(96.f),
         m_logicalWidth(800.f),
         m_logicalHeight(600.f),
@@ -43,8 +44,8 @@ public:
     // IFrameworkView methods
     virtual void Initialize(CoreApplicationView^ applicationView)
     {
-        applicationView->Activated += ref new
-            TypedEventHandler<CoreApplicationView^, IActivatedEventArgs^>(this, &ViewProvider::OnActivated);
+        applicationView->Activated +=
+            ref new TypedEventHandler<CoreApplicationView^, IActivatedEventArgs^>(this, &ViewProvider::OnActivated);
 
         CoreApplication::Suspending +=
             ref new EventHandler<SuspendingEventArgs^>(this, &ViewProvider::OnSuspending);
@@ -84,6 +85,21 @@ public:
         window->SizeChanged +=
             ref new TypedEventHandler<CoreWindow^, WindowSizeChangedEventArgs^>(this, &ViewProvider::OnWindowSizeChanged);
 
+#if defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+        try
+        {
+            window->ResizeStarted +=
+                ref new TypedEventHandler<CoreWindow^, Object^>(this, &ViewProvider::OnResizeStarted);
+
+            window->ResizeCompleted +=
+                ref new TypedEventHandler<CoreWindow^, Object^>(this, &ViewProvider::OnResizeCompleted);
+        }
+        catch (...)
+        {
+            // Requires Windows 10 Creators Update (10.0.15063) or later
+        }
+#endif
+
         window->VisibilityChanged +=
             ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &ViewProvider::OnVisibilityChanged);
 
@@ -94,6 +110,11 @@ public:
 
         dispatcher->AcceleratorKeyActivated +=
             ref new TypedEventHandler<CoreDispatcher^, AcceleratorKeyEventArgs^>(this, &ViewProvider::OnAcceleratorKeyActivated);
+
+        auto navigation = Windows::UI::Core::SystemNavigationManager::GetForCurrentView();
+
+        navigation->BackRequested +=
+            ref new EventHandler<BackRequestedEventArgs^>(this, &ViewProvider::OnBackRequested);
 
         auto currentDisplayInformation = DisplayInformation::GetForCurrentView();
 
@@ -214,8 +235,25 @@ protected:
         m_logicalWidth = sender->Bounds.Width;
         m_logicalHeight = sender->Bounds.Height;
 
+        if (m_in_sizemove)
+            return;
+
         HandleWindowSizeChanged();
     }
+
+#if defined(NTDDI_WIN10_RS2) && (NTDDI_VERSION >= NTDDI_WIN10_RS2)
+    void OnResizeStarted(CoreWindow^ sender, Platform::Object^ args)
+    {
+        m_in_sizemove = true;
+    }
+
+    void OnResizeCompleted(CoreWindow^ sender, Platform::Object^ args)
+    {
+        m_in_sizemove = false;
+
+        HandleWindowSizeChanged();
+    }
+#endif
 
     void OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
     {
@@ -250,6 +288,13 @@ protected:
         }
     }
 
+    void OnBackRequested(Platform::Object^, Windows::UI::Core::BackRequestedEventArgs^ args)
+    {
+        // UWP on Xbox One triggers a back request whenever the B button is pressed
+        // which can result in the app being suspended if unhandled
+        args->Handled = true;
+    }
+
     void OnDpiChanged(DisplayInformation^ sender, Object^ args)
     {
         m_DPI = sender->LogicalDpi;
@@ -261,9 +306,14 @@ protected:
 
     void OnOrientationChanged(DisplayInformation^ sender, Object^ args)
     {
+        auto resizeManager = CoreWindowResizeManager::GetForCurrentView();
+        resizeManager->ShouldWaitForLayoutCompletion = true;
+
         m_currentOrientation = sender->CurrentOrientation;
 
         HandleWindowSizeChanged();
+
+        resizeManager->NotifyLayoutCompleted();
     }
 
     void OnDisplayContentsInvalidated(DisplayInformation^ sender, Object^ args)
@@ -274,6 +324,7 @@ protected:
 private:
     bool                    m_exit;
     bool                    m_visible;
+    bool                    m_in_sizemove;
     float                   m_DPI;
     float                   m_logicalWidth;
     float                   m_logicalHeight;

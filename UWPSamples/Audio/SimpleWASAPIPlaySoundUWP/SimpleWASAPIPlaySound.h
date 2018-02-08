@@ -72,5 +72,4 @@ private:
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_background;
 
 	WASAPIManager^						   m_wm;
-	unsigned int                           m_volume;
 };

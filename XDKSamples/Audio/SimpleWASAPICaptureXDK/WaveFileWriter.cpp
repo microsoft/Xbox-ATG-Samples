@@ -91,7 +91,7 @@ HRESULT	CWaveFileWriter::Open(LPCWSTR pFileName, LPCWAVEFORMATEX pwfxFormat)
 HRESULT	CWaveFileWriter::Commit()
 {
     BOOL bResult = false;
-    LARGE_INTEGER liZero = {0};
+    LARGE_INTEGER liZero = {};
 
     GetWaveHeader(m_pwfxFormat, m_dwLoopSegmentSize, m_dwWritten, m_pvWaveHeader, m_dwWaveHeaderSize);
 

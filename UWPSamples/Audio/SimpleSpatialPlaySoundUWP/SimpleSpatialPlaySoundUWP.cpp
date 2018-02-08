@@ -7,19 +7,23 @@
 
 #include "pch.h"
 #include "SimpleSpatialPlaySoundUWP.h"
-#include "WAVFileReader.h"
 
 #include "ATGColors.h"
+#include "ControllerFont.h"
+#include "WAVFileReader.h"
 
 extern void ExitSample();
 
-static const LPCWSTR g_FileList[] = {
-	L"Jungle_RainThunder_mix714.wav",
-	L"ChannelIDs714.wav",
-	nullptr
-};
+namespace
+{
+    const LPCWSTR g_FileList[] =
+    {
+        L"Jungle_RainThunder_mix714.wav",
+        L"ChannelIDs714.wav",
+    };
 
-static const int numFiles = 2;
+    const int numFiles = _countof(g_FileList);
+}
 
 using namespace DirectX;
 using namespace Windows::System::Threading;
@@ -137,21 +141,24 @@ namespace
     }
 }
 
-
-Sample::Sample()
+Sample::Sample() :
+    m_numChannels(0),
+    m_bThreadActive(false),
+    m_bPlayingSound(false),
+    m_ctrlConnected(false),
+    m_bufferSize(0),
+    m_fileLoaded(false),
+    m_curFile(0)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
-	m_fileLoaded = false;
-	m_Renderer = nullptr;
-	m_bThreadActive = false;
-	m_bPlayingSound = false;
-	m_curFile = 0;
 }
 
 // Initialize the Direct3D resources required to run.
 void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATION rotation)
 {
+    m_gamePad = std::make_unique<GamePad>();
+
     m_keyboard = std::make_unique<Keyboard>();
     m_keyboard->SetWindow(reinterpret_cast<ABI::Windows::UI::Core::ICoreWindow*>(window));
 
@@ -183,12 +190,9 @@ void Sample::Tick()
 }
 
 // Updates the world.
-void Sample::Update(DX::StepTimer const& timer)
+void Sample::Update(DX::StepTimer const&)
 {
 	PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
-
-	float elapsedTime = float(timer.GetElapsedSeconds());
-	elapsedTime;
 
 	//Are we resetting the renderer?  This will happen if we get an invalid stream 
 	//  which can happen when render mode changes or device changes
@@ -210,10 +214,24 @@ void Sample::Update(DX::StepTimer const& timer)
 		}
 	}
 
+    auto pad = m_gamePad->GetState(0);
+    if (pad.IsConnected())
+    {
+        m_ctrlConnected = true;
+
+        m_gamePadButtons.Update(pad);
+    }
+    else
+    {
+        m_ctrlConnected = false;
+
+        m_gamePadButtons.Reset();
+    }
+
 	auto kb = m_keyboard->GetState();
 	m_keyboardButtons.Update(kb);
 
-	if (kb.Escape)
+	if (kb.Escape || m_gamePadButtons.view == GamePad::ButtonStateTracker::PRESSED)
 	{
 		if (m_bThreadActive)
 		{
@@ -226,7 +244,8 @@ void Sample::Update(DX::StepTimer const& timer)
 
         ExitSample();
 	}
-	if (m_keyboardButtons.IsKeyReleased(DirectX::Keyboard::Keys::Space))
+
+	if (m_keyboardButtons.IsKeyReleased(DirectX::Keyboard::Keys::Space) || m_gamePadButtons.a == m_gamePadButtons.RELEASED)
 	{
 		if (m_fileLoaded && m_Renderer && m_Renderer->IsActive())
 		{
@@ -256,7 +275,7 @@ void Sample::Update(DX::StepTimer const& timer)
 		//change playingsound state (pause/unpause)
 		m_bPlayingSound = !m_bPlayingSound;
 	}
-	if (m_keyboardButtons.IsKeyReleased(DirectX::Keyboard::Keys::Up))
+	if (m_keyboardButtons.IsKeyReleased(DirectX::Keyboard::Keys::Up) || m_gamePadButtons.b == m_gamePadButtons.RELEASED)
 	{
 		//if spatial thread active and playing, shutdown and start new file
 		if (m_bThreadActive && m_bPlayingSound)
@@ -323,28 +342,37 @@ void Sample::Render()
 
 	m_spriteBatch->Begin();
 
-	wchar_t str[128] = { 0 };
-	swprintf_s(str, L"Simple Spatial Playback:");
+    float spacing = m_font->GetLineSpacing();
+
+	m_font->DrawString(m_spriteBatch.get(), L"Simple Spatial Playback:", pos, ATG::Colors::White);
+	pos.y += spacing * 1.5f;
+
+    wchar_t str[128] = {};
+    swprintf_s(str, L"   file: %ls", g_FileList[m_curFile]);
 	m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-	pos.y += 30;
-	swprintf_s(str, L"   file: %s", g_FileList[m_curFile]);
+	pos.y += spacing;
+	swprintf_s(str, L"   state: %ls", (m_bThreadActive) ? ((m_bPlayingSound) ? L"Playing" : L"Paused") : L"Stopped");
 	m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-	pos.y += 30;
-	swprintf_s(str, L"   state: %s", (m_bThreadActive) ? ((m_bPlayingSound) ? L"Playing" : L"Paused") : L"Stopped");
-	m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-	pos.y += 30;
-	swprintf_s(str, L"Use Spacebar to start/stop playback");
-	m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-	pos.y += 30;
-	swprintf_s(str, L"Use 'p' to pause playback");
-	m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-	pos.y += 30;
-	swprintf_s(str, L"Use UP key to change to next file");
-	m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-	pos.y += 30;
+    pos.y += spacing * 1.5f;
+
+    const wchar_t* str1 = m_ctrlConnected
+        ? L"Use [A] to start/stop playback"
+        : L"Use Spacebar to start/stop playback and 'p' to pause/unpause";
+    DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), str1, pos, ATG::Colors::White);
+    pos.y += spacing;
+
+    const wchar_t* str2 = m_ctrlConnected
+        ? L"Use [B] to change to next file"
+        : L"Use UP key to change to next file";
+    DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), str2, pos, ATG::Colors::White);
+    pos.y += spacing;
+
+    const wchar_t* str3 = m_ctrlConnected
+        ? L"Use [View] to exit"
+        : L"Use Esc to exit";
+    DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), str3, pos, ATG::Colors::White);
 
 	m_spriteBatch->End();
-
 
     PIXEndEvent(context);
 
@@ -398,6 +426,7 @@ void Sample::OnSuspending()
 void Sample::OnResuming()
 {
     m_timer.ResetElapsedTime();
+    m_gamePadButtons.Reset();
     m_keyboardButtons.Reset();
 }
 
@@ -433,6 +462,8 @@ void Sample::CreateDeviceDependentResources()
 	m_spriteBatch = std::make_unique<SpriteBatch>(context);
 
 	m_font = std::make_unique<SpriteFont>(device, L"SegoeUI_18.spritefont");
+
+    m_ctrlFont = std::make_unique<SpriteFont>(device, L"XboxOneControllerSmall.spritefont");
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.
@@ -445,6 +476,7 @@ void Sample::OnDeviceLost()
 {
 	m_spriteBatch.reset();
 	m_font.reset();
+    m_ctrlFont.reset();
 }
 
 void Sample::OnDeviceRestored()
