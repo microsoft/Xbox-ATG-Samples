@@ -524,30 +524,34 @@ void Sample::CreateDeviceDependentResources()
     auto computeShaderBlob = DX::ReadData(L"Fractal.cso");
 
     // Define root table layout
-    CD3DX12_DESCRIPTOR_RANGE descRange[e_numRootParameters];
-    descRange[e_rootParameterSampler].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0); // s0
-    descRange[e_rootParameterSRV].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0); // t0
-    descRange[e_rootParameterUAV].Init(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0); // u0
+    {
+        CD3DX12_DESCRIPTOR_RANGE descRange[e_numRootParameters];
+        descRange[e_rootParameterSampler].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0); // s0
+        descRange[e_rootParameterSRV].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0); // t0
+        descRange[e_rootParameterUAV].Init(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0); // u0
 
-    CD3DX12_ROOT_PARAMETER rootParameters[e_numRootParameters];
-    rootParameters[e_rootParameterCB].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
-    rootParameters[e_rootParameterSampler].InitAsDescriptorTable(1, &descRange[e_rootParameterSampler], D3D12_SHADER_VISIBILITY_ALL);
-    rootParameters[e_rootParameterSRV].InitAsDescriptorTable(1, &descRange[e_rootParameterSRV], D3D12_SHADER_VISIBILITY_ALL);
-    rootParameters[e_rootParameterUAV].InitAsDescriptorTable(1, &descRange[e_rootParameterUAV], D3D12_SHADER_VISIBILITY_ALL);
+        CD3DX12_ROOT_PARAMETER rootParameters[e_numRootParameters];
+        rootParameters[e_rootParameterCB].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
+        rootParameters[e_rootParameterSampler].InitAsDescriptorTable(1, &descRange[e_rootParameterSampler], D3D12_SHADER_VISIBILITY_ALL);
+        rootParameters[e_rootParameterSRV].InitAsDescriptorTable(1, &descRange[e_rootParameterSRV], D3D12_SHADER_VISIBILITY_ALL);
+        rootParameters[e_rootParameterUAV].InitAsDescriptorTable(1, &descRange[e_rootParameterUAV], D3D12_SHADER_VISIBILITY_ALL);
 
-    CD3DX12_ROOT_SIGNATURE_DESC rootSignature(_countof(rootParameters), rootParameters);
-    ID3DBlob *spSerializedSignature;
-    DX::ThrowIfFailed(
-        D3D12SerializeRootSignature(&rootSignature, D3D_ROOT_SIGNATURE_VERSION_1, &spSerializedSignature, nullptr));
+        CD3DX12_ROOT_SIGNATURE_DESC rootSignature(_countof(rootParameters), rootParameters);
 
-    // Create the root signature
-    DX::ThrowIfFailed(
-        device->CreateRootSignature(
-            0,
-            spSerializedSignature->GetBufferPointer(),
-            spSerializedSignature->GetBufferSize(),
-            IID_GRAPHICS_PPV_ARGS(m_computeRootSignature.ReleaseAndGetAddressOf())));
-    m_computeRootSignature->SetName(L"Compute RS");
+        ComPtr<ID3DBlob> serializedSignature;
+        DX::ThrowIfFailed(
+            D3D12SerializeRootSignature(&rootSignature, D3D_ROOT_SIGNATURE_VERSION_1, serializedSignature.GetAddressOf(), nullptr));
+
+        // Create the root signature
+        DX::ThrowIfFailed(
+            device->CreateRootSignature(
+                0,
+                serializedSignature->GetBufferPointer(),
+                serializedSignature->GetBufferSize(),
+                IID_GRAPHICS_PPV_ARGS(m_computeRootSignature.ReleaseAndGetAddressOf())));
+
+        m_computeRootSignature->SetName(L"Compute RS");
+    }
 
     // Create compute pipeline state
     D3D12_COMPUTE_PIPELINE_STATE_DESC descComputePSO = {};
@@ -592,30 +596,24 @@ void Sample::CreateDeviceDependentResources()
         m_spriteBatch = std::make_unique<SpriteBatch>(device, resourceUpload, pd);
     }
 
-    {
-        m_font = std::make_unique<SpriteFont>(device, resourceUpload,
-            L"SegoeUI_18.spritefont",
-            m_resourceDescriptors->GetCpuHandle(Descriptors::TextFont),
-            m_resourceDescriptors->GetGpuHandle(Descriptors::TextFont));
-        m_ctrlFont = std::make_unique<SpriteFont>(device, resourceUpload,
-            L"XboxOneControllerLegendSmall.spritefont",
-            m_resourceDescriptors->GetCpuHandle(Descriptors::ControllerFont),
-            m_resourceDescriptors->GetGpuHandle(Descriptors::ControllerFont));
+    m_font = std::make_unique<SpriteFont>(device, resourceUpload,
+        L"SegoeUI_18.spritefont",
+        m_resourceDescriptors->GetCpuHandle(Descriptors::TextFont),
+        m_resourceDescriptors->GetGpuHandle(Descriptors::TextFont));
 
-        auto uploadResourcesFinished = resourceUpload.End(m_deviceResources->GetCommandQueue());
-        uploadResourcesFinished.wait();
-    }
+    m_ctrlFont = std::make_unique<SpriteFont>(device, resourceUpload,
+        L"XboxOneControllerLegendSmall.spritefont",
+        m_resourceDescriptors->GetCpuHandle(Descriptors::ControllerFont),
+        m_resourceDescriptors->GetGpuHandle(Descriptors::ControllerFont));
 
     {
         RenderTargetState rtState(m_deviceResources->GetBackBufferFormat(), m_deviceResources->GetDepthBufferFormat());
-        ResourceUploadBatch uploadBatch(device);
-        uploadBatch.Begin();
 
-        m_help->RestoreDevice(device, uploadBatch, rtState);
-
-        auto finish = uploadBatch.End(m_deviceResources->GetCommandQueue());
-        finish.wait();
+        m_help->RestoreDevice(device, resourceUpload, rtState);
     }
+
+    auto uploadResourcesFinished = resourceUpload.End(m_deviceResources->GetCommandQueue());
+    uploadResourcesFinished.wait();
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.

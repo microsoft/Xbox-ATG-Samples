@@ -218,6 +218,8 @@ void Sample::Update(DX::StepTimer const&)
 
             // Present the front pannel buffer
             m_frontPanelDisplay->Present();
+
+            m_dirty = false;
         }
     }
 
