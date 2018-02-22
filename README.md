@@ -165,6 +165,10 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td><a href="XDKSamples/System/GameDVR">Game DVR</a></td>
   <td><a href="XDKSamples/System/MemoryBanks">Memory Banks</a></td>
  </tr>
+ <tr>
+  <td>XDK (VS 2017 only)</td>
+  <td><a href="XDKSamples/System/CoroutinesXDK">Coroutines</a>
+ </tr>
 </table>
 
 <table>
