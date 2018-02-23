@@ -1,0 +1,77 @@
+@ECHO OFF
+SETLOCAL EnableDelayedExpansion
+REM UNATTENDSCRIPT
+REM NAME Toggle_FiddlerProxy
+ECHO Running script Toggle_FiddlerProxy
+ECHO Filename: %0
+
+REM NOTE: Manual modifications to this file may prevent it from being imported by Device Portal or may be lost on import.
+REM       It is highly recommended that it be modified in Device Portal with Custom actions used to accomplish things that can't be done with the regular templates.
+REM       Once you have a custom action, editing the text within that action in a text editor is fine and will be preserved on import.
+
+SET NeedsReboot=false
+SET SkipReboot=false
+
+SET SerialNumber=%1
+SET ConsoleId=%2
+SET DeviceId=%3
+
+REM SCRIPTSTEP START CRED V1
+ECHO %TIME%: Starting Action: Add network credentials
+SET NetworkCredShare="[Network Share]"
+SET NetworkCredUsername=[Username]
+SET NetworkCredPassword="UGxhY2Vob2xkZXI="
+J:\unattendedsetuphelper.exe cred add %NetworkCredShare% %NetworkCredUsername% %NetworkCredPassword%
+REM SCRIPTSTEP STOP
+
+REM SCRIPTSTEP START CUSTOM V1
+ECHO %TIME%: Starting Action: Do custom action
+REM NAME Set FiddlerRoot.cer filepath
+ECHO Running custom action Set FiddlerRoot.cer filepath
+SET FiddlerRoot=[Full path to FiddlerRoot.cer on the above network share]
+REM SCRIPTSTEP STOP
+
+REM SCRIPTSTEP START CUSTOM V1
+ECHO %TIME%: Starting Action: Do custom action
+REM NAME Set proxy host IP address and port
+ECHO Running custom action Set proxy host IP address and port
+SET HostIpAndPort=[IP address]:[Port Number]
+REM SCRIPTSTEP STOP
+
+REM SCRIPTSTEP START CUSTOM V1
+ECHO %TIME%: Starting Action: Do custom action
+REM NAME Enable or Disable Fiddler
+ECHO Running custom action Enable or Disable Fiddler
+REM This action does not need to be changed. It will get necessary information
+REM from the above actions.
+
+IF EXIST "s:\Microsoft\Cert\FiddlerRoot.cer" (
+    IF EXIST "s:\Microsoft\Fiddler\ProxyAddress.txt" (
+        SET FiddlerOn=true
+    )
+)
+
+IF "%FiddlerOn%" EQU "true" (
+    ECHO Disabling Fiddler
+    DEL s:\Microsoft\Fiddler\ProxyAddress.txt
+) ELSE (
+    ECHO Enabling Fiddler
+    MKDIR s:\Microsoft\Cert 2>nul
+    MKDIR s:\Microsoft\Fiddler 2>nul
+    COPY /Y %FiddlerRoot% s:\Microsoft\Cert\FiddlerRoot.cer >nul
+    ECHO %HostIpAndPort% > s:\Microsoft\Fiddler\ProxyAddress.txt
+)
+
+SET NeedsReboot=true
+REM SCRIPTSTEP STOP
+
+REM SCRIPTCLEANUP
+:_Cleanup
+REM If we need to reboot, pop a toast and sleep longer than the toast warns since it takes a toast a couple seconds to display.
+if "%SkipReboot%" neq "true" (
+    if "%NeedsReboot%" equ "true" (
+        J:\unattendedsetuphelper.exe toast Unattended%%20script%%20requires%%20a%%20reboot.%%0ARebooting%%20automatically%%20in%%205%%20seconds.
+        sleep 10
+        shutdown /r /t 0
+    )
+)
