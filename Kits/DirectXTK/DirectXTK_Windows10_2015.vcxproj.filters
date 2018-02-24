@@ -1076,6 +1076,9 @@
     <None Include="Src\Shaders\Compiled\ToneMap_VSQuad.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
+    <None Include="Src\Shaders\PBRCommon.fxh">
+      <Filter>Src\Shaders\Shared</Filter>
+    </None>
     <None Include="Src\Shaders\Compiled\PBREffect_PSConstant.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
@@ -1102,9 +1105,6 @@
     </None>
     <None Include="Src\Shaders\Compiled\PBREffect_VSConstantVelocityBn.inc">
       <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\PBRCommon.fxh">
-      <Filter>Src\Shaders\Shared</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\PBREffect_PSConstant.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
