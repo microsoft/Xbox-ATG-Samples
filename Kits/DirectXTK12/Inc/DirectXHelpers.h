@@ -1,12 +1,8 @@
 //--------------------------------------------------------------------------------------
 // File: DirectXHelpers.h
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
@@ -20,7 +16,13 @@
 #endif
 
 #include <DirectXMath.h>
+
 #include <pix.h>
+
+#include <initializer_list>
+#include <utility>
+#include <vector>
+
 #include <wrl/client.h>
 
 #ifndef IID_GRAPHICS_PPV_ARGS
@@ -127,36 +129,36 @@ namespace DirectX
     template<UINT TNameLength>
     inline void SetDebugObjectName(_In_ ID3D12DeviceChild* resource, _In_z_ const char(&name)[TNameLength])
     {
-        #if !defined(NO_D3D12_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
-            wchar_t wname[MAX_PATH];
-            int result = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, name, TNameLength, wname, MAX_PATH);
-            if (result > 0)
-            {
-                resource->SetName(wname);
-            }
-        #else
-            UNREFERENCED_PARAMETER(resource);
-            UNREFERENCED_PARAMETER(name);
-        #endif
+    #if !defined(NO_D3D12_DEBUG_NAME) && (defined(_DEBUG) || defined(PROFILE))
+        wchar_t wname[MAX_PATH];
+        int result = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, name, TNameLength, wname, MAX_PATH);
+        if (result > 0)
+        {
+            resource->SetName(wname);
+        }
+    #else
+        UNREFERENCED_PARAMETER(resource);
+        UNREFERENCED_PARAMETER(name);
+    #endif
     }
 
     template<UINT TNameLength>
     inline void SetDebugObjectName(_In_ ID3D12DeviceChild* resource, _In_z_ const wchar_t(&name)[TNameLength])
     {
-        #if !defined(NO_D3D12_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
-            resource->SetName(name);
-        #else
-            UNREFERENCED_PARAMETER(resource);
-            UNREFERENCED_PARAMETER(name);
-        #endif
+    #if !defined(NO_D3D12_DEBUG_NAME) && (defined(_DEBUG) || defined(PROFILE))
+        resource->SetName(name);
+    #else
+        UNREFERENCED_PARAMETER(resource);
+        UNREFERENCED_PARAMETER(name);
+    #endif
     }
 
     // Helper for resource barrier.
     inline void TransitionResource(
         _In_ ID3D12GraphicsCommandList* commandList,
         _In_ ID3D12Resource* resource,
-        _In_ D3D12_RESOURCE_STATES stateBefore,
-        _In_ D3D12_RESOURCE_STATES stateAfter)
+        D3D12_RESOURCE_STATES stateBefore,
+        D3D12_RESOURCE_STATES stateAfter)
     {
         assert(commandList != 0);
         assert(resource != 0);
@@ -173,6 +175,37 @@ namespace DirectX
 
         commandList->ResourceBarrier(1, &desc);
     }
+
+    // Helper which applies one or more resources barriers and then reverses them on destruction.
+    class ScopedBarrier
+    {
+    public:
+        ScopedBarrier(
+            _In_ ID3D12GraphicsCommandList* commandList,
+            std::initializer_list<D3D12_RESOURCE_BARRIER> barriers)
+            : mCommandList(commandList),
+            mBarriers(barriers)
+        {
+            // Set barriers
+            mCommandList->ResourceBarrier(static_cast<UINT>(mBarriers.size()), mBarriers.data());
+        }
+
+        ~ScopedBarrier()
+        {
+            // reverse barrier inputs and outputs
+            for (auto& b : mBarriers)
+            {
+                std::swap(b.Transition.StateAfter, b.Transition.StateBefore);
+            }
+
+            // Set barriers
+            mCommandList->ResourceBarrier(static_cast<UINT>(mBarriers.size()), mBarriers.data());
+        }
+
+    private:
+        ID3D12GraphicsCommandList* mCommandList;
+        std::vector<D3D12_RESOURCE_BARRIER> mBarriers;
+    };
 
     // Helpers for aligning values by a power of 2
     template<typename T>

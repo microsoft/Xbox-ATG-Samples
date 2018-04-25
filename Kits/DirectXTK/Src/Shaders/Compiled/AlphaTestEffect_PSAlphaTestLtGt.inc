@@ -41,14 +41,14 @@
     dcl t2.xy  // pin<8,9>
     dcl_2d s0
 
-#line 91 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
+#line 87 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
     texld r0, t2, s0
     mad r1.w, r0.w, t0.w, -c0.x
     mul r0, r0, t0  // ::color<0,1,2,3>
     cmp r1, r1.w, c0.w, c0.z
     texkill r1
 
-#line 20 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 18 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r1.xyz, c1, r0.w, -r0
     mad r0.xyz, t1.w, r1, r0  // ApplyFog::color<0,1,2>
     mov oC0, r0  // ::PSAlphaTestLtGt<0,1,2,3>
@@ -78,10 +78,10 @@ ret
 
 const BYTE AlphaTestEffect_PSAlphaTestLtGt[] =
 {
-     68,  88,  66,  67,  88, 214, 
-     60,  78,   4,  80, 104, 211, 
-    157,  39,   0, 174, 110,  64, 
-     49, 145,   1,   0,   0,   0, 
+     68,  88,  66,  67,  98,  25, 
+     91, 169,   6, 124, 199,  15, 
+     68, 135, 172,  93, 172,  15, 
+    224, 179,   1,   0,   0,   0, 
     180,   5,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     136,   3,   0,   0,  24,   5, 
@@ -130,16 +130,16 @@ const BYTE AlphaTestEffect_PSAlphaTestLtGt[] =
       0,   0,   0,   0, 255, 255, 
     124,   2,   0,   0,   0,   0, 
     255, 255, 136,   2,   0,   0, 
-     91,   0,   0,   0, 148,   2, 
-      0,   0,  93,   0,   0,   0, 
-    164,   2,   0,   0,  91,   0, 
+     87,   0,   0,   0, 148,   2, 
+      0,   0,  89,   0,   0,   0, 
+    164,   2,   0,   0,  87,   0, 
       0,   0, 184,   2,   0,   0, 
-     93,   0,   0,   0, 200,   2, 
-      0,   0,  93,   0,   0,   0, 
-    220,   2,   0,   0,  20,   0, 
+     89,   0,   0,   0, 200,   2, 
+      0,   0,  89,   0,   0,   0, 
+    220,   2,   0,   0,  18,   0, 
       1,   0, 228,   2,   0,   0, 
-     20,   0,   1,   0, 248,   2, 
-      0,   0,  20,   0,   1,   0, 
+     18,   0,   1,   0, 248,   2, 
+      0,   0,  18,   0,   1,   0, 
      12,   3,   0,   0,  80,  83, 
      65, 108, 112, 104,  97,  84, 
     101, 115, 116,  76, 116,  71, 

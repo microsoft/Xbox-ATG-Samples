@@ -48,48 +48,48 @@
     dcl_texcoord3 v3  // vin<9,10,11,12>
     dcl_texcoord4 v4  // vin<13,14,15,16>
 
-#line 53 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 49 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     mul r0.x, v3.x, c243.x
     mova a0.x, r0.x
     mul r0, v4.x, c26[a0.x]  // ::skinning<0,3,6,9>
 
-#line 57
+#line 53
     dp3 r1.x, v1, r0  // ::Skin<0>
     dp4 r0.x, v0, r0  // Skin::vin<0>
 
-#line 53
+#line 49
     mul r2, v4.x, c27[a0.x]  // ::skinning<1,4,7,10>
     mul r3, v4.x, c28[a0.x]  // ::skinning<2,5,8,11>
 
-#line 57
+#line 53
     dp3 r1.y, v1, r2  // ::Skin<1>
     dp4 r0.y, v0, r2  // Skin::vin<1>
     dp3 r1.z, v1, r3  // ::Skin<2>
     dp4 r0.z, v0, r3  // Skin::vin<2>
 
-#line 59 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 57 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp3 r2.x, r1, c19
     dp3 r2.y, r1, c20
     dp3 r2.z, r1, c21
     nrm r1.xyz, r2  // ::worldNormal<0,1,2>
 
-#line 36
+#line 34
     dp3 r2.x, -c3, r1  // ::dotL<0>
     dp3 r2.y, -c4, r1  // ::dotL<1>
     dp3 r2.z, -c5, r1  // ::dotL<2>
 
-#line 39
+#line 37
     sge r3.xyz, r2, c243.y  // ::zeroL<0,1,2>
     mul r4.xyz, r2, r3  // ::diffuse<0,1,2>
 
-#line 46
+#line 44
     mul r5.xyz, r4.y, c7
     mad r4.xyw, r4.x, c6.xyzz, r5.xyzz
     mad r4.xyz, r4.z, c8, r4.xyww
     mov r5.xyz, c0  // Parameters::DiffuseColor<0,1,2>
     mad oT0.xyz, r4, r5, c1  // ::VSSkinnedVertexLightingOneBone<0,1,2>
 
-#line 57
+#line 55
     mov r0.w, v0.w
     dp4 r4.x, r0, c15  // ::pos_ws<0>
     dp4 r4.y, r0, c16  // ::pos_ws<1>
@@ -97,28 +97,28 @@
     add r4.xyz, -r4, c12
     nrm r5.xyz, r4  // ::eyeVector<0,1,2>
 
-#line 33
+#line 31
     add r4.xyz, r5, -c3
     nrm r6.xyz, r4  // ::halfVectors<0,1,2>
 
-#line 37
+#line 35
     dp3 r4.x, r6, r1  // ::dotH<0>
 
-#line 33
+#line 31
     add r6.xyz, r5, -c4
     add r5.xyz, r5, -c5
     nrm r7.xyz, r5  // ::halfVectors<6,7,8>
 
-#line 37
+#line 35
     dp3 r4.z, r7, r1  // ::dotH<2>
 
-#line 33
+#line 31
     nrm r5.xyz, r6  // ::halfVectors<3,4,5>
 
-#line 37
+#line 35
     dp3 r4.y, r5, r1  // ::dotH<1>
 
-#line 42
+#line 40
     max r1.xyz, r4, c243.y
     mul r1.xyz, r3, r1
     log r3.x, r1.x
@@ -130,33 +130,33 @@
     exp r3.z, r1.z
     mul r1.xyz, r2, r3  // ::specular<0,1,2>
 
-#line 47
+#line 45
     mul r2.xyz, r1.y, c10
     mad r1.xyw, r1.x, c9.xyzz, r2.xyzz
     mad r1.xyz, r1.z, c11, r1.xyww
     mul oT1.xyz, r1, c2  // ::VSSkinnedVertexLightingOneBone<4,5,6>
 
-#line 63
+#line 61
     dp4 oPos.z, r0, c24  // ::VSSkinnedVertexLightingOneBone<12>
 
-#line 14 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 12 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r1.x, r0, c14
     max r1.x, r1.x, c243.y
     min oT1.w, r1.x, c243.z  // ::VSSkinnedVertexLightingOneBone<7>
 
-#line 63 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 61 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 r1.x, r0, c22  // ::vout<0>
     dp4 r1.y, r0, c23  // ::vout<1>
     dp4 r0.x, r0, c25  // ::vout<3>
 
-#line 62 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 58 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     mad oPos.xy, r0.x, c242, r1  // ::VSSkinnedVertexLightingOneBone<10,11>
     mov oPos.w, r0.x  // ::VSSkinnedVertexLightingOneBone<13>
 
-#line 46 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 44 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mov oT0.w, c0.w  // ::VSSkinnedVertexLightingOneBone<3>
 
-#line 66 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
+#line 62 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\SkinnedEffect.fx"
     mov oT2.xy, v2  // ::VSSkinnedVertexLightingOneBone<8,9>
 
 // approximately 75 instruction slots used
@@ -243,10 +243,10 @@ ret
 
 const BYTE SkinnedEffect_VSSkinnedVertexLightingOneBone[] =
 {
-     68,  88,  66,  67, 124, 186, 
-     86, 198, 146, 186, 205,  93, 
-    252, 106, 160,  35, 112, 252, 
-     80, 253,   1,   0,   0,   0, 
+     68,  88,  66,  67,  76, 188, 
+      6, 164, 206, 214,  72, 110, 
+     21, 151,  36, 116, 160, 250, 
+     73, 202,   1,   0,   0,   0, 
      60,  23,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     108,  13,   0,   0, 240,  21, 
@@ -307,92 +307,92 @@ const BYTE SkinnedEffect_VSSkinnedVertexLightingOneBone[] =
       0,   0,   0,   0, 255, 255, 
     244,   8,   0,   0,   0,   0, 
     255, 255,   0,   9,   0,   0, 
-     53,   0,   0,   0,  12,   9, 
-      0,   0,  53,   0,   0,   0, 
-     28,   9,   0,   0,  53,   0, 
+     49,   0,   0,   0,  12,   9, 
+      0,   0,  49,   0,   0,   0, 
+     28,   9,   0,   0,  49,   0, 
       0,   0,  40,   9,   0,   0, 
-     57,   0,   0,   0,  60,   9, 
-      0,   0,  56,   0,   0,   0, 
-     76,   9,   0,   0,  53,   0, 
+     53,   0,   0,   0,  60,   9, 
+      0,   0,  52,   0,   0,   0, 
+     76,   9,   0,   0,  49,   0, 
       0,   0,  92,   9,   0,   0, 
-     53,   0,   0,   0, 112,   9, 
-      0,   0,  57,   0,   0,   0, 
-    132,   9,   0,   0,  56,   0, 
+     49,   0,   0,   0, 112,   9, 
+      0,   0,  53,   0,   0,   0, 
+    132,   9,   0,   0,  52,   0, 
       0,   0, 148,   9,   0,   0, 
-     57,   0,   0,   0, 164,   9, 
-      0,   0,  56,   0,   0,   0, 
-    180,   9,   0,   0,  59,   0, 
+     53,   0,   0,   0, 164,   9, 
+      0,   0,  52,   0,   0,   0, 
+    180,   9,   0,   0,  57,   0, 
       1,   0, 196,   9,   0,   0, 
-     59,   0,   1,   0, 212,   9, 
-      0,   0,  59,   0,   1,   0, 
-    228,   9,   0,   0,  59,   0, 
+     57,   0,   1,   0, 212,   9, 
+      0,   0,  57,   0,   1,   0, 
+    228,   9,   0,   0,  57,   0, 
       1,   0, 244,   9,   0,   0, 
-     36,   0,   1,   0,   0,  10, 
-      0,   0,  36,   0,   1,   0, 
-     16,  10,   0,   0,  36,   0, 
+     34,   0,   1,   0,   0,  10, 
+      0,   0,  34,   0,   1,   0, 
+     16,  10,   0,   0,  34,   0, 
       1,   0,  32,  10,   0,   0, 
-     39,   0,   1,   0,  48,  10, 
-      0,   0,  41,   0,   1,   0, 
-     64,  10,   0,   0,  46,   0, 
+     37,   0,   1,   0,  48,  10, 
+      0,   0,  39,   0,   1,   0, 
+     64,  10,   0,   0,  44,   0, 
       1,   0,  80,  10,   0,   0, 
-     46,   0,   1,   0,  96,  10, 
-      0,   0,  46,   0,   1,   0, 
-    116,  10,   0,   0,  46,   0, 
+     44,   0,   1,   0,  96,  10, 
+      0,   0,  44,   0,   1,   0, 
+    116,  10,   0,   0,  44,   0, 
       1,   0, 136,  10,   0,   0, 
-     46,   0,   1,   0, 148,  10, 
-      0,   0,  57,   0,   1,   0, 
-    168,  10,   0,   0,  57,   0, 
+     44,   0,   1,   0, 148,  10, 
+      0,   0,  55,   0,   1,   0, 
+    168,  10,   0,   0,  55,   0, 
       1,   0, 180,  10,   0,   0, 
-     57,   0,   1,   0, 196,  10, 
-      0,   0,  57,   0,   1,   0, 
-    212,  10,   0,   0,  58,   0, 
+     55,   0,   1,   0, 196,  10, 
+      0,   0,  55,   0,   1,   0, 
+    212,  10,   0,   0,  56,   0, 
       1,   0, 228,  10,   0,   0, 
-     58,   0,   1,   0, 244,  10, 
-      0,   0,  33,   0,   1,   0, 
-      0,  11,   0,   0,  33,   0, 
+     56,   0,   1,   0, 244,  10, 
+      0,   0,  31,   0,   1,   0, 
+      0,  11,   0,   0,  31,   0, 
       1,   0,  16,  11,   0,   0, 
-     37,   0,   1,   0,  28,  11, 
-      0,   0,  33,   0,   1,   0, 
-     44,  11,   0,   0,  33,   0, 
+     35,   0,   1,   0,  28,  11, 
+      0,   0,  31,   0,   1,   0, 
+     44,  11,   0,   0,  31,   0, 
       1,   0,  60,  11,   0,   0, 
-     33,   0,   1,   0,  76,  11, 
-      0,   0,  37,   0,   1,   0, 
-     88,  11,   0,   0,  33,   0, 
+     31,   0,   1,   0,  76,  11, 
+      0,   0,  35,   0,   1,   0, 
+     88,  11,   0,   0,  31,   0, 
       1,   0, 104,  11,   0,   0, 
-     37,   0,   1,   0, 116,  11, 
-      0,   0,  42,   0,   1,   0, 
-    132,  11,   0,   0,  42,   0, 
+     35,   0,   1,   0, 116,  11, 
+      0,   0,  40,   0,   1,   0, 
+    132,  11,   0,   0,  40,   0, 
       1,   0, 148,  11,   0,   0, 
-     42,   0,   1,   0, 164,  11, 
-      0,   0,  42,   0,   1,   0, 
-    176,  11,   0,   0,  42,   0, 
+     40,   0,   1,   0, 164,  11, 
+      0,   0,  40,   0,   1,   0, 
+    176,  11,   0,   0,  40,   0, 
       1,   0, 188,  11,   0,   0, 
-     42,   0,   1,   0, 200,  11, 
-      0,   0,  42,   0,   1,   0, 
-    216,  11,   0,   0,  42,   0, 
+     40,   0,   1,   0, 200,  11, 
+      0,   0,  40,   0,   1,   0, 
+    216,  11,   0,   0,  40,   0, 
       1,   0, 228,  11,   0,   0, 
-     42,   0,   1,   0, 240,  11, 
-      0,   0,  42,   0,   1,   0, 
-    252,  11,   0,   0,  47,   0, 
+     40,   0,   1,   0, 240,  11, 
+      0,   0,  40,   0,   1,   0, 
+    252,  11,   0,   0,  45,   0, 
       1,   0,  12,  12,   0,   0, 
-     47,   0,   1,   0,  28,  12, 
-      0,   0,  47,   0,   1,   0, 
-     48,  12,   0,   0,  47,   0, 
+     45,   0,   1,   0,  28,  12, 
+      0,   0,  45,   0,   1,   0, 
+     48,  12,   0,   0,  45,   0, 
       1,   0,  68,  12,   0,   0, 
-     63,   0,   1,   0,  84,  12, 
-      0,   0,  14,   0,   2,   0, 
-    100,  12,   0,   0,  14,   0, 
+     61,   0,   1,   0,  84,  12, 
+      0,   0,  12,   0,   2,   0, 
+    100,  12,   0,   0,  12,   0, 
       2,   0, 116,  12,   0,   0, 
-     14,   0,   2,   0, 132,  12, 
-      0,   0,  63,   0,   1,   0, 
-    148,  12,   0,   0,  63,   0, 
+     12,   0,   2,   0, 132,  12, 
+      0,   0,  61,   0,   1,   0, 
+    148,  12,   0,   0,  61,   0, 
       1,   0, 164,  12,   0,   0, 
-     63,   0,   1,   0, 180,  12, 
-      0,   0,  62,   0,   0,   0, 
-    196,  12,   0,   0,  62,   0, 
+     61,   0,   1,   0, 180,  12, 
+      0,   0,  58,   0,   0,   0, 
+    196,  12,   0,   0,  58,   0, 
       0,   0, 216,  12,   0,   0, 
-     46,   0,   1,   0, 228,  12, 
-      0,   0,  66,   0,   0,   0, 
+     44,   0,   1,   0, 228,  12, 
+      0,   0,  62,   0,   0,   0, 
     240,  12,   0,   0,  80,  97, 
     114,  97, 109, 101, 116, 101, 
     114, 115,   0,  68, 105, 102, 

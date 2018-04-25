@@ -1,12 +1,8 @@
 //--------------------------------------------------------------------------------------
 // File: DualPostProcess.cpp
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
@@ -92,6 +88,8 @@ namespace
                 return hr;
             });
         }
+
+        ID3D12Device* GetDevice() const { return mDevice.Get(); }
 
     protected:
         ComPtr<ID3D12Device>                        mDevice;
@@ -193,7 +191,7 @@ DualPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& 
             D3D12_FLOAT32_MAX,
             D3D12_SHADER_VISIBILITY_PIXEL);
 
-        CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
+        CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount] = {};
 
         CD3DX12_DESCRIPTOR_RANGE texture1Range(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
         rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &texture1Range, D3D12_SHADER_VISIBILITY_PIXEL);
@@ -275,7 +273,7 @@ void DualPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList)
     if (mDirtyFlags & Dirty_ConstantBuffer)
     {
         mDirtyFlags &= ~Dirty_ConstantBuffer;
-        mConstantBuffer = GraphicsMemory::Get().AllocateConstant(constants);
+        mConstantBuffer = GraphicsMemory::Get(mDeviceResources->GetDevice()).AllocateConstant(constants);
     }
 
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, mConstantBuffer.GpuAddress());
@@ -284,27 +282,27 @@ void DualPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList)
     commandList->SetPipelineState(mPipelineState.Get());
 
     // Draw quad.
-    commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-    commandList->DrawInstanced(4, 1, 0, 0);
+    commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    commandList->DrawInstanced(3, 1, 0, 0);
 }
 
 
 // Public constructor.
 DualPostProcess::DualPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx)
-  : pImpl(new Impl(device, rtState, fx))
+  : pImpl(std::make_unique<Impl>(device, rtState, fx))
 {
 }
 
 
 // Move constructor.
-DualPostProcess::DualPostProcess(DualPostProcess&& moveFrom)
+DualPostProcess::DualPostProcess(DualPostProcess&& moveFrom) noexcept
   : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 
 // Move assignment.
-DualPostProcess& DualPostProcess::operator= (DualPostProcess&& moveFrom)
+DualPostProcess& DualPostProcess::operator= (DualPostProcess&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;

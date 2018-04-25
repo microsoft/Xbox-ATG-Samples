@@ -1,12 +1,8 @@
 //--------------------------------------------------------------------------------------
 // File: Model.cpp
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
@@ -67,17 +63,17 @@ void ModelMeshPart::Draw(_In_ ID3D12GraphicsCommandList* commandList) const
 
     commandList->IASetPrimitiveTopology(primitiveType);
 
-    commandList->DrawIndexedInstanced( indexCount, 1, startIndex, vertexOffset, 0 );
+    commandList->DrawIndexedInstanced(indexCount, 1, startIndex, vertexOffset, 0);
 }
 
 
 _Use_decl_annotations_
 void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList, const ModelMeshPart::Collection& meshParts)
 {
-    for ( auto it = meshParts.cbegin(); it != meshParts.cend(); ++it )
+    for (auto it = meshParts.cbegin(); it != meshParts.cend(); ++it)
     {
         auto part = (*it).get();
-        assert( part != 0 );
+        assert(part != 0);
 
         part->Draw(commandList);
     }
@@ -90,10 +86,10 @@ void ModelMeshPart::DrawMeshParts(
     const ModelMeshPart::Collection& meshParts,
     ModelMeshPart::DrawCallback callback)
 {
-    for ( auto it = meshParts.cbegin(); it != meshParts.cend(); ++it )
+    for (auto it = meshParts.cbegin(); it != meshParts.cend(); ++it)
     {
         auto part = (*it).get();
-        assert( part != 0 );
+        assert(part != 0);
 
         callback(commandList, *part);
         part->Draw(commandList);
@@ -115,7 +111,7 @@ void ModelMeshPart::DrawMeshParts(ID3D12GraphicsCommandList* commandList,
 // ModelMesh
 //--------------------------------------------------------------------------------------
 
-ModelMesh::ModelMesh()
+ModelMesh::ModelMesh() noexcept
 {
 }
 
@@ -163,7 +159,7 @@ void __cdecl ModelMesh::DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, M
 //--------------------------------------------------------------------------------------
 // Model
 //--------------------------------------------------------------------------------------
-Model::Model()
+Model::Model() noexcept
 {
 }
 
@@ -197,8 +193,8 @@ std::unique_ptr<EffectTextureFactory> Model::LoadTextures(
         return nullptr;
 
     std::unique_ptr<EffectTextureFactory> texFactory = std::make_unique<EffectTextureFactory>(
-        device, 
-        resourceUploadBatch, 
+        device,
+        resourceUploadBatch,
         textureNames.size(),
         flags);
     if (texturesPath != nullptr && *texturesPath != 0)
@@ -214,9 +210,9 @@ std::unique_ptr<EffectTextureFactory> Model::LoadTextures(
 
 // Create effects for each mesh piece
 std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
-    IEffectFactory& fxFactory, 
+    IEffectFactory& fxFactory,
     const EffectPipelineStateDescription& opaquePipelineState,
-    const EffectPipelineStateDescription& alphaPipelineState, 
+    const EffectPipelineStateDescription& alphaPipelineState,
     int textureDescriptorOffset,
     int samplerDescriptorOffset) const
 {
@@ -283,9 +279,9 @@ std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
 // Creates an effect for a mesh part
 _Use_decl_annotations_
 std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
-    IEffectFactory& fxFactory, 
+    IEffectFactory& fxFactory,
     const EffectPipelineStateDescription& opaquePipelineState,
-    const EffectPipelineStateDescription& alphaPipelineState, 
+    const EffectPipelineStateDescription& alphaPipelineState,
     int textureDescriptorOffset,
     int samplerDescriptorOffset,
     const ModelMeshPart* part) const
@@ -295,7 +291,7 @@ std::shared_ptr<IEffect> Model::CreateEffectForMeshPart(
     const auto& m = materials[part->materialIndex];
 
     D3D12_INPUT_LAYOUT_DESC il = {};
-    il.NumElements = (uint32_t) part->vbDecl->size();
+    il.NumElements = (uint32_t)part->vbDecl->size();
     il.pInputElementDescs = part->vbDecl->data();
 
     return fxFactory.CreateEffect(m, opaquePipelineState, alphaPipelineState, il, textureDescriptorOffset, samplerDescriptorOffset);
@@ -306,7 +302,7 @@ _Use_decl_annotations_
 std::vector<std::shared_ptr<IEffect>> Model::CreateEffects(
     const EffectPipelineStateDescription& opaquePipelineState,
     const EffectPipelineStateDescription& alphaPipelineState,
-    ID3D12DescriptorHeap* textureDescriptorHeap, 
+    ID3D12DescriptorHeap* textureDescriptorHeap,
     ID3D12DescriptorHeap* samplerDescriptorHeap,
     int textureDescriptorOffset,
     int samplerDescriptorOffset) const

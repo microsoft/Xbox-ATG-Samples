@@ -1,12 +1,8 @@
 //--------------------------------------------------------------------------------------
 // File: PBREffect.cpp
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
@@ -40,7 +36,7 @@ struct PBREffectConstants
     float   targetHeight;
 };
 
-static_assert( ( sizeof(PBREffectConstants) % 16 ) == 0, "CB size not padded correctly" );
+static_assert((sizeof(PBREffectConstants) % 16) == 0, "CB size not padded correctly");
 
 
 // Traits type describes our characteristics to the EffectBase template.
@@ -181,19 +177,19 @@ SharedResourcePool<ID3D12Device*, EffectBase<PBREffectTraits>::DeviceResources> 
 
 // Constructor.
 PBREffect::Impl::Impl(_In_ ID3D12Device* device,
-        int effectFlags,
-        const EffectPipelineStateDescription& pipelineDescription,
-        bool emissive,
-        bool generateVelocity)
+    int effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    bool emissive,
+    bool generateVelocity)
     : EffectBase(device),
     emissiveMap(emissive),
     descriptors{},
     lightColor{}
 {
-    static_assert( _countof(EffectBase<PBREffectTraits>::VertexShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<PBREffectTraits>::VertexShaderBytecode) == PBREffectTraits::VertexShaderCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<PBREffectTraits>::PixelShaderBytecode) == PBREffectTraits::PixelShaderCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<PBREffectTraits>::PixelShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch" );
+    static_assert(_countof(EffectBase<PBREffectTraits>::VertexShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<PBREffectTraits>::VertexShaderBytecode) == PBREffectTraits::VertexShaderCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<PBREffectTraits>::PixelShaderBytecode) == PBREffectTraits::PixelShaderCount, "array/max mismatch");
+    static_assert(_countof(EffectBase<PBREffectTraits>::PixelShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
 
     // Lighting
     static const XMVECTORF32 defaultLightDirection = { 0, -1, 0, 0 };
@@ -233,7 +229,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
             D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
             D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
-        CD3DX12_ROOT_PARAMETER rootParameters[RootParametersCount];
+        CD3DX12_ROOT_PARAMETER rootParameters[RootParametersCount] = {};
         CD3DX12_DESCRIPTOR_RANGE textureSRV[6] = {
             CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0),
             CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1),
@@ -288,7 +284,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
     assert(vi >= 0 && vi < PBREffectTraits::VertexShaderCount);
     int pi = EffectBase<PBREffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < PBREffectTraits::PixelShaderCount);
-   
+
     pipelineDescription.CreatePipelineState(
         device,
         mRootSignature,
@@ -461,20 +457,20 @@ PBREffect::PBREffect(_In_ ID3D12Device* device,
                     const EffectPipelineStateDescription& pipelineDescription, 
                     bool emissive,
                     bool generateVelocity)
-    : pImpl(new Impl(device, effectFlags, pipelineDescription, emissive, generateVelocity))
+    : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, emissive, generateVelocity))
 {
 }
 
 
 // Move constructor.
-PBREffect::PBREffect(PBREffect&& moveFrom)
+PBREffect::PBREffect(PBREffect&& moveFrom) noexcept
   : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 
 // Move assignment.
-PBREffect& PBREffect::operator= (PBREffect&& moveFrom)
+PBREffect& PBREffect::operator= (PBREffect&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;

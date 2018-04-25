@@ -1,12 +1,8 @@
 //--------------------------------------------------------------------------------------
 // File: BasicPostProcess.cpp
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
@@ -126,6 +122,8 @@ namespace
                 return hr;
             });
         }
+
+        ID3D12Device* GetDevice() const { return mDevice.Get(); }
 
     protected:
         ComPtr<ID3D12Device>                        mDevice;
@@ -248,7 +246,7 @@ BasicPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState&
             D3D12_FLOAT32_MAX,
             D3D12_SHADER_VISIBILITY_PIXEL);
 
-        CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
+        CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount] = {};
         rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRVs, D3D12_SHADER_VISIBILITY_PIXEL);
 
         // Root parameter descriptor - conditionally initialized
@@ -346,7 +344,7 @@ void BasicPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList
         if (mDirtyFlags & Dirty_ConstantBuffer)
         {
             mDirtyFlags &= ~Dirty_ConstantBuffer;
-            mConstantBuffer = GraphicsMemory::Get().AllocateConstant(constants);
+            mConstantBuffer = GraphicsMemory::Get(mDeviceResources->GetDevice()).AllocateConstant(constants);
         }
 
         commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, mConstantBuffer.GpuAddress());
@@ -356,8 +354,8 @@ void BasicPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList
     commandList->SetPipelineState(mPipelineState.Get());
 
     // Draw quad.
-    commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-    commandList->DrawInstanced(4, 1, 0, 0);
+    commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    commandList->DrawInstanced(3, 1, 0, 0);
 }
 
 
@@ -365,7 +363,7 @@ void BasicPostProcess::Impl::DownScale2x2()
 {
     mUseConstants = true;
 
-    if ( !texWidth || !texHeight)
+    if (!texWidth || !texHeight)
     {
         throw std::exception("Call SetSourceTexture before setting post-process effect");
     }
@@ -385,7 +383,6 @@ void BasicPostProcess::Impl::DownScale2x2()
             ++ptr;
         }
     }
-
 }
 
 
@@ -519,20 +516,20 @@ void  BasicPostProcess::Impl::Bloom(bool horizontal, float size, float brightnes
 
 // Public constructor.
 BasicPostProcess::BasicPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx)
-  : pImpl(new Impl(device, rtState, fx))
+  : pImpl(std::make_unique<Impl>(device, rtState, fx))
 {
 }
 
 
 // Move constructor.
-BasicPostProcess::BasicPostProcess(BasicPostProcess&& moveFrom)
+BasicPostProcess::BasicPostProcess(BasicPostProcess&& moveFrom) noexcept
   : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 
 // Move assignment.
-BasicPostProcess& BasicPostProcess::operator= (BasicPostProcess&& moveFrom)
+BasicPostProcess& BasicPostProcess::operator= (BasicPostProcess&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;

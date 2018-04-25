@@ -34,12 +34,8 @@
 //      allocator.InsertFences( pContext, 0 );
 //      DXGIXPresentArray(...);
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
@@ -54,7 +50,7 @@ namespace DirectX
     class LinearAllocatorPage
     {
     public:
-        LinearAllocatorPage();
+        LinearAllocatorPage() noexcept;
 
         size_t Suballocate(_In_ size_t size, _In_ size_t alignment);
 

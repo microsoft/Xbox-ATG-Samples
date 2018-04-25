@@ -7,26 +7,26 @@
     <Filter Include="Src">
       <UniqueIdentifier>{c52e19b6-8703-49a1-9b36-101a05b4745d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Inc\Shared">
-      <UniqueIdentifier>{e07ba3bc-b69f-4ded-9ffa-3b47427e9fef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Shared">
-      <UniqueIdentifier>{28e934ed-a6d7-4c30-b064-c72c50c99626}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Src\Shaders">
       <UniqueIdentifier>{28d5fa16-99e2-471c-8cd8-2020e81f0024}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Shaders\Compiled">
-      <UniqueIdentifier>{2c7e186a-b9b6-4511-85f2-1bb46bd0f152}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Shaders\Shared">
-      <UniqueIdentifier>{34676173-31f5-4435-b90d-a0ad4f7d163c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Src\Shaders\Symbols">
-      <UniqueIdentifier>{76af8346-1ee8-4ef9-90aa-6b4d86cf5164}</UniqueIdentifier>
+      <UniqueIdentifier>{2ea8e9b5-e01c-45c8-95a5-36f8a69b267c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Audio">
-      <UniqueIdentifier>{5d47b946-09b9-4477-934f-ca45fba9845d}</UniqueIdentifier>
+      <UniqueIdentifier>{16e1c974-4e01-4cff-948c-076e9914e033}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Inc\Shared">
+      <UniqueIdentifier>{5c972584-03dd-4b7d-9026-0e53ac731582}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Shared">
+      <UniqueIdentifier>{95983e6d-a96c-4fb5-b014-8e0527c1d68b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Shaders\Shared">
+      <UniqueIdentifier>{bb6c909b-3081-409a-a30f-5129414801ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Shaders\Symbols">
+      <UniqueIdentifier>{c8b7a2ba-194e-4aaa-bd43-4306846e3925}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,13 +48,7 @@
     <ClInclude Include="Inc\VertexTypes.h">
       <Filter>Inc</Filter>
     </ClInclude>
-    <ClInclude Include="Src\ConstantBuffer.h">
-      <Filter>Src</Filter>
-    </ClInclude>
     <ClInclude Include="Src\pch.h">
-      <Filter>Src</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\PlatformHelpers.h">
       <Filter>Src</Filter>
     </ClInclude>
     <ClInclude Include="Inc\GeometricPrimitive.h">
@@ -78,38 +72,32 @@
     <ClInclude Include="Inc\DirectXHelpers.h">
       <Filter>Inc</Filter>
     </ClInclude>
+    <ClInclude Include="Src\LinearAllocator.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\ResourceUploadBatch.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\DescriptorHeap.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
     <ClInclude Include="Inc\GraphicsMemory.h">
       <Filter>Inc</Filter>
     </ClInclude>
+    <ClInclude Include="Src\d3dx12.h">
+      <Filter>Src</Filter>
+    </ClInclude>
     <ClInclude Include="Inc\Audio.h">
-      <Filter>Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="Audio\SoundCommon.h">
-      <Filter>Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="Audio\WAVFileReader.h">
       <Filter>Audio</Filter>
     </ClInclude>
     <ClInclude Include="Audio\WaveBankReader.h">
       <Filter>Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Inc\GamePad.h">
-      <Filter>Inc\Shared</Filter>
+    <ClInclude Include="Audio\WAVFileReader.h">
+      <Filter>Audio</Filter>
     </ClInclude>
-    <ClInclude Include="Inc\Keyboard.h">
-      <Filter>Inc\Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="Inc\Mouse.h">
-      <Filter>Inc\Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="Inc\SimpleMath.inl">
-      <Filter>Inc\Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="Inc\SimpleMath.h">
-      <Filter>Inc\Shared</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\AlignedNew.h">
-      <Filter>Src\Shared</Filter>
+    <ClInclude Include="Audio\SoundCommon.h">
+      <Filter>Audio</Filter>
     </ClInclude>
     <ClInclude Include="Src\Bezier.h">
       <Filter>Src\Shared</Filter>
@@ -123,10 +111,28 @@
     <ClInclude Include="Src\DemandCreate.h">
       <Filter>Src\Shared</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Geometry.h">
+    <ClInclude Include="Src\PlatformHelpers.h">
       <Filter>Src\Shared</Filter>
     </ClInclude>
-    <ClInclude Include="Src\LoaderHelpers.h">
+    <ClInclude Include="Src\AlignedNew.h">
+      <Filter>Src\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\GamePad.h">
+      <Filter>Inc\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\Keyboard.h">
+      <Filter>Inc\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\Mouse.h">
+      <Filter>Inc\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\SimpleMath.h">
+      <Filter>Inc\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\SimpleMath.inl">
+      <Filter>Inc\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\SDKMesh.h">
       <Filter>Src\Shared</Filter>
     </ClInclude>
     <ClInclude Include="Src\SharedResourcePool.h">
@@ -135,8 +141,17 @@
     <ClInclude Include="Src\vbo.h">
       <Filter>Src\Shared</Filter>
     </ClInclude>
-    <ClInclude Include="Src\SDKMesh.h">
+    <ClInclude Include="Src\Geometry.h">
       <Filter>Src\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\LoaderHelpers.h">
+      <Filter>Src\Shared</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\RenderTargetState.h">
+      <Filter>Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="Inc\EffectPipelineStateDescription.h">
+      <Filter>Inc</Filter>
     </ClInclude>
     <ClInclude Include="Inc\PostProcess.h">
       <Filter>Inc</Filter>
@@ -194,22 +209,25 @@
     <ClCompile Include="Src\ScreenGrab.cpp">
       <Filter>Src</Filter>
     </ClCompile>
-    <ClCompile Include="Src\ModelLoadCMO.cpp">
-      <Filter>Src</Filter>
-    </ClCompile>
     <ClCompile Include="Src\ModelLoadSDKMESH.cpp">
       <Filter>Src</Filter>
     </ClCompile>
     <ClCompile Include="Src\Model.cpp">
       <Filter>Src</Filter>
     </ClCompile>
-    <ClCompile Include="Src\DGSLEffect.cpp">
-      <Filter>Src</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\DGSLEffectFactory.cpp">
-      <Filter>Src</Filter>
-    </ClCompile>
     <ClCompile Include="Src\ModelLoadVBO.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\LinearAllocator.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DescriptorHeap.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\ResourceUploadBatch.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DirectXHelpers.cpp">
       <Filter>Src</Filter>
     </ClCompile>
     <ClCompile Include="Src\GraphicsMemory.cpp">
@@ -221,44 +239,50 @@
     <ClCompile Include="Audio\DynamicSoundEffectInstance.cpp">
       <Filter>Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Audio\SoundCommon.cpp">
-      <Filter>Audio</Filter>
-    </ClCompile>
-    <ClCompile Include="Audio\WAVFileReader.cpp">
+    <ClCompile Include="Audio\WaveBank.cpp">
       <Filter>Audio</Filter>
     </ClCompile>
     <ClCompile Include="Audio\WaveBankReader.cpp">
       <Filter>Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Audio\WaveBank.cpp">
+    <ClCompile Include="Audio\WAVFileReader.cpp">
       <Filter>Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Audio\SoundEffectInstance.cpp">
+    <ClCompile Include="Audio\SoundCommon.cpp">
       <Filter>Audio</Filter>
     </ClCompile>
     <ClCompile Include="Audio\SoundEffect.cpp">
       <Filter>Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Src\NormalMapEffect.cpp">
-      <Filter>Src</Filter>
+    <ClCompile Include="Audio\SoundEffectInstance.cpp">
+      <Filter>Audio</Filter>
     </ClCompile>
-    <ClCompile Include="Src\BinaryReader.cpp">
-      <Filter>Src\Shared</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\GamePad.cpp">
-      <Filter>Src\Shared</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Geometry.cpp">
-      <Filter>Src\Shared</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Keyboard.cpp">
+    <ClCompile Include="Src\SimpleMath.cpp">
       <Filter>Src\Shared</Filter>
     </ClCompile>
     <ClCompile Include="Src\Mouse.cpp">
       <Filter>Src\Shared</Filter>
     </ClCompile>
-    <ClCompile Include="Src\SimpleMath.cpp">
+    <ClCompile Include="Src\Keyboard.cpp">
       <Filter>Src\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GamePad.cpp">
+      <Filter>Src\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\BinaryReader.cpp">
+      <Filter>Src\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Geometry.cpp">
+      <Filter>Src\Shared</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EffectTextureFactory.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\NormalMapEffect.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EffectPipelineStateDescription.cpp">
+      <Filter>Src</Filter>
     </ClCompile>
     <ClCompile Include="Src\BasicPostProcess.cpp">
       <Filter>Src</Filter>
@@ -299,18 +323,6 @@
       <Filter>Src\Shaders</Filter>
     </None>
     <None Include="Readme.txt" />
-    <None Include="Src\Shaders\DGSLEffect.fx">
-      <Filter>Src\Shaders</Filter>
-    </None>
-    <None Include="Src\Shaders\DGSLPhong.hlsl">
-      <Filter>Src\Shaders</Filter>
-    </None>
-    <None Include="Src\Shaders\DGSLUnlit.hlsl">
-      <Filter>Src\Shaders</Filter>
-    </None>
-    <None Include="Src\Shaders\DGSLLambert.hlsl">
-      <Filter>Src\Shaders</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\AlphaTestEffect_PSAlphaTestEqNe.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
@@ -371,18 +383,6 @@
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicNoFog.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLight.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightTx.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightTxVc.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightVc.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicPixelLighting.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
@@ -425,66 +425,6 @@
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicVertexLightingVc.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_main.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_main1Bones.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_main1BonesVc.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_main2Bones.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_main2BonesVc.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_main4Bones.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_main4BonesVc.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_mainVc.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLLambert_main.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLLambert_mainTk.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLLambert_mainTx.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLLambert_mainTxTk.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLPhong_main.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLPhong_mainTk.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLPhong_mainTx.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLPhong_mainTxTk.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLUnlit_main.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLUnlit_mainTk.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLUnlit_mainTx.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLUnlit_mainTxTk.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\DualTextureEffect_PSDualTexture.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
@@ -521,10 +461,7 @@
     <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapFresnel.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapOneLight.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapOneLightFresnel.inc">
+    <None Include="Src\Shaders\Compiled\GenerateMips_main.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\SkinnedEffect_PSSkinnedPixelLighting.inc">
@@ -534,15 +471,6 @@
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\SkinnedEffect_PSSkinnedVertexLightingNoFog.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightFourBones.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightOneBone.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightTwoBones.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingFourBones.inc">
@@ -569,19 +497,28 @@
     <None Include="Src\Shaders\Compiled\SpriteEffect_SpriteVertexShader.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\NormalMapEffect.fx">
+    <None Include="Src\Shaders\GenerateMips.hlsl">
       <Filter>Src\Shaders</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\NormalMapEffect_PSNormalPixelLightingTx.inc">
+    <None Include="Src\TeapotData.inc">
+      <Filter>Src\Shared</Filter>
+    </None>
+    <None Include="Src\Shaders\Common.fxh">
+      <Filter>Src\Shaders\Shared</Filter>
+    </None>
+    <None Include="Src\Shaders\Lighting.fxh">
+      <Filter>Src\Shaders\Shared</Filter>
+    </None>
+    <None Include="Src\Shaders\Structures.fxh">
+      <Filter>Src\Shaders\Shared</Filter>
+    </None>
+    <None Include="Src\Shaders\RootSig.fxh">
+      <Filter>Src\Shaders</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\SpriteEffect_SpritePixelShaderHeap.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\NormalMapEffect_PSNormalPixelLightingTxNoFog.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTx.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVc.inc">
+    <None Include="Src\Shaders\Compiled\SpriteEffect_SpriteVertexShaderHeap.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_PSEnvMapPixelLighting.inc">
@@ -597,6 +534,27 @@
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapPixelLighting.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_PSNormalPixelLightingTx.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_PSNormalPixelLightingTxNoFog.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTx.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVc.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\NormalMapEffect.fx">
+      <Filter>Src\Shaders</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_PSNormalPixelLightingTxNoFogSpec.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_PSNormalPixelLightingTxNoSpec.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\AlphaTestEffect_PSAlphaTestEqNe.pdb">
@@ -659,18 +617,6 @@
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicNoFog.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLight.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightTx.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightTxVc.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightVc.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicPixelLighting.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
@@ -711,66 +657,6 @@
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicVertexLightingVc.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_main.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_main1Bones.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_main1BonesVc.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_main2Bones.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_main2BonesVc.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_main4Bones.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_main4BonesVc.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLEffect_mainVc.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLLambert_main.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLLambert_mainTk.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLLambert_mainTx.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLLambert_mainTxTk.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLPhong_main.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLPhong_mainTk.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLPhong_mainTx.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLPhong_mainTxTk.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLUnlit_main.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLUnlit_mainTk.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLUnlit_mainTx.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\DGSLUnlit_mainTxTk.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\DualTextureEffect_PSDualTexture.pdb">
@@ -821,13 +707,10 @@
     <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapFresnel.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapOneLight.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapOneLightFresnel.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapPixelLighting.pdb">
+      <Filter>Src\Shaders\Symbols</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\GenerateMips_main.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\NormalMapEffect_PSNormalPixelLightingTx.pdb">
@@ -857,15 +740,6 @@
     <None Include="Src\Shaders\Compiled\SkinnedEffect_PSSkinnedVertexLightingNoFog.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightFourBones.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightOneBone.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightTwoBones.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingFourBones.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
@@ -887,32 +761,14 @@
     <None Include="Src\Shaders\Compiled\SpriteEffect_SpritePixelShader.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
+    <None Include="Src\Shaders\Compiled\SpriteEffect_SpritePixelShaderHeap.pdb">
+      <Filter>Src\Shaders\Symbols</Filter>
+    </None>
     <None Include="Src\Shaders\Compiled\SpriteEffect_SpriteVertexShader.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
-    <None Include="Src\Shaders\Lighting.fxh">
-      <Filter>Src\Shaders\Shared</Filter>
-    </None>
-    <None Include="Src\Shaders\Common.fxh">
-      <Filter>Src\Shaders\Shared</Filter>
-    </None>
-    <None Include="Src\Shaders\Structures.fxh">
-      <Filter>Src\Shaders\Shared</Filter>
-    </None>
-    <None Include="Src\TeapotData.inc">
-      <Filter>Src\Shared</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightTxBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightTxVcBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightVcBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
+    <None Include="Src\Shaders\Compiled\SpriteEffect_SpriteVertexShaderHeap.pdb">
+      <Filter>Src\Shaders\Symbols</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicPixelLightingBn.inc">
       <Filter>Src\Shaders\Compiled</Filter>
@@ -938,17 +794,38 @@
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicVertexLightingVcBn.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightBn.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
+    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapBn.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightTxBn.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
+    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapFresnelBn.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightTxVcBn.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
+    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapPixelLightingBn.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicOneLightVcBn.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxBn.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcBn.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingOneBoneBn.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingTwoBonesBn.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingOneBoneBn.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingTwoBonesBn.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicPixelLightingBn.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
@@ -974,64 +851,10 @@
     <None Include="Src\Shaders\Compiled\BasicEffect_VSBasicVertexLightingVcBn.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapFresnelBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapOneLightBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapOneLightFresnelBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapPixelLightingBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightFourBonesBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightOneBoneBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightTwoBonesBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingOneBoneBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingTwoBonesBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingOneBoneBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingTwoBonesBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapBn.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapFresnelBn.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapOneLightBn.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapOneLightFresnelBn.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\EnvironmentMapEffect_VSEnvMapPixelLightingBn.pdb">
@@ -1041,15 +864,6 @@
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcBn.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightFourBonesBn.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightOneBoneBn.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedOneLightTwoBonesBn.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedPixelLightingFourBonesBn.pdb">
@@ -1070,17 +884,29 @@
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingTwoBonesBn.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
-    <None Include="Src\Shaders\PostProcess.fx">
-      <Filter>Src\Shaders</Filter>
-    </None>
-    <None Include="Src\Shaders\ToneMap.fx">
-      <Filter>Src\Shaders</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\NormalMapEffect_PSNormalPixelLightingTxNoFogSpec.inc">
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxNoSpec.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\NormalMapEffect_PSNormalPixelLightingTxNoSpec.inc">
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxNoSpecBn.inc">
       <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcNoSpec.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcNoSpecBn.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxNoSpec.pdb">
+      <Filter>Src\Shaders\Symbols</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxNoSpecBn.pdb">
+      <Filter>Src\Shaders\Symbols</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcNoSpec.pdb">
+      <Filter>Src\Shaders\Symbols</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcNoSpecBn.pdb">
+      <Filter>Src\Shaders\Symbols</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\PostProcess_PSBloomBlur.inc">
       <Filter>Src\Shaders\Compiled</Filter>
@@ -1148,8 +974,20 @@
     <None Include="Src\Shaders\Compiled\PostProcess_VSQuad.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
-    <None Include="Src\Shaders\Utilities.fxh">
-      <Filter>Src\Shaders\Shared</Filter>
+    <None Include="Src\Shaders\Compiled\PostProcess_VSQuadDual.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\PostProcess_VSQuadNoCB.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\PostProcess_VSQuadDual.pdb">
+      <Filter>Src\Shaders\Symbols</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\PostProcess_VSQuadNoCB.pdb">
+      <Filter>Src\Shaders\Symbols</Filter>
+    </None>
+    <None Include="Src\Shaders\PostProcess.fx">
+      <Filter>Src\Shaders</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\ToneMap_PS_SRGB.inc">
       <Filter>Src\Shaders\Compiled</Filter>
@@ -1211,8 +1049,14 @@
     <None Include="Src\Shaders\Compiled\ToneMap_VSQuad.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
-    <None Include="Src\Shaders\PBREffect.fx">
+    <None Include="Src\Shaders\Utilities.fxh">
+      <Filter>Src\Shaders\Shared</Filter>
+    </None>
+    <None Include="Src\Shaders\ToneMap.fx">
       <Filter>Src\Shaders</Filter>
+    </None>
+    <None Include="Src\Shaders\PixelPacking_Velocity.hlsli">
+      <Filter>Src\Shaders\Shared</Filter>
     </None>
     <None Include="Src\Shaders\PBRCommon.fxh">
       <Filter>Src\Shaders\Shared</Filter>
@@ -1223,25 +1067,13 @@
     <None Include="Src\Shaders\Compiled\PBREffect_PSTextured.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\PBREffect_PSTexturedEmissive.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\PBREffect_PSTexturedEmissiveVelocity.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\PBREffect_PSTexturedVelocity.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\PBREffect_VSConstant.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\PBREffect_VSConstantBn.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\PBREffect_VSConstantVelocity.inc">
-      <Filter>Src\Shaders\Compiled</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\PBREffect_VSConstantVelocityBn.inc">
       <Filter>Src\Shaders\Compiled</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\PBREffect_PSConstant.pdb">
@@ -1250,22 +1082,37 @@
     <None Include="Src\Shaders\Compiled\PBREffect_PSTextured.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\PBREffect_PSTexturedEmissive.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\Compiled\PBREffect_PSTexturedEmissiveVelocity.pdb">
-      <Filter>Src\Shaders\Symbols</Filter>
-    </None>
     <None Include="Src\Shaders\Compiled\PBREffect_PSTexturedVelocity.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\PBREffect_VSConstant.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\PBREffect_VSConstantBn.pdb">
+    <None Include="Src\Shaders\Compiled\PBREffect_VSConstantVelocity.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
-    <None Include="Src\Shaders\Compiled\PBREffect_VSConstantVelocity.pdb">
+    <None Include="Src\Shaders\PBREffect.fx">
+      <Filter>Src\Shaders</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\PBREffect_PSTexturedEmissive.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\PBREffect_PSTexturedEmissiveVelocity.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\PBREffect_VSConstantBn.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\PBREffect_VSConstantVelocityBn.inc">
+      <Filter>Src\Shaders\Compiled</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\PBREffect_PSTexturedEmissive.pdb">
+      <Filter>Src\Shaders\Symbols</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\PBREffect_PSTexturedEmissiveVelocity.pdb">
+      <Filter>Src\Shaders\Symbols</Filter>
+    </None>
+    <None Include="Src\Shaders\Compiled\PBREffect_VSConstantBn.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
     </None>
     <None Include="Src\Shaders\Compiled\PBREffect_VSConstantVelocityBn.pdb">
@@ -1321,9 +1168,6 @@
     </None>
     <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugVcBn.pdb">
       <Filter>Src\Shaders\Symbols</Filter>
-    </None>
-    <None Include="Src\Shaders\PixelPacking_Velocity.hlsli">
-      <Filter>Src\Shaders\Shared</Filter>
     </None>
   </ItemGroup>
 </Project>

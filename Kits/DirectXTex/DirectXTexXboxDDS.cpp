@@ -4,6 +4,7 @@
 // DirectXTex Auxillary functions for saving "XBOX" Xbox One variants of DDS files
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
 #include "DirectXTexP.h"
@@ -81,19 +82,19 @@ namespace
         auto pHeader = reinterpret_cast<const DDS_HEADER*>(reinterpret_cast<const uint8_t*>(pSource) + sizeof(uint32_t));
 
         // Verify header to validate DDS file
-        if (pHeader->dwSize != sizeof(DDS_HEADER)
-            || pHeader->ddspf.dwSize != sizeof(DDS_PIXELFORMAT))
+        if (pHeader->size != sizeof(DDS_HEADER)
+            || pHeader->ddspf.size != sizeof(DDS_PIXELFORMAT))
         {
             return E_FAIL;
         }
 
-        metadata.mipLevels = pHeader->dwMipMapCount;
+        metadata.mipLevels = pHeader->mipMapCount;
         if (metadata.mipLevels == 0)
             metadata.mipLevels = 1;
 
         // Check for XBOX extension
-        if (!(pHeader->ddspf.dwFlags & DDS_FOURCC)
-            || (MAKEFOURCC('X', 'B', 'O', 'X') != pHeader->ddspf.dwFourCC))
+        if (!(pHeader->ddspf.flags & DDS_FOURCC)
+            || (MAKEFOURCC('X', 'B', 'O', 'X') != pHeader->ddspf.fourCC))
         {
             // We know it's a DDS file, but it's not an XBOX extension
             return S_FALSE;
@@ -133,12 +134,12 @@ namespace
         {
         case DDS_DIMENSION_TEXTURE1D:
 
-            if ((pHeader->dwFlags & DDS_HEIGHT) && pHeader->dwHeight != 1)
+            if ((pHeader->flags & DDS_HEIGHT) && pHeader->height != 1)
             {
                 return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
             }
 
-            metadata.width = pHeader->dwWidth;
+            metadata.width = pHeader->width;
             metadata.height = 1;
             metadata.depth = 1;
             metadata.dimension = TEX_DIMENSION_TEXTURE1D;
@@ -151,14 +152,14 @@ namespace
                 metadata.arraySize *= 6;
             }
 
-            metadata.width = pHeader->dwWidth;
-            metadata.height = pHeader->dwHeight;
+            metadata.width = pHeader->width;
+            metadata.height = pHeader->height;
             metadata.depth = 1;
             metadata.dimension = TEX_DIMENSION_TEXTURE2D;
             break;
 
         case DDS_DIMENSION_TEXTURE3D:
-            if (!(pHeader->dwFlags & DDS_HEADER_FLAGS_VOLUME))
+            if (!(pHeader->flags & DDS_HEADER_FLAGS_VOLUME))
             {
                 return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
             }
@@ -166,9 +167,9 @@ namespace
             if (metadata.arraySize > 1)
                 return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
 
-            metadata.width = pHeader->dwWidth;
-            metadata.height = pHeader->dwHeight;
-            metadata.depth = pHeader->dwDepth;
+            metadata.width = pHeader->width;
+            metadata.height = pHeader->height;
+            metadata.depth = pHeader->depth;
             metadata.dimension = TEX_DIMENSION_TEXTURE3D;
             break;
 
@@ -218,23 +219,23 @@ namespace
         auto header = reinterpret_cast<DDS_HEADER*>(reinterpret_cast<uint8_t*>(pDestination) + sizeof(uint32_t));
 
         memset(header, 0, sizeof(DDS_HEADER));
-        header->dwSize = sizeof(DDS_HEADER);
-        header->dwFlags = DDS_HEADER_FLAGS_TEXTURE;
-        header->dwCaps = DDS_SURFACE_FLAGS_TEXTURE;
+        header->size = sizeof(DDS_HEADER);
+        header->flags = DDS_HEADER_FLAGS_TEXTURE;
+        header->caps = DDS_SURFACE_FLAGS_TEXTURE;
 
         auto& metadata = xbox.GetMetadata();
 
         if (metadata.mipLevels > 0)
         {
-            header->dwFlags |= DDS_HEADER_FLAGS_MIPMAP;
+            header->flags |= DDS_HEADER_FLAGS_MIPMAP;
 
             if (metadata.mipLevels > UINT32_MAX)
                 return E_INVALIDARG;
 
-            header->dwMipMapCount = static_cast<uint32_t>(metadata.mipLevels);
+            header->mipMapCount = static_cast<uint32_t>(metadata.mipLevels);
 
-            if (header->dwMipMapCount > 1)
-                header->dwCaps |= DDS_SURFACE_FLAGS_MIPMAP;
+            if (header->mipMapCount > 1)
+                header->caps |= DDS_SURFACE_FLAGS_MIPMAP;
         }
 
         switch (metadata.dimension)
@@ -243,8 +244,8 @@ namespace
             if (metadata.width > UINT32_MAX)
                 return E_INVALIDARG;
 
-            header->dwWidth = static_cast<uint32_t>(metadata.width);
-            header->dwHeight = header->dwDepth = 1;
+            header->width = static_cast<uint32_t>(metadata.width);
+            header->height = header->depth = 1;
             break;
 
         case TEX_DIMENSION_TEXTURE2D:
@@ -252,14 +253,14 @@ namespace
                 || metadata.width > UINT32_MAX)
                 return E_INVALIDARG;
 
-            header->dwHeight = static_cast<uint32_t>(metadata.height);
-            header->dwWidth = static_cast<uint32_t>(metadata.width);
-            header->dwDepth = 1;
+            header->height = static_cast<uint32_t>(metadata.height);
+            header->width = static_cast<uint32_t>(metadata.width);
+            header->depth = 1;
 
             if (metadata.IsCubemap())
             {
-                header->dwCaps |= DDS_SURFACE_FLAGS_CUBEMAP;
-                header->dwCaps2 |= DDS_CUBEMAP_ALLFACES;
+                header->caps |= DDS_SURFACE_FLAGS_CUBEMAP;
+                header->caps2 |= DDS_CUBEMAP_ALLFACES;
             }
             break;
 
@@ -269,11 +270,11 @@ namespace
                 || metadata.depth > UINT32_MAX)
                 return E_INVALIDARG;
 
-            header->dwFlags |= DDS_HEADER_FLAGS_VOLUME;
-            header->dwCaps2 |= DDS_FLAGS_VOLUME;
-            header->dwHeight = static_cast<uint32_t>(metadata.height);
-            header->dwWidth = static_cast<uint32_t>(metadata.width);
-            header->dwDepth = static_cast<uint32_t>(metadata.depth);
+            header->flags |= DDS_HEADER_FLAGS_VOLUME;
+            header->caps2 |= DDS_FLAGS_VOLUME;
+            header->height = static_cast<uint32_t>(metadata.height);
+            header->width = static_cast<uint32_t>(metadata.width);
+            header->depth = static_cast<uint32_t>(metadata.depth);
             break;
 
         default:
@@ -289,13 +290,13 @@ namespace
 
         if (IsCompressed(metadata.format))
         {
-            header->dwFlags |= DDS_HEADER_FLAGS_LINEARSIZE;
-            header->dwPitchOrLinearSize = static_cast<uint32_t>(slicePitch);
+            header->flags |= DDS_HEADER_FLAGS_LINEARSIZE;
+            header->pitchOrLinearSize = static_cast<uint32_t>(slicePitch);
         }
         else
         {
-            header->dwFlags |= DDS_HEADER_FLAGS_PITCH;
-            header->dwPitchOrLinearSize = static_cast<uint32_t>(rowPitch);
+            header->flags |= DDS_HEADER_FLAGS_PITCH;
+            header->pitchOrLinearSize = static_cast<uint32_t>(rowPitch);
         }
 
         memcpy_s(&header->ddspf, sizeof(header->ddspf), &DDSPF_XBOX, sizeof(DDS_PIXELFORMAT));

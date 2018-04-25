@@ -34,42 +34,42 @@
     dcl t1.xyz  // pin<4,5,6>
     dcl t2  // pin<7,8,9,10>
 
-#line 581 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 577 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     add r0.xyz, -t0, c12
     dp3 r0.w, r0, r0
     rsq r0.w, r0.w
 
-#line 33 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 31 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mad r1.xyz, r0, r0.w, -c3
     nrm r2.xyz, r1  // ::halfVectors<0,1,2>
 
-#line 582 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 578 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     nrm r1.xyz, t1  // ::worldNormal<0,1,2>
 
-#line 37 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 35 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp3 r2.x, r2, r1  // ::dotH<0>
 
-#line 33
+#line 31
     mad r3.xyz, r0, r0.w, -c4
     mad r0.xyz, r0, r0.w, -c5
     nrm r4.xyz, r0  // ::halfVectors<6,7,8>
 
-#line 37
+#line 35
     dp3 r2.z, r4, r1  // ::dotH<2>
 
-#line 33
+#line 31
     nrm r0.xyz, r3  // ::halfVectors<3,4,5>
 
-#line 37
+#line 35
     dp3 r2.y, r0, r1  // ::dotH<1>
     dp3 r0.x, -c3, r1  // ::dotL<0>
     dp3 r0.y, -c4, r1  // ::dotL<1>
     dp3 r0.z, -c5, r1  // ::dotL<2>
 
-#line 39
+#line 37
     cmp r1.xyz, r0, c14.x, c14.y  // ::zeroL<0,1,2>
 
-#line 42
+#line 40
     mul r3.xyz, r1, r2
     cmp r2.xyz, r2, r3, c14.y
     mul r1.xyz, r0, r1  // ::diffuse<0,1,2>
@@ -82,26 +82,26 @@
     exp r3.z, r2.z
     mul r0.xyz, r0, r3  // ::specular<0,1,2>
 
-#line 47
+#line 45
     mul r2.xyz, r0.y, c10
     mad r2.xyz, r0.x, c9, r2
     mad r0.xyz, r0.z, c11, r2
     mul r0.xyz, r0, c2  // ::result<3,4,5>
 
-#line 26 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 24 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mul r0.xyz, r0, t2.w
 
-#line 46 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 44 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mul r2.xyz, r1.y, c7
     mad r2.xyz, r1.x, c6, r2
     mad r1.xyz, r1.z, c8, r2
     mov r2.xyz, c0  // Parameters::DiffuseColor<0,1,2>
     mad r1.xyz, r1, r2, c1  // ::result<0,1,2>
 
-#line 26 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 24 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r0.xyz, t2, r1, r0  // AddSpecular::color<0,1,2>
 
-#line 20
+#line 18
     mad r1.xyz, c13, t2.w, -r0
     mad r0.xyz, t0.w, r1, r0  // ApplyFog::color<0,1,2>
     mov r0.w, t2.w
@@ -167,10 +167,10 @@ ret
 
 const BYTE BasicEffect_PSBasicPixelLighting[] =
 {
-     68,  88,  66,  67, 146, 160, 
-     63,  49, 132,  38, 229, 141, 
-     71, 112,  80, 171,  80,   9, 
-    241, 186,   1,   0,   0,   0, 
+     68,  88,  66,  67,  99, 140, 
+    226,  25, 182, 110, 131, 253, 
+    168,  57,  17,  10, 156, 222, 
+     94, 252,   1,   0,   0,   0, 
     224,  15,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      60,   9,   0,   0,  68,  15, 
@@ -227,63 +227,63 @@ const BYTE BasicEffect_PSBasicPixelLighting[] =
     255, 255,   0,   6,   0,   0, 
       0,   0, 255, 255,  12,   6, 
       0,   0,   0,   0, 255, 255, 
-     24,   6,   0,   0,  69,   2, 
+     24,   6,   0,   0,  65,   2, 
       0,   0,  36,   6,   0,   0, 
-     69,   2,   0,   0,  52,   6, 
-      0,   0,  69,   2,   0,   0, 
-     68,   6,   0,   0,  33,   0, 
+     65,   2,   0,   0,  52,   6, 
+      0,   0,  65,   2,   0,   0, 
+     68,   6,   0,   0,  31,   0, 
       1,   0,  80,   6,   0,   0, 
-     33,   0,   1,   0, 100,   6, 
-      0,   0,  70,   2,   0,   0, 
-    112,   6,   0,   0,  37,   0, 
+     31,   0,   1,   0, 100,   6, 
+      0,   0,  66,   2,   0,   0, 
+    112,   6,   0,   0,  35,   0, 
       1,   0, 124,   6,   0,   0, 
-     33,   0,   1,   0, 140,   6, 
-      0,   0,  33,   0,   1,   0, 
-    160,   6,   0,   0,  33,   0, 
+     31,   0,   1,   0, 140,   6, 
+      0,   0,  31,   0,   1,   0, 
+    160,   6,   0,   0,  31,   0, 
       1,   0, 180,   6,   0,   0, 
-     37,   0,   1,   0, 192,   6, 
-      0,   0,  33,   0,   1,   0, 
-    208,   6,   0,   0,  37,   0, 
+     35,   0,   1,   0, 192,   6, 
+      0,   0,  31,   0,   1,   0, 
+    208,   6,   0,   0,  35,   0, 
       1,   0, 220,   6,   0,   0, 
-     36,   0,   1,   0, 236,   6, 
-      0,   0,  36,   0,   1,   0, 
-    252,   6,   0,   0,  36,   0, 
+     34,   0,   1,   0, 236,   6, 
+      0,   0,  34,   0,   1,   0, 
+    252,   6,   0,   0,  34,   0, 
       1,   0,  12,   7,   0,   0, 
-     39,   0,   1,   0,  28,   7, 
-      0,   0,  42,   0,   1,   0, 
-     48,   7,   0,   0,  42,   0, 
+     37,   0,   1,   0,  28,   7, 
+      0,   0,  40,   0,   1,   0, 
+     48,   7,   0,   0,  40,   0, 
       1,   0,  64,   7,   0,   0, 
-     41,   0,   1,   0,  84,   7, 
-      0,   0,  42,   0,   1,   0, 
-    100,   7,   0,   0,  42,   0, 
+     39,   0,   1,   0,  84,   7, 
+      0,   0,  40,   0,   1,   0, 
+    100,   7,   0,   0,  40,   0, 
       1,   0, 112,   7,   0,   0, 
-     42,   0,   1,   0, 124,   7, 
-      0,   0,  42,   0,   1,   0, 
-    136,   7,   0,   0,  42,   0, 
+     40,   0,   1,   0, 124,   7, 
+      0,   0,  40,   0,   1,   0, 
+    136,   7,   0,   0,  40,   0, 
       1,   0, 152,   7,   0,   0, 
-     42,   0,   1,   0, 164,   7, 
-      0,   0,  42,   0,   1,   0, 
-    176,   7,   0,   0,  42,   0, 
+     40,   0,   1,   0, 164,   7, 
+      0,   0,  40,   0,   1,   0, 
+    176,   7,   0,   0,  40,   0, 
       1,   0, 188,   7,   0,   0, 
-     47,   0,   1,   0, 204,   7, 
-      0,   0,  47,   0,   1,   0, 
-    220,   7,   0,   0,  47,   0, 
+     45,   0,   1,   0, 204,   7, 
+      0,   0,  45,   0,   1,   0, 
+    220,   7,   0,   0,  45,   0, 
       1,   0, 240,   7,   0,   0, 
-     47,   0,   1,   0,   4,   8, 
-      0,   0,  26,   0,   2,   0, 
-     20,   8,   0,   0,  46,   0, 
+     45,   0,   1,   0,   4,   8, 
+      0,   0,  24,   0,   2,   0, 
+     20,   8,   0,   0,  44,   0, 
       1,   0,  36,   8,   0,   0, 
-     46,   0,   1,   0,  52,   8, 
-      0,   0,  46,   0,   1,   0, 
-     72,   8,   0,   0,  46,   0, 
+     44,   0,   1,   0,  52,   8, 
+      0,   0,  44,   0,   1,   0, 
+     72,   8,   0,   0,  44,   0, 
       1,   0,  92,   8,   0,   0, 
-     46,   0,   1,   0, 104,   8, 
-      0,   0,  26,   0,   2,   0, 
-    124,   8,   0,   0,  20,   0, 
+     44,   0,   1,   0, 104,   8, 
+      0,   0,  24,   0,   2,   0, 
+    124,   8,   0,   0,  18,   0, 
       2,   0, 144,   8,   0,   0, 
-     20,   0,   2,   0, 164,   8, 
-      0,   0,  20,   0,   2,   0, 
-    184,   8,   0,   0,  20,   0, 
+     18,   0,   2,   0, 164,   8, 
+      0,   0,  18,   0,   2,   0, 
+    184,   8,   0,   0,  18,   0, 
       2,   0, 196,   8,   0,   0, 
      80,  97, 114,  97, 109, 101, 
     116, 101, 114, 115,   0,  68, 

@@ -41,7 +41,7 @@
     dcl t2.xy  // pin<8,9>
     dcl_2d s0
 
-#line 115 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
+#line 111 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
     texld r0, t2, s0
     mad r1.w, r0.w, t0.w, -c0.x
     mul r0, r0, t0  // ::color<0,1,2,3>
@@ -50,7 +50,7 @@
     cmp r1, r1.x, c0.w, c0.z
     texkill r1
 
-#line 20 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 18 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r1.xyz, c1, r0.w, -r0
     mad r0.xyz, t1.w, r1, r0  // ApplyFog::color<0,1,2>
     mov oC0, r0  // ::PSAlphaTestEqNe<0,1,2,3>
@@ -81,10 +81,10 @@ ret
 
 const BYTE AlphaTestEffect_PSAlphaTestEqNe[] =
 {
-     68,  88,  66,  67,   4, 162, 
-     13, 139, 204, 139, 237, 107, 
-    120, 146, 165,  30, 105, 221, 
-     97,  27,   1,   0,   0,   0, 
+     68,  88,  66,  67,  65, 153, 
+    224,  77, 127, 159, 122,  32, 
+      3,  97, 172, 234, 185,   5, 
+    105, 111,   1,   0,   0,   0, 
      16,   6,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     180,   3,   0,   0, 116,   5, 
@@ -133,19 +133,19 @@ const BYTE AlphaTestEffect_PSAlphaTestEqNe[] =
       0,   0,   0,   0, 255, 255, 
     140,   2,   0,   0,   0,   0, 
     255, 255, 152,   2,   0,   0, 
-    115,   0,   0,   0, 164,   2, 
-      0,   0, 117,   0,   0,   0, 
-    180,   2,   0,   0, 115,   0, 
+    111,   0,   0,   0, 164,   2, 
+      0,   0, 113,   0,   0,   0, 
+    180,   2,   0,   0, 111,   0, 
       0,   0, 200,   2,   0,   0, 
-    117,   0,   0,   0, 216,   2, 
-      0,   0, 117,   0,   0,   0, 
-    228,   2,   0,   0, 117,   0, 
+    113,   0,   0,   0, 216,   2, 
+      0,   0, 113,   0,   0,   0, 
+    228,   2,   0,   0, 113,   0, 
       0,   0, 244,   2,   0,   0, 
-    117,   0,   0,   0,   8,   3, 
-      0,   0,  20,   0,   1,   0, 
-     16,   3,   0,   0,  20,   0, 
+    113,   0,   0,   0,   8,   3, 
+      0,   0,  18,   0,   1,   0, 
+     16,   3,   0,   0,  18,   0, 
       1,   0,  36,   3,   0,   0, 
-     20,   0,   1,   0,  56,   3, 
+     18,   0,   1,   0,  56,   3, 
       0,   0,  80,  83,  65, 108, 
     112, 104,  97,  84, 101, 115, 
     116,  69, 113,  78, 101,   0, 

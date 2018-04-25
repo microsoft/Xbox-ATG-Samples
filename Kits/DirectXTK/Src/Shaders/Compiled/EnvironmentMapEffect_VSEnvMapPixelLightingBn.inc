@@ -47,16 +47,16 @@
     dcl_texcoord1 v1  // vin<4,5,6>
     dcl_texcoord2 v2  // vin<7,8>
 
-#line 85 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 83 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 oPos.z, v0, c11  // ::VSEnvMapPixelLightingBn<15>
     dp4 oT1.x, v0, c3  // ::VSEnvMapPixelLightingBn<2>
     dp4 oT1.y, v0, c4  // ::VSEnvMapPixelLightingBn<3>
     dp4 oT1.z, v0, c5  // ::VSEnvMapPixelLightingBn<4>
 
-#line 13 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Utilities.fxh"
+#line 11 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Utilities.fxh"
     mad r0.xyz, v1, c13.x, c13.y  // ::BiasX2<0,1,2>
 
-#line 87 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 85 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp3 r1.x, r0, c6
     dp3 r1.y, r0, c7
     dp3 r1.z, r0, c8
@@ -64,21 +64,21 @@
     rsq r0.x, r0.x
     mul oT2.xyz, r0.x, r1  // ::VSEnvMapPixelLightingBn<6,7,8>
 
-#line 14 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 12 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c2
     max r0.x, r0.x, c13.z
     min oT1.w, r0.x, c13.w  // ::VSEnvMapPixelLightingBn<5>
 
-#line 85 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 83 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 r0.x, v0, c9  // ::vout<0>
     dp4 r0.y, v0, c10  // ::vout<1>
     dp4 r0.z, v0, c12  // ::vout<3>
 
-#line 186 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 182 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSEnvMapPixelLightingBn<13,14>
     mov oPos.w, r0.z  // ::VSEnvMapPixelLightingBn<16>
 
-#line 196
+#line 192
     mov oT0.xy, v2  // ::VSEnvMapPixelLightingBn<0,1>
     mov r0.zw, c13
     mad oT3, c1.w, r0.zzzw, r0.wwwz  // ::VSEnvMapPixelLightingBn<9,10,11,12>
@@ -119,10 +119,10 @@ ret
 
 const BYTE EnvironmentMapEffect_VSEnvMapPixelLightingBn[] =
 {
-     68,  88,  66,  67,  75,  86, 
-    109,  80,  21, 118, 212, 183, 
-     52,  26, 154, 168, 133, 203, 
-     25, 185,   1,   0,   0,   0, 
+     68,  88,  66,  67, 119, 154, 
+    237,  34, 120, 190,  38,  17, 
+      5,  98, 201, 125,  38,  86, 
+    186, 170,   1,   0,   0,   0, 
     172,  10,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     208,   6,   0,   0, 148,   9, 
@@ -195,35 +195,35 @@ const BYTE EnvironmentMapEffect_VSEnvMapPixelLightingBn[] =
     255, 255, 200,   4,   0,   0, 
       0,   0, 255, 255, 212,   4, 
       0,   0,   0,   0, 255, 255, 
-    224,   4,   0,   0,  85,   0, 
+    224,   4,   0,   0,  83,   0, 
       0,   0, 236,   4,   0,   0, 
-     86,   0,   0,   0, 252,   4, 
-      0,   0,  86,   0,   0,   0, 
-     12,   5,   0,   0,  86,   0, 
+     84,   0,   0,   0, 252,   4, 
+      0,   0,  84,   0,   0,   0, 
+     12,   5,   0,   0,  84,   0, 
       0,   0,  28,   5,   0,   0, 
-     13,   0,   1,   0,  44,   5, 
-      0,   0,  87,   0,   0,   0, 
-     64,   5,   0,   0,  87,   0, 
-      0,   0,  80,   5,   0,   0, 
-     87,   0,   0,   0,  96,   5, 
-      0,   0,  87,   0,   0,   0, 
-    112,   5,   0,   0,  87,   0, 
-      0,   0, 128,   5,   0,   0, 
-     87,   0,   0,   0, 140,   5, 
-      0,   0,  14,   0,   2,   0, 
-    156,   5,   0,   0,  14,   0, 
-      2,   0, 172,   5,   0,   0, 
-     14,   0,   2,   0, 188,   5, 
+     11,   0,   1,   0,  44,   5, 
       0,   0,  85,   0,   0,   0, 
-    204,   5,   0,   0,  85,   0, 
+     64,   5,   0,   0,  85,   0, 
+      0,   0,  80,   5,   0,   0, 
+     85,   0,   0,   0,  96,   5, 
+      0,   0,  85,   0,   0,   0, 
+    112,   5,   0,   0,  85,   0, 
+      0,   0, 128,   5,   0,   0, 
+     85,   0,   0,   0, 140,   5, 
+      0,   0,  12,   0,   2,   0, 
+    156,   5,   0,   0,  12,   0, 
+      2,   0, 172,   5,   0,   0, 
+     12,   0,   2,   0, 188,   5, 
+      0,   0,  83,   0,   0,   0, 
+    204,   5,   0,   0,  83,   0, 
       0,   0, 220,   5,   0,   0, 
-     85,   0,   0,   0, 236,   5, 
-      0,   0, 186,   0,   3,   0, 
-    252,   5,   0,   0, 186,   0, 
+     83,   0,   0,   0, 236,   5, 
+      0,   0, 182,   0,   3,   0, 
+    252,   5,   0,   0, 182,   0, 
       3,   0,  16,   6,   0,   0, 
-    196,   0,   3,   0,  28,   6, 
-      0,   0, 195,   0,   3,   0, 
-     40,   6,   0,   0, 195,   0, 
+    192,   0,   3,   0,  28,   6, 
+      0,   0, 191,   0,   3,   0, 
+     40,   6,   0,   0, 191,   0, 
       3,   0,  52,   6,   0,   0, 
      66, 105,  97, 115,  88,  50, 
       0, 171,   1,   0,   3,   0, 

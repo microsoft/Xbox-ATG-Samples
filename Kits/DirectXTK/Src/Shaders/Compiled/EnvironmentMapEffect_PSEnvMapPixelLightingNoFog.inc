@@ -46,52 +46,52 @@
     dcl_2d s0
     dcl_cube s1
 
-#line 93 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 89 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     nrm r0.xyz, t2  // ::worldNormal<0,1,2>
     add r1.xyz, -t1, c10
     nrm r2.xyz, r1  // ::eyeVector<0,1,2>
 
-#line 99
+#line 95
     dp3 r0.w, -r2, r0
     add r0.w, r0.w, r0.w
     mad r1.xyz, r0, -r0.w, -r2  // ::envcoord<0,1,2>
 
-#line 90
+#line 86
     texld r2, t0, s0
 
-#line 101
+#line 97
     texld r1, r1, s1
 
-#line 36 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 34 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp3 r3.x, -c4, r0  // ::dotL<0>
     dp3 r3.y, -c5, r0  // ::dotL<1>
     dp3 r3.z, -c6, r0  // ::dotL<2>
 
-#line 39
+#line 37
     cmp r0.xyz, r3, c11.x, c11.y  // ::zeroL<0,1,2>
     mul r0.xyz, r3, r0  // ::diffuse<0,1,2>
 
-#line 46
+#line 44
     mul r3.xyz, r0.y, c8
     mad r3.xyz, r0.x, c7, r3
     mad r0.xyz, r0.z, c9, r3
     mov r3.xyz, c2  // Parameters::DiffuseColor<0,1,2>
     mad r0.xyz, r0, r3, c3  // ::result<0,1,2>
 
-#line 90 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 86 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     mul r2, r2, t3  // ::color<0,1,2,3>
 
-#line 97
+#line 93
     mul r0.xyz, r0, r2  // ::color<0,1,2>
 
-#line 109
+#line 105
     mad r1.xyz, r1, r2.w, -r0
     mad r0.xyz, c1.x, r1, r0  // ::color<0,1,2>
 
-#line 101
+#line 97
     mul r0.w, r1.w, r2.w  // ::envmap<3>
 
-#line 110
+#line 106
     mad r2.xyz, c0, r0.w, r0  // ::color<0,1,2>
     mov oC0, r2  // ::PSEnvMapPixelLightingNoFog<0,1,2,3>
 
@@ -143,10 +143,10 @@ ret
 
 const BYTE EnvironmentMapEffect_PSEnvMapPixelLightingNoFog[] =
 {
-     68,  88,  66,  67, 183, 197, 
-    236, 140, 237, 134, 151, 181, 
-    110,  75, 181, 150, 236, 119, 
-    168,  27,   1,   0,   0,   0, 
+     68,  88,  66,  67,  11, 193, 
+    207, 211, 207,  41,  53, 232, 
+    184, 236,  84,  67, 250, 131, 
+    185, 199,   1,   0,   0,   0, 
     160,  12,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     140,   7,   0,   0, 236,  11, 
@@ -201,39 +201,39 @@ const BYTE EnvironmentMapEffect_PSEnvMapPixelLightingNoFog[] =
       0,   0,   0,   0, 255, 255, 
      96,   5,   0,   0,   0,   0, 
     255, 255, 108,   5,   0,   0, 
-     93,   0,   0,   0, 120,   5, 
-      0,   0,  92,   0,   0,   0, 
-    132,   5,   0,   0,  92,   0, 
+     89,   0,   0,   0, 120,   5, 
+      0,   0,  88,   0,   0,   0, 
+    132,   5,   0,   0,  88,   0, 
       0,   0, 148,   5,   0,   0, 
-     99,   0,   0,   0, 160,   5, 
-      0,   0,  99,   0,   0,   0, 
-    176,   5,   0,   0,  99,   0, 
+     95,   0,   0,   0, 160,   5, 
+      0,   0,  95,   0,   0,   0, 
+    176,   5,   0,   0,  95,   0, 
       0,   0, 192,   5,   0,   0, 
-     90,   0,   0,   0, 212,   5, 
-      0,   0, 101,   0,   0,   0, 
-    228,   5,   0,   0,  36,   0, 
-      1,   0, 244,   5,   0,   0, 
-     36,   0,   1,   0,   4,   6, 
-      0,   0,  36,   0,   1,   0, 
-     20,   6,   0,   0,  39,   0, 
-      1,   0,  36,   6,   0,   0, 
-     41,   0,   1,   0,  56,   6, 
-      0,   0,  46,   0,   1,   0, 
-     72,   6,   0,   0,  46,   0, 
-      1,   0,  88,   6,   0,   0, 
-     46,   0,   1,   0, 108,   6, 
-      0,   0,  46,   0,   1,   0, 
-    128,   6,   0,   0,  46,   0, 
-      1,   0, 140,   6,   0,   0, 
-     90,   0,   0,   0, 160,   6, 
+     86,   0,   0,   0, 212,   5, 
       0,   0,  97,   0,   0,   0, 
-    176,   6,   0,   0, 109,   0, 
+    228,   5,   0,   0,  34,   0, 
+      1,   0, 244,   5,   0,   0, 
+     34,   0,   1,   0,   4,   6, 
+      0,   0,  34,   0,   1,   0, 
+     20,   6,   0,   0,  37,   0, 
+      1,   0,  36,   6,   0,   0, 
+     39,   0,   1,   0,  56,   6, 
+      0,   0,  44,   0,   1,   0, 
+     72,   6,   0,   0,  44,   0, 
+      1,   0,  88,   6,   0,   0, 
+     44,   0,   1,   0, 108,   6, 
+      0,   0,  44,   0,   1,   0, 
+    128,   6,   0,   0,  44,   0, 
+      1,   0, 140,   6,   0,   0, 
+     86,   0,   0,   0, 160,   6, 
+      0,   0,  93,   0,   0,   0, 
+    176,   6,   0,   0, 105,   0, 
       0,   0, 192,   6,   0,   0, 
-    109,   0,   0,   0, 212,   6, 
-      0,   0, 101,   0,   0,   0, 
-    232,   6,   0,   0, 110,   0, 
+    105,   0,   0,   0, 212,   6, 
+      0,   0,  97,   0,   0,   0, 
+    232,   6,   0,   0, 106,   0, 
       0,   0, 248,   6,   0,   0, 
-    110,   0,   0,   0,  12,   7, 
+    106,   0,   0,   0,  12,   7, 
       0,   0,  80,  97, 114,  97, 
     109, 101, 116, 101, 114, 115, 
       0,  68, 105, 102, 102, 117, 

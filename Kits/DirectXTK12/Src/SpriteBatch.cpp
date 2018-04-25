@@ -1,12 +1,8 @@
 //--------------------------------------------------------------------------------------
 // File: SpriteBatch.cpp
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
@@ -194,7 +190,8 @@ private:
         ComPtr<ID3D12Resource> indexBuffer;
         D3D12_INDEX_BUFFER_VIEW indexBufferView;
         ComPtr<ID3D12RootSignature> rootSignatureStatic;
-        ComPtr<ID3D12RootSignature> rootSignatureHeap;
+        ComPtr<ID3D12RootSignature> rootSignatureHeap; 
+        ID3D12Device* mDevice;
 
     private:
         void CreateIndexBuffer(_In_ ID3D12Device* device, ResourceUploadBatch& upload);
@@ -284,7 +281,9 @@ const D3D12_DEPTH_STENCIL_DESC SpriteBatchPipelineStateDescription::s_DefaultDep
 };
 
 // Per-device constructor.
-SpriteBatch::Impl::DeviceResources::DeviceResources(_In_ ID3D12Device* device, ResourceUploadBatch& upload)
+SpriteBatch::Impl::DeviceResources::DeviceResources(_In_ ID3D12Device* device, ResourceUploadBatch& upload) :
+    indexBufferView{},
+    mDevice(device)
 {
     CreateIndexBuffer(device, upload);
     CreateRootSignatures(device);
@@ -353,7 +352,7 @@ void SpriteBatch::Impl::DeviceResources::CreateRootSignatures(_In_ ID3D12Device*
             D3D12_FLOAT32_MAX,
             D3D12_SHADER_VISIBILITY_PIXEL);
 
-        CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount - 1];
+        CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount - 1] = {};
         rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV, D3D12_SHADER_VISIBILITY_PIXEL);
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
@@ -368,7 +367,7 @@ void SpriteBatch::Impl::DeviceResources::CreateRootSignatures(_In_ ID3D12Device*
     {
         CD3DX12_DESCRIPTOR_RANGE textureSampler(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
 
-        CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount];
+        CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount] = {};
         rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRV, D3D12_SHADER_VISIBILITY_PIXEL);
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
         rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler, D3D12_SHADER_VISIBILITY_PIXEL);
@@ -630,9 +629,9 @@ void SpriteBatch::Impl::PrepareForRendering()
     // Set root signature
     commandList->SetGraphicsRootSignature(mRootSignature.Get());
 
-	// Set render state
+    // Set render state
     commandList->SetPipelineState(mPSO.Get());
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     // Set the index buffer.
     commandList->IASetIndexBuffer(&mDeviceResources->indexBufferView);
@@ -642,7 +641,7 @@ void SpriteBatch::Impl::PrepareForRendering()
         ? mTransformMatrix
         : (mTransformMatrix * GetViewportTransform(mRotation));
 
-    mConstantBuffer = GraphicsMemory::Get().AllocateConstant(transformMatrix);
+    mConstantBuffer = GraphicsMemory::Get(mDeviceResources->mDevice).AllocateConstant(transformMatrix);
     commandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, mConstantBuffer.GpuAddress());
 }
 
@@ -731,8 +730,8 @@ void SpriteBatch::Impl::SortSprites()
         });
         break;
 
-	default:
-		break;
+    default:
+        break;
     }
 }
 
@@ -796,7 +795,7 @@ void SpriteBatch::Impl::RenderBatch(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMVECTO
         // Allocate a new page of vertex memory if we're starting the batch
         if (mSpriteCount == 0)
         {
-            mVertexSegment = GraphicsMemory::Get().Allocate(mVertexPageSize);
+            mVertexSegment = GraphicsMemory::Get(mDeviceResources->mDevice).Allocate(mVertexPageSize);
         }
 
         auto vertices = static_cast<VertexPositionColorTexture*>(mVertexSegment.Memory()) + mSpriteCount * VerticesPerSprite;
@@ -1002,20 +1001,20 @@ SpriteBatch::SpriteBatch(ID3D12Device* device,
     ResourceUploadBatch& upload,
     const SpriteBatchPipelineStateDescription& psoDesc,
     const D3D12_VIEWPORT* viewport)
-    : pImpl(new Impl(device, upload, psoDesc, viewport))
+    : pImpl(std::make_unique<Impl>(device, upload, psoDesc, viewport))
 {
 }
 
 
 // Move constructor.
-SpriteBatch::SpriteBatch(SpriteBatch&& moveFrom)
+SpriteBatch::SpriteBatch(SpriteBatch&& moveFrom) noexcept
     : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 
 // Move assignment.
-SpriteBatch& SpriteBatch::operator= (SpriteBatch&& moveFrom)
+SpriteBatch& SpriteBatch::operator= (SpriteBatch&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;

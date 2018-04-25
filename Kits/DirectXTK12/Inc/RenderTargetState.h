@@ -1,12 +1,8 @@
 //--------------------------------------------------------------------------------------
 // File: RenderTargetState.h
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
@@ -28,7 +24,7 @@ namespace DirectX
     class RenderTargetState
     {
     public:
-        RenderTargetState()
+        RenderTargetState() noexcept
             : sampleMask(~0U)
             , numRenderTargets(0)
             , rtvFormats{}
@@ -39,6 +35,10 @@ namespace DirectX
         }
 
         RenderTargetState(const RenderTargetState&) = default;
+        RenderTargetState& operator=(const RenderTargetState&) = default;
+
+        RenderTargetState(RenderTargetState&&) = default;
+        RenderTargetState& operator=(RenderTargetState&&) = default;
 
         // Single render target convenience constructor
         RenderTargetState(

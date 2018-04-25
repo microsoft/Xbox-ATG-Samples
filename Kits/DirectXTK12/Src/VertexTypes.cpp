@@ -1,12 +1,8 @@
 //--------------------------------------------------------------------------------------
 // File: VertexTypes.cpp
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
@@ -39,7 +35,7 @@ const D3D12_INPUT_ELEMENT_DESC VertexPositionColor::InputElements[] =
     { "COLOR",       0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 };
 
-static_assert( sizeof(VertexPositionColor) == 28, "Vertex struct/layout mismatch" );
+static_assert(sizeof(VertexPositionColor) == 28, "Vertex struct/layout mismatch");
 
 const D3D12_INPUT_LAYOUT_DESC VertexPositionColor::InputLayout =
 {
@@ -55,7 +51,7 @@ const D3D12_INPUT_ELEMENT_DESC VertexPositionTexture::InputElements[] =
     { "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 };
 
-static_assert( sizeof(VertexPositionTexture) == 20, "Vertex struct/layout mismatch" );
+static_assert(sizeof(VertexPositionTexture) == 20, "Vertex struct/layout mismatch");
 
 const D3D12_INPUT_LAYOUT_DESC VertexPositionTexture::InputLayout =
 {
@@ -88,9 +84,9 @@ const D3D12_INPUT_ELEMENT_DESC VertexPositionNormal::InputElements[] =
     { "NORMAL",      0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 };
 
-static_assert( sizeof(VertexPositionNormal) == 24, "Vertex struct/layout mismatch" );
+static_assert(sizeof(VertexPositionNormal) == 24, "Vertex struct/layout mismatch");
 
-        
+
 //--------------------------------------------------------------------------------------
 // Vertex struct holding position, color, and texture mapping information.
 const D3D12_INPUT_ELEMENT_DESC VertexPositionColorTexture::InputElements[] =
@@ -100,7 +96,7 @@ const D3D12_INPUT_ELEMENT_DESC VertexPositionColorTexture::InputElements[] =
     { "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 };
 
-static_assert( sizeof(VertexPositionColorTexture) == 36, "Vertex struct/layout mismatch" );
+static_assert(sizeof(VertexPositionColorTexture) == 36, "Vertex struct/layout mismatch");
 
 const D3D12_INPUT_LAYOUT_DESC VertexPositionColorTexture::InputLayout =
 {
@@ -118,7 +114,7 @@ const D3D12_INPUT_ELEMENT_DESC VertexPositionNormalColor::InputElements[] =
     { "COLOR",       0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 };
 
-static_assert( sizeof(VertexPositionNormalColor) == 40, "Vertex struct/layout mismatch" );
+static_assert(sizeof(VertexPositionNormalColor) == 40, "Vertex struct/layout mismatch");
 
 const D3D12_INPUT_LAYOUT_DESC VertexPositionNormalColor::InputLayout =
 {
@@ -135,7 +131,7 @@ const D3D12_INPUT_ELEMENT_DESC VertexPositionNormalTexture::InputElements[] =
     { "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 };
 
-static_assert( sizeof(VertexPositionNormalTexture) == 32, "Vertex struct/layout mismatch" );
+static_assert(sizeof(VertexPositionNormalTexture) == 32, "Vertex struct/layout mismatch");
 
 const D3D12_INPUT_LAYOUT_DESC VertexPositionNormalTexture::InputLayout =
 {
@@ -153,7 +149,7 @@ const D3D12_INPUT_ELEMENT_DESC VertexPositionNormalColorTexture::InputElements[]
     { "TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 };
 
-static_assert( sizeof(VertexPositionNormalColorTexture) == 48, "Vertex struct/layout mismatch" );
+static_assert(sizeof(VertexPositionNormalColorTexture) == 48, "Vertex struct/layout mismatch");
 
 const D3D12_INPUT_LAYOUT_DESC VertexPositionNormalColorTexture::InputLayout =
 {

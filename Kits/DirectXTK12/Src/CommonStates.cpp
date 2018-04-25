@@ -1,12 +1,8 @@
 //--------------------------------------------------------------------------------------
 // File: CommonStates.cpp
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
@@ -395,7 +391,7 @@ public:
     static const D3D12_SAMPLER_DESC SamplerDescs[static_cast<int>(SamplerIndex::Count)];
 
     Impl(_In_ ID3D12Device* device)
-        : mDescriptors(device, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, (int) SamplerIndex::Count)
+        : mDescriptors(device, D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, (int)SamplerIndex::Count)
     {
         SetDebugObjectName(mDescriptors.Heap(), L"CommonStates");
 
@@ -407,7 +403,7 @@ public:
 
     D3D12_GPU_DESCRIPTOR_HANDLE Get(SamplerIndex i) const
     {
-        return mDescriptors.GetGpuHandle((int) i);
+        return mDescriptors.GetGpuHandle((int)i);
     }
 
     ID3D12DescriptorHeap* Heap() const
@@ -419,7 +415,7 @@ private:
     DescriptorHeap mDescriptors;
 };
 
-const D3D12_SAMPLER_DESC CommonStates::Impl::SamplerDescs[] = 
+const D3D12_SAMPLER_DESC CommonStates::Impl::SamplerDescs[] =
 {
     // PointWrap
     {
@@ -508,14 +504,14 @@ CommonStates::CommonStates(ID3D12Device* device)
     pImpl = std::make_unique<Impl>(device);
 }
 
-CommonStates::CommonStates(CommonStates&& moveFrom)
+CommonStates::CommonStates(CommonStates&& moveFrom) noexcept
     : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 CommonStates::~CommonStates() {}
 
-CommonStates& CommonStates::operator = (CommonStates&& moveFrom)
+CommonStates& CommonStates::operator = (CommonStates&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;
