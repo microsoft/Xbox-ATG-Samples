@@ -265,7 +265,7 @@ namespace
         wprintf(L"Writing dump file: %s (type: 0x%08x)\n", dumpFileName, mdt);
 
         // Create the dump file
-        ScopedHandle dumpFile(safe_handle(
+        DX::ScopedHandle dumpFile(DX::safe_handle(
             CreateFile(
                 dumpFileName,
                  GENERIC_READ |  GENERIC_WRITE,

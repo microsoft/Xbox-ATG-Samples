@@ -17,10 +17,15 @@ namespace DX
     class DeviceResources
     {
     public:
+        static const unsigned int c_FlipPresent     = 0x1;
+        static const unsigned int c_AllowTearing    = 0x2;
+        static const unsigned int c_EnableHDR       = 0x4;
+
         DeviceResources(DXGI_FORMAT backBufferFormat = DXGI_FORMAT_B8G8R8A8_UNORM,
                         DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D32_FLOAT,
                         UINT backBufferCount = 2,
-                        D3D_FEATURE_LEVEL minFeatureLevel = D3D_FEATURE_LEVEL_10_0);
+                        D3D_FEATURE_LEVEL minFeatureLevel = D3D_FEATURE_LEVEL_10_0,
+                        unsigned int flags = c_FlipPresent);
 
         void CreateDeviceResources();
         void CreateWindowSizeDependentResources();
@@ -46,6 +51,8 @@ namespace DX
         DXGI_FORMAT             GetDepthBufferFormat() const            { return m_depthBufferFormat; }
         D3D11_VIEWPORT          GetScreenViewport() const               { return m_screenViewport; }
         UINT                    GetBackBufferCount() const              { return m_backBufferCount; }
+        DXGI_COLOR_SPACE_TYPE   GetColorSpace() const                   { return m_colorSpace; }
+        unsigned int            GetDeviceOptions() const                { return m_options; }
 
         // Performance events
         void PIXBeginEvent(_In_z_ const wchar_t* name)
@@ -64,9 +71,12 @@ namespace DX
         }
 
     private:
+        void CreateFactory();
         void GetHardwareAdapter(IDXGIAdapter1** ppAdapter);
+        void UpdateColorSpace();
 
         // Direct3D objects.
+        Microsoft::WRL::ComPtr<IDXGIFactory2>               m_dxgiFactory;
         Microsoft::WRL::ComPtr<ID3D11Device1>               m_d3dDevice;
         Microsoft::WRL::ComPtr<ID3D11DeviceContext1>        m_d3dContext;
         Microsoft::WRL::ComPtr<IDXGISwapChain1>             m_swapChain;
@@ -89,6 +99,12 @@ namespace DX
         HWND                                            m_window;
         D3D_FEATURE_LEVEL                               m_d3dFeatureLevel;
         RECT                                            m_outputSize;
+
+        // HDR Support
+        DXGI_COLOR_SPACE_TYPE                           m_colorSpace;
+
+        // DeviceResources options (see flags above)
+        unsigned int                                    m_options;
 
         // The IDeviceNotify can be held directly as it owns the DeviceResources.
         IDeviceNotify*                                  m_deviceNotify;

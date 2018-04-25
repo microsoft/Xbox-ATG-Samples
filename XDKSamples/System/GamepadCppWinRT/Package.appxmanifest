@@ -8,10 +8,10 @@
             Version="1.0.0.0" />
   
   <Properties>
-    <DisplayName>Gamepad</DisplayName>
+    <DisplayName>Gamepad (C++/CX)</DisplayName>
     <PublisherDisplayName>Xbox Advanced Technology Group</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
-    <Description>Gamepad</Description>
+    <Description>Gamepad using C++/CX</Description>
   </Properties>
   
   <Prerequisites>

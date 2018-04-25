@@ -37,7 +37,9 @@ DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depth
     m_d3dMinFeatureLevel(minFeatureLevel),
     m_window(nullptr),
     m_d3dFeatureLevel(D3D_FEATURE_LEVEL_11_0),
+    m_dxgiFactoryFlags(0),
     m_outputSize{0, 0, 1, 1},
+    m_colorSpace(DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709),
     m_options(flags),
     m_deviceNotify(nullptr)
 {
@@ -66,7 +68,6 @@ void DeviceResources::CreateDeviceResources()
     // Enable the debug layer (requires the Graphics Tools "optional feature").
     //
     // NOTE: Enabling the debug layer after device creation will invalidate the active device.
-    bool debugDXGI = false;
     {
         ComPtr<ID3D12Debug> debugController;
         if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(debugController.GetAddressOf()))))
@@ -81,19 +82,15 @@ void DeviceResources::CreateDeviceResources()
         ComPtr<IDXGIInfoQueue> dxgiInfoQueue;
         if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiInfoQueue.GetAddressOf()))))
         {
-            debugDXGI = true;
-
-            ThrowIfFailed(CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(m_dxgiFactory.ReleaseAndGetAddressOf())));
+            m_dxgiFactoryFlags = DXGI_CREATE_FACTORY_DEBUG;
 
             dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
             dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
         }
     }
-
-    if (!debugDXGI)
 #endif
 
-    ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(m_dxgiFactory.ReleaseAndGetAddressOf())));
+    ThrowIfFailed(CreateDXGIFactory2(m_dxgiFactoryFlags, IID_PPV_ARGS(m_dxgiFactory.ReleaseAndGetAddressOf())));
 
     // Determines whether tearing support is available for fullscreen borderless windows.
     if (m_options & c_AllowTearing)
@@ -185,6 +182,8 @@ void DeviceResources::CreateDeviceResources()
 
     ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(m_rtvDescriptorHeap.ReleaseAndGetAddressOf())));
 
+    m_rtvDescriptorHeap->SetName(L"DeviceResources");
+
     m_rtvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
     if (m_depthBufferFormat != DXGI_FORMAT_UNKNOWN)
@@ -194,6 +193,8 @@ void DeviceResources::CreateDeviceResources()
         dsvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 
         ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&dsvDescriptorHeapDesc, IID_PPV_ARGS(m_dsvDescriptorHeap.ReleaseAndGetAddressOf())));
+
+        m_dsvDescriptorHeap->SetName(L"DeviceResources");
     }
 
     // Create a command allocator for each back buffer that will be rendered to.
@@ -209,6 +210,8 @@ void DeviceResources::CreateDeviceResources()
     // Create a fence for tracking GPU execution progress.
     ThrowIfFailed(m_d3dDevice->CreateFence(m_fenceValues[m_backBufferIndex], D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_fence.ReleaseAndGetAddressOf())));
     m_fenceValues[m_backBufferIndex]++;
+
+    m_fence->SetName(L"DeviceResources");
 
     m_fenceEvent.Attach(CreateEvent(nullptr, FALSE, FALSE, nullptr));
     if (!m_fenceEvent.IsValid())
@@ -307,6 +310,9 @@ void DeviceResources::CreateWindowSizeDependentResources()
         ThrowIfFailed(m_dxgiFactory->MakeWindowAssociation(m_window, DXGI_MWA_NO_ALT_ENTER));
     }
 
+    // Handle color space settings for HDR
+    UpdateColorSpace();
+
     // Obtain the back buffers for this window which will be the final render targets
     // and create render target views for each of them.
     for (UINT n = 0; n < m_backBufferCount; n++)
@@ -400,6 +406,9 @@ bool DeviceResources::WindowSizeChanged(int width, int height)
         && newRc.right == m_outputSize.right
         && newRc.bottom == m_outputSize.bottom)
     {
+        // Handle color space settings for HDR
+        UpdateColorSpace();
+
         return false;
     }
 
@@ -510,6 +519,12 @@ void DeviceResources::Present(D3D12_RESOURCE_STATES beforeState)
         ThrowIfFailed(hr);
 
         MoveToNextFrame();
+
+        if (!m_dxgiFactory->IsCurrent())
+        {
+            // Output information is cached on the DXGI Factory. If it is stale we need to create a new factory.
+            ThrowIfFailed(CreateDXGIFactory2(m_dxgiFactoryFlags, IID_PPV_ARGS(m_dxgiFactory.ReleaseAndGetAddressOf())));
+        }
     }
 }
 
@@ -604,4 +619,66 @@ void DeviceResources::GetAdapter(IDXGIAdapter1** ppAdapter)
     }
 
     *ppAdapter = adapter.Detach();
+}
+
+// Sets the color space for the swap chain in order to handle HDR output.
+void DeviceResources::UpdateColorSpace()
+{
+    DXGI_COLOR_SPACE_TYPE colorSpace = DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709;
+
+    bool isDisplayHDR10 = false;
+
+#if defined(NTDDI_WIN10_RS2)
+    if (m_swapChain)
+    {
+        ComPtr<IDXGIOutput> output;
+        if (SUCCEEDED(m_swapChain->GetContainingOutput(output.GetAddressOf())))
+        {
+            ComPtr<IDXGIOutput6> output6;
+            if (SUCCEEDED(output.As(&output6)))
+            {
+                DXGI_OUTPUT_DESC1 desc;
+                ThrowIfFailed(output6->GetDesc1(&desc));
+
+                if (desc.ColorSpace == DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020)
+                {
+                    // Display output is HDR10.
+                    isDisplayHDR10 = true;
+                }
+            }
+        }
+    }
+#endif
+
+    if ((m_options & c_EnableHDR) && isDisplayHDR10)
+    {
+        switch (m_backBufferFormat)
+        {
+        case DXGI_FORMAT_R10G10B10A2_UNORM:
+            // The application creates the HDR10 signal.
+            colorSpace = DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020;
+            break;
+
+        case DXGI_FORMAT_R16G16B16A16_FLOAT:
+            // The system creates the HDR10 signal; application uses linear values.
+            colorSpace = DXGI_COLOR_SPACE_RGB_FULL_G10_NONE_P709;
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    m_colorSpace = colorSpace;
+
+    ComPtr<IDXGISwapChain3> swapChain3;
+    if (SUCCEEDED(m_swapChain.As(&swapChain3)))
+    {
+        UINT colorSpaceSupport = 0;
+        if (SUCCEEDED(swapChain3->CheckColorSpaceSupport(colorSpace, &colorSpaceSupport))
+            && (colorSpaceSupport & DXGI_SWAP_CHAIN_COLOR_SPACE_SUPPORT_FLAG_PRESENT))
+        {
+            ThrowIfFailed(swapChain3->SetColorSpace1(colorSpace));
+        }
+    }
 }

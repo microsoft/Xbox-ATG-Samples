@@ -252,6 +252,13 @@ void Sample::Render()
         m_font->DrawString(m_spriteBatch.get(), L"No controller connected", pos, ATG::Colors::Orange);
     }
 
+    DX::DrawControllerString(m_spriteBatch.get(),
+        m_font.get(), m_ctrlFont.get(),
+        L"[RB][LB][View][Menu] Exit",
+        XMFLOAT2(float(safeRect.left),
+            float(safeRect.bottom) - m_font->GetLineSpacing()),
+        ATG::Colors::LightGrey);
+
     m_spriteBatch->End();
 
     PIXEndEvent(context);
