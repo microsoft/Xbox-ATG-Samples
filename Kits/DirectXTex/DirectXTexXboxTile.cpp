@@ -4,6 +4,7 @@
 // DirectXTex Auxillary functions for converting from linear to Xbox One tiling
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
 #include "DirectXTexP.h"

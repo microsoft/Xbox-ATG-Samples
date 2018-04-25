@@ -41,11 +41,11 @@
     dcl t2.xy  // pin<8,9>
     dcl_2d s0
 
-#line 515 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 511 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     texld r0, t2, s0
     mul r0, r0, t0  // ::color<0,1,2,3>
 
-#line 20 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 18 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r1.xyz, c0, r0.w, -r0
     mad r0.xyz, t1.w, r1, r0  // ApplyFog::color<0,1,2>
     mov oC0, r0  // ::PSBasicTx<0,1,2,3>
@@ -71,10 +71,10 @@ ret
 
 const BYTE BasicEffect_PSBasicTx[] =
 {
-     68,  88,  66,  67, 163, 255, 
-     61, 179, 243, 217,  60, 217, 
-    207, 139, 170, 239,  20,  29, 
-    185,  89,   1,   0,   0,   0, 
+     68,  88,  66,  67, 179, 203, 
+    229, 129, 159,  61, 142,  35, 
+    210, 175,  53,   8, 215, 203, 
+     84, 241,   1,   0,   0,   0, 
     240,   4,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
      56,   3,   0,   0,  84,   4, 
@@ -122,12 +122,12 @@ const BYTE BasicEffect_PSBasicTx[] =
      80,   2,   0,   0,   0,   0, 
     255, 255,  92,   2,   0,   0, 
       0,   0, 255, 255, 104,   2, 
-      0,   0,   3,   2,   0,   0, 
-    116,   2,   0,   0,   3,   2, 
+      0,   0, 255,   1,   0,   0, 
+    116,   2,   0,   0, 255,   1, 
       0,   0, 132,   2,   0,   0, 
-     20,   0,   1,   0, 148,   2, 
-      0,   0,  20,   0,   1,   0, 
-    168,   2,   0,   0,  20,   0, 
+     18,   0,   1,   0, 148,   2, 
+      0,   0,  18,   0,   1,   0, 
+    168,   2,   0,   0,  18,   0, 
       1,   0, 188,   2,   0,   0, 
      80,  83,  66,  97, 115, 105, 
      99,  84, 120,   0, 171, 171, 

@@ -1,12 +1,8 @@
 //--------------------------------------------------------------------------------------
 // File: VertexTypes.h
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
@@ -29,6 +25,12 @@ namespace DirectX
     {
         VertexPosition() = default;
 
+        VertexPosition(const VertexPosition&) = default;
+        VertexPosition& operator=(const VertexPosition&) = default;
+
+        VertexPosition(VertexPosition&&) = default;
+        VertexPosition& operator=(VertexPosition&&) = default;
+
         VertexPosition(XMFLOAT3 const& position)
             : position(position)
         { }
@@ -39,7 +41,7 @@ namespace DirectX
         }
 
         XMFLOAT3 position;
-   
+
         static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
     private:
@@ -53,8 +55,14 @@ namespace DirectX
     {
         VertexPositionColor() = default;
 
+        VertexPositionColor(const VertexPositionColor&) = default;
+        VertexPositionColor& operator=(const VertexPositionColor&) = default;
+
+        VertexPositionColor(VertexPositionColor&&) = default;
+        VertexPositionColor& operator=(VertexPositionColor&&) = default;
+
         VertexPositionColor(XMFLOAT3 const& position, XMFLOAT4 const& color)
-          : position(position),
+            : position(position),
             color(color)
         { }
 
@@ -80,8 +88,14 @@ namespace DirectX
     {
         VertexPositionTexture() = default;
 
+        VertexPositionTexture(const VertexPositionTexture&) = default;
+        VertexPositionTexture& operator=(const VertexPositionTexture&) = default;
+
+        VertexPositionTexture(VertexPositionTexture&&) = default;
+        VertexPositionTexture& operator=(VertexPositionTexture&&) = default;
+
         VertexPositionTexture(XMFLOAT3 const& position, XMFLOAT2 const& textureCoordinate)
-          : position(position),
+            : position(position),
             textureCoordinate(textureCoordinate)
         { }
 
@@ -106,6 +120,12 @@ namespace DirectX
     struct VertexPositionDualTexture
     {
         VertexPositionDualTexture() = default;
+
+        VertexPositionDualTexture(const VertexPositionDualTexture&) = default;
+        VertexPositionDualTexture& operator=(const VertexPositionDualTexture&) = default;
+
+        VertexPositionDualTexture(VertexPositionDualTexture&&) = default;
+        VertexPositionDualTexture& operator=(VertexPositionDualTexture&&) = default;
 
         VertexPositionDualTexture(XMFLOAT3 const& position, XMFLOAT2 const& textureCoordinate0, XMFLOAT2 const& textureCoordinate1)
             : position(position),
@@ -139,8 +159,14 @@ namespace DirectX
     {
         VertexPositionNormal() = default;
 
+        VertexPositionNormal(const VertexPositionNormal&) = default;
+        VertexPositionNormal& operator=(const VertexPositionNormal&) = default;
+
+        VertexPositionNormal(VertexPositionNormal&&) = default;
+        VertexPositionNormal& operator=(VertexPositionNormal&&) = default;
+
         VertexPositionNormal(XMFLOAT3 const& position, XMFLOAT3 const& normal)
-          : position(position),
+            : position(position),
             normal(normal)
         { }
 
@@ -152,7 +178,7 @@ namespace DirectX
 
         XMFLOAT3 position;
         XMFLOAT3 normal;
-       
+
         static const D3D12_INPUT_LAYOUT_DESC InputLayout;
 
     private:
@@ -166,8 +192,14 @@ namespace DirectX
     {
         VertexPositionColorTexture() = default;
 
+        VertexPositionColorTexture(const VertexPositionColorTexture&) = default;
+        VertexPositionColorTexture& operator=(const VertexPositionColorTexture&) = default;
+
+        VertexPositionColorTexture(VertexPositionColorTexture&&) = default;
+        VertexPositionColorTexture& operator=(VertexPositionColorTexture&&) = default;
+
         VertexPositionColorTexture(XMFLOAT3 const& position, XMFLOAT4 const& color, XMFLOAT2 const& textureCoordinate)
-          : position(position),
+            : position(position),
             color(color),
             textureCoordinate(textureCoordinate)
         { }
@@ -196,8 +228,14 @@ namespace DirectX
     {
         VertexPositionNormalColor() = default;
 
+        VertexPositionNormalColor(const VertexPositionNormalColor&) = default;
+        VertexPositionNormalColor& operator=(const VertexPositionNormalColor&) = default;
+
+        VertexPositionNormalColor(VertexPositionNormalColor&&) = default;
+        VertexPositionNormalColor& operator=(VertexPositionNormalColor&&) = default;
+    
         VertexPositionNormalColor(XMFLOAT3 const& position, XMFLOAT3 const& normal, XMFLOAT4 const& color)
-          : position(position),
+            : position(position),
             normal(normal),
             color(color)
         { }
@@ -226,8 +264,14 @@ namespace DirectX
     {
         VertexPositionNormalTexture() = default;
 
+        VertexPositionNormalTexture(const VertexPositionNormalTexture&) = default;
+        VertexPositionNormalTexture& operator=(const VertexPositionNormalTexture&) = default;
+
+        VertexPositionNormalTexture(VertexPositionNormalTexture&&) = default;
+        VertexPositionNormalTexture& operator=(VertexPositionNormalTexture&&) = default;
+
         VertexPositionNormalTexture(XMFLOAT3 const& position, XMFLOAT3 const& normal, XMFLOAT2 const& textureCoordinate)
-          : position(position),
+            : position(position),
             normal(normal),
             textureCoordinate(textureCoordinate)
         { }
@@ -256,8 +300,14 @@ namespace DirectX
     {
         VertexPositionNormalColorTexture() = default;
 
+        VertexPositionNormalColorTexture(const VertexPositionNormalColorTexture&) = default;
+        VertexPositionNormalColorTexture& operator=(const VertexPositionNormalColorTexture&) = default;
+
+        VertexPositionNormalColorTexture(VertexPositionNormalColorTexture&&) = default;
+        VertexPositionNormalColorTexture& operator=(VertexPositionNormalColorTexture&&) = default;
+
         VertexPositionNormalColorTexture(XMFLOAT3 const& position, XMFLOAT3 const& normal, XMFLOAT4 const& color, XMFLOAT2 const& textureCoordinate)
-          : position(position),
+            : position(position),
             normal(normal),
             color(color),
             textureCoordinate(textureCoordinate)

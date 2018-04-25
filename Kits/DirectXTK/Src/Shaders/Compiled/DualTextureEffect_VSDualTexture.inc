@@ -46,28 +46,28 @@
     dcl_texcoord1 v1  // vin<4,5>
     dcl_texcoord2 v2  // vin<6,7>
 
-#line 43 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 41 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 oPos.z, v0, c5  // ::VSDualTexture<14>
 
-#line 14
+#line 12
     dp4 r0.x, v0, c2
     max r0.x, r0.x, c7.x
     min oT1.w, r0.x, c7.y  // ::VSDualTexture<7>
 
-#line 43
+#line 41
     dp4 r0.x, v0, c3  // ::vout<0>
     dp4 r0.y, v0, c4  // ::vout<1>
     dp4 r0.z, v0, c6  // ::vout<3>
 
-#line 33 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\DualTextureEffect.fx"
+#line 29 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\DualTextureEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSDualTexture<12,13>
     mov oPos.w, r0.z  // ::VSDualTexture<15>
 
-#line 44 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 42 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mov oT0, c1  // ::VSDualTexture<0,1,2,3>
     mov oT1.xyz, c7.x  // ::VSDualTexture<4,5,6>
 
-#line 40 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\DualTextureEffect.fx"
+#line 36 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\DualTextureEffect.fx"
     mov oT2.xy, v1  // ::VSDualTexture<8,9>
     mov oT2.zw, v2.xyyx  // ::VSDualTexture<11,10>
 
@@ -97,10 +97,10 @@ ret
 
 const BYTE DualTextureEffect_VSDualTexture[] =
 {
-     68,  88,  66,  67, 246,  41, 
-    180,  41,  18, 123, 239, 199, 
-    233,   0,  73, 184, 124, 194, 
-     36, 183,   1,   0,   0,   0, 
+     68,  88,  66,  67,  68, 196, 
+    155, 215,  93,   5,  41,  66, 
+    204,  50, 234, 234, 242,   1, 
+     60, 144,   1,   0,   0,   0, 
     148,   7,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     248,   4,   0,   0, 128,   6, 
@@ -151,23 +151,23 @@ const BYTE DualTextureEffect_VSDualTexture[] =
     255, 255, 152,   3,   0,   0, 
       0,   0, 255, 255, 164,   3, 
       0,   0,   0,   0, 255, 255, 
-    176,   3,   0,   0,  43,   0, 
+    176,   3,   0,   0,  41,   0, 
       0,   0, 188,   3,   0,   0, 
-     14,   0,   0,   0, 204,   3, 
-      0,   0,  14,   0,   0,   0, 
-    220,   3,   0,   0,  14,   0, 
+     12,   0,   0,   0, 204,   3, 
+      0,   0,  12,   0,   0,   0, 
+    220,   3,   0,   0,  12,   0, 
       0,   0, 236,   3,   0,   0, 
-     43,   0,   0,   0, 252,   3, 
-      0,   0,  43,   0,   0,   0, 
-     12,   4,   0,   0,  43,   0, 
+     41,   0,   0,   0, 252,   3, 
+      0,   0,  41,   0,   0,   0, 
+     12,   4,   0,   0,  41,   0, 
       0,   0,  28,   4,   0,   0, 
-     33,   0,   1,   0,  44,   4, 
-      0,   0,  33,   0,   1,   0, 
-     64,   4,   0,   0,  44,   0, 
+     29,   0,   1,   0,  44,   4, 
+      0,   0,  29,   0,   1,   0, 
+     64,   4,   0,   0,  42,   0, 
       0,   0,  76,   4,   0,   0, 
-     45,   0,   0,   0,  88,   4, 
-      0,   0,  40,   0,   1,   0, 
-    100,   4,   0,   0,  40,   0, 
+     43,   0,   0,   0,  88,   4, 
+      0,   0,  36,   0,   1,   0, 
+    100,   4,   0,   0,  36,   0, 
       1,   0, 112,   4,   0,   0, 
      86,  83,  68, 117,  97, 108, 
      84, 101, 120, 116, 117, 114, 

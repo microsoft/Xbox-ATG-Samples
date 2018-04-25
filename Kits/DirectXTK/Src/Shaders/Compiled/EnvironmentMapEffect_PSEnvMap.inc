@@ -45,16 +45,16 @@
     dcl_2d s0
     dcl_cube s1
 
-#line 206 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
+#line 202 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\EnvironmentMapEffect.fx"
     texld r0, t3, s1
     texld r1, t2, s0
     mul r1, r1, t0  // ::color<0,1,2,3>
 
-#line 208
+#line 204
     mad r0.xyz, r0, r1.w, -r1
     mad r0.xyz, t1, r0, r1  // ::color<0,1,2>
 
-#line 20 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 18 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mad r2.xyz, c0, r1.w, -r0
     mad r1.xyz, t1.w, r2, r0  // ApplyFog::color<0,1,2>
     mov oC0, r1  // ::PSEnvMap<0,1,2,3>
@@ -86,10 +86,10 @@ ret
 
 const BYTE EnvironmentMapEffect_PSEnvMap[] =
 {
-     68,  88,  66,  67, 213,  12, 
-      0,  10,  36, 255,  48,  15, 
-     76, 117,  67, 217, 246,  81, 
-    163, 183,   1,   0,   0,   0, 
+     68,  88,  66,  67, 117, 249, 
+     93,  96, 122, 206,  44, 169, 
+     73, 179, 145, 177, 109,  25, 
+    246,  73,   1,   0,   0,   0, 
     100,   6,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     252,   3,   0,   0, 176,   5, 
@@ -142,17 +142,17 @@ const BYTE EnvironmentMapEffect_PSEnvMap[] =
     255, 255, 216,   2,   0,   0, 
       0,   0, 255, 255, 228,   2, 
       0,   0,   0,   0, 255, 255, 
-    240,   2,   0,   0, 206,   0, 
+    240,   2,   0,   0, 202,   0, 
       0,   0, 252,   2,   0,   0, 
-    205,   0,   0,   0,  12,   3, 
-      0,   0, 205,   0,   0,   0, 
-     28,   3,   0,   0, 208,   0, 
+    201,   0,   0,   0,  12,   3, 
+      0,   0, 201,   0,   0,   0, 
+     28,   3,   0,   0, 204,   0, 
       0,   0,  44,   3,   0,   0, 
-    208,   0,   0,   0,  64,   3, 
-      0,   0,  20,   0,   1,   0, 
-     84,   3,   0,   0,  20,   0, 
+    204,   0,   0,   0,  64,   3, 
+      0,   0,  18,   0,   1,   0, 
+     84,   3,   0,   0,  18,   0, 
       1,   0, 104,   3,   0,   0, 
-     20,   0,   1,   0, 124,   3, 
+     18,   0,   1,   0, 124,   3, 
       0,   0,  80,  83,  69, 110, 
     118,  77,  97, 112,   0, 171, 
     171, 171,   1,   0,   3,   0, 

@@ -1,12 +1,8 @@
 //--------------------------------------------------------------------------------------
 // File: EffectFactory.cpp
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
@@ -53,7 +49,7 @@ public:
         int samplerDescriptorOffset);
 
     void ReleaseCache();
-    void SetSharing( bool enabled ) { mSharing = enabled; }
+    void SetSharing(bool enabled) { mSharing = enabled; }
 
     std::unique_ptr<DescriptorHeap> mTextureDescriptors;
     std::unique_ptr<DescriptorHeap> mSamplerDescriptors;
@@ -486,12 +482,12 @@ EffectFactory::~EffectFactory()
 }
 
 
-EffectFactory::EffectFactory(EffectFactory&& moveFrom)
+EffectFactory::EffectFactory(EffectFactory&& moveFrom) noexcept
     : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
-EffectFactory& EffectFactory::operator= (EffectFactory&& moveFrom)
+EffectFactory& EffectFactory::operator= (EffectFactory&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;
@@ -513,9 +509,9 @@ void EffectFactory::ReleaseCache()
     pImpl->ReleaseCache();
 }
 
-void EffectFactory::SetSharing( bool enabled )
+void EffectFactory::SetSharing(bool enabled)
 {
-    pImpl->SetSharing( enabled );
+    pImpl->SetSharing(enabled);
 }
 
 void EffectFactory::EnablePerPixelLighting(bool enabled)

@@ -1,12 +1,8 @@
 //--------------------------------------------------------------------------------------
 // File: EffectCommon.h
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
@@ -56,7 +52,7 @@ namespace DirectX
     // Helper stores matrix parameter values, and computes derived matrices.
     struct EffectMatrices
     {
-        EffectMatrices();
+        EffectMatrices() noexcept;
 
         XMMATRIX world;
         XMMATRIX view;
@@ -70,7 +66,7 @@ namespace DirectX
     // Helper stores the current fog settings, and computes derived shader parameters.
     struct EffectFog
     {
-        EffectFog();
+        EffectFog() noexcept;
 
         bool enabled;
         float start;
@@ -83,7 +79,7 @@ namespace DirectX
     // Helper stores material color settings, and computes derived parameters for shaders that do not support realtime lighting.
     struct EffectColor
     {
-        EffectColor();
+        EffectColor() noexcept;
 
         XMVECTOR diffuseColor;
         float alpha;
@@ -95,7 +91,7 @@ namespace DirectX
     // Helper stores the current light settings, and computes derived shader parameters.
     struct EffectLights : public EffectColor
     {
-        EffectLights();
+        EffectLights() noexcept;
 
         static const int MaxDirectionalLights = IEffectLights::MaxDirectionalLights;
 
@@ -126,7 +122,7 @@ namespace DirectX
     {
     public:
         EffectDeviceResources(_In_ ID3D12Device* device)
-          : mDevice(device)
+            : mDevice(device)
         { }
 
         ID3D12RootSignature* DemandCreateRootSig(_Inout_ Microsoft::WRL::ComPtr<ID3D12RootSignature>& rootSig, D3D12_ROOT_SIGNATURE_DESC const& desc);
@@ -142,17 +138,17 @@ namespace DirectX
     class EffectBase : public AlignedNew<typename Traits::ConstantBufferType>
     {
     public:
-         typename Traits::ConstantBufferType constants;
+        typename Traits::ConstantBufferType constants;
 
-        // Constructor.
+       // Constructor.
         EffectBase(_In_ ID3D12Device* device)
-          : constants{},
+            : constants{},
             dirtyFlags(INT_MAX),
             mRootSignature(nullptr),
             mDeviceResources(deviceResourcesPool.DemandCreate(device))
         {
             // Initialize the constant buffer data
-            mConstantBuffer = GraphicsMemory::Get().AllocateConstant(constants);
+            mConstantBuffer = GraphicsMemory::Get(device).AllocateConstant(constants);
         }
 
         // Commits constants to the constant buffer memory
@@ -161,7 +157,7 @@ namespace DirectX
             // Make sure the constant buffer is up to date.
             if (dirtyFlags & EffectDirtyFlags::ConstantBuffer)
             {
-                mConstantBuffer = GraphicsMemory::Get().AllocateConstant(constants);
+                mConstantBuffer = GraphicsMemory::Get(mDeviceResources->GetDevice()).AllocateConstant(constants);
 
                 dirtyFlags &= ~EffectDirtyFlags::ConstantBuffer;
             }
@@ -207,17 +203,19 @@ namespace DirectX
         {
         public:
             DeviceResources(_In_ ID3D12Device* device)
-              : EffectDeviceResources(device)
+                : EffectDeviceResources(device)
             { }
 
             // Gets or lazily creates the specified root signature
             ID3D12RootSignature* GetRootSignature(int slot, D3D12_ROOT_SIGNATURE_DESC const& desc)
             {
-                assert(slot >= 0 && slot< Traits::RootSignatureCount);
-                _Analysis_assume_(slot >= 0 && slot< Traits::RootSignatureCount);
+                assert(slot >= 0 && slot < Traits::RootSignatureCount);
+                _Analysis_assume_(slot >= 0 && slot < Traits::RootSignatureCount);
 
                 return DemandCreateRootSig(mRootSignature[slot], desc);
             }
+
+            ID3D12Device* GetDevice() const { return mDevice.Get(); }
 
         private:
             Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature[Traits::RootSignatureCount];

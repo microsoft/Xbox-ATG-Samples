@@ -45,30 +45,30 @@
     dcl_texcoord1 v1  // vin<4,5>
     dcl_texcoord2 v2  // vin<6,7,8,9>
 
-#line 43 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 41 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 oPos.z, v0, c5  // ::VSAlphaTestVc<12>
 
-#line 14
+#line 12
     dp4 r0.x, v0, c2
     max r0.x, r0.x, c7.x
     min oT1.w, r0.x, c7.y  // ::VSAlphaTestVc<7>
 
-#line 67 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
+#line 63 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
     mul oT0, v2, c1  // ::VSAlphaTestVc<0,1,2,3>
 
-#line 43 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 41 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c3  // ::vout<0>
     dp4 r0.y, v0, c4  // ::vout<1>
     dp4 r0.z, v0, c6  // ::vout<3>
 
-#line 59 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
+#line 55 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSAlphaTestVc<10,11>
     mov oPos.w, r0.z  // ::VSAlphaTestVc<13>
 
-#line 45 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 43 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     mov oT1.xyz, c7.x  // ::VSAlphaTestVc<4,5,6>
 
-#line 66 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
+#line 62 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\AlphaTestEffect.fx"
     mov oT2.xy, v1  // ::VSAlphaTestVc<8,9>
 
 // approximately 12 instruction slots used
@@ -95,10 +95,10 @@ ret
 
 const BYTE AlphaTestEffect_VSAlphaTestVc[] =
 {
-     68,  88,  66,  67,  30,  69, 
-     55,  65,  83,  79,  93, 185, 
-    227,  96,  91, 140,  77,  44, 
-    208, 255,   1,   0,   0,   0, 
+     68,  88,  66,  67, 236, 163, 
+    225, 145, 199, 203, 224, 231, 
+     78, 157,  76,  71,  53, 217, 
+    112,  45,   1,   0,   0,   0, 
      56,   7,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     200,   4,   0,   0,  56,   6, 
@@ -149,21 +149,21 @@ const BYTE AlphaTestEffect_VSAlphaTestVc[] =
       0,   0,   0,   0, 255, 255, 
     124,   3,   0,   0,   0,   0, 
     255, 255, 136,   3,   0,   0, 
-     43,   0,   0,   0, 148,   3, 
-      0,   0,  14,   0,   0,   0, 
-    164,   3,   0,   0,  14,   0, 
+     41,   0,   0,   0, 148,   3, 
+      0,   0,  12,   0,   0,   0, 
+    164,   3,   0,   0,  12,   0, 
       0,   0, 180,   3,   0,   0, 
-     14,   0,   0,   0, 196,   3, 
-      0,   0,  67,   0,   1,   0, 
-    212,   3,   0,   0,  43,   0, 
+     12,   0,   0,   0, 196,   3, 
+      0,   0,  63,   0,   1,   0, 
+    212,   3,   0,   0,  41,   0, 
       0,   0, 228,   3,   0,   0, 
-     43,   0,   0,   0, 244,   3, 
-      0,   0,  43,   0,   0,   0, 
-      4,   4,   0,   0,  59,   0, 
+     41,   0,   0,   0, 244,   3, 
+      0,   0,  41,   0,   0,   0, 
+      4,   4,   0,   0,  55,   0, 
       1,   0,  20,   4,   0,   0, 
-     59,   0,   1,   0,  40,   4, 
-      0,   0,  45,   0,   0,   0, 
-     52,   4,   0,   0,  66,   0, 
+     55,   0,   1,   0,  40,   4, 
+      0,   0,  43,   0,   0,   0, 
+     52,   4,   0,   0,  62,   0, 
       1,   0,  64,   4,   0,   0, 
      86,  83,  65, 108, 112, 104, 
      97,  84, 101, 115, 116,  86, 

@@ -46,60 +46,60 @@
     dcl_texcoord1 v1  // vin<4,5,6>
     dcl_texcoord2 v2  // vin<7,8>
 
-#line 13 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Utilities.fxh"
+#line 11 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Utilities.fxh"
     mad r0.xyz, v1, c25.x, c25.y  // ::BiasX2<0,1,2>
 
-#line 59 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 57 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp3 r1.x, r0, c18
     dp3 r1.y, r0, c19
     dp3 r1.z, r0, c20
     nrm r0.xyz, r1  // ::worldNormal<0,1,2>
 
-#line 36
+#line 34
     dp3 r1.x, -c4, r0  // ::dotL<0>
     dp3 r1.y, -c5, r0  // ::dotL<1>
     dp3 r1.z, -c6, r0  // ::dotL<2>
 
-#line 39
+#line 37
     sge r2.xyz, r1, c25.z  // ::zeroL<0,1,2>
     mul r3.xyz, r1, r2  // ::diffuse<0,1,2>
 
-#line 46
+#line 44
     mul r4.xyz, r3.y, c8
     mad r3.xyw, r3.x, c7.xyzz, r4.xyzz
     mad r3.xyz, r3.z, c9, r3.xyww
     mov r4.xyz, c1  // Parameters::DiffuseColor<0,1,2>
     mad oT0.xyz, r3, r4, c2  // ::VSBasicVertexLightingTxBn<0,1,2>
 
-#line 57
+#line 55
     dp4 r3.x, v0, c15  // ::pos_ws<0>
     dp4 r3.y, v0, c16  // ::pos_ws<1>
     dp4 r3.z, v0, c17  // ::pos_ws<2>
     add r3.xyz, -r3, c13
     nrm r4.xyz, r3  // ::eyeVector<0,1,2>
 
-#line 33
+#line 31
     add r3.xyz, r4, -c4
     nrm r5.xyz, r3  // ::halfVectors<0,1,2>
 
-#line 37
+#line 35
     dp3 r3.x, r5, r0  // ::dotH<0>
 
-#line 33
+#line 31
     add r5.xyz, r4, -c5
     add r4.xyz, r4, -c6
     nrm r6.xyz, r4  // ::halfVectors<6,7,8>
 
-#line 37
+#line 35
     dp3 r3.z, r6, r0  // ::dotH<2>
 
-#line 33
+#line 31
     nrm r4.xyz, r5  // ::halfVectors<3,4,5>
 
-#line 37
+#line 35
     dp3 r3.y, r4, r0  // ::dotH<1>
 
-#line 42
+#line 40
     max r0.xyz, r3, c25.z
     mul r0.xyz, r2, r0
     log r2.x, r0.x
@@ -111,33 +111,33 @@
     exp r2.z, r0.z
     mul r0.xyz, r1, r2  // ::specular<0,1,2>
 
-#line 47
+#line 45
     mul r1.xyz, r0.y, c11
     mad r0.xyw, r0.x, c10.xyzz, r1.xyzz
     mad r0.xyz, r0.z, c12, r0.xyww
     mul oT1.xyz, r0, c3  // ::VSBasicVertexLightingTxBn<4,5,6>
 
-#line 63
+#line 61
     dp4 oPos.z, v0, c23  // ::VSBasicVertexLightingTxBn<12>
 
-#line 14 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
+#line 12 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Common.fxh"
     dp4 r0.x, v0, c14
     max r0.x, r0.x, c25.z
     min oT1.w, r0.x, c25.w  // ::VSBasicVertexLightingTxBn<7>
 
-#line 63 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 61 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     dp4 r0.x, v0, c21  // ::vout<0>
     dp4 r0.y, v0, c22  // ::vout<1>
     dp4 r0.z, v0, c24  // ::vout<3>
 
-#line 219 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 215 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mad oPos.xy, r0.z, c0, r0  // ::VSBasicVertexLightingTxBn<10,11>
     mov oPos.w, r0.z  // ::VSBasicVertexLightingTxBn<13>
 
-#line 46 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
+#line 44 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\Lighting.fxh"
     mov oT0.w, c1.w  // ::VSBasicVertexLightingTxBn<3>
 
-#line 228 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
+#line 224 "D:\ATG\st_dev\Kits\DirectXTK\Src\Shaders\BasicEffect.fx"
     mov oT2.xy, v2  // ::VSBasicVertexLightingTxBn<8,9>
 
 // approximately 64 instruction slots used
@@ -212,10 +212,10 @@ ret
 
 const BYTE BasicEffect_VSBasicVertexLightingTxBn[] =
 {
-     68,  88,  66,  67, 214, 108, 
-     28, 248, 133,  18, 164, 184, 
-     49, 241,  17,  56, 223,  53, 
-    211, 112,   1,   0,   0,   0, 
+     68,  88,  66,  67, 226, 186, 
+      3, 178, 139,  63, 205, 140, 
+     33, 165,  13,  99, 197,  10, 
+     20, 106,   1,   0,   0,   0, 
     244,  19,   0,   0,   4,   0, 
       0,   0,  48,   0,   0,   0, 
     160,  11,   0,   0, 244,  18, 
@@ -287,78 +287,78 @@ const BYTE BasicEffect_VSBasicVertexLightingTxBn[] =
     180,   7,   0,   0,   0,   0, 
     255, 255, 192,   7,   0,   0, 
       0,   0, 255, 255, 204,   7, 
-      0,   0,  13,   0,   0,   0, 
-    216,   7,   0,   0,  59,   0, 
+      0,   0,  11,   0,   0,   0, 
+    216,   7,   0,   0,  57,   0, 
       1,   0, 236,   7,   0,   0, 
-     59,   0,   1,   0, 252,   7, 
-      0,   0,  59,   0,   1,   0, 
-     12,   8,   0,   0,  59,   0, 
-      1,   0,  28,   8,   0,   0, 
-     36,   0,   1,   0,  40,   8, 
-      0,   0,  36,   0,   1,   0, 
-     56,   8,   0,   0,  36,   0, 
-      1,   0,  72,   8,   0,   0, 
-     39,   0,   1,   0,  88,   8, 
-      0,   0,  41,   0,   1,   0, 
-    104,   8,   0,   0,  46,   0, 
-      1,   0, 120,   8,   0,   0, 
-     46,   0,   1,   0, 136,   8, 
-      0,   0,  46,   0,   1,   0, 
-    156,   8,   0,   0,  46,   0, 
-      1,   0, 176,   8,   0,   0, 
-     46,   0,   1,   0, 188,   8, 
+     57,   0,   1,   0, 252,   7, 
       0,   0,  57,   0,   1,   0, 
-    208,   8,   0,   0,  57,   0, 
+     12,   8,   0,   0,  57,   0, 
+      1,   0,  28,   8,   0,   0, 
+     34,   0,   1,   0,  40,   8, 
+      0,   0,  34,   0,   1,   0, 
+     56,   8,   0,   0,  34,   0, 
+      1,   0,  72,   8,   0,   0, 
+     37,   0,   1,   0,  88,   8, 
+      0,   0,  39,   0,   1,   0, 
+    104,   8,   0,   0,  44,   0, 
+      1,   0, 120,   8,   0,   0, 
+     44,   0,   1,   0, 136,   8, 
+      0,   0,  44,   0,   1,   0, 
+    156,   8,   0,   0,  44,   0, 
+      1,   0, 176,   8,   0,   0, 
+     44,   0,   1,   0, 188,   8, 
+      0,   0,  55,   0,   1,   0, 
+    208,   8,   0,   0,  55,   0, 
       1,   0, 224,   8,   0,   0, 
-     57,   0,   1,   0, 240,   8, 
-      0,   0,  58,   0,   1,   0, 
-      0,   9,   0,   0,  58,   0, 
+     55,   0,   1,   0, 240,   8, 
+      0,   0,  56,   0,   1,   0, 
+      0,   9,   0,   0,  56,   0, 
       1,   0,  16,   9,   0,   0, 
-     33,   0,   1,   0,  28,   9, 
-      0,   0,  33,   0,   1,   0, 
-     44,   9,   0,   0,  37,   0, 
+     31,   0,   1,   0,  28,   9, 
+      0,   0,  31,   0,   1,   0, 
+     44,   9,   0,   0,  35,   0, 
       1,   0,  56,   9,   0,   0, 
-     33,   0,   1,   0,  72,   9, 
-      0,   0,  33,   0,   1,   0, 
-     88,   9,   0,   0,  33,   0, 
+     31,   0,   1,   0,  72,   9, 
+      0,   0,  31,   0,   1,   0, 
+     88,   9,   0,   0,  31,   0, 
       1,   0, 104,   9,   0,   0, 
-     37,   0,   1,   0, 116,   9, 
-      0,   0,  33,   0,   1,   0, 
-    132,   9,   0,   0,  37,   0, 
+     35,   0,   1,   0, 116,   9, 
+      0,   0,  31,   0,   1,   0, 
+    132,   9,   0,   0,  35,   0, 
       1,   0, 144,   9,   0,   0, 
-     42,   0,   1,   0, 160,   9, 
-      0,   0,  42,   0,   1,   0, 
-    176,   9,   0,   0,  42,   0, 
+     40,   0,   1,   0, 160,   9, 
+      0,   0,  40,   0,   1,   0, 
+    176,   9,   0,   0,  40,   0, 
       1,   0, 192,   9,   0,   0, 
-     42,   0,   1,   0, 204,   9, 
-      0,   0,  42,   0,   1,   0, 
-    216,   9,   0,   0,  42,   0, 
+     40,   0,   1,   0, 204,   9, 
+      0,   0,  40,   0,   1,   0, 
+    216,   9,   0,   0,  40,   0, 
       1,   0, 228,   9,   0,   0, 
-     42,   0,   1,   0, 244,   9, 
-      0,   0,  42,   0,   1,   0, 
-      0,  10,   0,   0,  42,   0, 
+     40,   0,   1,   0, 244,   9, 
+      0,   0,  40,   0,   1,   0, 
+      0,  10,   0,   0,  40,   0, 
       1,   0,  12,  10,   0,   0, 
-     42,   0,   1,   0,  24,  10, 
-      0,   0,  47,   0,   1,   0, 
-     40,  10,   0,   0,  47,   0, 
+     40,   0,   1,   0,  24,  10, 
+      0,   0,  45,   0,   1,   0, 
+     40,  10,   0,   0,  45,   0, 
       1,   0,  56,  10,   0,   0, 
-     47,   0,   1,   0,  76,  10, 
-      0,   0,  47,   0,   1,   0, 
-     96,  10,   0,   0,  63,   0, 
+     45,   0,   1,   0,  76,  10, 
+      0,   0,  45,   0,   1,   0, 
+     96,  10,   0,   0,  61,   0, 
       1,   0, 112,  10,   0,   0, 
-     14,   0,   2,   0, 128,  10, 
-      0,   0,  14,   0,   2,   0, 
-    144,  10,   0,   0,  14,   0, 
+     12,   0,   2,   0, 128,  10, 
+      0,   0,  12,   0,   2,   0, 
+    144,  10,   0,   0,  12,   0, 
       2,   0, 160,  10,   0,   0, 
-     63,   0,   1,   0, 176,  10, 
-      0,   0,  63,   0,   1,   0, 
-    192,  10,   0,   0,  63,   0, 
+     61,   0,   1,   0, 176,  10, 
+      0,   0,  61,   0,   1,   0, 
+    192,  10,   0,   0,  61,   0, 
       1,   0, 208,  10,   0,   0, 
-    219,   0,   3,   0, 224,  10, 
-      0,   0, 219,   0,   3,   0, 
-    244,  10,   0,   0,  46,   0, 
+    215,   0,   3,   0, 224,  10, 
+      0,   0, 215,   0,   3,   0, 
+    244,  10,   0,   0,  44,   0, 
       1,   0,   0,  11,   0,   0, 
-    228,   0,   3,   0,  12,  11, 
+    224,   0,   3,   0,  12,  11, 
       0,   0,  66, 105,  97, 115, 
      88,  50,   0, 171,   1,   0, 
       3,   0,   1,   0,   3,   0, 

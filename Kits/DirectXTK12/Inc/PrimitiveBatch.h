@@ -1,12 +1,8 @@
 //--------------------------------------------------------------------------------------
 // File: PrimitiveBatch.h
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
 //--------------------------------------------------------------------------------------
@@ -34,8 +30,8 @@ namespace DirectX
         protected:
             PrimitiveBatchBase(_In_ ID3D12Device* device, size_t maxIndices, size_t maxVertices, size_t vertexSize);
 
-            PrimitiveBatchBase(PrimitiveBatchBase&& moveFrom);
-            PrimitiveBatchBase& operator= (PrimitiveBatchBase&& moveFrom);
+            PrimitiveBatchBase(PrimitiveBatchBase&& moveFrom) noexcept;
+            PrimitiveBatchBase& operator= (PrimitiveBatchBase&& moveFrom) noexcept;
 
             PrimitiveBatchBase(PrimitiveBatchBase const&) = delete;
             PrimitiveBatchBase& operator= (PrimitiveBatchBase const&) = delete;
@@ -44,7 +40,7 @@ namespace DirectX
 
         public:
             // Begin/End a batch of primitive drawing operations.
-            void __cdecl Begin( _In_ ID3D12GraphicsCommandList* cmdList );
+            void __cdecl Begin(_In_ ID3D12GraphicsCommandList* cmdList);
             void __cdecl End();
 
         protected:
@@ -68,14 +64,14 @@ namespace DirectX
 
     public:
         explicit PrimitiveBatch(_In_ ID3D12Device* device, size_t maxIndices = DefaultBatchSize * 3, size_t maxVertices = DefaultBatchSize)
-          : PrimitiveBatchBase(device, maxIndices, maxVertices, sizeof(TVertex))
+            : PrimitiveBatchBase(device, maxIndices, maxVertices, sizeof(TVertex))
         { }
 
-        PrimitiveBatch(PrimitiveBatch&& moveFrom)
-          : PrimitiveBatchBase(std::move(moveFrom))
+        PrimitiveBatch(PrimitiveBatch&& moveFrom) noexcept
+            : PrimitiveBatchBase(std::move(moveFrom))
         { }
 
-        PrimitiveBatch& operator= (PrimitiveBatch&& moveFrom)
+        PrimitiveBatch& operator= (PrimitiveBatch&& moveFrom) noexcept
         {
             PrimitiveBatchBase::operator=(std::move(moveFrom));
             return *this;
