@@ -3,8 +3,8 @@
 //
 // Class to draw a full-screen quad
 //
-// Advanced Technology Group (ATG)
-// Copyright (C) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
 #include "pch.h"
@@ -53,7 +53,7 @@ void FullScreenQuad::Initialize(_In_ ID3D12Device* d3dDevice)
         D3D12_FLOAT32_MAX,
         D3D12_SHADER_VISIBILITY_PIXEL);
 
-    CD3DX12_ROOT_PARAMETER rootParameters[static_cast<uint32_t>(RootParameterIndex::Count)];
+    CD3DX12_ROOT_PARAMETER rootParameters[static_cast<uint32_t>(RootParameterIndex::Count)] = {};
     rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
     rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRVs, D3D12_SHADER_VISIBILITY_PIXEL);
 
@@ -78,8 +78,8 @@ void FullScreenQuad::Draw(
     d3dCommandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, constantBuffer);
     d3dCommandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
     d3dCommandList->SetPipelineState(d3dPSO);
-    d3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-    d3dCommandList->DrawInstanced(4, 1, 0, 0);
+    d3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    d3dCommandList->DrawInstanced(3, 1, 0, 0);
 }
 
 void FullScreenQuad::ReleaseDevice()
@@ -143,9 +143,10 @@ void FullScreenQuad::Draw(
     }
 
     // Draw quad.
-    d3dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+    d3dContext->IASetInputLayout(nullptr);
+    d3dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-    d3dContext->Draw(4, 0);
+    d3dContext->Draw(3, 0);
 }
 
 void FullScreenQuad::ReleaseDevice()

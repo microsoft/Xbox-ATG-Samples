@@ -15,6 +15,7 @@
 
 using namespace ATG;
 using namespace DirectX;
+using namespace DX;
 
 using Microsoft::WRL::ComPtr;
 
@@ -94,13 +95,13 @@ FrontPanelDisplay::FrontPanelDisplay(_In_ IXboxFrontPanelControl * frontPanelCon
     if (IsAvailable())
     {
         uint32_t displayWidth = 0;
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             m_frontPanelControl->GetScreenWidth(&displayWidth)
         );
         m_displayWidth = displayWidth;
 
         uint32_t displayHeight = 0;
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             m_frontPanelControl->GetScreenHeight(&displayHeight)
         );
         m_displayHeight = displayHeight;
@@ -166,7 +167,7 @@ void FrontPanelDisplay::SaveDDSToFile(_In_z_ const wchar_t * fileName) const
 
     if (!hFile)
     {
-        DX::ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
+        ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
     }
 
     auto_delete_file delonfail(hFile.get());
@@ -196,7 +197,7 @@ void FrontPanelDisplay::SaveDDSToFile(_In_z_ const wchar_t * fileName) const
     DWORD bytesWritten = 0;
     if (!WriteFile(hFile.get(), fileHeader, static_cast<DWORD>(HEADER_SIZE), &bytesWritten, nullptr))
     {
-        DX::ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
+        ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
     }
 
     if (bytesWritten != HEADER_SIZE)
@@ -206,7 +207,7 @@ void FrontPanelDisplay::SaveDDSToFile(_In_z_ const wchar_t * fileName) const
 
     if (!WriteFile(hFile.get(), m_buffer.get(), static_cast<DWORD>(imageSize), &bytesWritten, nullptr))
     {
-        DX::ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
+        ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
     }
 
     if (bytesWritten != imageSize)
@@ -236,44 +237,44 @@ void FrontPanelDisplay::SaveWICToFile(_In_z_ const wchar_t *filename, REFGUID gu
     }
 
     ComPtr<IWICStream> stream;
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         pWIC->CreateStream(stream.GetAddressOf())
     );
 
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         stream->InitializeFromFilename(filename, GENERIC_WRITE)
     );
 
     auto_delete_file_wic delonfail(stream, filename);
 
     ComPtr<IWICBitmapEncoder> encoder;
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         pWIC->CreateEncoder(guidContainerFormat, 0, encoder.GetAddressOf())
     );
 
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         encoder->Initialize(stream.Get(), WICBitmapEncoderNoCache)
     );
 
     ComPtr<IWICBitmapFrameEncode> frame;
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         encoder->CreateNewFrame(frame.GetAddressOf(), nullptr)
     );
 
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         frame->Initialize(nullptr)
     );
 
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         frame->SetSize(m_displayWidth, m_displayHeight)
     );
 
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         frame->SetResolution(72, 72)
     );
 
     WICPixelFormatGUID targetGuid = GUID_WICPixelFormat8bppGray;
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         frame->SetPixelFormat(&targetGuid)
     );
 
@@ -284,19 +285,19 @@ void FrontPanelDisplay::SaveWICToFile(_In_z_ const wchar_t *filename, REFGUID gu
     {
         // Conversion required to write
         ComPtr<IWICBitmap> source;
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             pWIC->CreateBitmapFromMemory(m_displayWidth, m_displayHeight, GUID_WICPixelFormat8bppGray,
                 rowPitch, imageSize,
                 reinterpret_cast<BYTE*>(m_buffer.get()), source.GetAddressOf())
         );
 
         ComPtr<IWICFormatConverter> FC;
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             pWIC->CreateFormatConverter(FC.GetAddressOf())
         );
 
         BOOL canConvert = FALSE;
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             FC->CanConvert(GUID_WICPixelFormat8bppGray, targetGuid, &canConvert)
         );
 
@@ -305,18 +306,18 @@ void FrontPanelDisplay::SaveWICToFile(_In_z_ const wchar_t *filename, REFGUID gu
             throw std::exception("CanConvert");
         }
 
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             FC->Initialize(source.Get(), targetGuid, WICBitmapDitherTypeNone, nullptr, 0, WICBitmapPaletteTypeFixedGray16)
         );
 
         WICRect rect = { 0, 0, static_cast<INT>(m_displayWidth), static_cast<INT>(m_displayHeight) };
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             frame->WriteSource(FC.Get(), &rect)
         );
     }
     else
     {
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             frame->WritePixels(
                 m_displayHeight,
                 rowPitch, imageSize,
@@ -324,11 +325,11 @@ void FrontPanelDisplay::SaveWICToFile(_In_z_ const wchar_t *filename, REFGUID gu
         );
     }
 
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         frame->Commit()
     );
 
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         encoder->Commit()
     );
 
@@ -357,12 +358,12 @@ BufferDesc FrontPanelDisplay::LoadWICFromFile(_In_z_ const wchar_t* filename, st
     }
 
     ComPtr<IWICBitmapDecoder> decoder;
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         pWIC->CreateDecoderFromFilename(filename, 0, GENERIC_READ, WICDecodeMetadataCacheOnDemand, decoder.GetAddressOf())
     );
 
     UINT frameCount = 0;
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         decoder->GetFrameCount(&frameCount)
     );
 
@@ -372,17 +373,17 @@ BufferDesc FrontPanelDisplay::LoadWICFromFile(_In_z_ const wchar_t* filename, st
     }
 
     ComPtr<IWICBitmapFrameDecode> frame;
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         decoder->GetFrame(frameindex, frame.GetAddressOf())
     );
 
     UINT width, height;
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         frame->GetSize(&width, &height)
     );
 
     WICPixelFormatGUID pixelFormat;
-    DX::ThrowIfFailed(
+    ThrowIfFailed(
         frame->GetPixelFormat(&pixelFormat)
     );
 
@@ -397,7 +398,7 @@ BufferDesc FrontPanelDisplay::LoadWICFromFile(_In_z_ const wchar_t* filename, st
         && m_displayHeight == height)
     {
         // No format conversion or resize needed
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             frame->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), data.get())
         );
     }
@@ -405,35 +406,35 @@ BufferDesc FrontPanelDisplay::LoadWICFromFile(_In_z_ const wchar_t* filename, st
     {
         // Resize
         ComPtr<IWICBitmapScaler> scaler;
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             pWIC->CreateBitmapScaler(scaler.GetAddressOf())
         );
 
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             scaler->Initialize(frame.Get(), m_displayWidth, m_displayHeight, WICBitmapInterpolationModeFant)
         );
 
         WICPixelFormatGUID pfScaler;
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             scaler->GetPixelFormat(&pfScaler)
         );
 
         if (memcmp(&GUID_WICPixelFormat8bppGray, &pfScaler, sizeof(GUID)) == 0)
         {
             // No format conversion needed
-            DX::ThrowIfFailed(
+            ThrowIfFailed(
                 scaler->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), data.get())
             );
         }
         else
         {
             ComPtr<IWICFormatConverter> FC;
-            DX::ThrowIfFailed(
+            ThrowIfFailed(
                 pWIC->CreateFormatConverter(FC.GetAddressOf())
             );
 
             BOOL canConvert = FALSE;
-            DX::ThrowIfFailed(
+            ThrowIfFailed(
                 FC->CanConvert(pfScaler, GUID_WICPixelFormat8bppGray, &canConvert)
             );
 
@@ -442,12 +443,12 @@ BufferDesc FrontPanelDisplay::LoadWICFromFile(_In_z_ const wchar_t* filename, st
                 throw std::exception("CanConvert");
             }
 
-            DX::ThrowIfFailed(
+            ThrowIfFailed(
                 FC->Initialize(scaler.Get(), GUID_WICPixelFormat8bppGray,
                     WICBitmapDitherTypeErrorDiffusion, nullptr, 0, WICBitmapPaletteTypeMedianCut)
             );
 
-            DX::ThrowIfFailed(
+            ThrowIfFailed(
                 FC->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), data.get())
             );
         }
@@ -456,12 +457,12 @@ BufferDesc FrontPanelDisplay::LoadWICFromFile(_In_z_ const wchar_t* filename, st
     {
         // Format conversion but no resize
         ComPtr<IWICFormatConverter> FC;
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             pWIC->CreateFormatConverter(FC.GetAddressOf())
         );
 
         BOOL canConvert = FALSE;
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             FC->CanConvert(pixelFormat, GUID_WICPixelFormat8bppGray, &canConvert)
         );
 
@@ -470,12 +471,12 @@ BufferDesc FrontPanelDisplay::LoadWICFromFile(_In_z_ const wchar_t* filename, st
             throw std::exception("CanConvert");
         }
 
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             FC->Initialize(frame.Get(), GUID_WICPixelFormat8bppGray,
                 WICBitmapDitherTypeErrorDiffusion, nullptr, 0, WICBitmapPaletteTypeMedianCut)
         );
 
-        DX::ThrowIfFailed(
+        ThrowIfFailed(
             FC->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), data.get())
         );
     }

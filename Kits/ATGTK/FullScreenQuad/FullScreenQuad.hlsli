@@ -3,8 +3,8 @@
 //
 // Common shader code to draw a full-screen quad
 //
-// Advanced Technology Group (ATG)
-// Copyright (C) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
 #ifndef __FULLSCREENQUAD_HLSLI__
