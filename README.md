@@ -73,6 +73,13 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td><a href="PCSamples/IntroGraphics/SimpleTrianglePC12">PC DX12</a></td>
  </tr>
  <tr>
+  <td></td>
+  <td><a href="UWPSamples/IntroGraphics/SimpleTriangleCppWinRT_UWP">UWP (C++/WinRT) DX11</a></td>
+  <td><a href="UWPSamples/IntroGraphics/SimpleTriangleCppWinRT_UWP12">UWP (C++/WinRT) DX12</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleTriangleCppWinRT">XDK (C++/WinRT) DX11</a></td>
+  <td><a href="XDKSamples/IntroGraphics/SimpleTriangleCppWinRT12">XDK (C++/WinRT) DX12</a></td>
+ </tr>
+ <tr>
   <td>Basic texturing</td>
   <td><a href="UWPSamples/IntroGraphics/SimpleTextureUWP">UWP DX11</a></td>
   <td><a href="UWPSamples/IntroGraphics/SimpleTextureUWP12">UWP DX12</a></td>
@@ -147,6 +154,11 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td><a href="XDKSamples/Graphics/SimpleHDR">XDK DX11</a></td>
   <td><a href="XDKSamples/Graphics/SimpleHDR12">XDK DX12</a></td>
  </tr>
+ <tr>
+  <td>ESRAM</td>
+  <td><a href="XDKSamples/Graphics/SimpleESRAM">XDK DX11</a></td>
+  <td><a href="XDKSamples/Graphics/SimpleESRAM12">XDK DX12</a></td>
+ </tr>
 </table>
 
 ### System
@@ -164,6 +176,7 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td><a href="XDKSamples/System/DataBreakpoints">Data Breakpoints</a></td>
   <td><a href="XDKSamples/System/GameDVR">Game DVR</a></td>
   <td><a href="XDKSamples/System/MemoryBanks">Memory Banks</a></td>
+  <td><a href="XDKSamples/System/UserManagement">User Management</a></td>
  </tr>
  <tr>
   <td>XDK (VS 2017 only)</td>
