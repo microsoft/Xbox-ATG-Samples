@@ -33,10 +33,21 @@ namespace
         return SUCCEEDED(hr);
     }
 #endif
+
+    inline DXGI_FORMAT NoSRGB(DXGI_FORMAT fmt)
+    {
+        switch (fmt)
+        {
+        case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:   return DXGI_FORMAT_R8G8B8A8_UNORM;
+        case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:   return DXGI_FORMAT_B8G8R8A8_UNORM;
+        case DXGI_FORMAT_B8G8R8X8_UNORM_SRGB:   return DXGI_FORMAT_B8G8R8X8_UNORM;
+        default:                                return fmt;
+        }
+    }
 };
 
 // Constructor for DeviceResources.
-DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depthBufferFormat, UINT backBufferCount, D3D_FEATURE_LEVEL minFeatureLevel) :
+DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depthBufferFormat, UINT backBufferCount, D3D_FEATURE_LEVEL minFeatureLevel, unsigned int flags) :
     m_screenViewport{},
     m_backBufferFormat(backBufferFormat),
     m_depthBufferFormat(depthBufferFormat),
@@ -45,6 +56,8 @@ DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depth
     m_window(nullptr),
     m_d3dFeatureLevel(D3D_FEATURE_LEVEL_9_1),
     m_outputSize{0, 0, 1, 1},
+    m_colorSpace(DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709),
+    m_options(flags | c_FlipPresent),
     m_deviceNotify(nullptr)
 {
 }
@@ -65,6 +78,55 @@ void DeviceResources::CreateDeviceResources()
         OutputDebugStringA("WARNING: Direct3D Debug Device is not available\n");
     }
 #endif
+
+    CreateFactory();
+
+    // Determines whether tearing support is available for fullscreen borderless windows.
+    if (m_options & c_AllowTearing)
+    {
+        BOOL allowTearing = FALSE;
+
+        ComPtr<IDXGIFactory5> factory5;
+        HRESULT hr = m_dxgiFactory.As(&factory5);
+        if (SUCCEEDED(hr))
+        {
+            hr = factory5->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing));
+        }
+
+        if (FAILED(hr) || !allowTearing)
+        {
+            m_options &= ~c_AllowTearing;
+#ifdef _DEBUG
+            OutputDebugStringA("WARNING: Variable refresh rate displays not supported");
+#endif
+        }
+    }
+
+    // Disable HDR if we are on an OS that can't support FLIP swap effects
+    if (m_options & c_EnableHDR)
+    {
+        ComPtr<IDXGIFactory5> factory5;
+        if (FAILED(m_dxgiFactory.As(&factory5)))
+        {
+            m_options &= ~c_EnableHDR;
+#ifdef _DEBUG
+            OutputDebugStringA("WARNING: HDR swap chains not supported");
+#endif
+        }
+    }
+
+    // Disable FLIP if not on a supporting OS
+    if (m_options & c_FlipPresent)
+    {
+        ComPtr<IDXGIFactory4> factory4;
+        if (FAILED(m_dxgiFactory.As(&factory4)))
+        {
+            m_options &= ~c_FlipPresent;
+#ifdef _DEBUG
+            OutputDebugStringA("INFO: Flip swap effects not supported");
+#endif
+        }
+    }
 
     // Determine DirectX hardware feature levels this app will support.
     static const D3D_FEATURE_LEVEL s_featureLevels[] =
@@ -108,9 +170,9 @@ void DeviceResources::CreateDeviceResources()
             s_featureLevels,
             featLevelCount,
             D3D11_SDK_VERSION,
-            device.GetAddressOf(),      // Returns the Direct3D device created.
-            &m_d3dFeatureLevel,         // Returns feature level of device created.
-            context.GetAddressOf()      // Returns the device immediate context.
+            device.GetAddressOf(),  // Returns the Direct3D device created.
+            &m_d3dFeatureLevel,     // Returns feature level of device created.
+            context.GetAddressOf()  // Returns the device immediate context.
             );
     }
 #if defined(NDEBUG)
@@ -194,6 +256,7 @@ void DeviceResources::CreateWindowSizeDependentResources()
     // Determine the render target size in pixels.
     UINT backBufferWidth = std::max<UINT>(m_outputSize.right - m_outputSize.left, 1);
     UINT backBufferHeight = std::max<UINT>(m_outputSize.bottom - m_outputSize.top, 1);
+    DXGI_FORMAT backBufferFormat = (m_options & (c_FlipPresent | c_AllowTearing | c_EnableHDR)) ? NoSRGB(m_backBufferFormat) : m_backBufferFormat;
 
     if (m_swapChain)
     {
@@ -202,8 +265,8 @@ void DeviceResources::CreateWindowSizeDependentResources()
             m_backBufferCount,
             backBufferWidth,
             backBufferHeight,
-            m_backBufferFormat,
-            0
+            backBufferFormat,
+            (m_options & c_AllowTearing) ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0
             );
 
         if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
@@ -227,35 +290,25 @@ void DeviceResources::CreateWindowSizeDependentResources()
     }
     else
     {
-        // Otherwise, create a new one using the same adapter as the existing Direct3D device.
-
-        // This sequence obtains the DXGI factory that was used to create the Direct3D device above.
-        ComPtr<IDXGIDevice1> dxgiDevice;
-        ThrowIfFailed(m_d3dDevice.As(&dxgiDevice));
-
-        ComPtr<IDXGIAdapter> dxgiAdapter;
-        ThrowIfFailed(dxgiDevice->GetAdapter(dxgiAdapter.GetAddressOf()));
-
-        ComPtr<IDXGIFactory2> dxgiFactory;
-        ThrowIfFailed(dxgiAdapter->GetParent(IID_PPV_ARGS(dxgiFactory.GetAddressOf())));
-
+        // Create a descriptor for the swap chain.
         DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
         swapChainDesc.Width = backBufferWidth;
         swapChainDesc.Height = backBufferHeight;
-        swapChainDesc.Format = m_backBufferFormat;
+        swapChainDesc.Format = backBufferFormat;
         swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         swapChainDesc.BufferCount = m_backBufferCount;
         swapChainDesc.SampleDesc.Count = 1;
         swapChainDesc.SampleDesc.Quality = 0;
         swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
-        swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+        swapChainDesc.SwapEffect = (m_options & (c_FlipPresent | c_AllowTearing | c_EnableHDR)) ? DXGI_SWAP_EFFECT_FLIP_DISCARD : DXGI_SWAP_EFFECT_DISCARD;
         swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
+        swapChainDesc.Flags = (m_options & c_AllowTearing) ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
 
         DXGI_SWAP_CHAIN_FULLSCREEN_DESC fsSwapChainDesc = {};
         fsSwapChainDesc.Windowed = TRUE;
 
         // Create a SwapChain from a Win32 window.
-        ThrowIfFailed(dxgiFactory->CreateSwapChainForHwnd(
+        ThrowIfFailed(m_dxgiFactory->CreateSwapChainForHwnd(
             m_d3dDevice.Get(),
             m_window,
             &swapChainDesc,
@@ -264,15 +317,19 @@ void DeviceResources::CreateWindowSizeDependentResources()
             ));
 
         // This class does not support exclusive full-screen mode and prevents DXGI from responding to the ALT+ENTER shortcut
-        ThrowIfFailed(dxgiFactory->MakeWindowAssociation(m_window, DXGI_MWA_NO_ALT_ENTER));
+        ThrowIfFailed(m_dxgiFactory->MakeWindowAssociation(m_window, DXGI_MWA_NO_ALT_ENTER));
     }
+
+    // Handle color space settings for HDR
+    UpdateColorSpace();
 
     // Create a render target view of the swap chain back buffer.
     ThrowIfFailed(m_swapChain->GetBuffer(0, IID_PPV_ARGS(m_renderTarget.ReleaseAndGetAddressOf())));
 
+    CD3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc(D3D11_RTV_DIMENSION_TEXTURE2D, m_backBufferFormat);
     ThrowIfFailed(m_d3dDevice->CreateRenderTargetView(
         m_renderTarget.Get(),
-        nullptr,
+        &renderTargetViewDesc,
         m_d3dRenderTargetView.ReleaseAndGetAddressOf()
         ));
 
@@ -330,6 +387,9 @@ bool DeviceResources::WindowSizeChanged(int width, int height)
     newRc.bottom = height;
     if (newRc == m_outputSize)
     {
+        // Handle color space settings for HDR
+        UpdateColorSpace();
+
         return false;
     }
 
@@ -365,6 +425,7 @@ void DeviceResources::HandleDeviceLost()
 #endif
 
     m_d3dDevice.Reset();
+    m_dxgiFactory.Reset();
 
     CreateDeviceResources();
     CreateWindowSizeDependentResources();
@@ -378,10 +439,19 @@ void DeviceResources::HandleDeviceLost()
 // Present the contents of the swap chain to the screen.
 void DeviceResources::Present() 
 {
-    // The first argument instructs DXGI to block until VSync, putting the application
-    // to sleep until the next VSync. This ensures we don't waste any cycles rendering
-    // frames that will never be displayed to the screen.
-    HRESULT hr = m_swapChain->Present(1, 0);
+    HRESULT hr;
+    if (m_options & c_AllowTearing)
+    {
+        // Recommended to always use tearing if supported when using a sync interval of 0.
+        hr = m_swapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
+    }
+    else
+    {
+        // The first argument instructs DXGI to block until VSync, putting the application
+        // to sleep until the next VSync. This ensures we don't waste any cycles rendering
+        // frames that will never be displayed to the screen.
+        hr = m_swapChain->Present(1, 0);
+    }
 
     // Discard the contents of the render target.
     // This is a valid operation only when the existing contents will be entirely
@@ -408,7 +478,36 @@ void DeviceResources::Present()
     else
     {
         ThrowIfFailed(hr);
+
+        if (!m_dxgiFactory->IsCurrent())
+        {
+            // Output information is cached on the DXGI Factory. If it is stale we need to create a new factory.
+            CreateFactory();
+        }
     }
+}
+
+void DeviceResources::CreateFactory()
+{
+#if defined(_DEBUG) && (_WIN32_WINNT >= 0x0603 /*_WIN32_WINNT_WINBLUE*/)
+    bool debugDXGI = false;
+    {
+        ComPtr<IDXGIInfoQueue> dxgiInfoQueue;
+        if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiInfoQueue.GetAddressOf()))))
+        {
+            debugDXGI = true;
+
+            ThrowIfFailed(CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(m_dxgiFactory.ReleaseAndGetAddressOf())));
+
+            dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
+            dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
+        }
+    }
+
+    if (!debugDXGI)
+#endif
+
+    ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(m_dxgiFactory.ReleaseAndGetAddressOf())));
 }
 
 // This method acquires the first available hardware adapter.
@@ -417,11 +516,8 @@ void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter)
 {
     *ppAdapter = nullptr;
 
-    ComPtr<IDXGIFactory1> dxgiFactory;
-    ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(dxgiFactory.GetAddressOf())));
-
     ComPtr<IDXGIAdapter1> adapter;
-    for (UINT adapterIndex = 0; DXGI_ERROR_NOT_FOUND != dxgiFactory->EnumAdapters1(adapterIndex, adapter.ReleaseAndGetAddressOf()); adapterIndex++)
+    for (UINT adapterIndex = 0; DXGI_ERROR_NOT_FOUND != m_dxgiFactory->EnumAdapters1(adapterIndex, adapter.ReleaseAndGetAddressOf()); adapterIndex++)
     {
         DXGI_ADAPTER_DESC1 desc;
         adapter->GetDesc1(&desc);
@@ -442,4 +538,66 @@ void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter)
     }
 
     *ppAdapter = adapter.Detach();
+}
+
+// Sets the color space for the swap chain in order to handle HDR output.
+void DeviceResources::UpdateColorSpace()
+{
+    DXGI_COLOR_SPACE_TYPE colorSpace = DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709;
+
+    bool isDisplayHDR10 = false;
+
+#if defined(NTDDI_WIN10_RS2)
+    if (m_swapChain)
+    {
+        ComPtr<IDXGIOutput> output;
+        if (SUCCEEDED(m_swapChain->GetContainingOutput(output.GetAddressOf())))
+        {
+            ComPtr<IDXGIOutput6> output6;
+            if (SUCCEEDED(output.As(&output6)))
+            {
+                DXGI_OUTPUT_DESC1 desc;
+                ThrowIfFailed(output6->GetDesc1(&desc));
+
+                if (desc.ColorSpace == DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020)
+                {
+                    // Display output is HDR10.
+                    isDisplayHDR10 = true;
+                }
+            }
+        }
+    }
+#endif
+
+    if ((m_options & c_EnableHDR) && isDisplayHDR10)
+    {
+        switch (m_backBufferFormat)
+        {
+        case DXGI_FORMAT_R10G10B10A2_UNORM:
+            // The application creates the HDR10 signal.
+            colorSpace = DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020;
+            break;
+
+        case DXGI_FORMAT_R16G16B16A16_FLOAT:
+            // The system creates the HDR10 signal; application uses linear values.
+            colorSpace = DXGI_COLOR_SPACE_RGB_FULL_G10_NONE_P709;
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    m_colorSpace = colorSpace;
+
+    ComPtr<IDXGISwapChain3> swapChain3;
+    if (SUCCEEDED(m_swapChain.As(&swapChain3)))
+    {
+        UINT colorSpaceSupport = 0;
+        if (SUCCEEDED(swapChain3->CheckColorSpaceSupport(colorSpace, &colorSpaceSupport))
+            && (colorSpaceSupport & DXGI_SWAP_CHAIN_COLOR_SPACE_SUPPORT_FLAG_PRESENT))
+        {
+            ThrowIfFailed(swapChain3->SetColorSpace1(colorSpace));
+        }
+    }
 }

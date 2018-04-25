@@ -9,7 +9,6 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
-#include <Windows.Gaming.Input.h>
 
 
 // A basic sample implementation that creates a D3D11 device and

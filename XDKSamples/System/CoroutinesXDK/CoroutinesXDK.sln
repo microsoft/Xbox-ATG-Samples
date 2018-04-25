@@ -1,11 +1,11 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27428.2027
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK_XboxOneXDK_2017", "..\..\..\Kits\DirectXTK\DirectXTK_XboxOneXDK_2017.vcxproj", "{303DE40A-E4FA-4133-A7FC-07C1C10FA4D1}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CoroutinesXDK", "CoroutinesXDK.vcxproj", "{01215E5B-FA7B-4BFB-B3FB-4858FD3C153F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK_XboxOneXDK_2017", "..\..\..\Kits\DirectXTK\DirectXTK_XboxOneXDK_2017.vcxproj", "{4FDFDCCD-EE2E-415C-B458-1E8FDB0D85F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,12 +14,6 @@ Global
 		Release|Durango = Release|Durango
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{303DE40A-E4FA-4133-A7FC-07C1C10FA4D1}.Debug|Durango.ActiveCfg = Debug|Durango
-		{303DE40A-E4FA-4133-A7FC-07C1C10FA4D1}.Debug|Durango.Build.0 = Debug|Durango
-		{303DE40A-E4FA-4133-A7FC-07C1C10FA4D1}.Profile|Durango.ActiveCfg = Profile|Durango
-		{303DE40A-E4FA-4133-A7FC-07C1C10FA4D1}.Profile|Durango.Build.0 = Profile|Durango
-		{303DE40A-E4FA-4133-A7FC-07C1C10FA4D1}.Release|Durango.ActiveCfg = Release|Durango
-		{303DE40A-E4FA-4133-A7FC-07C1C10FA4D1}.Release|Durango.Build.0 = Release|Durango
 		{01215E5B-FA7B-4BFB-B3FB-4858FD3C153F}.Debug|Durango.ActiveCfg = Debug|Durango
 		{01215E5B-FA7B-4BFB-B3FB-4858FD3C153F}.Debug|Durango.Build.0 = Debug|Durango
 		{01215E5B-FA7B-4BFB-B3FB-4858FD3C153F}.Debug|Durango.Deploy.0 = Debug|Durango
@@ -29,11 +23,17 @@ Global
 		{01215E5B-FA7B-4BFB-B3FB-4858FD3C153F}.Release|Durango.ActiveCfg = Release|Durango
 		{01215E5B-FA7B-4BFB-B3FB-4858FD3C153F}.Release|Durango.Build.0 = Release|Durango
 		{01215E5B-FA7B-4BFB-B3FB-4858FD3C153F}.Release|Durango.Deploy.0 = Release|Durango
+		{4FDFDCCD-EE2E-415C-B458-1E8FDB0D85F2}.Debug|Durango.ActiveCfg = Debug|Durango
+		{4FDFDCCD-EE2E-415C-B458-1E8FDB0D85F2}.Debug|Durango.Build.0 = Debug|Durango
+		{4FDFDCCD-EE2E-415C-B458-1E8FDB0D85F2}.Profile|Durango.ActiveCfg = Profile|Durango
+		{4FDFDCCD-EE2E-415C-B458-1E8FDB0D85F2}.Profile|Durango.Build.0 = Profile|Durango
+		{4FDFDCCD-EE2E-415C-B458-1E8FDB0D85F2}.Release|Durango.ActiveCfg = Release|Durango
+		{4FDFDCCD-EE2E-415C-B458-1E8FDB0D85F2}.Release|Durango.Build.0 = Release|Durango
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {4788B593-CB71-4BC8-98BA-A4BCD6935BEA}
+		SolutionGuid = {D8C661F9-BB51-4EDB-90CC-7E2039899736}
 	EndGlobalSection
 EndGlobal

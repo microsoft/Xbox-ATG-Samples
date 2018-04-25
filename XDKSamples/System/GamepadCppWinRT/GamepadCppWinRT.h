@@ -9,7 +9,7 @@
 
 #include "DeviceResources.h"
 #include "StepTimer.h"
-#include "winrt\Windows.Xbox.Input.h"
+
 
 // A basic sample implementation that creates a D3D11 device and
 // provides a render loop.

@@ -376,7 +376,7 @@ void SharedSimplePBR::CreateDeviceDependentResources()
         }
 
         // Skybox
-        m_skybox = std::make_unique<ATG::Skybox>(device, m_srvPile->GetGpuHandle(StaticDescriptors::RadianceTex), hdrBufferRts, *m_commonStates);
+        m_skybox = std::make_unique<DX::Skybox>(device, m_srvPile->GetGpuHandle(StaticDescriptors::RadianceTex), hdrBufferRts, *m_commonStates);
     }
  
     // The current map has too much detail removed at last mips, scale back down to

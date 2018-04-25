@@ -11,6 +11,8 @@
 #include "ATGColors.h"
 #include "ControllerFont.h"
 
+extern void ExitSample();
+
 using namespace DirectX;
 using namespace Windows::Gaming::Input;
 using namespace Windows::Foundation;
@@ -126,6 +128,8 @@ void Sample::Update(DX::StepTimer const&)
 
     m_buttonString = L"Buttons pressed:  ";
 
+    int exitComboPressed = 0;
+
     if ((m_reading.Buttons & GamepadButtons::DPadUp) == GamepadButtons::DPadUp)
     {
         m_buttonString += L"[DPad]Up ";
@@ -169,11 +173,13 @@ void Sample::Update(DX::StepTimer const&)
     if ((m_reading.Buttons & GamepadButtons::LeftShoulder) == GamepadButtons::LeftShoulder)
     {
         m_buttonString += L"[LB] ";
+        exitComboPressed += 1;
     }
     
     if ((m_reading.Buttons & GamepadButtons::RightShoulder) == GamepadButtons::RightShoulder)
     {
         m_buttonString += L"[RB] ";
+        exitComboPressed += 1;
     }
     
     if ((m_reading.Buttons & GamepadButtons::LeftThumbstick) == GamepadButtons::LeftThumbstick)
@@ -189,11 +195,13 @@ void Sample::Update(DX::StepTimer const&)
     if ((m_reading.Buttons & GamepadButtons::Menu) == GamepadButtons::Menu)
     {
         m_buttonString += L"[Menu] ";
+        exitComboPressed += 1;
     }
     
     if ((m_reading.Buttons & GamepadButtons::View) == GamepadButtons::View)
     {
         m_buttonString += L"[View] ";
+        exitComboPressed += 1;
     }
 
     m_leftTrigger = m_reading.LeftTrigger;
@@ -202,6 +210,9 @@ void Sample::Update(DX::StepTimer const&)
     m_leftStickY = m_reading.LeftThumbstickY;
     m_rightStickX = m_reading.RightThumbstickX;
     m_rightStickY = m_reading.RightThumbstickY;
+
+    if (exitComboPressed == 4)
+        ExitSample();
 
     PIXEndEvent();
 }
@@ -255,6 +266,13 @@ void Sample::Render()
     {
         m_font->DrawString(m_spriteBatch.get(), L"No controller connected", pos, ATG::Colors::Orange);
     }
+
+    DX::DrawControllerString(m_spriteBatch.get(),
+        m_font.get(), m_ctrlFont.get(),
+        L"[RB][LB][View][Menu] Exit",
+        XMFLOAT2(float(safeRect.left),
+            float(safeRect.bottom) - m_font->GetLineSpacing()),
+        ATG::Colors::LightGrey);
 
     m_spriteBatch->End();
 

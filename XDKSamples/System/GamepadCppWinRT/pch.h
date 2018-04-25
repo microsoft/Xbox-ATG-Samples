@@ -37,6 +37,7 @@
 #include "winrt/Windows.ApplicationModel.Activation.h"
 #include "winrt/Windows.UI.Core.h"
 #include "winrt/Windows.Foundation.h"
+#include "winrt/Windows.Xbox.Input.h"
 
 #include "GraphicsMemory.h"
 #include "DDSTextureLoader.h"

@@ -83,5 +83,5 @@ private:
     std::vector< std::unique_ptr<ATG::PBRModel>>    m_pbrModels;
 
     // Skybox
-    std::unique_ptr<ATG::Skybox>                    m_skybox;
+    std::unique_ptr<DX::Skybox>                     m_skybox;
 };

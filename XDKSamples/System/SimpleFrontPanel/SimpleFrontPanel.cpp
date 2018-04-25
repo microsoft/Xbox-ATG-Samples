@@ -389,14 +389,14 @@ void Sample::CaptureFrontPanelScreen(const wchar_t * fileName)
     }
 
     // Create file
-    ScopedHandle hFile(safe_handle(CreateFile2(fileName, GENERIC_WRITE | DELETE, 0, CREATE_ALWAYS, nullptr)));
+    DX::ScopedHandle hFile(DX::safe_handle(CreateFile2(fileName, GENERIC_WRITE | DELETE, 0, CREATE_ALWAYS, nullptr)));
 
     if (!hFile)
     {
         DX::ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
     }
 
-    auto_delete_file delonfail(hFile.get());
+    DX::auto_delete_file delonfail(hFile.get());
 
     // Setup header
     const size_t HEADER_SIZE = sizeof(uint32_t) + sizeof(DDS_HEADER);

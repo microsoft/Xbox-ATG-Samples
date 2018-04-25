@@ -37,7 +37,13 @@
 #include <wrl/event.h>
 
 #include <d3d12.h>
+
+#if defined(NTDDI_WIN10_RS2)
+#include <dxgi1_6.h>
+#else
 #include <dxgi1_5.h>
+#endif
+
 #include <DirectXMath.h>
 #include <DirectXColors.h>
 
@@ -48,12 +54,12 @@
 #include <memory>
 #include <stdexcept>
 
+#include <stdio.h>
+#include <pix.h>
+
 #ifdef _DEBUG
 #include <dxgidebug.h>
 #endif
-
-#include <stdio.h>
-#include <pix.h>
 
 #include "Audio.h"
 #include "CommonStates.h"
@@ -86,7 +92,7 @@ namespace DX
         virtual const char* what() const override
         {
             static char s_str[64] = {};
-            sprintf_s(s_str, "Failure with HRESULT of %08X", result);
+            sprintf_s(s_str, "Failure with HRESULT of %08X", static_cast<unsigned int>(result));
             return s_str;
         }
 

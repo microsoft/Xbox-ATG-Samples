@@ -9,6 +9,7 @@
 #include "CoroutinesXDK.h"
 
 #include "ATGColors.h"
+#include "ControllerFont.h"
 
 extern void ExitSample();
 
@@ -272,10 +273,11 @@ void Sample::Render()
     {
         // lock guard is required since m_currentUser is accessed across multiple threads
         std::lock_guard<std::mutex> lock(m_userMutex);
-        swprintf_s(buffer, L"Press 'A' to change current user\nPress 'X' to query users\nPress 'Y' to open virtual keyboard\nCurrent user: %ls",
+        swprintf_s(buffer, L"Press [A] to change current user\nPress [X] to query users\nPress [Y] to open virtual keyboard\nCurrent user: %ls",
             (m_currentUser == nullptr ? L"<None>" : m_currentUser->DisplayInfo->Gamertag->Begin()));
     }
-    m_font->DrawString(m_spriteBatch.get(), buffer, DirectX::XMFLOAT2{ posx, posy }, DirectX::Colors::White);
+
+    DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), buffer, DirectX::XMFLOAT2{ posx, posy }, DirectX::Colors::White);
 
     posy += 200.f;
 
@@ -370,6 +372,7 @@ void Sample::CreateDeviceDependentResources()
     m_graphicsMemory = std::make_unique<GraphicsMemory>(device, m_deviceResources->GetBackBufferCount());
 
     m_font = std::make_unique<SpriteFont>(device, L"SegoeUI_24.spritefont");
+    m_ctrlFont = std::make_unique<SpriteFont>(device, L"XboxOneControllerLegendSmall.spritefont");
     m_spriteBatch = std::make_unique<SpriteBatch>(context);
 }
 

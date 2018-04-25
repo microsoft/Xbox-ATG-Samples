@@ -183,6 +183,7 @@ private:
     // DirectXTK objects.
     std::unique_ptr<DirectX::GraphicsMemory>    m_graphicsMemory;
     std::unique_ptr<DirectX::SpriteFont>        m_font;
+    std::unique_ptr<DirectX::SpriteFont>        m_ctrlFont;
     std::unique_ptr<DirectX::SpriteBatch>       m_spriteBatch;
 
     Windows::Foundation::Collections::IVectorView<Windows::Xbox::System::User^>^    m_users;
