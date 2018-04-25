@@ -1,0 +1,57 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2002
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleTriangleCppWinRT_UWP", "SimpleTriangleCppWinRT_UWP.vcxproj", "{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK", "..\..\..\Kits\DirectXTK\DirectXTK_Windows10.vcxproj", "{F4776924-619C-42C7-88B2-82C947CCC9E7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ARM = Release|ARM
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Debug|ARM.ActiveCfg = Debug|ARM
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Debug|ARM.Build.0 = Debug|ARM
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Debug|ARM.Deploy.0 = Debug|ARM
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Debug|x64.ActiveCfg = Debug|x64
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Debug|x64.Build.0 = Debug|x64
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Debug|x64.Deploy.0 = Debug|x64
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Debug|x86.ActiveCfg = Debug|Win32
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Debug|x86.Build.0 = Debug|Win32
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Debug|x86.Deploy.0 = Debug|Win32
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Release|ARM.ActiveCfg = Release|ARM
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Release|ARM.Build.0 = Release|ARM
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Release|ARM.Deploy.0 = Release|ARM
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Release|x64.ActiveCfg = Release|x64
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Release|x64.Build.0 = Release|x64
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Release|x64.Deploy.0 = Release|x64
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Release|x86.ActiveCfg = Release|Win32
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Release|x86.Build.0 = Release|Win32
+		{493423CC-08E6-4EE5-ADF1-CCFE6FF533AC}.Release|x86.Deploy.0 = Release|Win32
+		{F4776924-619C-42C7-88B2-82C947CCC9E7}.Debug|ARM.ActiveCfg = Debug|ARM
+		{F4776924-619C-42C7-88B2-82C947CCC9E7}.Debug|ARM.Build.0 = Debug|ARM
+		{F4776924-619C-42C7-88B2-82C947CCC9E7}.Debug|x64.ActiveCfg = Debug|x64
+		{F4776924-619C-42C7-88B2-82C947CCC9E7}.Debug|x64.Build.0 = Debug|x64
+		{F4776924-619C-42C7-88B2-82C947CCC9E7}.Debug|x86.ActiveCfg = Debug|Win32
+		{F4776924-619C-42C7-88B2-82C947CCC9E7}.Debug|x86.Build.0 = Debug|Win32
+		{F4776924-619C-42C7-88B2-82C947CCC9E7}.Release|ARM.ActiveCfg = Release|ARM
+		{F4776924-619C-42C7-88B2-82C947CCC9E7}.Release|ARM.Build.0 = Release|ARM
+		{F4776924-619C-42C7-88B2-82C947CCC9E7}.Release|x64.ActiveCfg = Release|x64
+		{F4776924-619C-42C7-88B2-82C947CCC9E7}.Release|x64.Build.0 = Release|x64
+		{F4776924-619C-42C7-88B2-82C947CCC9E7}.Release|x86.ActiveCfg = Release|Win32
+		{F4776924-619C-42C7-88B2-82C947CCC9E7}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5833D4DE-5466-4350-B78A-35944F24868A}
+	EndGlobalSection
+EndGlobal
