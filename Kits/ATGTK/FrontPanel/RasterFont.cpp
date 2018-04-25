@@ -17,6 +17,7 @@
 #include <fstream>
 
 using namespace ATG;
+using namespace DX;
 
 //--------------------------------------------------------------------------------------
 // RasterGlyphSheet implementation

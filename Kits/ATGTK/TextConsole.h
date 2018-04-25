@@ -6,12 +6,8 @@
 //
 // Note: This is best used with monospace rather than proportional fonts
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
-// Copyright(c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
 #pragma once
@@ -41,13 +37,18 @@ namespace DX
 
         void Clear();
 
-        void Write(_In_z_ const wchar_t *str);
-        void WriteLine(_In_z_ const wchar_t *str);
-        void Format(_In_z_ _Printf_format_string_ const wchar_t* strFormat, ...);
+        void Write(_In_z_ const wchar_t* str);
+		void XM_CALLCONV Write(DirectX::FXMVECTOR color, _In_z_ const wchar_t* str);
+
+        void WriteLine(_In_z_ const wchar_t* str);
+		void XM_CALLCONV WriteLine(DirectX::FXMVECTOR color, _In_z_ const wchar_t* str);
+
+		void Format(_In_z_ _Printf_format_string_ const wchar_t* strFormat, ...);
+		void XM_CALLCONV Format(DirectX::CXMVECTOR color, _In_z_ _Printf_format_string_ const wchar_t* strFormat, ...);
 
         void SetWindow(const RECT& layout);
 
-        void XM_CALLCONV SetForegroundColor(DirectX::FXMVECTOR color) { DirectX::XMStoreFloat4(&m_textColor, color); }
+        void XM_CALLCONV SetForegroundColor(DirectX::FXMVECTOR color) { DirectX::XMStoreFloat4(&m_foregroundColor, color); }
 
         void SetDebugOutput(bool debug) { m_debugOutput = debug; }
 
@@ -59,11 +60,24 @@ namespace DX
         void SetRotation(DXGI_MODE_ROTATION rotation);
 
     protected:
-        void ProcessString(const wchar_t* str);
+		void XM_CALLCONV FormatImpl(DirectX::FXMVECTOR color, _In_z_ _Printf_format_string_ const wchar_t* strFormat, va_list args);
+        void XM_CALLCONV ProcessString(DirectX::FXMVECTOR color, const wchar_t* str);
         void IncrementLine();
 
-        RECT                                            m_layout;
-        DirectX::XMFLOAT4                               m_textColor;
+		struct Line
+		{
+			wchar_t*			m_text;
+			DirectX::XMFLOAT4	m_textColor;
+
+			static const DirectX::XMVECTORF32 s_defaultColor;
+
+			Line() : m_text(nullptr), m_textColor(s_defaultColor) {}
+
+			void XM_CALLCONV SetColor(DirectX::FXMVECTOR color = s_defaultColor) { XMStoreFloat4(&m_textColor, color); }
+		};
+
+		RECT                                            m_layout;
+        DirectX::XMFLOAT4                               m_foregroundColor;
 
         bool                                            m_debugOutput;
 
@@ -73,7 +87,7 @@ namespace DX
         unsigned int                                    m_currentLine;
 
         std::unique_ptr<wchar_t[]>                      m_buffer;
-        std::unique_ptr<wchar_t*[]>                     m_lines;
+        std::unique_ptr<Line[]>							m_lines;
         std::vector<wchar_t>                            m_tempBuffer;
 
         std::unique_ptr<DirectX::SpriteBatch>           m_batch;

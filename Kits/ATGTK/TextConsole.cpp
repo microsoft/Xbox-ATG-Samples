@@ -1,12 +1,8 @@
 //--------------------------------------------------------------------------------------
 // File: TextConsole.cpp
 //
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
-// Copyright(c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
 #include "pch.h"
@@ -23,8 +19,10 @@ using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 using namespace DX;
 
+const XMVECTORF32 TextConsole::Line::s_defaultColor = Colors::Transparent;
+
 TextConsole::TextConsole()
-    : m_textColor(1.f, 1.f, 1.f, 1.f),
+    : m_foregroundColor(1.f, 1.f, 1.f, 1.f),
     m_debugOutput(false)
 {
     Clear();
@@ -32,7 +30,7 @@ TextConsole::TextConsole()
 
 
 TextConsole::TextConsole(ID3D11DeviceContext* context, const wchar_t* fontName)
-    : m_textColor(1.f, 1.f, 1.f, 1.f),
+    : m_foregroundColor(1.f, 1.f, 1.f, 1.f),
     m_debugOutput(false)
 {
     RestoreDevice(context, fontName);
@@ -50,7 +48,7 @@ void TextConsole::Render()
     float x = float(m_layout.left);
     float y = float(m_layout.top);
     
-    XMVECTOR color = XMLoadFloat4(&m_textColor);
+	XMVECTOR foregroundColor = XMLoadFloat4(&m_foregroundColor);
 
     m_batch->Begin();
 
@@ -60,9 +58,10 @@ void TextConsole::Render()
     {
         XMFLOAT2 pos(x, y + lineSpacing * float(line));
 
-        if (*m_lines[textLine])
+        if (*(m_lines[textLine].m_text))
         {
-            m_font->DrawString(m_batch.get(), m_lines[textLine], pos, color);
+			XMVECTOR lineColor = XMLoadFloat4(&m_lines[textLine].m_textColor);
+			m_font->DrawString(m_batch.get(), m_lines[textLine].m_text, pos, XMColorEqual(lineColor, Line::s_defaultColor) ? foregroundColor : lineColor);
         }
 
         textLine = unsigned int(textLine + 1) % m_rows;
@@ -81,40 +80,62 @@ void TextConsole::Clear()
         memset(m_buffer.get(), 0, sizeof(wchar_t) * (m_columns + 1) * m_rows);
     }
 
-    m_currentColumn = m_currentLine = 0;
+	if (m_lines)
+	{
+		for (unsigned int line = 0; line < m_rows; ++line)
+		{
+			m_lines[line].SetColor();
+		}
+	}
+	
+	m_currentColumn = m_currentLine = 0;
 }
 
 
 _Use_decl_annotations_
-void TextConsole::Write(const wchar_t *str)
+void TextConsole::Write(const wchar_t* str)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+	Write(Line::s_defaultColor, str);
+}
 
-    ProcessString(str);
+
+_Use_decl_annotations_
+void XM_CALLCONV TextConsole::Write(FXMVECTOR color, const wchar_t* str)
+{
+	std::lock_guard<std::mutex> lock(m_mutex);
+
+	ProcessString(color, str);
 
 #ifndef NDEBUG
-    if (m_debugOutput)
-    {
-        OutputDebugStringW(str);
-    }
+	if (m_debugOutput)
+	{
+		OutputDebugStringW(str);
+	}
 #endif
 }
 
 
 _Use_decl_annotations_
-void TextConsole::WriteLine(const wchar_t *str)
+void TextConsole::WriteLine(const wchar_t* str)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+	WriteLine(Line::s_defaultColor, str);
+}
 
-    ProcessString(str);
-    IncrementLine();
+
+_Use_decl_annotations_
+void XM_CALLCONV TextConsole::WriteLine(FXMVECTOR color, const wchar_t* str)
+{
+	std::lock_guard<std::mutex> lock(m_mutex);
+
+	ProcessString(color, str);
+	IncrementLine();
 
 #ifndef NDEBUG
-    if (m_debugOutput)
-    {
-        OutputDebugStringW(str);
-        OutputDebugStringW(L"\n");
-    }
+	if (m_debugOutput)
+	{
+		OutputDebugStringW(str);
+		OutputDebugStringW(L"\n");
+	}
 #endif
 }
 
@@ -122,29 +143,48 @@ void TextConsole::WriteLine(const wchar_t *str)
 _Use_decl_annotations_
 void TextConsole::Format(const wchar_t* strFormat, ...)
 {
-    std::lock_guard<std::mutex> lock(m_mutex);
+	va_list argList;
+	va_start(argList, strFormat);
 
-    va_list argList;
-    va_start(argList, strFormat);
+	FormatImpl(Line::s_defaultColor, strFormat, argList);
 
-    size_t len = _vscwprintf(strFormat, argList) + 1;
+	va_end(argList);
+}
 
-    if (m_tempBuffer.size() < len)
-        m_tempBuffer.resize(len);
 
-    memset(m_tempBuffer.data(), 0, sizeof(wchar_t) * len);
+_Use_decl_annotations_
+void XM_CALLCONV TextConsole::Format(CXMVECTOR color, const wchar_t* strFormat, ...)
+{
+	va_list argList;
+	va_start(argList, strFormat);
 
-    vswprintf_s(m_tempBuffer.data(), m_tempBuffer.size(), strFormat, argList);
+	FormatImpl(color, strFormat, argList);
 
-    va_end(argList);
+	va_end(argList);
+}
 
-    ProcessString(m_tempBuffer.data());
+
+_Use_decl_annotations_
+void XM_CALLCONV TextConsole::FormatImpl(FXMVECTOR color, const wchar_t* strFormat, va_list args)
+{
+	std::lock_guard<std::mutex> lock(m_mutex);
+
+	size_t len = _vscwprintf(strFormat, args) + 1;
+
+	if (m_tempBuffer.size() < len)
+		m_tempBuffer.resize(len);
+
+	memset(m_tempBuffer.data(), 0, sizeof(wchar_t) * len);
+
+	vswprintf_s(m_tempBuffer.data(), m_tempBuffer.size(), strFormat, args);
+
+	ProcessString(color, m_tempBuffer.data());
 
 #ifndef NDEBUG
-    if (m_debugOutput)
-    {
-        OutputDebugStringW(m_tempBuffer.data());
-    }
+	if (m_debugOutput)
+	{
+		OutputDebugStringW(m_tempBuffer.data());
+	}
 #endif
 }
 
@@ -166,10 +206,10 @@ void TextConsole::SetWindow(const RECT& layout)
     std::unique_ptr<wchar_t[]> buffer(new wchar_t[(columns + 1) * rows]);
     memset(buffer.get(), 0, sizeof(wchar_t) * (columns + 1) * rows);
 
-    std::unique_ptr<wchar_t*[]> lines(new wchar_t*[rows]);
+    std::unique_ptr<Line[]> lines(new Line[rows]);
     for (unsigned int line = 0; line < rows; ++line)
     {
-        lines[line] = buffer.get() + (columns + 1) * line;
+        lines[line].m_text = buffer.get() + (columns + 1) * line;
     }
 
     if (m_lines)
@@ -179,7 +219,8 @@ void TextConsole::SetWindow(const RECT& layout)
 
         for (unsigned int line = 0; line < r; ++line)
         {
-            memcpy(lines[line], m_lines[line], c * sizeof(wchar_t));
+            memcpy(lines[line].m_text, m_lines[line].m_text, c * sizeof(wchar_t));
+			lines[line].m_textColor = m_lines[line].m_textColor;
         }
     }
 
@@ -236,10 +277,12 @@ void TextConsole::SetRotation(DXGI_MODE_ROTATION rotation)
 }
 
 
-void TextConsole::ProcessString(const wchar_t* str)
+void TextConsole::ProcessString(FXMVECTOR color, const wchar_t* str)
 {
     if (!m_lines)
         return;
+
+	m_lines[m_currentLine].SetColor(color);
 
     float width = float(m_layout.right - m_layout.left);
 
@@ -248,7 +291,8 @@ void TextConsole::ProcessString(const wchar_t* str)
         if (*ch == '\n')
         {
             IncrementLine();
-            continue;
+			m_lines[m_currentLine].SetColor(color);
+			continue;
         }
 
         bool increment = false;
@@ -259,12 +303,12 @@ void TextConsole::ProcessString(const wchar_t* str)
         }
         else
         {
-            m_lines[m_currentLine][m_currentColumn] = *ch;
+            m_lines[m_currentLine].m_text[m_currentColumn] = *ch;
 
-            auto fontSize = m_font->MeasureString(m_lines[m_currentLine]);
+            auto fontSize = m_font->MeasureString(m_lines[m_currentLine].m_text);
             if (XMVectorGetX(fontSize) > width)
             {
-                m_lines[m_currentLine][m_currentColumn] = L'\0';
+                m_lines[m_currentLine].m_text[m_currentColumn] = L'\0';
 
                 increment = true;
             }
@@ -273,8 +317,9 @@ void TextConsole::ProcessString(const wchar_t* str)
         if (increment)
         {
             IncrementLine();
-            m_lines[m_currentLine][0] = *ch;
-        }
+            m_lines[m_currentLine].m_text[0] = *ch;
+			m_lines[m_currentLine].SetColor(color);
+		}
 
         ++m_currentColumn;
     }
@@ -288,7 +333,7 @@ void TextConsole::IncrementLine()
 
     m_currentLine = (m_currentLine + 1) % m_rows;
     m_currentColumn = 0;
-    memset(m_lines[m_currentLine], 0, sizeof(wchar_t) * (m_columns + 1));
+    memset(m_lines[m_currentLine].m_text, 0, sizeof(wchar_t) * (m_columns + 1));
 }
 
 

@@ -1,10 +1,10 @@
 //--------------------------------------------------------------------------------------
 // SkyboxEffect.cpp
 //
-// A sky box rendering helper for DirectX 12.
+// A sky box rendering helper.
 //
-// Advanced Technology Group (ATG)
-// Copyright (C) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
 #include "pch.h"
@@ -13,7 +13,7 @@
 #include <..\Src\EffectCommon.h>
 
 using namespace DirectX;
-using namespace ATG;
+using namespace DX;
 
 // Include the precompiled shader code.
 namespace
@@ -44,7 +44,7 @@ struct SkyboxEffectTraits
 };
 
 
-class ATG::SkyboxEffect::Impl : public EffectBase<SkyboxEffectTraits>
+class SkyboxEffect::Impl : public EffectBase<SkyboxEffectTraits>
 {
 public:
 

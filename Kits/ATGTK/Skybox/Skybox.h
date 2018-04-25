@@ -1,17 +1,17 @@
 //--------------------------------------------------------------------------------------
 // Skybox.h
 //
-// A sky box rendering helper for DirectX 12. Takes DDS cubemap as input. 
+// A sky box rendering helper. Takes DDS cubemap as input. 
 // 
-// Advanced Technology Group (ATG)
-// Copyright (C) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 #pragma once
 
 #include <GeometricPrimitive.h>
 #include "SkyboxEffect.h"
 
-namespace ATG
+namespace DX
 {
     class Skybox
     {
@@ -20,20 +20,21 @@ namespace ATG
             ID3D12Device* device,
             D3D12_GPU_DESCRIPTOR_HANDLE cubeTexture,
             const DirectX::RenderTargetState& rtState,
-            const DirectX::CommonStates& commonStates)
+            const DirectX::CommonStates& commonStates,
+            bool lhcoords = false)
         {
             using namespace DirectX;
             using namespace DirectX::SimpleMath;
 
             // Skybox effect
-            EffectPipelineStateDescription skyPSD(&ATG::SkyboxEffect::VertexType::InputLayout,
+            EffectPipelineStateDescription skyPSD(&SkyboxEffect::VertexType::InputLayout,
                 CommonStates::Opaque,
                 CommonStates::DepthRead,
-                CommonStates::CullClockwise,
+                lhcoords ? CommonStates::CullCounterClockwise : CommonStates::CullClockwise,
                 rtState,
                 D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE);
 
-            m_effect = std::make_unique<ATG::SkyboxEffect>(device, skyPSD);
+            m_effect = std::make_unique<SkyboxEffect>(device, skyPSD);
             m_effect->SetTexture(cubeTexture, commonStates.LinearWrap());
 
             // "Skybox" geometry
@@ -53,6 +54,6 @@ namespace ATG
 
     private:
         std::unique_ptr<DirectX::GeometricPrimitive>    m_sky;
-        std::unique_ptr<ATG::SkyboxEffect>              m_effect;
+        std::unique_ptr<SkyboxEffect>                   m_effect;
     };
 }
