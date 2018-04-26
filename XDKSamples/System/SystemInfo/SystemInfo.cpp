@@ -236,11 +236,25 @@ void Sample::Render()
             swprintf_s(buff, L"%u.%u.%u.%u", HIWORD(li.HighPart), LOWORD(li.HighPart), HIWORD(li.LowPart), LOWORD(li.LowPart));
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
 
+            // For logging the Host OS/recovery version use this Xbox One XDK specific API
+            y += m_smallFont->GetLineSpacing() * 2;
+
+            SYSTEMOSVERSIONINFO systemOSver = {};
+            GetSystemOSVersion(&systemOSver);
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"GetSystemOSVersion (Host OS)", left, y, m_scale);
+
+            swprintf_s(buff, L"%u.%u.%u.%u", systemOSver.MajorVersion, systemOSver.MinorVersion, systemOSver.BuildNumber, systemOSver.Revision);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
+
             // The _XDK_VER captures at compile-time the version of the Xbox One XDK used to build the application
             y += m_smallFont->GetLineSpacing() * 2;
 
-            swprintf_s(buff, L"%u.%u", HIWORD(_XDK_VER), LOWORD(_XDK_VER));
+            swprintf_s(buff, L"%08X", _XDK_VER);
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"_XDK_VER", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
+
+            swprintf_s(buff, L"%u.%u", HIWORD(_XDK_VER), LOWORD(_XDK_VER));
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
 
             if (li.LowPart != _XDK_VER)
