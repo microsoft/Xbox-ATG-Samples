@@ -134,7 +134,7 @@ public:
             std::swap(outputWidth, outputHeight);
         }
 
-        m_sample->Initialize(winrt::get_abi(window), outputWidth, outputHeight, rotation);
+        m_sample->Initialize(reinterpret_cast<::IUnknown*>(winrt::get_abi(window)), outputWidth, outputHeight, rotation);
 
         Mouse::SetDpi(m_DPI);
     }
@@ -205,7 +205,7 @@ protected:
     {
         auto deferral = args.SuspendingOperation().GetDeferral();
 
-        std::async(std::launch::async, [this, deferral]()
+        auto f = std::async(std::launch::async, [this, deferral]()
         {
             m_sample->OnSuspending();
 
