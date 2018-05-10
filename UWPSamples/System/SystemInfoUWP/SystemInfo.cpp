@@ -432,23 +432,20 @@ void Sample::Render()
 
             // https://docs.microsoft.com/en-us/uwp/extension-sdks/windows-universal-sdk
 
-            bool isfoundation1 = ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 1, 0);
             bool isfoundation2 = ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 2, 0);
             bool isfoundation3 = ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 3, 0);
-            bool isuniversal1 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 1, 0);
             bool isuniversal2 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2, 0);
             bool isuniversal3 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3, 0);
             bool isuniversal4 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4, 0);
             bool isuniversal5 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5, 0);
             bool isuniversal6 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 6, 0);
             bool isphone = ApiInformation::IsApiContractPresent("Windows.Phone.PhoneContract", 1, 0);
-            bool isstore = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 1, 0);
             bool isstore2 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 2, 0);
             bool isstore3 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 3, 0);
             bool xliveStorage = ApiInformation::IsApiContractPresent("Windows.Gaming.XboxLive.StorageApiContract", 1, 0);
             bool xliveSecure = ApiInformation::IsApiContractPresent("Windows.Networking.XboxLive.XboxLiveSecureSocketsContract", 1, 0);
 
-            assert(isfoundation1);
+            assert(ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 1, 0));
             wchar_t contracts[256] = L"1.0";
             if (isfoundation2) { wcscat_s(contracts, L", 2.0"); }
             if (isfoundation3) { wcscat_s(contracts, L", 3.0"); }
@@ -456,7 +453,7 @@ void Sample::Render()
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"FoundationContract", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), contracts, right, y, m_scale);
 
-            assert(isuniversal1);
+            assert(ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 1, 0));
             wcscpy_s(contracts, L"1.0");
             if (isuniversal2) { wcscat_s(contracts, L", 2.0"); }
             if (isuniversal3) { wcscat_s(contracts, L", 3.0"); }
@@ -470,7 +467,7 @@ void Sample::Render()
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"PhoneContract", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), isphone ? L"1.0" : L"", right, y, m_scale);
 
-            assert(isstore);
+            assert(ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 1, 0));
             wcscpy_s(contracts, L"1.0");
             if (isstore2) { wcscat_s(contracts, L", 2.0"); }
             if (isstore3) { wcscat_s(contracts, L", 3.0"); }
