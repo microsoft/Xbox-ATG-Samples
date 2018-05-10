@@ -205,7 +205,7 @@ protected:
     {
         auto deferral = args.SuspendingOperation().GetDeferral();
 
-        std::async(std::launch::async, [this, deferral]()
+        auto f = std::async(std::launch::async, [this, deferral]()
         {
             m_sample->OnSuspending();
 
