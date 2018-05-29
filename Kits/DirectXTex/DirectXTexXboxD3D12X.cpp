@@ -29,7 +29,7 @@ namespace
         XALLOC_MEMTYPE_GRAPHICS_WRITECOMBINE_GPU_READONLY,
         XALLOC_PAGESIZE_64KB,
         XALLOC_ALIGNMENT_64K);
-};
+}
 
 //=====================================================================================
 // Entry-points

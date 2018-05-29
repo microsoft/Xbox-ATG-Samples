@@ -140,6 +140,27 @@ static_assert(XG_RESOURCE_MISC_TEXTURECUBE    == TEX_MISC_TEXTURECUBE, "XG vs. D
 //--------------------------------------------------------------------------------------
 // Initialize memory
 //--------------------------------------------------------------------------------------
+
+XboxImage& XboxImage::operator= (XboxImage&& moveFrom) noexcept
+{
+    if (this != &moveFrom)
+    {
+        Release();
+
+        dataSize = moveFrom.dataSize;
+        baseAlignment = moveFrom.baseAlignment;
+        tilemode = moveFrom.tilemode;
+        metadata = moveFrom.metadata;
+        memory = moveFrom.memory;
+
+        moveFrom.dataSize = 0;
+        moveFrom.baseAlignment = 0;
+        moveFrom.tilemode = XG_TILE_MODE_INVALID;
+        moveFrom.memory = nullptr;
+    }
+    return *this;
+}
+
 _Use_decl_annotations_
 HRESULT XboxImage::Initialize(const XG_TEXTURE1D_DESC& desc, const XG_RESOURCE_LAYOUT& layout, uint32_t miscFlags2)
 {

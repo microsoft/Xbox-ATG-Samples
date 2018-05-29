@@ -23,7 +23,7 @@ namespace DirectX
     class Keyboard
     {
     public:
-        Keyboard();
+        Keyboard() noexcept(false);
         Keyboard(Keyboard&& moveFrom) noexcept;
         Keyboard& operator= (Keyboard&& moveFrom) noexcept;
 
@@ -432,7 +432,7 @@ namespace DirectX
 
             void __cdecl Update(const State& state);
 
-            void __cdecl Reset();
+            void __cdecl Reset() noexcept;
 
             bool __cdecl IsKeyPressed(Keys key) const { return pressed.IsKeyDown(key); }
             bool __cdecl IsKeyReleased(Keys key) const { return released.IsKeyDown(key); }

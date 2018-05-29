@@ -251,7 +251,7 @@ namespace
             //--- Standard format handling ------------------------------------------------
             auto& mip = layout.Plane[0].MipLayout[level];
 
-            size_t tiledPixels = mip.PitchPixels * mip.PaddedDepthOrArraySize;
+            UINT32 tiledPixels = mip.PitchPixels * mip.PaddedDepthOrArraySize;
 
             ScopedAlignedArrayXMVECTOR scanline(reinterpret_cast<XMVECTOR*>(
                 _aligned_malloc(sizeof(XMVECTOR) * (images[0]->width + (tiledPixels)), 16)));
@@ -364,7 +364,7 @@ namespace
             //--- Standard format handling ------------------------------------------------
             auto& mip = layout.Plane[0].MipLayout[level];
 
-            const size_t tiledPixels = mip.PaddedWidthElements * mip.PaddedHeightElements * mip.PaddedDepthOrArraySize;
+            const UINT32 tiledPixels = mip.PaddedWidthElements * mip.PaddedHeightElements * mip.PaddedDepthOrArraySize;
 
             ScopedAlignedArrayXMVECTOR scanline(
                 reinterpret_cast<XMVECTOR*>(_aligned_malloc(
@@ -478,7 +478,7 @@ namespace
             //--- Standard format handling ------------------------------------------------
             auto& mip = layout.Plane[0].MipLayout[level];
 
-            const size_t tiledPixels = mip.PaddedWidthElements * mip.PaddedHeightElements * mip.PaddedDepthOrArraySize;
+            const UINT32 tiledPixels = mip.PaddedWidthElements * mip.PaddedHeightElements * mip.PaddedDepthOrArraySize;
             assert(tiledPixels >= (image.width * image.height * slices));
 
             ScopedAlignedArrayXMVECTOR scanline(
@@ -545,7 +545,7 @@ namespace
                 }
 
                 dptr += mip.Slice2DSizeBytes;
-                tptr += mip.PaddedHeightElements * mip.PaddedWidthElements;
+                tptr += size_t(mip.PaddedHeightElements) * size_t(mip.PaddedWidthElements);
             }
         }
 

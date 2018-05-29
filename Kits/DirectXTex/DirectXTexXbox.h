@@ -30,13 +30,16 @@ namespace Xbox
     class XboxImage
     {
     public:
-        XboxImage() : dataSize(0), baseAlignment(0), tilemode(XG_TILE_MODE_INVALID), metadata{}, memory(nullptr)
-        {
-        }
-        ~XboxImage()
-        {
-            Release();
-        }
+        XboxImage() noexcept
+            : dataSize(0), baseAlignment(0), tilemode(XG_TILE_MODE_INVALID), metadata{}, memory(nullptr) {}
+        XboxImage(XboxImage&& moveFrom) noexcept
+            : dataSize(0), baseAlignment(0), tilemode(XG_TILE_MODE_INVALID), metadata{}, memory(nullptr) { *this = std::move(moveFrom); }
+        ~XboxImage() { Release(); }
+
+        XboxImage& __cdecl operator= (XboxImage&& moveFrom) noexcept;
+
+        XboxImage(const XboxImage&) = delete;
+        XboxImage& operator=(const XboxImage&) = delete;
 
         HRESULT Initialize(_In_ const XG_TEXTURE1D_DESC& desc, _In_ const XG_RESOURCE_LAYOUT& layout, _In_ uint32_t miscFlags2 = 0);
         HRESULT Initialize(_In_ const XG_TEXTURE2D_DESC& desc, _In_ const XG_RESOURCE_LAYOUT& layout, _In_ uint32_t miscFlags2 = 0);
@@ -58,10 +61,6 @@ namespace Xbox
         XG_TILE_MODE            tilemode;
         DirectX::TexMetadata    metadata;
         uint8_t*                memory;
-
-        // Hide copy constructor and assignment operator
-        XboxImage(const XboxImage&);
-        XboxImage& operator=(const XboxImage&);
     };
 
     //---------------------------------------------------------------------------------

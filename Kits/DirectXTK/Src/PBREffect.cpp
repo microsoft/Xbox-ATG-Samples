@@ -42,7 +42,7 @@ static_assert((sizeof(PBREffectConstants) % 16) == 0, "CB size not padded correc
 // Traits type describes our characteristics to the EffectBase template.
 struct PBREffectTraits
 {
-    typedef PBREffectConstants ConstantBufferType;
+    using ConstantBufferType = PBREffectConstants;
 
     static const int VertexShaderCount = 4;
     static const int PixelShaderCount = 5;
@@ -167,7 +167,8 @@ SharedResourcePool<ID3D11Device*, EffectBase<PBREffectTraits>::DeviceResources> 
 PBREffect::Impl::Impl(_In_ ID3D11Device* device)
     : EffectBase(device),
     biasedVertexNormals(false),
-    velocityEnabled(false)
+    velocityEnabled(false),
+    lightColor{}
 {
     if (device->GetFeatureLevel() < D3D_FEATURE_LEVEL_10_0)
     {
@@ -292,14 +293,14 @@ PBREffect::PBREffect(_In_ ID3D11Device* device)
 
 
 // Move constructor.
-PBREffect::PBREffect(PBREffect&& moveFrom) throw()
+PBREffect::PBREffect(PBREffect&& moveFrom) noexcept
   : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 
 // Move assignment.
-PBREffect& PBREffect::operator= (PBREffect&& moveFrom) throw()
+PBREffect& PBREffect::operator= (PBREffect&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;
