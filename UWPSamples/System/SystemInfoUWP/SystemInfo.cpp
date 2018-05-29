@@ -432,58 +432,54 @@ void Sample::Render()
 
             // https://docs.microsoft.com/en-us/uwp/extension-sdks/windows-universal-sdk
 
-            bool isfoundation1 = ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 1, 0);
             bool isfoundation2 = ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 2, 0);
             bool isfoundation3 = ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 3, 0);
-            bool isuniversal1 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 1, 0);
             bool isuniversal2 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2, 0);
             bool isuniversal3 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3, 0);
             bool isuniversal4 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4, 0);
             bool isuniversal5 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5, 0);
+            bool isuniversal6 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 6, 0);
             bool isphone = ApiInformation::IsApiContractPresent("Windows.Phone.PhoneContract", 1, 0);
-            bool isstore = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 1, 0);
             bool isstore2 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 2, 0);
+            bool isstore3 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 3, 0);
             bool xliveStorage = ApiInformation::IsApiContractPresent("Windows.Gaming.XboxLive.StorageApiContract", 1, 0);
             bool xliveSecure = ApiInformation::IsApiContractPresent("Windows.Networking.XboxLive.XboxLiveSecureSocketsContract", 1, 0);
 
-            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"FoundationContract 1.0", left, y, m_scale);
-            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isfoundation1 ? L"true" : L"false", right, y, m_scale);
+            assert(ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 1, 0));
+            wchar_t contracts[256] = L"1.0";
+            if (isfoundation2) { wcscat_s(contracts, L", 2.0"); }
+            if (isfoundation3) { wcscat_s(contracts, L", 3.0"); }
 
-            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"FoundationContract 2.0", left, y, m_scale);
-            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isfoundation2 ? L"true" : L"false", right, y, m_scale);
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"FoundationContract", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), contracts, right, y, m_scale);
 
-            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"FoundationContract 3.0", left, y, m_scale);
-            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isfoundation3 ? L"true" : L"false", right, y, m_scale);
+            assert(ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 1, 0));
+            wcscpy_s(contracts, L"1.0");
+            if (isuniversal2) { wcscat_s(contracts, L", 2.0"); }
+            if (isuniversal3) { wcscat_s(contracts, L", 3.0"); }
+            if (isuniversal4) { wcscat_s(contracts, L", 4.0"); }
+            if (isuniversal5) { wcscat_s(contracts, L", 5.0"); }
+            if (isuniversal6) { wcscat_s(contracts, L", 6.0"); }
 
-            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UniversalApiContract 1.0", left, y, m_scale);
-            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isuniversal1 ? L"true" : L"false", right, y, m_scale);
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UniversalApiContract", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), contracts, right, y, m_scale);
 
-            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UniversalApiContract 2.0", left, y, m_scale);
-            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isuniversal2 ? L"true" : L"false", right, y, m_scale);
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"PhoneContract", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isphone ? L"1.0" : L"", right, y, m_scale);
 
-            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UniversalApiContract 3.0", left, y, m_scale);
-            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isuniversal3 ? L"true" : L"false", right, y, m_scale);
+            assert(ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 1, 0));
+            wcscpy_s(contracts, L"1.0");
+            if (isstore2) { wcscat_s(contracts, L", 2.0"); }
+            if (isstore3) { wcscat_s(contracts, L", 3.0"); }
 
-            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UniversalApiContract 4.0", left, y, m_scale);
-            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isuniversal4 ? L"true" : L"false", right, y, m_scale);
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"StoreContract", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), contracts, right, y, m_scale);
 
-            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UniversalApiContract 5.0", left, y, m_scale);
-            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isuniversal5 ? L"true" : L"false", right, y, m_scale);
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"XboxLive StorageApiContract", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), xliveStorage ? L"1.0" : L"", right, y, m_scale);
 
-            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"PhoneContract 1.0", left, y, m_scale);
-            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isphone ? L"true" : L"false", right, y, m_scale);
-
-            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"StoreContract 1.0", left, y, m_scale);
-            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isstore ? L"true" : L"false", right, y, m_scale);
-
-            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"StoreContract 2.0", left, y, m_scale);
-            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isstore2 ? L"true" : L"false", right, y, m_scale);
-
-            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"XboxLive StorageApiContract 1.0", left, y, m_scale);
-            y += DrawStringRight(m_batch.get(), m_smallFont.get(), xliveStorage ? L"true" : L"false", right, y, m_scale);
-
-            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"XboxLive SecureSocketsContract 1.0", left, y, m_scale);
-            y += DrawStringRight(m_batch.get(), m_smallFont.get(), xliveSecure ? L"true" : L"false", right, y, m_scale);
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"XboxLive SecureSocketsContract", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), xliveSecure ? L"1.0" : L"", right, y, m_scale);
         }
         break;
 
@@ -733,12 +729,8 @@ void Sample::Render()
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DedicatedVideoMemory", left, y, m_scale);
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
 
-                    swprintf_s(buff, L"%u (MiB)", dsm);
-                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DedicatedSystemMemory", left, y, m_scale);
-                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
-
-                    swprintf_s(buff, L"%u (MiB)", ssm);
-                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"SharedSystemMemory", left, y, m_scale);
+                    swprintf_s(buff, L"%u (MiB) / %u (MiB)", dsm, ssm);
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Dedicated / Shared SystemMemory", left, y, m_scale);
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
                 }
             }
@@ -1034,6 +1026,10 @@ void Sample::Render()
                 #if defined(NTDDI_WIN10_RS3) && (NTDDI_VERSION >= NTDDI_WIN10_RS3)
                 case D3D_SHADER_MODEL_6_1: shaderModelVer = L"6.1"; break;
                 #endif
+
+                #if defined(NTDDI_WIN10_RS4) && (NTDDI_VERSION >= NTDDI_WIN10_RS4)
+                case D3D_SHADER_MODEL_6_2: shaderModelVer = L"6.2"; break;
+                #endif
                 }
 
                 wchar_t buff[64] = {};
@@ -1052,6 +1048,10 @@ void Sample::Render()
                     case D3D12_TILED_RESOURCES_TIER_1: tiledTier = L"Tier 1"; break;
                     case D3D12_TILED_RESOURCES_TIER_2: tiledTier = L"Tier 2"; break;
                     case D3D12_TILED_RESOURCES_TIER_3: tiledTier = L"Tier 3"; break;
+
+                    #if defined(NTDDI_WIN10_RS4) && (NTDDI_VERSION >= NTDDI_WIN10_RS4)
+                    case D3D12_TILED_RESOURCES_TIER_4: tiledTier = L"Tier 4"; break;
+                    #endif
                     }
 
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"TiledResourcesTier", left, y, m_scale);
@@ -1116,7 +1116,7 @@ void Sample::Render()
         }
         break;
 
-    case InfoPage::DIRECT3D12_OPT:
+    case InfoPage::DIRECT3D12_OPT1:
         {
             y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 12 Optional Features", mid, y, ATG::Colors::LightGrey, m_scale);
 
@@ -1229,6 +1229,83 @@ void Sample::Render()
                 {
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Existing Heaps", left, y, m_scale);
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12heaps.Supported ? L"true" : L"false", right, y, m_scale);
+                }
+                #endif
+            }
+        }
+        break;
+
+    case InfoPage::DIRECT3D12_OPT2:
+        {
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 12 Optional Features (continued)", mid, y, ATG::Colors::LightGrey, m_scale);
+
+            auto device = m_deviceResources->GetD3DDevice12();
+
+            if (!device)
+            {
+                y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"Not supported", mid, y, ATG::Colors::Orange, m_scale);
+            }
+            else
+            {
+                // Optional Direct3D 12 features for Windows 10 April 2018 Update
+                #if defined(NTDDI_WIN10_RS4) && (NTDDI_VERSION >= NTDDI_WIN10_RS4)
+                D3D12_FEATURE_DATA_D3D12_OPTIONS4 d3d12opts4 = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS4, &d3d12opts4, sizeof(d3d12opts4))))
+                {
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"MSAA64KBAlignedTextureSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts4.MSAA64KBAlignedTextureSupported ? L"true" : L"false", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Native16BitShaderOpsSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts4.Native16BitShaderOpsSupported ? L"true" : L"false", right, y, m_scale);
+
+                    const wchar_t* srcompatTier = L"Unknown";
+                    switch (d3d12opts4.SharedResourceCompatibilityTier)
+                    {
+                        case D3D12_SHARED_RESOURCE_COMPATIBILITY_TIER_0: srcompatTier = L"Tier 0"; break;
+                        case D3D12_SHARED_RESOURCE_COMPATIBILITY_TIER_1: srcompatTier = L"Tier 1"; break;
+                    }
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"SharedResourceCompatibilityTier", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), srcompatTier, right, y, m_scale);
+                }
+
+                D3D12_FEATURE_DATA_SERIALIZATION d3d12serial = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_SERIALIZATION, &d3d12serial, sizeof(d3d12serial))))
+                {
+                    const wchar_t* serialTier = L"Unknown";
+                    switch (d3d12serial.HeapSerializationTier)
+                    {
+                        case D3D12_HEAP_SERIALIZATION_TIER_0: serialTier = L"Tier 0"; break;
+                        case D3D12_HEAP_SERIALIZATION_TIER_10: serialTier = L"Tier 10"; break;
+                    }
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"HeapSerializationTier", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), serialTier, right, y, m_scale);
+
+                    wchar_t buff[64] = {};
+                    swprintf_s(buff, L"%u", d3d12serial.NodeIndex);
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Serialization NodeIndex", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
+                }
+
+                D3D12_FEATURE_DATA_CROSS_NODE d3d12xnode = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_CROSS_NODE, &d3d12xnode, sizeof(d3d12xnode))))
+                {
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Cross node AtomicShaderInstructions", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12xnode.AtomicShaderInstructions ? L"true" : L"false", right, y, m_scale);
+
+                    const wchar_t* shareTier = L"Unknown";
+                    switch (d3d12xnode.SharingTier)
+                    {
+                        case D3D12_CROSS_NODE_SHARING_TIER_NOT_SUPPORTED: shareTier = L"Not supported"; break;
+                        case D3D12_CROSS_NODE_SHARING_TIER_1_EMULATED: shareTier = L"Tier 1 (Emulated)"; break;
+                        case D3D12_CROSS_NODE_SHARING_TIER_1: shareTier = L"Tier 1"; break;
+                        case D3D12_CROSS_NODE_SHARING_TIER_2: shareTier = L"Tier 2"; break;
+                        case D3D12_CROSS_NODE_SHARING_TIER_3: shareTier = L"Tier 3"; break;
+                    }
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Cross node SharingTier", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), shareTier, right, y, m_scale);
                 }
                 #endif
             }
