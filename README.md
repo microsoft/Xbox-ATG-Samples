@@ -11,6 +11,7 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   * ``System``
   * ``Tools``
 * ``PCSamples`` contains samples for the classic Win32 desktop PC platform
+  * ``Graphics``
   * ``IntroGraphics``
 * ``XDKSamples`` contains samples the Xbox One platform using the Xbox One XDK
   * ``Audio``
@@ -94,6 +95,8 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td><a href="UWPSamples/IntroGraphics/SimpleLightingUWP12">UWP DX12</a></td>
   <td><a href="XDKSamples/IntroGraphics/SimpleLighting">XDK DX11</a></td>
   <td><a href="XDKSamples/IntroGraphics/SimpleLighting12">XDK DX12</a></td>
+  <td><a href="PCSamples/IntroGraphics/SimpleLightingPC">PC DX11</a></td>
+  <td><a href="PCSamples/IntroGraphics/SimpleLightingPC12">PC DX12</a></td>
  </tr>
  <tr>
   <td>Bezier</td>
@@ -101,6 +104,8 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td><a href="UWPSamples/IntroGraphics/SimpleBezierUWP12">UWP DX12</a></td>
   <td><a href="XDKSamples/IntroGraphics/SimpleBezier">XDK DX11</a></td>
   <td><a href="XDKSamples/IntroGraphics/SimpleBezier12">XDK DX12</a></td>
+  <td><a href="PCSamples/IntroGraphics/SimpleBezierPC">PC DX11</a></td>
+  <td><a href="PCSamples/IntroGraphics/SimpleBezierPC12">PC DX12</a></td>
  </tr>
  <tr>
   <td>DirectCompute</td>
@@ -124,6 +129,8 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td><a href="UWPSamples/IntroGraphics/SimpleInstancingUWP12">UWP DX12</a></td>
   <td><a href="XDKSamples/IntroGraphics/SimpleInstancing">XDK DX11</a></td>
   <td><a href="XDKSamples/IntroGraphics/SimpleInstancing12">XDK DX12</a></td>
+  <td><a href="PCSamples/IntroGraphics/SimpleInstancingPC">PC DX11</a></td>
+  <td><a href="PCSamples/IntroGraphics/SimpleInstancingPC12">PC DX12</a></td>
  </tr>
  <tr>
   <td>Multisample Antialiasing</td>
@@ -131,6 +138,8 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td><a href="UWPSamples/IntroGraphics/SimpleMSAA_UWP12">UWP DX12</a></td>
   <td><a href="XDKSamples/IntroGraphics/SimpleMSAA">XDK DX11</a></td>
   <td><a href="XDKSamples/IntroGraphics/SimpleMSAA12">XDK DX12</a></td>
+  <td><a href="PCSamples/IntroGraphics/SimpleMSAA_PC">PC DX11</a></td>
+  <td><a href="PCSamples/IntroGraphics/SimpleMSAA_PC12">PC DX12</a></td>
  </tr>
  <tr>
   <td>Xbox One Device Setup</td>
@@ -153,6 +162,8 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td><a href="UWPSamples/Graphics/SimpleHDR_UWP12">UWP DX12</a></td>
   <td><a href="XDKSamples/Graphics/SimpleHDR">XDK DX11</a></td>
   <td><a href="XDKSamples/Graphics/SimpleHDR12">XDK DX12</a></td>
+  <td><a href="PCSamples/Graphics/SimpleHDR_PC">PC DX11</a></td>
+  <td><a href="PCSamples/Graphics/SimpleHDR_PC12">PC DX12</a></td>
  </tr>
  <tr>
   <td>ESRAM</td>

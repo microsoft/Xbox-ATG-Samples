@@ -436,6 +436,7 @@ int __cdecl main(Platform::Array<Platform::String^>^ /*argv*/)
 }
 
 
+// Exit helper
 void ExitSample()
 {
     Windows::ApplicationModel::Core::CoreApplication::Exit();

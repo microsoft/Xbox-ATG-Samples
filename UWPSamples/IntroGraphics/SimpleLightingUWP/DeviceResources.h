@@ -24,7 +24,7 @@ namespace DX
                         DXGI_FORMAT depthBufferFormat = DXGI_FORMAT_D24_UNORM_S8_UINT,
                         UINT backBufferCount = 2,
                         D3D_FEATURE_LEVEL minFeatureLevel = D3D_FEATURE_LEVEL_9_3,
-                        unsigned int flags = 0);
+                        unsigned int flags = 0) noexcept;
 
         void CreateDeviceResources();
         void CreateWindowSizeDependentResources();

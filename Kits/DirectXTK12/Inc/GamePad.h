@@ -35,7 +35,7 @@ namespace DirectX
     class GamePad
     {
     public:
-        GamePad();
+        GamePad() noexcept(false);
         GamePad(GamePad&& moveFrom) noexcept;
         GamePad& operator= (GamePad&& moveFrom) noexcept;
 
@@ -232,7 +232,7 @@ namespace DirectX
 
             void __cdecl Update(const State& state);
 
-            void __cdecl Reset();
+            void __cdecl Reset() noexcept;
 
             State __cdecl GetLastState() const { return lastState; }
 
