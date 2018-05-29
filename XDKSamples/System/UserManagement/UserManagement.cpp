@@ -22,64 +22,64 @@ using Microsoft::WRL::ComPtr;
 
 namespace
 {
-	std::mutex g_consoleMutex;
-	
-	inline std::wstring FormatHResult(int hResult)
+    std::mutex g_consoleMutex;
+    
+    inline std::wstring FormatHResult(int hResult)
     {
         wchar_t hrBuf[16] = {};
         swprintf_s(hrBuf, L"0x%08X", hResult);
         return std::wstring(hrBuf);
     }
 
-	inline std::wstring FormatControllerType(Platform::String^ controllerType)
-	{
-		if (!controllerType)
-		{
-			return std::wstring();
-		}
+    inline std::wstring FormatControllerType(Platform::String^ controllerType)
+    {
+        if (!controllerType)
+        {
+            return std::wstring();
+        }
 
-		const wchar_t* classPrefix = wcsrchr(controllerType->Data(), L'.');
-		if (classPrefix)
-		{
-			return std::wstring(classPrefix + 1);
-		}
-		else
-		{
-			return std::wstring(controllerType->Data());
-		}
-	}
+        const wchar_t* classPrefix = wcsrchr(controllerType->Data(), L'.');
+        if (classPrefix)
+        {
+            return std::wstring(classPrefix + 1);
+        }
+        else
+        {
+            return std::wstring(controllerType->Data());
+        }
+    }
 
-	inline std::wstring GetGamertag(User^ user)
-	{
-		if (user)
-		{
-			return std::wstring(user->DisplayInfo->Gamertag->Data());
-		}
-		else
-		{
-			return std::wstring(L"<no user>");
-		}
-	}
+    inline std::wstring GetGamertag(User^ user)
+    {
+        if (user)
+        {
+            return std::wstring(user->DisplayInfo->Gamertag->Data());
+        }
+        else
+        {
+            return std::wstring(L"<no user>");
+        }
+    }
 
-	inline bool IsUserStale(User^ user)
-	{
-		// User only becomes stale when user signs out. It never transitions from IsSignedIn = false -> true.
-		return !user->IsSignedIn;
-	}
+    inline bool IsUserStale(User^ user)
+    {
+        // User only becomes stale when user signs out. It never transitions from IsSignedIn = false -> true.
+        return !user->IsSignedIn;
+    }
 
-	User^ UpdateStaleUser(User^ staleUser)
-	{
-		auto users = User::Users;
-		for (auto freshUser : users)
-		{
-			if (Platform::String::CompareOrdinal(staleUser->XboxUserId, freshUser->XboxUserId) == 0)
-			{
-				return freshUser;
-			}
-		}
+    User^ UpdateStaleUser(User^ staleUser)
+    {
+        auto users = User::Users;
+        for (auto freshUser : users)
+        {
+            if (Platform::String::CompareOrdinal(staleUser->XboxUserId, freshUser->XboxUserId) == 0)
+            {
+                return freshUser;
+            }
+        }
 
-		return nullptr;
-	}
+        return nullptr;
+    }
 }
 
 Sample::Sample() :
@@ -106,66 +106,66 @@ void Sample::Initialize(IUnknown* window)
     // Sign up for controller events.
     Controller::ControllerAdded += ref new EventHandler<ControllerAddedEventArgs^>([=](Platform::Object^, ControllerAddedEventArgs^ args)
     {
-		std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
+        std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
 
         auto controllerId = args->Controller->Id;
         auto controllerType = args->Controller->Type;
         auto controllerUser = args->Controller->User;
 
         m_console->Format(Colors::Aquamarine, L"EVENT: Controller Added, %ls ID: %lld, Paired User: %ls\n",
-			FormatControllerType(controllerType).c_str(), 
-			controllerId,
-			GetGamertag(controllerUser).c_str());
+            FormatControllerType(controllerType).c_str(), 
+            controllerId,
+            GetGamertag(controllerUser).c_str());
     });
 
     Controller::ControllerPairingChanged += ref new EventHandler<ControllerPairingChangedEventArgs^>([=](Platform::Object^, ControllerPairingChangedEventArgs^ args)
     {
-		std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
+        std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
 
-		auto controllerId = args->Controller->Id;
+        auto controllerId = args->Controller->Id;
         auto controllerType = args->Controller->Type;
-		auto controllerPrevUser = args->PreviousUser;
+        auto controllerPrevUser = args->PreviousUser;
         auto controllerUser = args->Controller->User;
 
         m_console->Format(Colors::Aquamarine, L"EVENT: Controller Pairing Changed, %ls ID: %lld, Previous User: %ls, New User: %ls\n",
-			FormatControllerType(controllerType).c_str(), 
-			controllerId,
-			GetGamertag(controllerPrevUser).c_str(),
-			GetGamertag(controllerUser).c_str());
+            FormatControllerType(controllerType).c_str(), 
+            controllerId,
+            GetGamertag(controllerPrevUser).c_str(),
+            GetGamertag(controllerUser).c_str());
     });
 
     Controller::ControllerRemoved += ref new EventHandler<ControllerRemovedEventArgs^>([=](Platform::Object^, ControllerRemovedEventArgs^ args)
     {
-		std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
+        std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
 
-		auto controllerId = args->Controller->Id;
+        auto controllerId = args->Controller->Id;
         auto controllerType = args->Controller->Type;
         auto controllerUser = args->Controller->User;
 
         m_console->Format(Colors::Aquamarine, L"EVENT: Controller Removed, %ls ID: %lld, Paired User: %ls\n",
-			FormatControllerType(controllerType).c_str(),
-			controllerId,
-			GetGamertag(controllerUser).c_str());
+            FormatControllerType(controllerType).c_str(),
+            controllerId,
+            GetGamertag(controllerUser).c_str());
     });
 
     // Sign up for user events.
-	Windows::Xbox::ApplicationModel::Core::CoreApplicationContext::CurrentUserChanged += ref new EventHandler<Platform::Object ^>([=](Platform::Object^, Platform::Object^ args)
-	{
-		auto prevCurrentUser = m_currentUser;
-		m_currentUser = Windows::Xbox::ApplicationModel::Core::CoreApplicationContext::CurrentUser;
+    Windows::Xbox::ApplicationModel::Core::CoreApplicationContext::CurrentUserChanged += ref new EventHandler<Platform::Object ^>([=](Platform::Object^, Platform::Object^ args)
+    {
+        auto prevCurrentUser = m_currentUser;
+        m_currentUser = Windows::Xbox::ApplicationModel::Core::CoreApplicationContext::CurrentUser;
 
-		std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
+        std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
 
-		m_console->Format(Colors::Lime, L"EVENT: Current User Changed, from %ls to %ls\n",
-			GetGamertag(prevCurrentUser).c_str(),
-			GetGamertag(m_currentUser).c_str());
-	});
+        m_console->Format(Colors::Lime, L"EVENT: Current User Changed, from %ls to %ls\n",
+            GetGamertag(prevCurrentUser).c_str(),
+            GetGamertag(m_currentUser).c_str());
+    });
 
     User::UserAdded += ref new EventHandler<UserAddedEventArgs^>([=](Platform::Object^, UserAddedEventArgs^ args)
     {
-		std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
-		
-		auto user = args->User;
+        std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
+        
+        auto user = args->User;
 
         m_console->Format(Colors::Lime, L"EVENT: User Added, Gamertag: %ls\n", GetGamertag(user).c_str());
         WriteUser(user);
@@ -173,9 +173,9 @@ void Sample::Initialize(IUnknown* window)
 
     User::UserRemoved += ref new EventHandler<UserRemovedEventArgs^>([=](Platform::Object^, UserRemovedEventArgs^ args)
     {
-		std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
-		
-		auto user = args->User;
+        std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
+        
+        auto user = args->User;
 
         m_console->Format(Colors::Lime, L"EVENT: User Removed, Gamertag: %ls\n", GetGamertag(user).c_str());
         WriteUser(user);
@@ -183,9 +183,9 @@ void Sample::Initialize(IUnknown* window)
 
     User::SignInCompleted += ref new EventHandler<SignInCompletedEventArgs^>([=](Platform::Object^, SignInCompletedEventArgs^ args)
     {
-		std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
-		
-		auto user = args->User;
+        std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
+        
+        auto user = args->User;
 
         m_console->Format(Colors::Lime, L"EVENT: Sign In Completed, Gamertag: %ls\n", GetGamertag(user).c_str());
         WriteUser(user);
@@ -193,7 +193,7 @@ void Sample::Initialize(IUnknown* window)
 
     User::SignOutStarted += ref new EventHandler<SignOutStartedEventArgs^>([=](Platform::Object^, SignOutStartedEventArgs^ args)
     {
-		std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
+        std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
 
         auto user = args->User;
 
@@ -209,31 +209,31 @@ void Sample::Initialize(IUnknown* window)
                 Concurrency::wait(m_signOutDeferralTimeInSeconds * 1000);
                 signOutDeferral->Complete();
 
-				std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
-				
-				m_console->Format(L"  User Sign Out Deferral Completed at %0.2f seconds\n", m_timer.GetTotalSeconds());
+                std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
+                
+                m_console->Format(L"  User Sign Out Deferral Completed at %0.2f seconds\n", m_timer.GetTotalSeconds());
             });
         }
     });
 
     User::SignOutCompleted += ref new EventHandler<SignOutCompletedEventArgs^>([=](Platform::Object^, SignOutCompletedEventArgs^ args)
     {
-		std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
+        std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
 
         auto user = args->User;
 
-		if (m_activeUser == user)
-		{
-			m_console->Format(Colors::Lime, L"User %ls signed out.. resetting active user\n", GetGamertag(user).c_str());
-			m_activeUser = nullptr;
-		}
+        if (m_activeUser == user)
+        {
+            m_console->Format(Colors::Lime, L"User %ls signed out.. resetting active user\n", GetGamertag(user).c_str());
+            m_activeUser = nullptr;
+        }
 
         m_console->Format(Colors::Lime, L"EVENT: Sign Out Completed, Gamertag: %ls\n", GetGamertag(user).c_str());
     });
 
     // Display current Controller / User configuration on startup.
-	std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
-	m_console->WriteLine(L"==== Startup Configuration ====");
+    std::lock_guard<std::mutex> lock(g_consoleMutex); // lock to keep console output together
+    m_console->WriteLine(L"==== Startup Configuration ====");
     WriteControllers();
     WriteUsers();
     m_console->WriteLine(L"===============================");
@@ -275,88 +275,88 @@ void Sample::Update(DX::StepTimer const&)
 
             if (m_gamePadButtons[i].menu == GamePad::ButtonStateTracker::PRESSED)
             {
-				// Show account picker.
+                // Show account picker.
                 auto gamepad = GetGamepad(i);
-				PickUserAsync(gamepad, Windows::Xbox::UI::AccountPickerOptions::AllowGuests);
+                PickUserAsync(gamepad, Windows::Xbox::UI::AccountPickerOptions::AllowGuests);
             }
-			else if (m_gamePadButtons[i].x == GamePad::ButtonStateTracker::PRESSED)
-			{
-				// Write controller info to console window.
-				if (pad.IsLeftTriggerPressed())
-				{
-					// Write info on only this controller.
-					m_console->WriteLine(L"-- This Controller --");
-					auto gamepad = GetGamepad(i);
-					WriteController(gamepad);
-				}
-				else
-				{
-					// Write info on all controllers.
-					WriteControllers();
-				}
-			}
-			else if (m_gamePadButtons[i].y == GamePad::ButtonStateTracker::PRESSED)
-			{
-				// Write info on all users to console window.
-				WriteUsers();
-			}
-			else if (m_gamePadButtons[i].a == GamePad::ButtonStateTracker::PRESSED)
-			{
-				// Set active user if not already set.
-				if (!m_activeUser)
-				{
-					auto gamepad = GetGamepad(i);
-					auto pairedUser = gamepad->User;
+            else if (m_gamePadButtons[i].x == GamePad::ButtonStateTracker::PRESSED)
+            {
+                // Write controller info to console window.
+                if (pad.IsLeftTriggerPressed())
+                {
+                    // Write info on only this controller.
+                    m_console->WriteLine(L"-- This Controller --");
+                    auto gamepad = GetGamepad(i);
+                    WriteController(gamepad);
+                }
+                else
+                {
+                    // Write info on all controllers.
+                    WriteControllers();
+                }
+            }
+            else if (m_gamePadButtons[i].y == GamePad::ButtonStateTracker::PRESSED)
+            {
+                // Write info on all users to console window.
+                WriteUsers();
+            }
+            else if (m_gamePadButtons[i].a == GamePad::ButtonStateTracker::PRESSED)
+            {
+                // Set active user if not already set.
+                if (!m_activeUser)
+                {
+                    auto gamepad = GetGamepad(i);
+                    auto pairedUser = gamepad->User;
 
-					if (pairedUser)
-					{
-						// Set active user to the engaging controller's paired user.
-						m_activeUser = pairedUser;
+                    if (pairedUser)
+                    {
+                        // Set active user to the engaging controller's paired user.
+                        m_activeUser = pairedUser;
 
-						m_console->Format(Colors::Lime, L"Active User set to %ls\n", GetGamertag(pairedUser).c_str());
-					}
-					else
-					{
-						// Use account picker to try to pair a user to the engaging controller.
-						PickUserAsync(gamepad, Windows::Xbox::UI::AccountPickerOptions::None).then([=](User^ userPicked)
-						{
-							m_activeUser = userPicked;
-							if (m_activeUser)
-							{
-								m_console->Format(Colors::Lime, L"Active User set to %ls\n", GetGamertag(userPicked).c_str());
-							}
-							else
-							{
-								m_console->WriteLine(ATG::Colors::Orange, L"No user chosen.. active user not set");
-							}
-						});
-					}
-				}
-			}
-			else if (m_gamePadButtons[i].b == GamePad::ButtonStateTracker::PRESSED)
-			{
-				// Reset active user.
-				m_activeUser = nullptr;
+                        m_console->Format(Colors::Lime, L"Active User set to %ls\n", GetGamertag(pairedUser).c_str());
+                    }
+                    else
+                    {
+                        // Use account picker to try to pair a user to the engaging controller.
+                        PickUserAsync(gamepad, Windows::Xbox::UI::AccountPickerOptions::None).then([=](User^ userPicked)
+                        {
+                            m_activeUser = userPicked;
+                            if (m_activeUser)
+                            {
+                                m_console->Format(Colors::Lime, L"Active User set to %ls\n", GetGamertag(userPicked).c_str());
+                            }
+                            else
+                            {
+                                m_console->WriteLine(ATG::Colors::Orange, L"No user chosen.. active user not set");
+                            }
+                        });
+                    }
+                }
+            }
+            else if (m_gamePadButtons[i].b == GamePad::ButtonStateTracker::PRESSED)
+            {
+                // Reset active user.
+                m_activeUser = nullptr;
 
-				m_console->WriteLine(Colors::Lime, L"Active User reset");
-			}
-			else if (m_gamePadButtons[i].dpadLeft == GamePad::ButtonStateTracker::PRESSED)
-			{
-				// Decrease sign out deferral time.
-				if (m_signOutDeferralTimeInSeconds > 0)
-				{
-					m_signOutDeferralTimeInSeconds--;
-				}
-			}
-			else if (m_gamePadButtons[i].dpadRight == GamePad::ButtonStateTracker::PRESSED)
-			{
-				// Increase sign out deferral time.
-				if (m_signOutDeferralTimeInSeconds < 60)
-				{
-					m_signOutDeferralTimeInSeconds++;
-				}
-			}
-		}
+                m_console->WriteLine(Colors::Lime, L"Active User reset");
+            }
+            else if (m_gamePadButtons[i].dpadLeft == GamePad::ButtonStateTracker::PRESSED)
+            {
+                // Decrease sign out deferral time.
+                if (m_signOutDeferralTimeInSeconds > 0)
+                {
+                    m_signOutDeferralTimeInSeconds--;
+                }
+            }
+            else if (m_gamePadButtons[i].dpadRight == GamePad::ButtonStateTracker::PRESSED)
+            {
+                // Increase sign out deferral time.
+                if (m_signOutDeferralTimeInSeconds < 60)
+                {
+                    m_signOutDeferralTimeInSeconds++;
+                }
+            }
+        }
         else
         {
             m_gamePadButtons[i].Reset();
@@ -390,35 +390,35 @@ void Sample::Render()
     auto context = m_deviceResources->GetD3DDeviceContext();
     PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Render");
 
-	m_spriteBatch->Begin();
+    m_spriteBatch->Begin();
 
-	// Prompt to acquire user if needed
-	if (!m_activeUser)
-	{
-		static const wchar_t setActiveUserPrompt[] = L"Press [A] to Set Active User";
-		auto promptWidth = m_smallFont->MeasureString(setActiveUserPrompt);
-		DX::DrawControllerString(m_spriteBatch.get(), m_smallFont.get(), m_controllerLegendFont.get(),
-			setActiveUserPrompt,
-			XMFLOAT2(float((safe.right - safe.left) / 2) - (XMVectorGetX(promptWidth) / 2.f), float(safe.bottom - safe.top) / 2.f),
-			Colors::Lime,
-			1.5f);
-	}
+    // Prompt to acquire user if needed
+    if (!m_activeUser)
+    {
+        static const wchar_t setActiveUserPrompt[] = L"Press [A] to Set Active User";
+        auto promptWidth = m_smallFont->MeasureString(setActiveUserPrompt);
+        DX::DrawControllerString(m_spriteBatch.get(), m_smallFont.get(), m_controllerLegendFont.get(),
+            setActiveUserPrompt,
+            XMFLOAT2(float((safe.right - safe.left) / 2) - (XMVectorGetX(promptWidth) / 2.f), float(safe.bottom - safe.top) / 2.f),
+            Colors::Lime,
+            1.5f);
+    }
 
-	// Render console window area.
+    // Render console window area.
     m_console->Render();
 
-	// Render status line (top).
-	wchar_t statusStr[256] = {};
-	auto activeUser = m_activeUser;
-	auto currentUser = m_currentUser;
-	swprintf_s(statusStr, L"Active User: %ls   Current User Property: %ls   Sign Out Deferral: %d seconds", 
-		GetGamertag(activeUser).c_str(),
-		GetGamertag(currentUser).c_str(),
-		m_signOutDeferralTimeInSeconds);
-	m_smallFont->DrawString(m_spriteBatch.get(), statusStr, XMFLOAT2(float(safe.left), float(safe.top)), Colors::Lime);
+    // Render status line (top).
+    wchar_t statusStr[256] = {};
+    auto activeUser = m_activeUser;
+    auto currentUser = m_currentUser;
+    swprintf_s(statusStr, L"Active User: %ls   Current User Property: %ls   Sign Out Deferral: %d seconds", 
+        GetGamertag(activeUser).c_str(),
+        GetGamertag(currentUser).c_str(),
+        m_signOutDeferralTimeInSeconds);
+    m_smallFont->DrawString(m_spriteBatch.get(), statusStr, XMFLOAT2(float(safe.left), float(safe.top)), Colors::Lime);
 
-	// Render controller legend (bottom).
-	DX::DrawControllerString(m_spriteBatch.get(), m_smallFont.get(), m_controllerLegendFont.get(),
+    // Render controller legend (bottom).
+    DX::DrawControllerString(m_spriteBatch.get(), m_smallFont.get(), m_controllerLegendFont.get(),
         L"[View] Exit   [Menu] Show Account Picker   [X] List Controllers   [LT] +[X] List This Controller   [Y] List Users   [B] Reset Active User   [DPad] Adjust Sign Out Deferral",
         XMFLOAT2(float(safe.left), float(safe.bottom) - m_smallFont->GetLineSpacing()),
         ATG::Colors::LightGrey);
@@ -463,9 +463,9 @@ void Sample::OnSuspending()
     auto context = m_deviceResources->GetD3DDeviceContext();
     context->Suspend(0);
 
-	m_console->WriteLine(Colors::Yellow, L"EVENT: Suspending");
-	
-	m_gamePad->Suspend();
+    m_console->WriteLine(Colors::Yellow, L"EVENT: Suspending");
+    
+    m_gamePad->Suspend();
 }
 
 void Sample::OnResuming()
@@ -473,38 +473,38 @@ void Sample::OnResuming()
     auto context = m_deviceResources->GetD3DDeviceContext();
     context->Resume();
 
-	m_console->WriteLine(Colors::Yellow, L"EVENT: Resuming");
+    m_console->WriteLine(Colors::Yellow, L"EVENT: Resuming");
 
-	m_gamePad->Resume();
+    m_gamePad->Resume();
     for (int i = 0; i < DirectX::GamePad::MAX_PLAYER_COUNT; ++i)
     {
         m_gamePadButtons[i].Reset();
     }
 
-	// Check for a stale user object on resuming from suspend, refreshing as needed.
-	if (m_activeUser && IsUserStale(m_activeUser))
-	{
-		m_console->WriteLine(Colors::Lime, L"Found stale active user");
-		auto staleGamertag = GetGamertag(m_activeUser);
+    // Check for a stale user object on resuming from suspend, refreshing as needed.
+    if (m_activeUser && IsUserStale(m_activeUser))
+    {
+        m_console->WriteLine(Colors::Lime, L"Found stale active user");
+        auto staleGamertag = GetGamertag(m_activeUser);
 
-		m_activeUser = UpdateStaleUser(m_activeUser);
+        m_activeUser = UpdateStaleUser(m_activeUser);
 
-		if (m_activeUser)
-		{
-			m_console->Format(Colors::Lime, L"Freshened active user %ls\n", GetGamertag(m_activeUser).c_str());
-		}
-		else
-		{
-			m_console->Format(Colors::Lime, L"User %ls no longer signed in.. resetting active user\n", staleGamertag.c_str());
-		}
-	}
+        if (m_activeUser)
+        {
+            m_console->Format(Colors::Lime, L"Freshened active user %ls\n", GetGamertag(m_activeUser).c_str());
+        }
+        else
+        {
+            m_console->Format(Colors::Lime, L"User %ls no longer signed in.. resetting active user\n", staleGamertag.c_str());
+        }
+    }
 
-	m_timer.ResetElapsedTime();
+    m_timer.ResetElapsedTime();
 }
 
 void Sample::OnVisibilityChanged(Windows::UI::Core::VisibilityChangedEventArgs^ args)
 {
-	m_console->Format(Colors::Yellow, L"EVENT: OnVisibilityChanged, Visible: %ls\n", args->Visible.ToString()->Data());
+    m_console->Format(Colors::Yellow, L"EVENT: OnVisibilityChanged, Visible: %ls\n", args->Visible.ToString()->Data());
 }
 
 #pragma endregion
@@ -533,7 +533,7 @@ void Sample::CreateWindowSizeDependentResources()
 
     // Define the sample console window region.
     auto consoleWindow = SimpleMath::Viewport::ComputeTitleSafeArea(fullScreen.right, fullScreen.bottom);
-	consoleWindow.top += long(2.f * m_smallFont->GetLineSpacing());
+    consoleWindow.top += long(2.f * m_smallFont->GetLineSpacing());
     consoleWindow.bottom -= long(m_smallFont->GetLineSpacing());
     m_console->SetWindow(consoleWindow);
 }
@@ -548,7 +548,7 @@ Windows::Xbox::Input::IGamepad ^ Sample::GetGamepad(int index)
         return nullptr;
     }
 
-	auto gamepads = Windows::Xbox::Input::Gamepad::Gamepads;
+    auto gamepads = Windows::Xbox::Input::Gamepad::Gamepads;
     for (auto gamepad : gamepads)
     {
         if (gamepad->Id == gamepadId)
@@ -562,33 +562,33 @@ Windows::Xbox::Input::IGamepad ^ Sample::GetGamepad(int index)
 
 Concurrency::task<User^> Sample::PickUserAsync(IController^ controller, Windows::Xbox::UI::AccountPickerOptions options)
 {
-	return Concurrency::create_task(Windows::Xbox::UI::SystemUI::ShowAccountPickerAsync(controller, options)).then
-	([this](Concurrency::task<Windows::Xbox::UI::AccountPickerResult^> t) -> Windows::Xbox::System::User^
-	{
-		try
-		{
-			auto result = t.get();
+    return Concurrency::create_task(Windows::Xbox::UI::SystemUI::ShowAccountPickerAsync(controller, options)).then
+    ([this](Concurrency::task<Windows::Xbox::UI::AccountPickerResult^> t) -> Windows::Xbox::System::User^
+    {
+        try
+        {
+            auto result = t.get();
 
-			if (result->User)
-			{
-				m_console->Format(Colors::Lime, L"Picked User: %ls\n", GetGamertag((User^)result->User).c_str());
-			}
-			else
-			{
-				m_console->WriteLine(ATG::Colors::Orange, L"User canceled account picker");
-			}
-			return (User^)result->User;
-		}
-		catch (Platform::Exception^ ex)
-		{
-			m_console->Format(ATG::Colors::Orange, L"ShowAccountPickerAsync threw error: %ls\n", FormatHResult(ex->HResult).c_str());
-		}
-		catch (concurrency::task_canceled&)
-		{
-			m_console->WriteLine(ATG::Colors::Orange, L"ShowAccountPickerAsync canceled"); // system canceled picker, e.g. user may have pressed Xbox button to go Home
-		}
-		return nullptr;
-	});
+            if (result->User)
+            {
+                m_console->Format(Colors::Lime, L"Picked User: %ls\n", GetGamertag((User^)result->User).c_str());
+            }
+            else
+            {
+                m_console->WriteLine(ATG::Colors::Orange, L"User canceled account picker");
+            }
+            return (User^)result->User;
+        }
+        catch (Platform::Exception^ ex)
+        {
+            m_console->Format(ATG::Colors::Orange, L"ShowAccountPickerAsync threw error: %ls\n", FormatHResult(ex->HResult).c_str());
+        }
+        catch (concurrency::task_canceled&)
+        {
+            m_console->WriteLine(ATG::Colors::Orange, L"ShowAccountPickerAsync canceled"); // system canceled picker, e.g. user may have pressed Xbox button to go Home
+        }
+        return nullptr;
+    });
 }
 
 // Write a list of all active controllers to the sample console window.
@@ -597,29 +597,29 @@ void Sample::WriteControllers()
     m_console->WriteLine(L"-- Controllers --");
 
     auto controllers = Windows::Xbox::Input::Controller::Controllers;
-	if (controllers->Size == 0)
-	{
-		m_console->WriteLine(L"   <none>");
-		return;
-	}
-
-	for (auto&& controller : controllers)
+    if (controllers->Size == 0)
     {
-		WriteController(controller);
+        m_console->WriteLine(L"   <none>");
+        return;
+    }
+
+    for (auto&& controller : controllers)
+    {
+        WriteController(controller);
     }
 }
 
 // Write information about the controller passed in to the sample console window.
 void Sample::WriteController(IController^ controller)
 {
-	auto controllerId = controller->Id;
-	auto controllerType = controller->Type;
-	auto controllerUser = controller->User;
+    auto controllerId = controller->Id;
+    auto controllerType = controller->Type;
+    auto controllerUser = controller->User;
 
-	m_console->Format(L"   Controller ID: %lld, Type: %ls, Paired User: %ls\n", 
-		controllerId, 
-		controllerType->Data(),
-		GetGamertag(controllerUser).c_str());
+    m_console->Format(L"   Controller ID: %lld, Type: %ls, Paired User: %ls\n", 
+        controllerId, 
+        controllerType->Data(),
+        GetGamertag(controllerUser).c_str());
 }
 
 // Write information about all signed in users to the sample console window.
@@ -628,11 +628,11 @@ void Sample::WriteUsers()
     m_console->WriteLine(L"-- Users --");
 
     auto users = User::Users;
-	if (users->Size == 0)
-	{
-		m_console->WriteLine(L"   <none>");
-		return;
-	}
+    if (users->Size == 0)
+    {
+        m_console->WriteLine(L"   <none>");
+        return;
+    }
 
     for (auto&& user : users)
     {
@@ -672,43 +672,43 @@ void Sample::WriteUser(User^ user)
     }
 
     // Write information about all paired controllers.
-	auto controllers = user->Controllers;
-	if (controllers->Size == 0)
-	{
-		m_console->WriteLine(L"     Has no paired controller");
-	}
-	else
-	{
-		for (auto controller : controllers)
-		{
-			m_console->Format(L"     Controller ID: %lld, Type: %ls\n", controller->Id, controller->Type->Data());
-		}
-	}
+    auto controllers = user->Controllers;
+    if (controllers->Size == 0)
+    {
+        m_console->WriteLine(L"     Has no paired controller");
+    }
+    else
+    {
+        for (auto controller : controllers)
+        {
+            m_console->Format(L"     Controller ID: %lld, Type: %ls\n", controller->Id, controller->Type->Data());
+        }
+    }
 
-	// Write information about user's audio devices.
-	auto audioDevices = user->AudioDevices;
-	for (auto audioDevice : audioDevices)
-	{
-		wchar_t idInfo[256] = { L'\0' };
-		const wchar_t *preContext, *postContext;
+    // Write information about user's audio devices.
+    auto audioDevices = user->AudioDevices;
+    for (auto audioDevice : audioDevices)
+    {
+        wchar_t idInfo[256] = { L'\0' };
+        const wchar_t *preContext, *postContext;
 
-		// Strip the 128 bit GUID's from the render target ID's to get some more human readable information from them.
-		// Id's take the form of "{GUID}!DeviceInfo{GUID}\MoreDeviceInfo".
+        // Strip the 128 bit GUID's from the render target ID's to get some more human readable information from them.
+        // Id's take the form of "{GUID}!DeviceInfo{GUID}\MoreDeviceInfo".
 
-		// First copy the text between the two GUID's.
-		preContext = wcschr(audioDevice->Id->Data(), L'!');
-		postContext = wcschr(preContext, L'#');
-		wcsncpy_s(idInfo, preContext + 1, wcslen(preContext + 1) - wcslen(postContext));
+        // First copy the text between the two GUID's.
+        preContext = wcschr(audioDevice->Id->Data(), L'!');
+        postContext = wcschr(preContext, L'#');
+        wcsncpy_s(idInfo, preContext + 1, wcslen(preContext + 1) - wcslen(postContext));
 
-		// Now concatenate the text after the second GUID.
-		preContext = wcsrchr(audioDevice->Id->Data(), L'}');
-		wcscat_s(idInfo, preContext + 1);
+        // Now concatenate the text after the second GUID.
+        preContext = wcsrchr(audioDevice->Id->Data(), L'}');
+        wcscat_s(idInfo, preContext + 1);
 
-		m_console->Format(L"     Audio Device Category/Type: %ls/%ls (%ls)\n", 
-			audioDevice->DeviceCategory.ToString()->Data(), 
-			audioDevice->DeviceType.ToString()->Data(), 
-			idInfo);
-	}
+        m_console->Format(L"     Audio Device Category/Type: %ls/%ls (%ls)\n", 
+            audioDevice->DeviceCategory.ToString()->Data(), 
+            audioDevice->DeviceType.ToString()->Data(), 
+            idInfo);
+    }
 }
 
 #pragma endregion

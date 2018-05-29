@@ -61,25 +61,30 @@ namespace
 };
 
 // Constructor for DeviceResources.
-DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depthBufferFormat, UINT backBufferCount, D3D_FEATURE_LEVEL minFeatureLevel, unsigned int flags) :
-    m_backBufferIndex(0),
-    m_fenceValues{},
-    m_rtvDescriptorSize(0),
-    m_screenViewport{},
-    m_scissorRect{},
-    m_backBufferFormat(backBufferFormat),
-    m_depthBufferFormat(depthBufferFormat),
-    m_backBufferCount(backBufferCount),
-    m_d3dMinFeatureLevel(minFeatureLevel),
-    m_window(nullptr),
-    m_d3dFeatureLevel(D3D_FEATURE_LEVEL_11_0),
-    m_rotation(DXGI_MODE_ROTATION_IDENTITY),
-    m_dxgiFactoryFlags(0),
-    m_outputSize{0, 0, 1, 1},
-    m_orientationTransform3D(ScreenRotation::Rotation0),
-    m_colorSpace(DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709),
-    m_options(flags),
-    m_deviceNotify(nullptr)
+DeviceResources::DeviceResources(
+    DXGI_FORMAT backBufferFormat,
+    DXGI_FORMAT depthBufferFormat,
+    UINT backBufferCount,
+    D3D_FEATURE_LEVEL minFeatureLevel,
+    unsigned int flags) noexcept(false) :
+        m_backBufferIndex(0),
+        m_fenceValues{},
+        m_rtvDescriptorSize(0),
+        m_screenViewport{},
+        m_scissorRect{},
+        m_backBufferFormat(backBufferFormat),
+        m_depthBufferFormat(depthBufferFormat),
+        m_backBufferCount(backBufferCount),
+        m_d3dMinFeatureLevel(minFeatureLevel),
+        m_window(nullptr),
+        m_d3dFeatureLevel(D3D_FEATURE_LEVEL_11_0),
+        m_rotation(DXGI_MODE_ROTATION_IDENTITY),
+        m_dxgiFactoryFlags(0),
+        m_outputSize{0, 0, 1, 1},
+        m_orientationTransform3D(ScreenRotation::Rotation0),
+        m_colorSpace(DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709),
+        m_options(flags),
+        m_deviceNotify(nullptr)
 {
     if (backBufferCount > MAX_BACK_BUFFER_COUNT)
     {
@@ -161,6 +166,8 @@ void DeviceResources::CreateDeviceResources()
         IID_PPV_ARGS(m_d3dDevice.ReleaseAndGetAddressOf())
         ));
 
+    m_d3dDevice->SetName(L"DeviceResources");
+
 #ifndef NDEBUG
     // Configure debug device (if active).
     ComPtr<ID3D12InfoQueue> d3dInfoQueue;
@@ -213,12 +220,16 @@ void DeviceResources::CreateDeviceResources()
 
     ThrowIfFailed(m_d3dDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(m_commandQueue.ReleaseAndGetAddressOf())));
 
+    m_commandQueue->SetName(L"DeviceResources");
+
     // Create descriptor heaps for render target views and depth stencil views.
     D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc = {};
     rtvDescriptorHeapDesc.NumDescriptors = m_backBufferCount;
     rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 
     ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(m_rtvDescriptorHeap.ReleaseAndGetAddressOf())));
+
+    m_rtvDescriptorHeap->SetName(L"DeviceResources");
 
     m_rtvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
@@ -229,21 +240,31 @@ void DeviceResources::CreateDeviceResources()
         dsvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 
         ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&dsvDescriptorHeapDesc, IID_PPV_ARGS(m_dsvDescriptorHeap.ReleaseAndGetAddressOf())));
+
+        m_dsvDescriptorHeap->SetName(L"DeviceResources");
     }
 
     // Create a command allocator for each back buffer that will be rendered to.
     for (UINT n = 0; n < m_backBufferCount; n++)
     {
         ThrowIfFailed(m_d3dDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(m_commandAllocators[n].ReleaseAndGetAddressOf())));
+
+        wchar_t name[25] = {};
+        swprintf_s(name, L"Render target %u", n);
+        m_commandAllocators[n]->SetName(name);
     }
 
     // Create a command list for recording graphics commands.
     ThrowIfFailed(m_d3dDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_commandAllocators[0].Get(), nullptr, IID_PPV_ARGS(m_commandList.ReleaseAndGetAddressOf())));
     ThrowIfFailed(m_commandList->Close());
 
+    m_commandList->SetName(L"DeviceResources");
+
     // Create a fence for tracking GPU execution progress.
     ThrowIfFailed(m_d3dDevice->CreateFence(m_fenceValues[m_backBufferIndex], D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_fence.ReleaseAndGetAddressOf())));
     m_fenceValues[m_backBufferIndex]++;
+
+    m_fence->SetName(L"DeviceResources");
 
     m_fenceEvent.Attach(CreateEvent(nullptr, FALSE, FALSE, nullptr));
     if (!m_fenceEvent.IsValid())
@@ -670,7 +691,47 @@ void DeviceResources::GetAdapter(IDXGIAdapter1** ppAdapter)
     *ppAdapter = nullptr;
 
     ComPtr<IDXGIAdapter1> adapter;
-    for (UINT adapterIndex = 0; DXGI_ERROR_NOT_FOUND != m_dxgiFactory->EnumAdapters1(adapterIndex, adapter.ReleaseAndGetAddressOf()); ++adapterIndex)
+
+#if defined(__dxgi1_6_h__) && defined(NTDDI_WIN10_RS4)
+    ComPtr<IDXGIFactory6> factory6;
+    HRESULT hr = m_dxgiFactory.As(&factory6);
+    if (SUCCEEDED(hr))
+    {
+        for (UINT adapterIndex = 0;
+            DXGI_ERROR_NOT_FOUND != factory6->EnumAdapterByGpuPreference(
+                adapterIndex,
+                DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE,
+                IID_PPV_ARGS(adapter.ReleaseAndGetAddressOf()));
+            adapterIndex++)
+        {
+            DXGI_ADAPTER_DESC1 desc;
+            adapter->GetDesc1(&desc);
+
+            if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+            {
+                // Don't select the Basic Render Driver adapter.
+                continue;
+            }
+
+            // Check to see if the adapter supports Direct3D 12, but don't create the actual device yet.
+            if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), m_d3dMinFeatureLevel, _uuidof(ID3D12Device), nullptr)))
+            {
+            #ifdef _DEBUG
+                wchar_t buff[256] = {};
+                swprintf_s(buff, L"Direct3D Adapter (%u): VID:%04X, PID:%04X - %ls\n", adapterIndex, desc.VendorId, desc.DeviceId, desc.Description);
+                OutputDebugStringW(buff);
+            #endif
+                break;
+            }
+        }
+    }
+    else
+#endif
+    for (UINT adapterIndex = 0;
+        DXGI_ERROR_NOT_FOUND != m_dxgiFactory->EnumAdapters1(
+            adapterIndex,
+            adapter.ReleaseAndGetAddressOf());
+        ++adapterIndex)
     {
         DXGI_ADAPTER_DESC1 desc;
         ThrowIfFailed(adapter->GetDesc1(&desc));
@@ -684,11 +745,11 @@ void DeviceResources::GetAdapter(IDXGIAdapter1** ppAdapter)
         // Check to see if the adapter supports Direct3D 12, but don't create the actual device yet.
         if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), m_d3dMinFeatureLevel, _uuidof(ID3D12Device), nullptr)))
         {
-#ifdef _DEBUG
+        #ifdef _DEBUG
             wchar_t buff[256] = {};
             swprintf_s(buff, L"Direct3D Adapter (%u): VID:%04X, PID:%04X - %ls\n", adapterIndex, desc.VendorId, desc.DeviceId, desc.Description);
             OutputDebugStringW(buff);
-#endif
+        #endif
             break;
         }
     }
@@ -719,7 +780,7 @@ void DeviceResources::UpdateColorSpace()
 {
     DXGI_COLOR_SPACE_TYPE colorSpace = DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709;
 
-    bool isdisplayhdr10 = false;
+    bool isDisplayHDR10 = false;
 
 #if defined(NTDDI_WIN10_RS2)
     if (m_swapChain)
@@ -736,14 +797,14 @@ void DeviceResources::UpdateColorSpace()
                 if (desc.ColorSpace == DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020)
                 {
                     // Display output is HDR10.
-                    isdisplayhdr10 = true;
+                    isDisplayHDR10 = true;
                 }
             }
         }
     }
 #endif
 
-    if ((m_options & c_EnableHDR) && isdisplayhdr10)
+    if ((m_options & c_EnableHDR) && isDisplayHDR10)
     {
         switch (m_backBufferFormat)
         {

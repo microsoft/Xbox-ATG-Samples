@@ -4,6 +4,7 @@
 // DirectXTex Auxillary functions for using the OpenEXR library
 //
 // Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
 //Uncomment if you add DirectXTexEXR to your copy of the DirectXTex library

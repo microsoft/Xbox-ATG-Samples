@@ -65,7 +65,8 @@ public:
         // Default window thread to CPU 0
         SetThreadAffinityMask(GetCurrentThread(), 0x1);
 
-        m_sample->Initialize(winrt::get_abi(window));
+        auto windowPtr = static_cast<::IUnknown*>(winrt::get_abi(window));
+        m_sample->Initialize(windowPtr);
     }
 
     void Load(winrt::hstring const &)
