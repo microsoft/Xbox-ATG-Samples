@@ -28,7 +28,7 @@ public:
     // Messages
     void OnSuspending();
     void OnResuming();
-	void OnVisibilityChanged(Windows::UI::Core::VisibilityChangedEventArgs^ args);
+    void OnVisibilityChanged(Windows::UI::Core::VisibilityChangedEventArgs^ args);
 
     // Properties
     bool RequestHDRMode() const { return m_deviceResources ? (m_deviceResources->GetDeviceOptions() & DX::DeviceResources::c_EnableHDR) != 0 : false; }
@@ -46,12 +46,12 @@ private:
     // Get platform gamepad from DirectXTK player index.
     Windows::Xbox::Input::IGamepad^ GetGamepad(int index);
 
-	// Show account picker with options, then return User.
-	Concurrency::task<Windows::Xbox::System::User^> PickUserAsync(Windows::Xbox::Input::IController^ controller, Windows::Xbox::UI::AccountPickerOptions options);
+    // Show account picker with options, then return User.
+    Concurrency::task<Windows::Xbox::System::User^> PickUserAsync(Windows::Xbox::Input::IController^ controller, Windows::Xbox::UI::AccountPickerOptions options);
 
     // Write information to the sample console window.
     void WriteControllers();
-	void WriteController(Windows::Xbox::Input::IController^ controller);
+    void WriteController(Windows::Xbox::Input::IController^ controller);
     void WriteUsers();
     void WriteUser(Windows::Xbox::System::User^ user);
 
@@ -72,11 +72,11 @@ private:
     std::unique_ptr<DirectX::SpriteFont>        m_smallFont;
     std::unique_ptr<DirectX::SpriteFont>        m_controllerLegendFont;
 
-	// Text console.
-	std::unique_ptr<DX::TextConsole>            m_console;
+    // Text console.
+    std::unique_ptr<DX::TextConsole>            m_console;
 
-	// User management objects.
-	Windows::Xbox::System::User^				m_activeUser;
-	Windows::Xbox::System::User^				m_currentUser;
-	int                                         m_signOutDeferralTimeInSeconds;
+    // User management objects.
+    Windows::Xbox::System::User^				m_activeUser;
+    Windows::Xbox::System::User^				m_currentUser;
+    int                                         m_signOutDeferralTimeInSeconds;
 };

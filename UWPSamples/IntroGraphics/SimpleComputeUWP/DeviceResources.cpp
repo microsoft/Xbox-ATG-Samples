@@ -84,21 +84,26 @@ namespace ScreenRotation
 };
 
 // Constructor for DeviceResources.
-DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depthBufferFormat, UINT backBufferCount, D3D_FEATURE_LEVEL minFeatureLevel, unsigned int flags) :
-    m_screenViewport{},
-    m_backBufferFormat(backBufferFormat),
-    m_depthBufferFormat(depthBufferFormat),
-    m_backBufferCount(backBufferCount),
-    m_d3dMinFeatureLevel(minFeatureLevel),
-    m_window(nullptr),
-    m_d3dFeatureLevel(D3D_FEATURE_LEVEL_9_1),
-    m_rotation(DXGI_MODE_ROTATION_IDENTITY),
-    m_dxgiFactoryFlags(0),
-    m_outputSize{0, 0, 1, 1},
-    m_orientationTransform3D(ScreenRotation::Rotation0),
-    m_colorSpace(DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709),
-    m_options(flags),
-    m_deviceNotify(nullptr)
+DeviceResources::DeviceResources(
+    DXGI_FORMAT backBufferFormat,
+    DXGI_FORMAT depthBufferFormat,
+    UINT backBufferCount,
+    D3D_FEATURE_LEVEL minFeatureLevel,
+    unsigned int flags) noexcept :
+        m_screenViewport{},
+        m_backBufferFormat(backBufferFormat),
+        m_depthBufferFormat(depthBufferFormat),
+        m_backBufferCount(backBufferCount),
+        m_d3dMinFeatureLevel(minFeatureLevel),
+        m_window(nullptr),
+        m_d3dFeatureLevel(D3D_FEATURE_LEVEL_9_1),
+        m_rotation(DXGI_MODE_ROTATION_IDENTITY),
+        m_dxgiFactoryFlags(0),
+        m_outputSize{0, 0, 1, 1},
+        m_orientationTransform3D(ScreenRotation::Rotation0),
+        m_colorSpace(DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709),
+        m_options(flags),
+        m_deviceNotify(nullptr)
 {
 }
 
@@ -602,7 +607,44 @@ void DeviceResources::GetHardwareAdapter(IDXGIAdapter1** ppAdapter)
     *ppAdapter = nullptr;
 
     ComPtr<IDXGIAdapter1> adapter;
-    for (UINT adapterIndex = 0; DXGI_ERROR_NOT_FOUND != m_dxgiFactory->EnumAdapters1(adapterIndex, adapter.ReleaseAndGetAddressOf()); adapterIndex++)
+
+#if defined(__dxgi1_6_h__) && defined(NTDDI_WIN10_RS4)
+    ComPtr<IDXGIFactory6> factory6;
+    HRESULT hr = m_dxgiFactory.As(&factory6);
+    if (SUCCEEDED(hr))
+    {
+        for (UINT adapterIndex = 0;
+            DXGI_ERROR_NOT_FOUND != factory6->EnumAdapterByGpuPreference(
+                adapterIndex,
+                DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE,
+                IID_PPV_ARGS(adapter.ReleaseAndGetAddressOf()));
+            adapterIndex++)
+        {
+            DXGI_ADAPTER_DESC1 desc;
+            adapter->GetDesc1(&desc);
+
+            if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+            {
+                // Don't select the Basic Render Driver adapter.
+                continue;
+            }
+
+        #ifdef _DEBUG
+            wchar_t buff[256] = {};
+            swprintf_s(buff, L"Direct3D Adapter (%u): VID:%04X, PID:%04X - %ls\n", adapterIndex, desc.VendorId, desc.DeviceId, desc.Description);
+            OutputDebugStringW(buff);
+        #endif
+
+            break;
+        }
+    }
+    else
+#endif
+    for (UINT adapterIndex = 0;
+        DXGI_ERROR_NOT_FOUND != m_dxgiFactory->EnumAdapters1(
+            adapterIndex,
+            adapter.ReleaseAndGetAddressOf());
+        adapterIndex++)
     {
         DXGI_ADAPTER_DESC1 desc;
         adapter->GetDesc1(&desc);
@@ -630,7 +672,7 @@ void DeviceResources::UpdateColorSpace()
 {
     DXGI_COLOR_SPACE_TYPE colorSpace = DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709;
 
-    bool isdisplayhdr10 = false;
+    bool isDisplayHDR10 = false;
 
 #if defined(NTDDI_WIN10_RS2)
     if (m_swapChain)
@@ -647,14 +689,14 @@ void DeviceResources::UpdateColorSpace()
                 if (desc.ColorSpace == DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020)
                 {
                     // Display output is HDR10.
-                    isdisplayhdr10 = true;
+                    isDisplayHDR10 = true;
                 }
             }
         }
     }
 #endif
 
-    if ((m_options & c_EnableHDR) && isdisplayhdr10)
+    if ((m_options & c_EnableHDR) && isDisplayHDR10)
     {
         switch (m_backBufferFormat)
         {

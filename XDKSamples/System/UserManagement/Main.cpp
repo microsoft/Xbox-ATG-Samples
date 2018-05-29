@@ -90,8 +90,8 @@ public:
         window->Closed +=
             ref new TypedEventHandler<CoreWindow^, CoreWindowEventArgs^>(this, &ViewProvider::OnWindowClosed);
 
-		window->VisibilityChanged += 
-			ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::VisibilityChangedEventArgs ^>(this, &ViewProvider::OnVisibilityChanged);
+        window->VisibilityChanged += 
+            ref new Windows::Foundation::TypedEventHandler<Windows::UI::Core::CoreWindow ^, Windows::UI::Core::VisibilityChangedEventArgs ^>(this, &ViewProvider::OnVisibilityChanged);
 
         // Default window thread to CPU 0
         SetThreadAffinityMask(GetCurrentThread(), 0x1);
@@ -137,10 +137,10 @@ protected:
         m_sample->OnResuming();
     }
 
-	void OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
-	{
-		m_sample->OnVisibilityChanged(args);
-	}
+    void OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
+    {
+        m_sample->OnVisibilityChanged(args);
+    }
 
     void OnWindowClosed(CoreWindow^ sender, CoreWindowEventArgs^ args)
     {

@@ -437,4 +437,3 @@ void ExitSample()
 {
     Windows::ApplicationModel::Core::CoreApplication::Exit();
 }
-

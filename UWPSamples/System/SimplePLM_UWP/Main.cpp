@@ -200,17 +200,15 @@ protected:
         ApplicationView::PreferredLaunchWindowingMode = ApplicationViewWindowingMode::PreferredLaunchViewSize;
         // Change to ApplicationViewWindowingMode::FullScreen to default to full screen
 
-        auto desiredSize = Size( ConvertPixelsToDips( w ),
-                                 ConvertPixelsToDips( h ) ); 
+        auto desiredSize = Size(ConvertPixelsToDips(w), ConvertPixelsToDips(h));
 
         ApplicationView::PreferredLaunchViewSize = desiredSize;
 
         auto view = ApplicationView::GetForCurrentView();
 
-        auto minSize = Size( ConvertPixelsToDips( 320 ),
-                             ConvertPixelsToDips( 200 ) );
+        auto minSize = Size(ConvertPixelsToDips(320), ConvertPixelsToDips(200));
 
-        view->SetPreferredMinSize( minSize );
+        view->SetPreferredMinSize(minSize);
 
         m_sample->LogPLMEvent(L"OnActivated()", args->Kind.ToString()->Data());
         CoreWindow::GetForCurrentThread()->Activate();

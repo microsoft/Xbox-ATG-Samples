@@ -19,7 +19,7 @@
 #include <mutex>
 
 #include <d3d11_3.h>
-#include <dxgi1_4.h>
+#include <dxgi1_6.h>
 #include <DirectXMath.h>
 #include <DirectXColors.h>
 

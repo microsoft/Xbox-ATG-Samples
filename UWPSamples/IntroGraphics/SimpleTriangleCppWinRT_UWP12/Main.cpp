@@ -134,7 +134,8 @@ public:
             std::swap(outputWidth, outputHeight);
         }
 
-        m_sample->Initialize(winrt::get_abi(window), outputWidth, outputHeight, rotation);
+        auto windowPtr = static_cast<::IUnknown*>(winrt::get_abi(window));
+        m_sample->Initialize(windowPtr, outputWidth, outputHeight, rotation);
 
         Mouse::SetDpi(m_DPI);
     }
