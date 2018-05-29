@@ -42,7 +42,7 @@ static_assert((sizeof(SkinnedEffectConstants) % 16) == 0, "CB size not padded co
 // Traits type describes our characteristics to the EffectBase template.
 struct SkinnedEffectTraits
 {
-    typedef SkinnedEffectConstants ConstantBufferType;
+    using ConstantBufferType = SkinnedEffectConstants;
 
     static const int VertexShaderCount = 18;
     static const int PixelShaderCount = 3;
@@ -363,14 +363,14 @@ SkinnedEffect::SkinnedEffect(_In_ ID3D11Device* device)
 
 
 // Move constructor.
-SkinnedEffect::SkinnedEffect(SkinnedEffect&& moveFrom) throw()
+SkinnedEffect::SkinnedEffect(SkinnedEffect&& moveFrom) noexcept
   : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 
 // Move assignment.
-SkinnedEffect& SkinnedEffect::operator= (SkinnedEffect&& moveFrom) throw()
+SkinnedEffect& SkinnedEffect::operator= (SkinnedEffect&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;

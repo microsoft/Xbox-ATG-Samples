@@ -29,7 +29,7 @@ static_assert((sizeof(AlphaTestEffectConstants) % 16) == 0, "CB size not padded 
 // Traits type describes our characteristics to the EffectBase template.
 struct AlphaTestEffectTraits
 {
-    typedef AlphaTestEffectConstants ConstantBufferType;
+    using ConstantBufferType = AlphaTestEffectConstants;
 
     static const int VertexShaderCount = 4;
     static const int PixelShaderCount = 4;
@@ -286,14 +286,14 @@ AlphaTestEffect::AlphaTestEffect(_In_ ID3D11Device* device)
 
 
 // Move constructor.
-AlphaTestEffect::AlphaTestEffect(AlphaTestEffect&& moveFrom) throw()
+AlphaTestEffect::AlphaTestEffect(AlphaTestEffect&& moveFrom) noexcept
   : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 
 // Move assignment.
-AlphaTestEffect& AlphaTestEffect::operator= (AlphaTestEffect&& moveFrom) throw()
+AlphaTestEffect& AlphaTestEffect::operator= (AlphaTestEffect&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;

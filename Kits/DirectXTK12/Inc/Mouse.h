@@ -22,7 +22,7 @@ namespace DirectX
     class Mouse
     {
     public:
-        Mouse();
+        Mouse() noexcept(false);
         Mouse(Mouse&& moveFrom) noexcept;
         Mouse& operator= (Mouse&& moveFrom) noexcept;
 
@@ -71,7 +71,7 @@ namespace DirectX
 
             void __cdecl Update(const State& state);
 
-            void __cdecl Reset();
+            void __cdecl Reset() noexcept;
 
             State __cdecl GetLastState() const { return lastState; }
 

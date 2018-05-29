@@ -40,7 +40,7 @@ static_assert((sizeof(NormalMapEffectConstants) % 16) == 0, "CB size not padded 
 // Traits type describes our characteristics to the EffectBase template.
 struct NormalMapEffectTraits
 {
-    typedef NormalMapEffectConstants ConstantBufferType;
+    using ConstantBufferType = NormalMapEffectConstants;
 
     static const int VertexShaderCount = 4;
     static const int PixelShaderCount = 4;
@@ -252,14 +252,14 @@ NormalMapEffect::NormalMapEffect(_In_ ID3D11Device* device)
 
 
 // Move constructor.
-NormalMapEffect::NormalMapEffect(NormalMapEffect&& moveFrom) throw()
+NormalMapEffect::NormalMapEffect(NormalMapEffect&& moveFrom) noexcept
   : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
 
 // Move assignment.
-NormalMapEffect& NormalMapEffect::operator= (NormalMapEffect&& moveFrom) throw()
+NormalMapEffect& NormalMapEffect::operator= (NormalMapEffect&& moveFrom) noexcept
 {
     pImpl = std::move(moveFrom.pImpl);
     return *this;

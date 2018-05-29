@@ -21,10 +21,6 @@
 #pragma comment(lib,"acphal.lib")
 #endif
 
-#if defined(WINAPI_FAMILY) && WINAPI_FAMILY == WINAPI_FAMILY_PHONE_APP
-#pragma comment(lib,"PhoneAudioSes.lib")
-#endif
-
 #ifndef XAUDIO2_HELPER_FUNCTIONS
 #define XAUDIO2_HELPER_FUNCTIONS
 #endif
@@ -83,6 +79,14 @@ namespace DirectX
     class IVoiceNotify
     {
     public:
+        virtual ~IVoiceNotify() = default;
+
+        IVoiceNotify(const IVoiceNotify&) = delete;
+        IVoiceNotify& operator=(const IVoiceNotify&) = delete;
+
+        IVoiceNotify(IVoiceNotify&&) = delete;
+        IVoiceNotify& operator=(IVoiceNotify&&) = delete;
+
         virtual void __cdecl OnBufferEnd() = 0;
             // Notfication that a voice buffer has finished
             // Note this is called from XAudio2's worker thread, so it should perform very minimal and thread-safe operations
@@ -104,6 +108,9 @@ namespace DirectX
 
         virtual void __cdecl GatherStatistics(AudioStatistics& stats) const = 0;
             // Contribute to statistics request
+
+    protected:
+        IVoiceNotify() = default;
     };
 
     //----------------------------------------------------------------------------------
@@ -185,7 +192,7 @@ namespace DirectX
     public:
         explicit AudioEngine(
             AUDIO_ENGINE_FLAGS flags = AudioEngine_Default, _In_opt_ const WAVEFORMATEX* wfx = nullptr, _In_opt_z_ const wchar_t* deviceId = nullptr,
-            AUDIO_STREAM_CATEGORY category = AudioCategory_GameEffects);
+            AUDIO_STREAM_CATEGORY category = AudioCategory_GameEffects) noexcept(false);
 
         AudioEngine(AudioEngine&& moveFrom) noexcept;
         AudioEngine& operator= (AudioEngine&& moveFrom) noexcept;
@@ -491,10 +498,10 @@ namespace DirectX
     {
         float       EmitterAzimuths[XAUDIO2_MAX_AUDIO_CHANNELS];
 
-        AudioEmitter() noexcept
+        AudioEmitter() noexcept :
+            EmitterAzimuths{}
         {
             memset(this, 0, sizeof(X3DAUDIO_EMITTER));
-            memset(EmitterAzimuths, 0, sizeof(EmitterAzimuths));
 
             OrientFront.z = -1.f;
 
