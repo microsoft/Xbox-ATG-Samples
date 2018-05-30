@@ -113,6 +113,8 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td><a href="UWPSamples/IntroGraphics/SimpleComputeUWP12">UWP DX12</a></td>
   <td><a href="XDKSamples/IntroGraphics/SimpleCompute">XDK DX11</a></td>
   <td><a href="XDKSamples/IntroGraphics/SimpleCompute12">XDK DX12</a></td>
+  <td><a href="PCSamples/IntroGraphics/SimpleComputePC">PC DX11</a></td>
+  <td><a href="PCSamples/IntroGraphics/SimpleComputePC12">PC DX12</a></td>
  </tr>
  <tr>
   <td>DirectX Tool Kit</td>
