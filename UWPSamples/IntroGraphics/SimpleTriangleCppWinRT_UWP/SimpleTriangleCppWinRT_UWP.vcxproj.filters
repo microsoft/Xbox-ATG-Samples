@@ -75,7 +75,6 @@
     <None Include="..\..\..\Kits\Telemetry\x64\ATGTelemetryUWP.dll">
       <Filter>Common\Telemetry\x64</Filter>
     </None>
-    <None Include="packages.config" />
     <None Include="Readme.docx" />
   </ItemGroup>
   <ItemGroup>
