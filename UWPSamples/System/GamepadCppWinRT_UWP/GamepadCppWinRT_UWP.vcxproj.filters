@@ -88,6 +88,5 @@
     <None Include="..\..\..\Kits\Telemetry\Win32\ATGTelemetryUWP.dll">
       <Filter>Common\Telemetry\Win32</Filter>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
 </Project>
