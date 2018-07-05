@@ -385,6 +385,8 @@ void Sample::CreateDeviceDependentResources()
 
         resourceUpload.Begin();
 
+        m_model->LoadStaticBuffers(device, resourceUpload);
+
         DX::ThrowIfFailed(
             CreateDDSTextureFromFile(device, resourceUpload, L"seafloor.dds", m_texture1.ReleaseAndGetAddressOf())
         );

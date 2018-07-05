@@ -75,7 +75,7 @@ namespace DX
         void GetAdapter(IDXGIAdapter1** ppAdapter);
         void UpdateColorSpace();
 
-        const static size_t MAX_BACK_BUFFER_COUNT = 3;
+        static const size_t MAX_BACK_BUFFER_COUNT = 3;
 
         UINT                                                m_backBufferIndex;
 

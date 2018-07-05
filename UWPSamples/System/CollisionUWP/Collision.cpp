@@ -587,9 +587,9 @@ void Sample::Animate( double fTime )
     m_secondaryAABoxes[2].aabox.Center.z = 8.f * cosf( 3.5f * t );
 
     // triangle points in local space - equilateral triangle with radius of 2
-    const static XMVECTORF32 TrianglePointA = { 0.f, 2.f, 0.f, 0.f };
-    const static XMVECTORF32 TrianglePointB = { 1.732f, -1.f, 0.f, 0.f };
-    const static XMVECTORF32 TrianglePointC = { -1.732f, -1.f, 0.f, 0.f };
+    static const XMVECTORF32 TrianglePointA = { 0.f, 2.f, 0.f, 0.f };
+    static const XMVECTORF32 TrianglePointB = { 1.732f, -1.f, 0.f, 0.f };
+    static const XMVECTORF32 TrianglePointC = { -1.732f, -1.f, 0.f, 0.f };
 
     // animate triangle 0 around the frustum
     XMMATRIX TriangleCoords = XMMatrixRotationRollPitchYaw( t * 1.4f, t * 2.5f, t );

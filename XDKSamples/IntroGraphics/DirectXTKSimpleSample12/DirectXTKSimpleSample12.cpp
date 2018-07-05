@@ -326,6 +326,8 @@ void Sample::CreateDeviceDependentResources()
 
         resourceUpload.Begin();
 
+        m_model->LoadStaticBuffers(device, resourceUpload);
+
         RenderTargetState rtState(m_deviceResources->GetBackBufferFormat(), m_deviceResources->GetDepthBufferFormat());
 
         {

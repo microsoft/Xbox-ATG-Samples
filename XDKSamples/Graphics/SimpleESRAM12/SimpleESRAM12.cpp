@@ -849,10 +849,16 @@ void Sample::CreateDeviceDependentResources()
         m_models[i] = Model::CreateFromSDKMESH(s_modelPaths[i]);
     }
 
-    // Upload textures to GPU.
     ResourceUploadBatch resourceUpload(device);
     resourceUpload.Begin();
 
+    // Optimize meshes for rendering
+    for (int i = 0; i < m_models.size(); ++i)
+    {
+        m_models[i]->LoadStaticBuffers(device, resourceUpload);
+    }
+
+    // Upload textures to GPU.
     m_textureFactory = std::make_unique<EffectTextureFactory>(device, resourceUpload, m_srvPile->Heap());
 
     auto texOffsets = std::vector<size_t>(m_models.size());
