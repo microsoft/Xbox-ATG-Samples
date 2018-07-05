@@ -17,9 +17,9 @@
 
 #include "DDSTextureLoader.h"
 
+#include "PlatformHelpers.h"
 #include "dds.h"
 #include "DirectXHelpers.h"
-#include "PlatformHelpers.h"
 #include "LoaderHelpers.h"
 #include "ResourceUploadBatch.h"
 
@@ -308,7 +308,7 @@ namespace
         if ((header->ddspf.flags & DDS_FOURCC) &&
             (MAKEFOURCC('D', 'X', '1', '0') == header->ddspf.fourCC))
         {
-            auto d3d10ext = reinterpret_cast<const DDS_HEADER_DXT10*>((const char*)header + sizeof(DDS_HEADER));
+            auto d3d10ext = reinterpret_cast<const DDS_HEADER_DXT10*>(reinterpret_cast<const char*>(header) + sizeof(DDS_HEADER));
 
             arraySize = d3d10ext->arraySize;
             if (arraySize == 0)
@@ -595,7 +595,7 @@ HRESULT DirectX::LoadDDSTextureFromMemoryEx(
         return E_FAIL;
     }
 
-    uint32_t dwMagicNumber = *(const uint32_t*)(ddsData);
+    auto dwMagicNumber = *reinterpret_cast<const uint32_t*>(ddsData);
     if (dwMagicNumber != DDS_MAGIC)
     {
         return E_FAIL;
@@ -634,7 +634,7 @@ HRESULT DirectX::LoadDDSTextureFromMemoryEx(
         texture, subresources, isCubeMap);
     if (SUCCEEDED(hr))
     {
-        if (texture != 0 && *texture != 0)
+        if (texture && *texture)
         {
             SetDebugObjectName(*texture, L"DDSTextureLoader");
         }
@@ -732,7 +732,7 @@ HRESULT DirectX::LoadDDSTextureFromFileEx(
             (*texture)->SetName(fileName);
         }
     #else
-        if (texture != 0)
+        if (texture)
         {
             CHAR strFileA[MAX_PATH];
             int result = WideCharToMultiByte(CP_ACP,
@@ -756,7 +756,7 @@ HRESULT DirectX::LoadDDSTextureFromFileEx(
                     pstrName++;
                 }
 
-                if (texture != 0 && *texture != 0)
+                if (texture && *texture)
                 {
                     (*texture)->SetName(pstrName);
                 }

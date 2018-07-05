@@ -183,7 +183,7 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D12Device* device,
         mRootSignature = GetRootSignature(0, rsigDesc);
     }
 
-    assert(mRootSignature != 0);
+    assert(mRootSignature != nullptr);
 
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
 
@@ -260,7 +260,7 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     if (dirtyFlags & EffectDirtyFlags::AlphaTest)
     {
         // Convert reference alpha from 8 bit integer to 0-1 float format.
-        float reference = (float)referenceAlpha / 255.0f;
+        auto reference = static_cast<float>(referenceAlpha) / 255.0f;
                 
         // Comparison tolerance of half the 8 bit integer precision.
         const float threshold = 0.5f / 255.0f;
