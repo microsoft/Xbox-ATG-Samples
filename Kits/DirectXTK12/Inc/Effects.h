@@ -167,7 +167,7 @@ namespace DirectX
         BasicEffect(BasicEffect const&) = delete;
         BasicEffect& operator= (BasicEffect const&) = delete;
 
-        virtual ~BasicEffect();
+        virtual ~BasicEffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -225,7 +225,7 @@ namespace DirectX
         AlphaTestEffect(AlphaTestEffect const&) = delete;
         AlphaTestEffect& operator= (AlphaTestEffect const&) = delete;
 
-        virtual ~AlphaTestEffect();
+        virtual ~AlphaTestEffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -271,7 +271,7 @@ namespace DirectX
         DualTextureEffect(DualTextureEffect const&) = delete;
         DualTextureEffect& operator= (DualTextureEffect const&) = delete;
 
-        ~DualTextureEffect();
+        virtual ~DualTextureEffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -315,7 +315,7 @@ namespace DirectX
         EnvironmentMapEffect(EnvironmentMapEffect const&) = delete;
         EnvironmentMapEffect& operator= (EnvironmentMapEffect const&) = delete;
 
-        virtual ~EnvironmentMapEffect();
+        virtual ~EnvironmentMapEffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -377,7 +377,7 @@ namespace DirectX
         SkinnedEffect(SkinnedEffect const&) = delete;
         SkinnedEffect& operator= (SkinnedEffect const&) = delete;
 
-        virtual ~SkinnedEffect();
+        virtual ~SkinnedEffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -439,7 +439,7 @@ namespace DirectX
         NormalMapEffect(NormalMapEffect const&) = delete;
         NormalMapEffect& operator= (NormalMapEffect const&) = delete;
 
-        virtual ~NormalMapEffect();
+        virtual ~NormalMapEffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -499,7 +499,7 @@ namespace DirectX
         PBREffect(PBREffect const&) = delete;
         PBREffect& operator= (PBREffect const&) = delete;
 
-        virtual ~PBREffect();
+        virtual ~PBREffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -573,7 +573,7 @@ namespace DirectX
         DebugEffect(DebugEffect const&) = delete;
         DebugEffect& operator= (DebugEffect const&) = delete;
 
-        virtual ~DebugEffect();
+        virtual ~DebugEffect() override;
 
         // IEffect methods.
         void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) override;
@@ -622,12 +622,12 @@ namespace DirectX
     public:
         EffectTextureFactory(
             _In_ ID3D12Device* device,
-            _Inout_ ResourceUploadBatch& resourceUploadBatch,
+            ResourceUploadBatch& resourceUploadBatch,
             _In_ ID3D12DescriptorHeap* descriptorHeap);
 
         EffectTextureFactory(
             _In_ ID3D12Device* device,
-            _Inout_ ResourceUploadBatch& resourceUploadBatch,
+            ResourceUploadBatch& resourceUploadBatch,
             _In_ size_t numDescriptors,
             _In_ D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags);
 
@@ -637,7 +637,7 @@ namespace DirectX
         EffectTextureFactory(EffectTextureFactory const&) = delete;
         EffectTextureFactory& operator= (EffectTextureFactory const&) = delete;
 
-        virtual ~EffectTextureFactory();
+        virtual ~EffectTextureFactory() override;
 
         virtual void __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) override;
 
@@ -650,7 +650,7 @@ namespace DirectX
         // How many textures are there in this factory?
         size_t __cdecl ResourceCount() const;
 
-        // Get a resource in a specific slot
+        // Get a resource in a specific slot (note: increases reference count on resource)
         void __cdecl GetResource(size_t slot, _Out_ ID3D12Resource** resource, _Out_ bool* isCubeMap);
 
         // Settings.
@@ -753,7 +753,7 @@ namespace DirectX
         EffectFactory(EffectFactory const&) = delete;
         EffectFactory& operator= (EffectFactory const&) = delete;
 
-        virtual ~EffectFactory();
+        virtual ~EffectFactory() override;
 
         // IEffectFactory methods.
         virtual std::shared_ptr<IEffect> __cdecl CreateEffect(

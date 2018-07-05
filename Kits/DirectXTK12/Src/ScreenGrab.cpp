@@ -25,8 +25,8 @@
 #include "ScreenGrab.h"
 #include "DirectXHelpers.h"
 
-#include "dds.h"
 #include "PlatformHelpers.h"
+#include "dds.h"
 #include "LoaderHelpers.h"
 
 using Microsoft::WRL::ComPtr;
@@ -136,7 +136,7 @@ namespace
 
             DXGI_FORMAT fmt = EnsureNotTypeless(desc.Format);
 
-            D3D12_FEATURE_DATA_FORMAT_SUPPORT formatInfo = { fmt };
+            D3D12_FEATURE_DATA_FORMAT_SUPPORT formatInfo = { fmt, D3D12_FORMAT_SUPPORT1_NONE, D3D12_FORMAT_SUPPORT2_NONE };
             hr = device->CheckFeatureSupport(D3D12_FEATURE_FORMAT_SUPPORT, &formatInfo, sizeof(formatInfo));
             if (FAILED(hr))
                 return hr;
@@ -196,7 +196,7 @@ namespace
             return hr;
 
         // Execute the command list
-        pCommandQ->ExecuteCommandLists(1, (ID3D12CommandList**)commandList.GetAddressOf());
+        pCommandQ->ExecuteCommandLists(1, CommandListCast(commandList.GetAddressOf()));
 
         // Signal the fence
         hr = pCommandQ->Signal(fence.Get(), 1);
@@ -275,7 +275,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
     header->size = sizeof(DDS_HEADER);
     header->flags = DDS_HEADER_FLAGS_TEXTURE | DDS_HEADER_FLAGS_MIPMAP;
     header->height = desc.Height;
-    header->width = (uint32_t)desc.Width;
+    header->width = static_cast<uint32_t>(desc.Width);
     header->mipMapCount = 1;
     header->caps = DDS_SURFACE_FLAGS_TEXTURE;
 
@@ -337,7 +337,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
     }
 
     size_t rowPitch, slicePitch, rowCount;
-    GetSurfaceInfo((size_t)desc.Width, desc.Height, desc.Format, &slicePitch, &rowPitch, &rowCount);
+    GetSurfaceInfo(static_cast<size_t>(desc.Width), desc.Height, desc.Format, &slicePitch, &rowPitch, &rowCount);
 
     if (IsCompressed(desc.Format))
     {
@@ -520,7 +520,7 @@ HRESULT DirectX::SaveWICTextureToFile(
     auto_delete_file_wic delonfail(stream, fileName);
 
     ComPtr<IWICBitmapEncoder> encoder;
-    hr = pWIC->CreateEncoder(guidContainerFormat, 0, encoder.GetAddressOf());
+    hr = pWIC->CreateEncoder(guidContainerFormat, nullptr, encoder.GetAddressOf());
     if (FAILED(hr))
         return hr;
 

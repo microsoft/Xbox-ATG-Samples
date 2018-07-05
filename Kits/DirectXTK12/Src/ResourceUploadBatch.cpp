@@ -149,7 +149,7 @@ namespace
         };
 #pragma pack(pop)
 
-        static const uint32_t Num32BitConstants = (uint32_t)(sizeof(ConstantData) / sizeof(uint32_t));
+        static const uint32_t Num32BitConstants = static_cast<uint32_t>(sizeof(ConstantData) / sizeof(uint32_t));
         static const uint32_t ThreadGroupSize = 8;
 
         ComPtr<ID3D12RootSignature> rootSignature;
@@ -256,9 +256,9 @@ public:
     // The resource must be in the COPY_DEST state.
     void Upload(
         _In_ ID3D12Resource* resource,
-        _In_ uint32_t subresourceIndexStart,
+        uint32_t subresourceIndexStart,
         _In_reads_(numSubresources) D3D12_SUBRESOURCE_DATA* subRes,
-        _In_ uint32_t numSubresources)
+        uint32_t numSubresources)
     {
         if (!mInBeginEndBlock)
             throw std::exception("Can't call Upload on a closed ResourceUploadBatch.");
@@ -285,11 +285,29 @@ public:
 
         SetDebugObjectName(scratchResource.Get(), L"ResourceUploadBatch Temporary");
 
-        // Transition the resource to a copy target, copy and transition back
+        // Submit resource copy to command list
         UpdateSubresources(mList.Get(), resource, scratchResource.Get(), 0, subresourceIndexStart, numSubresources, subRes);
 
         // Remember this upload object for delayed release
         mTrackedObjects.push_back(scratchResource);
+
+        PIXEndEvent(mList.Get());
+    }
+
+    void Upload(
+        _In_ ID3D12Resource* resource,
+        const SharedGraphicsResource& buffer)
+    {
+        if (!mInBeginEndBlock)
+            throw std::exception("Can't call Upload on a closed ResourceUploadBatch.");
+
+        PIXBeginEvent(mList.Get(), 0, __FUNCTIONW__);
+
+        // Submit resource copy to command list
+        mList->CopyBufferRegion(resource, 0, buffer.Resource(), buffer.ResourceOffset(), buffer.Size());
+
+        // Remember this upload resource for delayed release
+        mTrackedMemoryResources.push_back(buffer);
 
         PIXEndEvent(mList.Get());
     }
@@ -378,7 +396,7 @@ public:
         ThrowIfFailed(mList->Close());
 
         // Submit the job to the GPU
-        commandQueue->ExecuteCommandLists(1, (ID3D12CommandList**)mList.GetAddressOf());
+        commandQueue->ExecuteCommandLists(1, CommandListCast(mList.GetAddressOf()));
 
         // Set an event so we get notified when the GPU has completed all its work
         ComPtr<ID3D12Fence> fence;
@@ -394,11 +412,12 @@ public:
         ThrowIfFailed(fence->SetEventOnCompletion(1ULL, gpuCompletedEvent));
 
         // Create a packet of data that'll be passed to our waiting upload thread
-        UploadBatch* uploadBatch = new UploadBatch();
+        auto uploadBatch = new UploadBatch();
         uploadBatch->CommandList = mList;
         uploadBatch->Fence = fence;
         uploadBatch->GpuCompleteEvent = gpuCompletedEvent;
-        uploadBatch->TrackedObjects.insert(std::end(uploadBatch->TrackedObjects), std::begin(mTrackedObjects), std::end(mTrackedObjects));
+        std::swap(mTrackedObjects, uploadBatch->TrackedObjects);
+        std::swap(mTrackedMemoryResources, uploadBatch->TrackedMemoryResources);
 
         // Kick off a thread that waits for the upload to complete on the GPU timeline.
         // Let the thread run autonomously, but provide a future the user can wait on.
@@ -419,18 +438,21 @@ public:
             }
 
             // Delete the batch
-            // Because the vector contains ComPtrs, their destructors will fire and the
-            // resources will be Released.
+            // Because the vectors contain smart-pointers, their destructors will
+            // fire and the resources will be released.
             delete uploadBatch;
         });
 
         // Reset our state
         mInBeginEndBlock = false;
-        mTrackedObjects.resize(0);
         mList.Reset();
         mCmdAlloc.Reset();
 
-        return std::move(future);
+        // Swap above should have cleared these
+        assert(mTrackedObjects.empty());
+        assert(mTrackedMemoryResources.empty());
+
+        return future;
     }
 
 private:
@@ -544,7 +566,7 @@ private:
             descriptorSize); // offset by 1 descriptor
 
         // Process each mip
-        uint32_t mipWidth = (uint32_t)desc.Width;
+        auto mipWidth = static_cast<uint32_t>(desc.Width);
         uint32_t mipHeight = desc.Height;
         for (uint32_t mip = 1; mip < desc.MipLevels; ++mip)
         {
@@ -561,7 +583,7 @@ private:
             // Set constants
             GenerateMipsResources::ConstantData constants;
             constants.SrcMipIndex = mip - 1;
-            constants.InvOutTexelSize = XMFLOAT2(1 / (float)mipWidth, 1 / (float)mipHeight);
+            constants.InvOutTexelSize = XMFLOAT2(1 / float(mipWidth), 1 / float(mipHeight));
             mList->SetComputeRoot32BitConstants(
                 GenerateMipsResources::Constants,
                 GenerateMipsResources::Num32BitConstants,
@@ -740,6 +762,7 @@ private:
     struct UploadBatch
     {
         std::vector<ComPtr<ID3D12DeviceChild>>  TrackedObjects;
+        std::vector<SharedGraphicsResource>     TrackedMemoryResources;
         ComPtr<ID3D12GraphicsCommandList>       CommandList;
         ComPtr<ID3D12Fence>  			        Fence;
         HANDLE                                  GpuCompleteEvent;
@@ -753,6 +776,7 @@ private:
     std::unique_ptr<GenerateMipsResources>      mGenMipsResources;
 
     std::vector<ComPtr<ID3D12DeviceChild>>      mTrackedObjects;
+    std::vector<SharedGraphicsResource>         mTrackedMemoryResources;
     bool                                        mInBeginEndBlock;
 };
 
@@ -792,14 +816,26 @@ void ResourceUploadBatch::Begin()
 }
 
 
+_Use_decl_annotations_
 void ResourceUploadBatch::Upload(
-    _In_ ID3D12Resource* resource,
-    _In_ uint32_t subresourceIndexStart,
-    _In_reads_(numSubresources) D3D12_SUBRESOURCE_DATA* subRes,
-    _In_ uint32_t numSubresources)
+    ID3D12Resource* resource,
+    uint32_t subresourceIndexStart,
+    D3D12_SUBRESOURCE_DATA* subRes,
+    uint32_t numSubresources)
 {
     pImpl->Upload(resource, subresourceIndexStart, subRes, numSubresources);
 }
+
+
+_Use_decl_annotations_
+void ResourceUploadBatch::Upload(
+    ID3D12Resource* resource,
+    const SharedGraphicsResource& buffer
+)
+{
+    pImpl->Upload(resource, buffer);
+}
+
 
 
 void ResourceUploadBatch::GenerateMips(_In_ ID3D12Resource* resource)
@@ -808,10 +844,11 @@ void ResourceUploadBatch::GenerateMips(_In_ ID3D12Resource* resource)
 }
 
 
+_Use_decl_annotations_
 void ResourceUploadBatch::Transition(
-    _In_ ID3D12Resource* resource,
-    _In_ D3D12_RESOURCE_STATES stateBefore,
-    _In_ D3D12_RESOURCE_STATES stateAfter)
+    ID3D12Resource* resource,
+    D3D12_RESOURCE_STATES stateBefore,
+    D3D12_RESOURCE_STATES stateAfter)
 {
     pImpl->Transition(resource, stateBefore, stateAfter);
 }
@@ -819,6 +856,5 @@ void ResourceUploadBatch::Transition(
 
 std::future<void> ResourceUploadBatch::End(_In_ ID3D12CommandQueue* commandQueue)
 {
-    return std::move(pImpl->End(commandQueue));
+    return pImpl->End(commandQueue);
 }
-

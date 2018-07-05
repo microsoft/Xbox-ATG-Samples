@@ -53,10 +53,14 @@ namespace DirectX
         uint32_t                                                vertexOffset;
         uint32_t                                                vertexStride;
         uint32_t                                                vertexCount;
+        uint32_t                                                indexBufferSize;
+        uint32_t                                                vertexBufferSize;
         D3D_PRIMITIVE_TOPOLOGY                                  primitiveType;
         DXGI_FORMAT                                             indexFormat;
         SharedGraphicsResource                                  indexBuffer;
         SharedGraphicsResource                                  vertexBuffer;
+        Microsoft::WRL::ComPtr<ID3D12Resource>                  staticIndexBuffer;
+        Microsoft::WRL::ComPtr<ID3D12Resource>                  staticVertexBuffer;
         std::shared_ptr<std::vector<D3D12_INPUT_ELEMENT_DESC>>  vbDecl;
 
         using Collection = std::vector<std::unique_ptr<ModelMeshPart>>;
@@ -64,6 +68,8 @@ namespace DirectX
 
         // Draw mesh part
         void __cdecl Draw(_In_ ID3D12GraphicsCommandList* commandList) const;
+
+        void __cdecl DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstanceLocation = 0) const;
 
         //
         // Utilities for drawing multiple mesh parts
@@ -81,7 +87,7 @@ namespace DirectX
         // Draw the mesh with a range of effects that mesh parts will index into. 
         // Effects can be any IEffect pointer type (including smart pointer). Value or reference types will not compile.
         // The iterator passed to this method should have random access capabilities for best performance.
-        template<typename TEffectIterator, typename TEffectIteratorCategory = TEffectIterator::iterator_category>
+        template<typename TEffectIterator, typename TEffectIteratorCategory = typename TEffectIterator::iterator_category>
         static void DrawMeshParts(
             _In_ ID3D12GraphicsCommandList* commandList,
             _In_ const ModelMeshPart::Collection& meshParts,
@@ -139,12 +145,12 @@ namespace DirectX
 
         // Draw the mesh with a range of effects that mesh parts will index into. 
         // TEffectPtr can be any IEffect pointer type (including smart pointer). Value or reference types will not compile.
-        template<typename TEffectIterator, typename TEffectIteratorCategory = TEffectIterator::iterator_category>
+        template<typename TEffectIterator, typename TEffectIteratorCategory = typename TEffectIterator::iterator_category>
         void DrawOpaque(_In_ ID3D12GraphicsCommandList* commandList, TEffectIterator effects) const
         {
             ModelMeshPart::DrawMeshParts<TEffectIterator, TEffectIteratorCategory>(commandList, opaqueMeshParts, effects);
         }
-        template<typename TEffectIterator, typename TEffectIteratorCategory = TEffectIterator::iterator_category>
+        template<typename TEffectIterator, typename TEffectIteratorCategory = typename TEffectIterator::iterator_category>
         void DrawAlpha(_In_ ID3D12GraphicsCommandList* commandList, TEffectIterator effects) const
         {
             ModelMeshPart::DrawMeshParts<TEffectIterator, TEffectIteratorCategory>(commandList, alphaMeshParts, effects);
@@ -212,9 +218,15 @@ namespace DirectX
         // Load texture resources into a new Effect Texture Factory
         std::unique_ptr<EffectTextureFactory> __cdecl LoadTextures(
             _In_ ID3D12Device* device,
-            _Inout_ ResourceUploadBatch& resourceUploadBatch,
+            ResourceUploadBatch& resourceUploadBatch,
             _In_opt_z_ const wchar_t* texturesPath = nullptr,
             D3D12_DESCRIPTOR_HEAP_FLAGS flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE) const;
+
+        // Load VB/IB resources for static geometry
+        void __cdecl LoadStaticBuffers(
+            _In_ ID3D12Device* device,
+            ResourceUploadBatch& resourceUploadBatch,
+            bool keepMemory = false);
 
         // Create effects using the default effect factory
         std::vector<std::shared_ptr<IEffect>> __cdecl CreateEffects(
@@ -255,7 +267,7 @@ namespace DirectX
                 return handle;
 
             handle = heap->GetGPUDescriptorHandleForHeapStart();
-            handle.ptr += descriptorSize * ((size_t)textureIndex + descriptorOffset);
+            handle.ptr += static_cast<UINT64>(descriptorSize * (static_cast<size_t>(textureIndex) + descriptorOffset));
 
             return handle;
         }
