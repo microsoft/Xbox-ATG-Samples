@@ -395,6 +395,8 @@ void Sample::CreateDeviceDependentResources()
     resourceUpload.Begin();
 
     {
+        m_model->LoadStaticBuffers(device, resourceUpload);
+
         wchar_t drive[_MAX_DRIVE];
         wchar_t path[_MAX_PATH];
 

@@ -272,7 +272,7 @@ namespace DX
 
         typedef std::unique_ptr<void, handle_closer> ScopedHandle;
 
-        inline HANDLE safe_handle(HANDLE h) { return (h == INVALID_HANDLE_VALUE) ? 0 : h; }
+        inline HANDLE safe_handle(HANDLE h) { return (h == INVALID_HANDLE_VALUE) ? nullptr : h; }
 
         std::unique_ptr<wchar_t[]>  m_data;
         const wchar_t*              m_end;

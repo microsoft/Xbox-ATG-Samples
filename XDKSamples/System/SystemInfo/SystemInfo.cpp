@@ -220,6 +220,13 @@ void Sample::Render()
         {
             y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"AnalyticsInfo", mid, y, ATG::Colors::LightGrey, m_scale);
 
+#if _XDK_VER < 0x3F6803F3 /* XDK Edition 170600 */
+            auto deviceForm = Windows::System::Profile::AnalyticsInfo::DeviceForm;
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DeviceForm", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), deviceForm->Data(), right, y, m_scale);
+#endif
+
             auto versionInfo = Windows::System::Profile::AnalyticsInfo::VersionInfo;
 
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DeviceFamily", left, y, m_scale);
@@ -250,7 +257,7 @@ void Sample::Render()
             // The _XDK_VER captures at compile-time the version of the Xbox One XDK used to build the application
             y += m_smallFont->GetLineSpacing() * 2;
 
-            swprintf_s(buff, L"%08X", _XDK_VER);
+            swprintf_s(buff, L"%08X (%ls)", _XDK_VER, _XDK_VER_STRING_COMPACT_W);
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"_XDK_VER", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
 

@@ -1,9 +1,10 @@
-﻿//
+//
 // StepTimer.h - A simple timer that provides elapsed time information
 //
 
 #pragma once
 
+#include <cmath>
 #include <exception>
 #include <stdint.h>
 
@@ -13,7 +14,7 @@ namespace DX
     class StepTimer
     {
     public:
-        StepTimer() : 
+        StepTimer() noexcept(false) :
             m_elapsedTicks(0),
             m_totalTicks(0),
             m_leftOverTicks(0),
@@ -35,7 +36,7 @@ namespace DX
             }
 
             // Initialize max delta to 1/10 of a second.
-            m_qpcMaxDelta = m_qpcFrequency.QuadPart / 10;
+            m_qpcMaxDelta = static_cast<uint64_t>(m_qpcFrequency.QuadPart / 10);
         }
 
         // Get elapsed time since the previous Update call.
@@ -122,7 +123,7 @@ namespace DX
                 // accumulate enough tiny errors that it would drop a frame. It is better to just round 
                 // small deviations down to zero to leave things running smoothly.
 
-                if (abs(static_cast<int64_t>(timeDelta - m_targetElapsedTicks)) < TicksPerSecond / 4000)
+                if (static_cast<uint64_t>(std::abs(static_cast<int64_t>(timeDelta - m_targetElapsedTicks))) < TicksPerSecond / 4000)
                 {
                     timeDelta = m_targetElapsedTicks;
                 }

@@ -47,9 +47,10 @@ namespace
         std::unique_ptr<ATG::PBREffect> m_effect;
 
         void Init(ID3D12Device* device,
-                    D3D12_GPU_DESCRIPTOR_HANDLE radianceTex, int numMips, 
-                    D3D12_GPU_DESCRIPTOR_HANDLE irradianceTex, 
-                    D3D12_GPU_DESCRIPTOR_HANDLE sampler)
+                  ResourceUploadBatch& upload,
+                  D3D12_GPU_DESCRIPTOR_HANDLE radianceTex, int numMips, 
+                  D3D12_GPU_DESCRIPTOR_HANDLE irradianceTex, 
+                  D3D12_GPU_DESCRIPTOR_HANDLE sampler)
         {
             RenderTargetState hdrBufferRts(Sample::GetHDRRenderFormat(), Sample::GetDepthFormat());
 
@@ -74,6 +75,9 @@ namespace
             
             // Model
             m_model = Model::CreateFromSDKMESH(L"XboxOrb.sdkmesh");
+
+            // Optimize model for rendering
+            m_model->LoadStaticBuffers(device, upload);
         }
 
         void XM_CALLCONV Render(ID3D12GraphicsCommandList* commandList, FXMMATRIX camView, CXMMATRIX camProj)
@@ -394,7 +398,9 @@ void SharedSimplePBR::CreateDeviceDependentResources()
     }
 
     s_testScene = std::make_unique<TestScene>();
-    s_testScene->Init(device, m_srvPile->GetGpuHandle(StaticDescriptors::RadianceTex),
+    s_testScene->Init(device,
+        resourceUpload,
+        m_srvPile->GetGpuHandle(StaticDescriptors::RadianceTex),
         numMips,
         m_srvPile->GetGpuHandle(StaticDescriptors::IrradianceTex),
         m_commonStates->LinearWrap());

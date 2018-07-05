@@ -68,7 +68,7 @@ namespace DX
     private:
         void MoveToNextFrame();
 
-        const static size_t MAX_BACK_BUFFER_COUNT = 3;
+        static const size_t MAX_BACK_BUFFER_COUNT = 3;
 
         UINT                                                m_backBufferIndex;
 

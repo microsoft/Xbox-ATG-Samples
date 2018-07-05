@@ -312,6 +312,11 @@ void Sample::Render()
         {
             y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"AnalyticsInfo", mid, y, ATG::Colors::LightGrey, m_scale);
 
+            auto deviceForm = Windows::System::Profile::AnalyticsInfo::DeviceForm;
+
+            DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DeviceForm", left, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), deviceForm->Data(), right, y, m_scale);
+
             auto versionInfo = Windows::System::Profile::AnalyticsInfo::VersionInfo;
 
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DeviceFamily", left, y, m_scale);

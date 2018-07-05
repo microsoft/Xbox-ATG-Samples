@@ -66,7 +66,7 @@ namespace DX
     {
         typedef uint64_t Timestamp;
 
-        const static Timestamp c_invalidTimestamp = 0;
+        static const Timestamp c_invalidTimestamp = 0;
 
     public:
         static const size_t c_maxTimers = 8;
@@ -158,7 +158,7 @@ namespace DX
     {
         typedef uint64_t Timestamp;
 
-        const static Timestamp c_invalidTimestamp = 0;
+        static const Timestamp c_invalidTimestamp = 0;
 
     public:
         static const size_t c_maxTimers = 8;

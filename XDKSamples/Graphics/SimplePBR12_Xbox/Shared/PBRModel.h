@@ -66,6 +66,9 @@ namespace ATG
             // PBR Model
             m_model = Model::CreateFromSDKMESH(m_modelFullPath.c_str());
 
+            // Optimize model for rendering
+            m_model->LoadStaticBuffers(device, resourceUpload);
+
             // PBR Textures
             // Force SRGB on albedo texture
             DX::ThrowIfFailed(

@@ -365,7 +365,7 @@ void GPUCommandListTimer<t_CommandList>::Frame::ComputeFrame(_In_ t_CommandList*
 
         DebugWarnings(j, start, end);
 
-        const static double c_FrequencyInvMS = 1000.0 / double(D3D11X_XBOX_GPU_TIMESTAMP_FREQUENCY);
+        static const double c_FrequencyInvMS = 1000.0 / double(D3D11X_XBOX_GPU_TIMESTAMP_FREQUENCY);
         float value = float(double(end - start) * c_FrequencyInvMS);
         m_timing[j] = value;
         m_avg[j] = UpdateRunningAverage(m_avg[j], value);
@@ -578,7 +578,7 @@ void GPUContextTimer<t_Context>::Frame::ComputeFrame(_In_ t_Context* context)
 
         DebugWarnings(j, start, end);
 
-        const static double c_FrequencyInvMS = 1000.0 / double(D3D11X_XBOX_GPU_TIMESTAMP_FREQUENCY);
+        static const double c_FrequencyInvMS = 1000.0 / double(D3D11X_XBOX_GPU_TIMESTAMP_FREQUENCY);
         float value = float(double(end - start) * c_FrequencyInvMS);
         m_timing[j] = value;
         m_avg[j] = UpdateRunningAverage(m_avg[j], value);

@@ -249,7 +249,7 @@ void FrontPanelDisplay::SaveWICToFile(_In_z_ const wchar_t *filename, REFGUID gu
 
     ComPtr<IWICBitmapEncoder> encoder;
     ThrowIfFailed(
-        pWIC->CreateEncoder(guidContainerFormat, 0, encoder.GetAddressOf())
+        pWIC->CreateEncoder(guidContainerFormat, nullptr, encoder.GetAddressOf())
     );
 
     ThrowIfFailed(
@@ -359,7 +359,7 @@ BufferDesc FrontPanelDisplay::LoadWICFromFile(_In_z_ const wchar_t* filename, st
 
     ComPtr<IWICBitmapDecoder> decoder;
     ThrowIfFailed(
-        pWIC->CreateDecoderFromFilename(filename, 0, GENERIC_READ, WICDecodeMetadataCacheOnDemand, decoder.GetAddressOf())
+        pWIC->CreateDecoderFromFilename(filename, nullptr, GENERIC_READ, WICDecodeMetadataCacheOnDemand, decoder.GetAddressOf())
     );
 
     UINT frameCount = 0;
@@ -399,7 +399,7 @@ BufferDesc FrontPanelDisplay::LoadWICFromFile(_In_z_ const wchar_t* filename, st
     {
         // No format conversion or resize needed
         ThrowIfFailed(
-            frame->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), data.get())
+            frame->CopyPixels(nullptr, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), data.get())
         );
     }
     else if (m_displayWidth != width || m_displayHeight != height)
@@ -423,7 +423,7 @@ BufferDesc FrontPanelDisplay::LoadWICFromFile(_In_z_ const wchar_t* filename, st
         {
             // No format conversion needed
             ThrowIfFailed(
-                scaler->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), data.get())
+                scaler->CopyPixels(nullptr, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), data.get())
             );
         }
         else
@@ -449,7 +449,7 @@ BufferDesc FrontPanelDisplay::LoadWICFromFile(_In_z_ const wchar_t* filename, st
             );
 
             ThrowIfFailed(
-                FC->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), data.get())
+                FC->CopyPixels(nullptr, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), data.get())
             );
         }
     }
@@ -477,7 +477,7 @@ BufferDesc FrontPanelDisplay::LoadWICFromFile(_In_z_ const wchar_t* filename, st
         );
 
         ThrowIfFailed(
-            FC->CopyPixels(0, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), data.get())
+            FC->CopyPixels(nullptr, static_cast<UINT>(rowPitch), static_cast<UINT>(imageSize), data.get())
         );
     }
 
