@@ -12,6 +12,8 @@
 #include "WASAPIManager.h"
 
 using namespace Platform;
+using namespace Windows::Media::Devices;
+using namespace Windows::Foundation;
 
 WASAPIManager::WASAPIManager() :
     m_RenderStateChangedEvent( nullptr ),
@@ -25,6 +27,8 @@ WASAPIManager::WASAPIManager() :
             
     //Create a 32k buffer
     m_captureBuffer = new CBuffer(32768);
+
+	m_renderEventToken = MediaDevice::DefaultAudioRenderDeviceChanged += ref new TypedEventHandler<Platform::Object^, DefaultAudioRenderDeviceChangedEventArgs^>(this, &WASAPIManager::OnRenderDeviceChange);
 
 	InitializeCriticalSectionEx(&m_CritSec, 0, 0);
 }
@@ -54,6 +58,11 @@ WASAPIManager::~WASAPIManager()
     DeleteCriticalSection( &m_CritSec );
 }
 
+void WASAPIManager::OnRenderDeviceChange(Platform::Object^,
+	Windows::Media::Devices::DefaultAudioRenderDeviceChangedEventArgs^)
+{
+	RestartDevice();
+}
 
 //--------------------------------------------------------------------------------------
 //  Name: OnDeviceStateChange
@@ -319,6 +328,15 @@ void WASAPIManager::StartDevice()
     }
 }
 
+//--------------------------------------------------------------------------------------
+//  Name: RestartDevice
+//  Desc: Restart playback
+//--------------------------------------------------------------------------------------
+void WASAPIManager::RestartDevice()
+{
+	m_Renderer = nullptr;
+	InitializeRenderDevice();
+}
 
 //--------------------------------------------------------------------------------------
 //  Name: GetStatus
