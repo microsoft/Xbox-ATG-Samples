@@ -9,13 +9,15 @@
 #include "pch.h"
 #include "WASAPIManager.h"
 
-
 using namespace Platform;
+using namespace Windows::Media::Devices;
+using namespace Windows::Foundation;
 
 WASAPIManager::WASAPIManager() :
     m_StateChangedEvent( nullptr ),
     m_Renderer( nullptr )
 {
+	m_renderEventToken = MediaDevice::DefaultAudioRenderDeviceChanged += ref new TypedEventHandler<Platform::Object^, DefaultAudioRenderDeviceChangedEventArgs^>(this, &WASAPIManager::OnRenderDeviceChange);
 }
 
 WASAPIManager::~WASAPIManager()
@@ -27,6 +29,12 @@ WASAPIManager::~WASAPIManager()
         m_StateChangedEvent = nullptr;
         m_DeviceStateChangeToken.Value = 0;
     }
+}
+
+void WASAPIManager::OnRenderDeviceChange(Platform::Object^,
+	Windows::Media::Devices::DefaultAudioRenderDeviceChangedEventArgs^)
+{
+	RestartDevice();
 }
 
 //--------------------------------------------------------------------------------------
@@ -160,6 +168,21 @@ void WASAPIManager::StartDevice()
         // Starts a work item to begin playback, likely in the paused state
         m_Renderer->StartPlaybackAsync();
     }
+}
+
+//--------------------------------------------------------------------------------------
+//  Name: RestartDevice
+//  Desc: Restart playback
+//--------------------------------------------------------------------------------------
+void WASAPIManager::RestartDevice()
+{
+	if (nullptr != m_Renderer)
+	{
+		StopDevice();
+		m_Renderer = nullptr;
+	}
+
+	InitializeDevice();
 }
 
 //--------------------------------------------------------------------------------------

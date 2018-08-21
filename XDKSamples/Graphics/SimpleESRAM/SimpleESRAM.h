@@ -15,8 +15,6 @@
 #include "DeviceResources.h"
 #include "StepTimer.h"
 
-#include "Camera.h"
-
 constexpr int PlaneCount = _countof(XG_RESOURCE_LAYOUT::Plane);
 
 
@@ -85,19 +83,18 @@ private:
 private:
     // Device resources.
     std::unique_ptr<DX::DeviceResources>            m_deviceResources;
-    int                                             m_displayWidth = 0;
-    int                                             m_displayHeight = 0;
+    int                                             m_displayWidth;
+    int                                             m_displayHeight;
                                                     
     // Rendering loop timer.                        
-    uint64_t                                        m_frame = 0;
+    uint64_t                                        m_frame;
     DX::StepTimer                                   m_timer;
     std::unique_ptr<DX::GPUTimer>                   m_profiler;
                                                     
     // Input devices.                               
     DirectX::GamePad                                m_gamePad;
     DirectX::GamePad::ButtonStateTracker            m_gamePadButtons;
-    ATG::Camera                                     m_camera;
-                                                    
+                                                  
     // DirectXTK objects.                 
     std::unique_ptr<DirectX::GraphicsMemory>        m_graphicsMemory;
     std::unique_ptr<DirectX::CommonStates>          m_commonStates;
@@ -107,6 +104,13 @@ private:
     std::unique_ptr<DirectX::SpriteBatch>           m_hudBatch;
     std::unique_ptr<DirectX::SpriteFont>            m_smallFont;
     std::unique_ptr<DirectX::SpriteFont>            m_ctrlFont;
+
+    // Camera
+    float                                           m_theta;
+    float                                           m_phi;
+    float                                           m_radius;
+    DirectX::SimpleMath::Matrix                     m_proj;
+    DirectX::SimpleMath::Matrix                     m_view;
                                                  
     // Assets & Scene                                    
     std::vector<std::unique_ptr<DirectX::Model>>    m_models;

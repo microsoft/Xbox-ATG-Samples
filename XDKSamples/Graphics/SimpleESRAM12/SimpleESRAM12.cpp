@@ -8,8 +8,6 @@
 #include "pch.h"
 #include "SimpleESRAM12.h"
 
-#include <stdlib.h>
-
 extern void ExitSample();
 
 using namespace DirectX;
@@ -51,6 +49,9 @@ namespace
 
     //--------------------------------------
     // Constants
+
+    const float c_defaultPhi = XM_2PI / 6.0f;
+    const float c_defaultRadius = 3.3f;
 
     // Assest paths.
     const wchar_t* s_modelPaths[] =
@@ -395,7 +396,13 @@ namespace
 
 
 Sample::Sample() 
-    : m_generator(std::random_device()())
+    : m_displayWidth(0)
+    , m_displayHeight(0)
+    , m_frame(0)
+    , m_theta(0.f)
+    , m_phi(c_defaultPhi)
+    , m_radius(c_defaultRadius)
+    , m_generator(std::random_device()())
     , m_showOverlay(SupportsESRAM())
     , m_mapScheme(SupportsESRAM() ? EMS_Simple : EMS_None)
 { 
@@ -561,18 +568,50 @@ void Sample::Update(const DX::StepTimer& timer)
         {
             UpdateResourceMappings();
         }
+
+        if (pad.IsRightStickPressed())
+        {
+            m_theta = 0.f;
+            m_phi = c_defaultPhi;
+            m_radius = c_defaultRadius;
+        }
+        else
+        {
+            m_theta += pad.thumbSticks.rightX * XM_PI * elapsedTime;
+            m_phi -= pad.thumbSticks.rightY * XM_PI * elapsedTime;
+            m_radius -= pad.thumbSticks.leftY * 5.f * elapsedTime;
+        }
     }
     else
     {
         m_gamePadButtons.Reset();
     }
 
-    // Update the scene.
-    m_camera.Update(elapsedTime, pad);
+    // Limit to avoid looking directly up or down
+    m_phi = std::max(1e-2f, std::min(XM_PIDIV2, m_phi));
+    m_radius = std::max(1.f, std::min(10.f, m_radius));
 
+    if (m_theta > XM_PI)
+    {
+        m_theta -= XM_PI * 2.f;
+    }
+    else if (m_theta < -XM_PI)
+    {
+        m_theta += XM_PI * 2.f;
+    }
+
+    XMVECTOR lookFrom = XMVectorSet(
+        m_radius * sinf(m_phi) * cosf(m_theta),
+        m_radius * cosf(m_phi),
+        m_radius * sinf(m_phi) * sinf(m_theta),
+        0);
+
+    m_view = XMMatrixLookAtLH(lookFrom, g_XMZero, g_XMIdentityR1);
+
+    // Update the scene.
     for (auto& obj : m_scene)
     {
-        Model::UpdateEffectMatrices(obj.effects, obj.world, m_camera.GetView(), m_camera.GetProjection());
+        Model::UpdateEffectMatrices(obj.effects, obj.world, m_view, m_proj);
     }
 
     PIXEndEvent();
@@ -757,11 +796,11 @@ void Sample::Render()
             const wchar_t* commonCtrl = nullptr;
             if (SupportsESRAM())
             {
-                commonCtrl = L"[RThumb]/[LThumb]: Move Camera    [DPad] Switch Mapping Schemes    [A] Toggle Overlay    [View] Exit ";
+                commonCtrl = L"[LThumb] Toward/Away   [RThumb]: Orbit Camera    [DPad] Switch Mapping Schemes    [A] Toggle Overlay    [View] Exit ";
             }
             else
             {
-                commonCtrl = L"[RThumb]/[LThumb]: Move Camera    [View] Exit ";
+                commonCtrl = L"[LThumb] Toward/Away   [RThumb]: Orbit Camera    [View] Exit ";
             }
 
             DX::DrawControllerString(m_hudBatch.get(), m_smallFont.get(), m_ctrlFont.get(), commonCtrl, textPos, textColor);
@@ -966,7 +1005,7 @@ void Sample::CreateWindowSizeDependentResources()
     m_hudBatch->SetViewport(m_deviceResources->GetScreenViewport());
 
     // Set camera parameters.
-    m_camera.SetAspect(float(m_displayWidth) / float(m_displayHeight));
+    m_proj = XMMatrixPerspectiveFovLH(XM_PIDIV4, float(size.right) / float(size.bottom), 0.1f, 500.0f);
 
     // Begin uploading texture resources
     {
@@ -1238,7 +1277,7 @@ void Sample::UpdateResourceMappings()
         // 'Random' mapping performs a random check over each page against a user-specified 
         // probability to determine whether that page will be mapped to system or ESRAM memory.
         //
-        // There�s not a specific benefit to this mapping scheme � it simply shows off how to utilize 
+        // There's not a specific benefit to this mapping scheme -- it simply shows off how to utilize 
         // the provided API in a unique fashion.
         //
         // This mapping method also makes use of the XGMemoryLayout::MapRunLengthArray(...) function.

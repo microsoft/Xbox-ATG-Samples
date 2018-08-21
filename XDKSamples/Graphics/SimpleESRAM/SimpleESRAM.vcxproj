@@ -169,7 +169,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h" />
     <ClInclude Include="..\..\..\Kits\ATGTK\PerformanceTimersXbox.h" />
-    <ClInclude Include="Camera.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PIXHelpers.h" />
     <ClInclude Include="SimpleESRAM.h" />
@@ -180,7 +179,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Kits\ATGTK\PerformanceTimersXbox.cpp" />
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="DeviceResources.cpp" />
     <ClCompile Include="pch.cpp">

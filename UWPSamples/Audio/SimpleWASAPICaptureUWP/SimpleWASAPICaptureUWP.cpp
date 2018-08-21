@@ -29,6 +29,14 @@ Sample::Sample() :
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
+	
+	m_renderEventToken = MediaDevice::DefaultAudioRenderDeviceChanged += 
+		ref new TypedEventHandler<Platform::Object^, DefaultAudioRenderDeviceChangedEventArgs^>([this](Platform::Object^ sender, Platform::Object^ args)
+		{
+			m_renderInterface = nullptr;
+			m_renderInterface = Microsoft::WRL::Make<WASAPIRenderer>();
+			m_renderInterface->InitializeAudioDeviceAsync();
+		}, Platform::CallbackContext::Same);
 }
 
 // Initialize the Direct3D resources required to run.
@@ -297,7 +305,14 @@ void Sample::Render()
 
     // Draw the sample rates
     wchar_t rateString[32] = {};
-    swprintf_s(rateString, L"Render rate: %dHz", m_renderInterface->GetMixFormat()->nSamplesPerSec);
+	if (m_renderFormat != nullptr)
+	{
+		swprintf_s(rateString, L"Render rate: %dHz", m_renderFormat->nSamplesPerSec);
+	}
+	else
+	{
+		swprintf_s(rateString, L"Render rate: -----Hz");
+	}
     m_font->DrawString(m_spriteBatch.get(), rateString, pos, ATG::Colors::Orange);
     pos.y += spacing;
 

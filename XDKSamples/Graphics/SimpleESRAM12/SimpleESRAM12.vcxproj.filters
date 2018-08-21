@@ -38,7 +38,6 @@
     <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h">
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h" />
     <ClInclude Include="..\..\..\Kits\ATGTK\PerformanceTimersXbox.h">
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
@@ -50,7 +49,6 @@
     <ClCompile Include="DeviceResources.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="..\..\..\Kits\ATGTK\PerformanceTimersXbox.cpp">
       <Filter>ATG Tool Kit</Filter>
     </ClCompile>

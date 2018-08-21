@@ -48,7 +48,6 @@ void Sample::Initialize(IUnknown* window)
 	{
 		DX::ThrowIfFailed(hr);
 	}
-
 }
 
 #pragma region Frame Update

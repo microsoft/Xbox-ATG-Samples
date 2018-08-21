@@ -66,7 +66,8 @@ private:
     Microsoft::WRL::ComPtr<WASAPIRenderer>          m_renderInterface;
     std::vector<Windows::Devices::Enumeration::DeviceInformation^> m_captureDevices;
     Windows::Devices::Enumeration::DeviceWatcher^   m_captureWatcher;
-    Platform::String^                               m_currentId;
+	Windows::Foundation::EventRegistrationToken		m_renderEventToken;
+	Platform::String^                               m_currentId;
     std::unique_ptr<CBuffer>                        m_captureBuffer;
     WAVEFORMATEX*                                   m_renderFormat;
 

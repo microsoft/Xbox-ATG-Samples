@@ -33,6 +33,9 @@
 #include <stdio.h>
 #include <pix.h>
 
+// Workaround for /permissive- issue specific to the Xbox One XDK winrt/base.h
+#define JSCRIPT_E_CANTEXECUTE _HRESULT_TYPEDEF_(0x89020001U)
+
 #include "winrt/Windows.ApplicationModel.h"
 #include "winrt/Windows.ApplicationModel.Core.h"
 #include "winrt/Windows.ApplicationModel.Activation.h"

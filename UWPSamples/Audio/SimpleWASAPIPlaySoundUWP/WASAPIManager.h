@@ -20,7 +20,8 @@ public:
     WASAPIManager();
 
     void StartDevice();
-    void StopDevice();
+	void RestartDevice();
+	void StopDevice();
     void PauseDevice();
     void PlayPauseToggle();
 
@@ -53,6 +54,9 @@ public:
 		return bPlaying;
 	}
 
+	void OnRenderDeviceChange(Platform::Object^,
+		Windows::Media::Devices::DefaultAudioRenderDeviceChangedEventArgs^);
+
 private:
     ~WASAPIManager();
 
@@ -64,4 +68,5 @@ private:
 
     DeviceStateChangedEvent^					m_StateChangedEvent;
     Microsoft::WRL::ComPtr<WASAPIRenderer>      m_Renderer;
+	Windows::Foundation::EventRegistrationToken m_renderEventToken;
 };

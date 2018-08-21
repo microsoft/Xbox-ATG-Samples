@@ -35,6 +35,7 @@ public:
 	WASAPIManager();
 
 	void StartDevice();
+	void RestartDevice();
 	void PlayPauseToggle();
 			
 	void RecordToggle();
@@ -42,6 +43,9 @@ public:
 	void SetCaptureDevice(int index);
 
 	void UpdateStatus();
+
+	void OnRenderDeviceChange(Platform::Object^,
+		Windows::Media::Devices::DefaultAudioRenderDeviceChangedEventArgs^);
 
 internal:
 	void GetStatus(ManagerStatus *inStatus);
@@ -75,6 +79,7 @@ private:
 	DeviceStateChangedEvent^    m_CaptureStateChangedEvent;
 	Microsoft::WRL::ComPtr<WASAPIRenderer>      m_Renderer;
 	Microsoft::WRL::ComPtr<WASAPICapture>       m_Capture;
+	Windows::Foundation::EventRegistrationToken m_renderEventToken;
 
 	DeviceManager				m_deviceManager;
 

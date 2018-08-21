@@ -133,10 +133,9 @@ void Sample::Update(DX::StepTimer const& timer)
     }
 
     // Limit to avoid looking directly up or down
-    float limit = XM_PI / 2.0f - 0.01f;
-    m_pitch = std::max(-limit, m_pitch);
-    m_pitch = std::min(+limit, m_pitch);
-
+    const float limit = XM_PI / 2.0f - 0.01f;
+    m_pitch = std::max(-limit, std::min(+limit, m_pitch));
+    
     if (m_yaw > XM_PI)
     {
         m_yaw -= XM_PI * 2.f;
