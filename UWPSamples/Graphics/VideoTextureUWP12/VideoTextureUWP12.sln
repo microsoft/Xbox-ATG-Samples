@@ -1,0 +1,57 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VideoTextureUWP12", "VideoTextureUWP12.vcxproj", "{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK12", "..\..\..\Kits\DirectXTK12\DirectXTK_Windows10.vcxproj", "{945B8F0E-AE5F-447C-933A-9D069532D3E4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|ARM = Release|ARM
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Debug|ARM.ActiveCfg = Debug|ARM
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Debug|ARM.Build.0 = Debug|ARM
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Debug|ARM.Deploy.0 = Debug|ARM
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Debug|x64.ActiveCfg = Debug|x64
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Debug|x64.Build.0 = Debug|x64
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Debug|x64.Deploy.0 = Debug|x64
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Debug|x86.ActiveCfg = Debug|Win32
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Debug|x86.Build.0 = Debug|Win32
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Debug|x86.Deploy.0 = Debug|Win32
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Release|ARM.ActiveCfg = Release|ARM
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Release|ARM.Build.0 = Release|ARM
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Release|ARM.Deploy.0 = Release|ARM
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Release|x64.ActiveCfg = Release|x64
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Release|x64.Build.0 = Release|x64
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Release|x64.Deploy.0 = Release|x64
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Release|x86.ActiveCfg = Release|Win32
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Release|x86.Build.0 = Release|Win32
+		{68A75AD3-9FD1-47DF-932C-C0E16DA2D123}.Release|x86.Deploy.0 = Release|Win32
+		{945B8F0E-AE5F-447C-933A-9D069532D3E4}.Debug|ARM.ActiveCfg = Debug|ARM
+		{945B8F0E-AE5F-447C-933A-9D069532D3E4}.Debug|ARM.Build.0 = Debug|ARM
+		{945B8F0E-AE5F-447C-933A-9D069532D3E4}.Debug|x64.ActiveCfg = Debug|x64
+		{945B8F0E-AE5F-447C-933A-9D069532D3E4}.Debug|x64.Build.0 = Debug|x64
+		{945B8F0E-AE5F-447C-933A-9D069532D3E4}.Debug|x86.ActiveCfg = Debug|Win32
+		{945B8F0E-AE5F-447C-933A-9D069532D3E4}.Debug|x86.Build.0 = Debug|Win32
+		{945B8F0E-AE5F-447C-933A-9D069532D3E4}.Release|ARM.ActiveCfg = Release|ARM
+		{945B8F0E-AE5F-447C-933A-9D069532D3E4}.Release|ARM.Build.0 = Release|ARM
+		{945B8F0E-AE5F-447C-933A-9D069532D3E4}.Release|x64.ActiveCfg = Release|x64
+		{945B8F0E-AE5F-447C-933A-9D069532D3E4}.Release|x64.Build.0 = Release|x64
+		{945B8F0E-AE5F-447C-933A-9D069532D3E4}.Release|x86.ActiveCfg = Release|Win32
+		{945B8F0E-AE5F-447C-933A-9D069532D3E4}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EA3A1609-5E45-482C-85B3-C0A142B33FCD}
+	EndGlobalSection
+EndGlobal
