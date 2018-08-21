@@ -31,6 +31,8 @@ public:
     {
         ComPtr<ID3D12Resource> mResource;
         bool mIsCubeMap;
+
+        TextureCacheEntry() noexcept : mIsCubeMap(false) {}
     };
 
     typedef std::map< std::wstring, TextureCacheEntry > TextureCache;
@@ -119,7 +121,7 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
             wcscpy_s(fullName, name);
             if (!GetFileAttributesExW(fullName, GetFileExInfoStandard, &fileAttr))
             {
-                DebugTrace("EffectTextureFactory could not find texture file '%ls'\n", name);
+                DebugTrace("ERROR: EffectTextureFactory could not find texture file '%ls'\n", name);
                 throw std::exception("CreateTexture");
             }
         }
@@ -152,7 +154,7 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
                 &textureEntry.mIsCubeMap);
             if (FAILED(hr))
             {
-                DebugTrace("CreateDDSTextureFromFile failed (%08X) for '%ls'\n", hr, fullName);
+                DebugTrace("ERROR: CreateDDSTextureFromFile failed (%08X) for '%ls'\n", hr, fullName);
                 throw std::exception("CreateDDSTextureFromFile");
             }
         }
@@ -170,7 +172,7 @@ void EffectTextureFactory::Impl::CreateTexture(_In_z_ const wchar_t* name, int d
                 textureEntry.mResource.ReleaseAndGetAddressOf());
             if (FAILED(hr))
             {
-                DebugTrace("CreateWICTextureFromFile failed (%08X) for '%ls'\n", hr, fullName);
+                DebugTrace("ERROR: CreateWICTextureFromFile failed (%08X) for '%ls'\n", hr, fullName);
                 throw std::exception("CreateWICTextureFromFile");
             }
         }
