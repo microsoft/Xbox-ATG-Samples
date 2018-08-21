@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>3cc52609-0ac0-43e8-841f-27ff4b06d41f</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>bbb4f276-b5b6-4d2f-b3cc-fd1d6415088e</UniqueIdentifier>
+      <Extensions>bmp;dds;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Filter Include="ATG Tool Kit">
+      <UniqueIdentifier>9082e77b-fa72-4a6d-bb63-f923327b138e</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Models">
+      <UniqueIdentifier>{9b21647b-50f6-4489-8a29-1fbcbebc42ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Logo">
+      <UniqueIdentifier>{5dd92873-4ce0-43cd-8b04-6a15ecda17f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Fonts">
+      <UniqueIdentifier>{bbbd3c4a-9dff-4c7b-839c-cd67c6f7f327}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TransientAllocator">
+      <UniqueIdentifier>{5e4f45fa-03f3-464c-9750-7b6944241f05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{6f2d3624-a8a6-438f-bbe3-9305203cd63d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="StepTimer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Telemetry.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceResources.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\PerformanceTimersXbox.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="AdvancedESRAM12.h" />
+    <ClInclude Include="PageAllocator.h">
+      <Filter>TransientAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedDefinitions.h">
+      <Filter>TransientAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="TransientResource.h">
+      <Filter>TransientAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="TransientCache.h">
+      <Filter>TransientAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="TransientAllocator.h">
+      <Filter>TransientAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="Hash.h">
+      <Filter>TransientAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="EsramVisualizeEffect.h">
+      <Filter>Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ReadData.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="DeviceResources.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kits\ATGTK\PerformanceTimersXbox.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+    <ClCompile Include="AdvancedESRAM12.cpp" />
+    <ClCompile Include="PageAllocator.cpp">
+      <Filter>TransientAllocator</Filter>
+    </ClCompile>
+    <ClCompile Include="TransientResource.cpp">
+      <Filter>TransientAllocator</Filter>
+    </ClCompile>
+    <ClCompile Include="TransientCache.cpp">
+      <Filter>TransientAllocator</Filter>
+    </ClCompile>
+    <ClCompile Include="TransientAllocator.cpp">
+      <Filter>TransientAllocator</Filter>
+    </ClCompile>
+    <ClCompile Include="Hash.cpp">
+      <Filter>TransientAllocator</Filter>
+    </ClCompile>
+    <ClCompile Include="EsramVisualizeEffect.cpp">
+      <Filter>Shaders</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\WideLogo.png">
+      <Filter>Assets\Logo</Filter>
+    </Image>
+    <Image Include="Assets\Logo.png">
+      <Filter>Assets\Logo</Filter>
+    </Image>
+    <Image Include="Assets\SmallLogo.png">
+      <Filter>Assets\Logo</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.png">
+      <Filter>Assets\Logo</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets\Logo</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\MicroscopeCity\city.dds">
+      <Filter>Assets\Models</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\MicroscopeCity\column.dds">
+      <Filter>Assets\Models</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\MicroscopeCity\scanner.dds">
+      <Filter>Assets\Models</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
+      <Filter>Assets\Fonts</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
+      <Filter>Assets\Fonts</Filter>
+    </None>
+    <None Include="..\..\..\Media\Meshes\MicroscopeCity\column.sdkmesh">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="..\..\..\Media\Meshes\MicroscopeCity\occcity.sdkmesh">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="..\..\..\Media\Meshes\MicroscopeCity\scanner.sdkmesh">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="ReadMe.docx" />
+    <None Include="PageAllocator.inl">
+      <Filter>TransientAllocator</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="EsramVisualize_CS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
