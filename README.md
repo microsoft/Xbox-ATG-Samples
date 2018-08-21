@@ -61,6 +61,13 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
  </tr>
 </table>
 
+<table>
+ <tr>
+  <td>Play Text to Speech</td>
+  <td><a href="XDKSamples/Audio/SimplePlayTextToSpeechXDK">XDK</a></td>
+ </tr>
+</table>
+
 ### Introductory Graphics
 
 <table>
@@ -167,10 +174,24 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td><a href="PCSamples/Graphics/SimpleHDR_PC">PC DX11</a></td>
   <td><a href="PCSamples/Graphics/SimpleHDR_PC12">PC DX12</a></td>
  </tr>
+</table>
+
+<table>
  <tr>
-  <td>ESRAM</td>
-  <td><a href="XDKSamples/Graphics/SimpleESRAM">XDK DX11</a></td>
-  <td><a href="XDKSamples/Graphics/SimpleESRAM12">XDK DX12</a></td>
+  <td>Media Foundation</td>
+  <td><a href="PCSamples/Graphics/VideoTexturePC12">PC DX12</a></td>
+  <td><a href="UWPSamples/Graphics/VideoTextureUWP">UWP DX11</a></td>
+  <td><a href="UWPSamples/Graphics/VideoTextureUWP12">UWP DX12</a></td>
+  <td><a href="XDKSamples/Graphics/MP4Reader">XDK</a></td>
+ </tr>
+</table>
+
+<table>
+ <tr>
+  <td>ESRAM (XDK only)</td>
+  <td><a href="XDKSamples/Graphics/SimpleESRAM">Simple DX11</a></td>
+  <td><a href="XDKSamples/Graphics/SimpleESRAM12">Simple DX12</a></td>
+  <td><a href="XDKSamples/Graphics/AdvancedESRAM12">Advanced DX12</a></td>
  </tr>
 </table>
 
@@ -308,7 +329,7 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 
 ## UWP apps
 * Windows 10 Anniversary Update (Version 1607) or later
-* Visual Studio 2017 ([15.7](https://blogs.msdn.microsoft.com/chuckw/2018/05/07/vs-2017-15-7-update/) update) or later with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, and *Windows 10 SDK ([10.0.17134.0](https://blogs.msdn.microsoft.com/chuckw/2018/05/02/windows-10-april-2018-update-sdk/))*.
+* Visual Studio 2017 ([15.7](https://blogs.msdn.microsoft.com/chuckw/2018/05/07/vs-2017-15-7-update/) or [15.8](https://blogs.msdn.microsoft.com/chuckw/2018/08/16/vs-2017-15-8-update/) update) with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, and *Windows 10 SDK ([10.0.17134.0](https://blogs.msdn.microsoft.com/chuckw/2018/05/02/windows-10-april-2018-update-sdk/))*.
 
 ## XDK apps
 * Xbox One Development Kit
