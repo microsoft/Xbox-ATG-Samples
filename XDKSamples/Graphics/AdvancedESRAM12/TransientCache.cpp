@@ -107,7 +107,7 @@ namespace
                 desc.DepthOrArraySize,
                 desc.SampleDesc.Count,
                 (desc.Flags & D3D12XBOX_RESOURCE_FLAG_DENY_COMPRESSION_DATA) == 0,
-                &depthTileMode,
+                &tileMode,
                 &stencilTileMode);
 #endif
         }
