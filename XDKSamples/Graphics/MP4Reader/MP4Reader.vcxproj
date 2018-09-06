@@ -167,6 +167,7 @@
     </FXCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h" />
     <ClInclude Include="MP4Reader.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PlaySoundStreamVoiceContext.h" />

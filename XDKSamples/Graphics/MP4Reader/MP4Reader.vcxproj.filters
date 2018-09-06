@@ -28,6 +28,9 @@
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
     <ClInclude Include="PlaySoundStreamVoiceContext.h" />
+    <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
