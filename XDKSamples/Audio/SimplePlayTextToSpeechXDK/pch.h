@@ -14,8 +14,8 @@
 
 #include <xdk.h>
 
-#if _XDK_VER < 0x295A0401 /* XDK Edition 151100 */
-#error This sample requires the November 2015 XDK or later
+#if _XDK_VER < 0x38390868 /* XDK Edition 161000 */
+#error This sample requires the October 2016 XDK or later
 #endif
 
 #include <wrl.h>
