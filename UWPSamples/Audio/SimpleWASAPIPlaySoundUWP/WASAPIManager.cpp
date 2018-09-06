@@ -18,7 +18,7 @@ WASAPIManager::WASAPIManager() :
     m_StateChangedEvent( nullptr ),
     m_Renderer( nullptr )
 {
-	m_renderEventToken = MediaDevice::DefaultAudioRenderDeviceChanged += ref new TypedEventHandler<Platform::Object^, DefaultAudioRenderDeviceChangedEventArgs^>(this, &WASAPIManager::OnRenderDeviceChange);
+    m_renderEventToken = MediaDevice::DefaultAudioRenderDeviceChanged += ref new TypedEventHandler<Platform::Object^, DefaultAudioRenderDeviceChangedEventArgs^>(this, &WASAPIManager::OnRenderDeviceChange);
 }
 
 WASAPIManager::~WASAPIManager()
@@ -33,9 +33,9 @@ WASAPIManager::~WASAPIManager()
 }
 
 void WASAPIManager::OnRenderDeviceChange(Platform::Object^,
-	Windows::Media::Devices::DefaultAudioRenderDeviceChangedEventArgs^)
+    Windows::Media::Devices::DefaultAudioRenderDeviceChangedEventArgs^)
 {
-	RestartDevice();
+    RestartDevice();
 }
 
 
@@ -53,11 +53,11 @@ void WASAPIManager::OnDeviceStateChange( Object^ sender, DeviceStateChangedEvent
         break;
 
     case DeviceState::DeviceStatePlaying:
-		OutputDebugString( L"Playback Started\n" );
+        OutputDebugString( L"Playback Started\n" );
         break;
 
     case DeviceState::DeviceStatePaused:
-		OutputDebugString( L"Playback Paused\n" );
+        OutputDebugString( L"Playback Paused\n" );
         break;
 
     case DeviceState::DeviceStateStopped:
@@ -70,7 +70,7 @@ void WASAPIManager::OnDeviceStateChange( Object^ sender, DeviceStateChangedEvent
             m_DeviceStateChangeToken.Value = 0;
         }
 
-		OutputDebugString( L"Playback Stopped\n" );
+        OutputDebugString( L"Playback Stopped\n" );
         break;
 
     case DeviceState::DeviceStateInError:
@@ -96,17 +96,17 @@ void WASAPIManager::OnDeviceStateChange( Object^ sender, DeviceStateChangedEvent
         {
         case AUDCLNT_E_ENDPOINT_OFFLOAD_NOT_CAPABLE:
             strMessage = "ERROR: Endpoint Does Not Support HW Offload (" + strHRVal + ")\n";
-			OutputDebugString(strMessage->Data());
+            OutputDebugString(strMessage->Data());
             break;
 
         case AUDCLNT_E_RESOURCES_INVALIDATED:
             strMessage = "ERROR: Endpoint Lost Access To Resources (" + strHRVal + ")\n";
-			OutputDebugString( strMessage->Data() );
+            OutputDebugString( strMessage->Data() );
             break;
 
         default:
             strMessage = "ERROR: " + strHRVal + " has occurred.\n";
-			OutputDebugString( strMessage->Data() );
+            OutputDebugString( strMessage->Data() );
         }
     }
 }
@@ -163,7 +163,7 @@ void WASAPIManager::InitializeDevice()
         int BufferSize = 0;
         props.IsBackground = false;
         props.hnsBufferDuration = static_cast<REFERENCE_TIME>(BufferSize);
-		props.Frequency = 440;
+        props.Frequency = 440;
 
         m_Renderer->SetProperties( props );
 
@@ -196,13 +196,13 @@ void WASAPIManager::StartDevice()
 //--------------------------------------------------------------------------------------
 void WASAPIManager::RestartDevice()
 {
-	if (nullptr != m_Renderer)
-	{
-		StopDevice();
-		m_Renderer = nullptr;
-	}
+    if (nullptr != m_Renderer)
+    {
+        StopDevice();
+        m_Renderer = nullptr;
+    }
 
-	InitializeDevice();
+    InitializeDevice();
 }
 
 //--------------------------------------------------------------------------------------
