@@ -220,7 +220,7 @@ void Sample::Render()
         {
             y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"AnalyticsInfo", mid, y, ATG::Colors::LightGrey, m_scale);
 
-#if _XDK_VER < 0x3F6803F3 /* XDK Edition 170600 */
+#if _XDK_VER >= 0x3F6803F3 /* XDK Edition 170600 */
             auto deviceForm = Windows::System::Profile::AnalyticsInfo::DeviceForm;
 
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DeviceForm", left, y, m_scale);
