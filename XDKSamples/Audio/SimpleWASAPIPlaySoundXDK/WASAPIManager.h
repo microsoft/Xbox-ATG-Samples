@@ -17,8 +17,8 @@ public:
     WASAPIManager();
 
     void StartDevice();
-	void RestartDevice();
-	void StopDevice();
+    void RestartDevice();
+    void StopDevice();
     void PauseDevice();
     void PlayPauseToggle();
 
@@ -38,19 +38,19 @@ public:
         return bStopped; 
     }
 
-	bool IsPlaying()
-	{
-		bool bPlaying = false;
+    bool IsPlaying()
+    {
+        bool bPlaying = false;
 
-		if (m_Renderer != nullptr)
-		{
-			bPlaying = (m_StateChangedEvent->GetState() == DeviceState::DeviceStatePlaying);
-		}
-		return bPlaying;
-	}
+        if (m_Renderer != nullptr)
+        {
+            bPlaying = (m_StateChangedEvent->GetState() == DeviceState::DeviceStatePlaying);
+        }
+        return bPlaying;
+    }
 
-	void OnRenderDeviceChange(Platform::Object^,
-		Windows::Media::Devices::DefaultAudioRenderDeviceChangedEventArgs^);
+    void OnRenderDeviceChange(Platform::Object^,
+        Windows::Media::Devices::DefaultAudioRenderDeviceChangedEventArgs^);
 
 private:
     ~WASAPIManager();
@@ -63,5 +63,5 @@ private:
 
     DeviceStateChangedEvent^					m_StateChangedEvent;
     Microsoft::WRL::ComPtr<WASAPIRenderer>      m_Renderer;
-	Windows::Foundation::EventRegistrationToken m_renderEventToken;
+    Windows::Foundation::EventRegistrationToken m_renderEventToken;
 };

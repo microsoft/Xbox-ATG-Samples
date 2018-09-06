@@ -24,74 +24,74 @@ static const LPCWSTR g_FileName = L"Recording.wav";
 
 struct ManagerStatus
 {
-	bool bCapturing;
-	bool bPlaying;
-	bool bLoopback;
+    bool bCapturing;
+    bool bPlaying;
+    bool bLoopback;
 };
-		
+        
 ref class WASAPIManager sealed
 {
 public:
-	WASAPIManager();
+    WASAPIManager();
 
-	void StartDevice();
-	void RestartDevice();
-	void PlayPauseToggle();
-			
-	void RecordToggle();
-	void LoopbackToggle();
-	void SetCaptureDevice(int index);
+    void StartDevice();
+    void RestartDevice();
+    void PlayPauseToggle();
+            
+    void RecordToggle();
+    void LoopbackToggle();
+    void SetCaptureDevice(int index);
 
-	void UpdateStatus();
+    void UpdateStatus();
 
-	void OnRenderDeviceChange(Platform::Object^,
-		Windows::Media::Devices::DefaultAudioRenderDeviceChangedEventArgs^);
+    void OnRenderDeviceChange(Platform::Object^,
+        Windows::Media::Devices::DefaultAudioRenderDeviceChangedEventArgs^);
 
 internal:
-	void GetStatus(ManagerStatus *inStatus);
+    void GetStatus(ManagerStatus *inStatus);
 
-	//--------------------------------------------------------------------------------------
-	//  Name: SetDeviceChangeCallback
-	//  Desc: Sets the callback when capture devices change
-	//--------------------------------------------------------------------------------------
-	void SetDeviceChangeCallback(void (*inFunc)(int))
-	{
-		m_deviceManager.SetDeviceListReport(inFunc);
-	}
+    //--------------------------------------------------------------------------------------
+    //  Name: SetDeviceChangeCallback
+    //  Desc: Sets the callback when capture devices change
+    //--------------------------------------------------------------------------------------
+    void SetDeviceChangeCallback(void (*inFunc)(int))
+    {
+        m_deviceManager.SetDeviceListReport(inFunc);
+    }
 
-	void GetCaptureDevices(std::vector<LPWSTR> &device)
-	{
-		m_deviceManager.GetCaptureDevices(device);
-	}
+    void GetCaptureDevices(std::vector<LPWSTR> &device)
+    {
+        m_deviceManager.GetCaptureDevices(device);
+    }
 
 private:
-	~WASAPIManager();
+    ~WASAPIManager();
 
-	void OnDeviceStateChange( Object^ sender, DeviceStateChangedEventArgs^ e );
+    void OnDeviceStateChange( Object^ sender, DeviceStateChangedEventArgs^ e );
 
-	void InitializeRenderDevice();
-	void InitializeCaptureDevice();
+    void InitializeRenderDevice();
+    void InitializeCaptureDevice();
 
-	Windows::Foundation::EventRegistrationToken     m_RenderDeviceStateChangeToken;
-	Windows::Foundation::EventRegistrationToken     m_CaptureDeviceStateChangeToken;
+    Windows::Foundation::EventRegistrationToken     m_RenderDeviceStateChangeToken;
+    Windows::Foundation::EventRegistrationToken     m_CaptureDeviceStateChangeToken;
 
-	DeviceStateChangedEvent^    m_RenderStateChangedEvent;
-	DeviceStateChangedEvent^    m_CaptureStateChangedEvent;
-	Microsoft::WRL::ComPtr<WASAPIRenderer>      m_Renderer;
-	Microsoft::WRL::ComPtr<WASAPICapture>       m_Capture;
-	Windows::Foundation::EventRegistrationToken m_renderEventToken;
+    DeviceStateChangedEvent^    m_RenderStateChangedEvent;
+    DeviceStateChangedEvent^    m_CaptureStateChangedEvent;
+    Microsoft::WRL::ComPtr<WASAPIRenderer>      m_Renderer;
+    Microsoft::WRL::ComPtr<WASAPICapture>       m_Capture;
+    Windows::Foundation::EventRegistrationToken m_renderEventToken;
 
-	DeviceManager				m_deviceManager;
+    DeviceManager				m_deviceManager;
 
-	WAVEFORMATEX		        m_CaptureWfx;
-	WAVEFORMATEX		        m_RenderWfx;
-	bool						m_bUseLoopback;
-	UINT						m_CaptureIndex;
+    WAVEFORMATEX		        m_CaptureWfx;
+    WAVEFORMATEX		        m_RenderWfx;
+    bool						m_bUseLoopback;
+    UINT						m_CaptureIndex;
 
-	CBuffer* 					m_captureBuffer;
+    CBuffer* 					m_captureBuffer;
 
-	CRITICAL_SECTION			m_CritSec;
-	ManagerStatus				m_Status;
+    CRITICAL_SECTION			m_CritSec;
+    ManagerStatus				m_Status;
 };
 
 #endif

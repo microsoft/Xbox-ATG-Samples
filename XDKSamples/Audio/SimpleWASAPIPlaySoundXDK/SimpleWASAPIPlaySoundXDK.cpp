@@ -19,7 +19,7 @@ using Microsoft::WRL::ComPtr;
 
 Sample::Sample() :
     m_frame(0),
-	m_playPressed(false)
+    m_playPressed(false)
 {
     // Renders only 2D, so no need for a depth buffer.
     m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_UNKNOWN);
@@ -38,16 +38,16 @@ void Sample::Initialize(IUnknown* window)
     m_deviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
 
-	// Initialize MF
-	HRESULT hr = MFStartup(MF_VERSION, MFSTARTUP_LITE);
-	if (SUCCEEDED(hr))
-	{
-		m_wm = ref new WASAPIManager();
-	}
-	else
-	{
-		DX::ThrowIfFailed(hr);
-	}
+    // Initialize MF
+    HRESULT hr = MFStartup(MF_VERSION, MFSTARTUP_LITE);
+    if (SUCCEEDED(hr))
+    {
+        m_wm = ref new WASAPIManager();
+    }
+    else
+    {
+        DX::ThrowIfFailed(hr);
+    }
 }
 
 #pragma region Frame Update
@@ -73,22 +73,22 @@ void Sample::Update(DX::StepTimer const&)
     PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
 
     auto pad = m_gamePad->GetState(0);
-	m_gamePadButtons.Update(pad);
+    m_gamePadButtons.Update(pad);
 
     if (pad.IsViewPressed())
     {
         ExitSample();
     }
-		
-	if (pad.IsAPressed() && !m_playPressed)
-	{
-		m_wm->PlayPauseToggle();
-		m_playPressed = true;
-	}
-	else if (!pad.IsAPressed() && m_playPressed)
-	{
-		m_playPressed = false;
-	}
+        
+    if (pad.IsAPressed() && !m_playPressed)
+    {
+        m_wm->PlayPauseToggle();
+        m_playPressed = true;
+    }
+    else if (!pad.IsAPressed() && m_playPressed)
+    {
+        m_playPressed = false;
+    }
 
     PIXEndEvent();
 }
@@ -118,11 +118,11 @@ void Sample::Render()
 
     m_spriteBatch->Begin();
 
-	m_font->DrawString(m_spriteBatch.get(), L"Simple WASAPI Playback:", pos, ATG::Colors::White);
-	pos.y += m_font->GetLineSpacing() * 1.5f;
+    m_font->DrawString(m_spriteBatch.get(), L"Simple WASAPI Playback:", pos, ATG::Colors::White);
+    pos.y += m_font->GetLineSpacing() * 1.5f;
 
     wchar_t str[128] = {};
-	swprintf_s(str, L"Audio Source - Test tone at 440hz : %s", (m_wm->IsPlaying())? L"Is Playing" : L"Is Stopped");
+    swprintf_s(str, L"Audio Source - Test tone at 440hz : %s", (m_wm->IsPlaying())? L"Is Playing" : L"Is Stopped");
     m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
 
     DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"Press [A] to start/stop playback   [View] Exit",
@@ -177,7 +177,7 @@ void Sample::OnResuming()
     m_gamePadButtons.Reset();
 
     // Resume audio engine
-	m_wm->StartDevice();
+    m_wm->StartDevice();
 }
 #pragma endregion
 

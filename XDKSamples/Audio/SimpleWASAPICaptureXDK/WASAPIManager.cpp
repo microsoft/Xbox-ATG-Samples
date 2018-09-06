@@ -28,9 +28,9 @@ WASAPIManager::WASAPIManager() :
     //Create a 32k buffer
     m_captureBuffer = new CBuffer(32768);
 
-	m_renderEventToken = MediaDevice::DefaultAudioRenderDeviceChanged += ref new TypedEventHandler<Platform::Object^, DefaultAudioRenderDeviceChangedEventArgs^>(this, &WASAPIManager::OnRenderDeviceChange);
+    m_renderEventToken = MediaDevice::DefaultAudioRenderDeviceChanged += ref new TypedEventHandler<Platform::Object^, DefaultAudioRenderDeviceChangedEventArgs^>(this, &WASAPIManager::OnRenderDeviceChange);
 
-	InitializeCriticalSectionEx(&m_CritSec, 0, 0);
+    InitializeCriticalSectionEx(&m_CritSec, 0, 0);
 }
 
 
@@ -59,9 +59,9 @@ WASAPIManager::~WASAPIManager()
 }
 
 void WASAPIManager::OnRenderDeviceChange(Platform::Object^,
-	Windows::Media::Devices::DefaultAudioRenderDeviceChangedEventArgs^)
+    Windows::Media::Devices::DefaultAudioRenderDeviceChangedEventArgs^)
 {
-	RestartDevice();
+    RestartDevice();
 }
 
 //--------------------------------------------------------------------------------------
@@ -168,11 +168,11 @@ void WASAPIManager::InitializeCaptureDevice()
         m_CaptureDeviceStateChangeToken = m_CaptureStateChangedEvent->StateChangedEvent += ref new DeviceStateChangedHandler( this, &WASAPIManager::OnDeviceStateChange );
 
         //Activate the capture device
-		if (m_Capture->Activate(m_CaptureIndex, m_bUseLoopback, m_captureBuffer) != S_OK)
-		{
-			m_Capture = nullptr;
-			return;
-		}
+        if (m_Capture->Activate(m_CaptureIndex, m_bUseLoopback, m_captureBuffer) != S_OK)
+        {
+            m_Capture = nullptr;
+            return;
+        }
                 
         //Get a copy of the capture/render format
         CopyMemory(&m_CaptureWfx, m_Capture->GetFormat(), sizeof(WAVEFORMATEX));
@@ -189,7 +189,7 @@ void WASAPIManager::InitializeCaptureDevice()
         m_captureBuffer->SetSourceFormat(&m_CaptureWfx);
 
         //Register the device manager
-		Microsoft::WRL::ComPtr<IMMDeviceEnumerator> deviceEnum;
+        Microsoft::WRL::ComPtr<IMMDeviceEnumerator> deviceEnum;
         CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&deviceEnum);
         deviceEnum->RegisterEndpointNotificationCallback(&m_deviceManager);
     }
@@ -334,8 +334,8 @@ void WASAPIManager::StartDevice()
 //--------------------------------------------------------------------------------------
 void WASAPIManager::RestartDevice()
 {
-	m_Renderer = nullptr;
-	InitializeRenderDevice();
+    m_Renderer = nullptr;
+    InitializeRenderDevice();
 }
 
 //--------------------------------------------------------------------------------------
