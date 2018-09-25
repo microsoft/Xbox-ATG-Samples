@@ -200,6 +200,15 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
  </tr>
 </table>
 
+<table>
+ <tr>
+  <td>Xbox One (XDK only)</td>
+  <td><a href="XDKSamples/Graphics/AsyncPresent">AsyncPresent</a></td>
+  <td><a href="XDKSamples/Graphics/HLSLSymbols">HLSL Symbols</a></td> 
+  <td><a href="XDKSamples/Graphics/SimpleDmaDecompression">Simple DMA Decompression</a></td>
+ </tr>
+</table>
+
 ### System
 
 <table>

@@ -16,7 +16,8 @@
     "            DENY_GEOMETRY_SHADER_ROOT_ACCESS |" \
     "            DENY_HULL_SHADER_ROOT_ACCESS )," \
     "CBV(b0, visibility = SHADER_VISIBILITY_PIXEL ), " \
-    "DescriptorTable ( SRV(t0), visibility = SHADER_VISIBILITY_PIXEL ),"\
+    "DescriptorTable (SRV(t0), visibility = SHADER_VISIBILITY_PIXEL),"\
+    "DescriptorTable (SRV(t1), visibility = SHADER_VISIBILITY_PIXEL),"\
     "StaticSampler(s0,"\
     "           filter =   FILTER_MIN_MAG_MIP_POINT,"\
     "           addressU = TEXTURE_ADDRESS_CLAMP,"\
