@@ -25,6 +25,7 @@ enum RootParameterIndex
 {
     ConstantBuffer,
     TextureSRV,
+    TextureSRV_2,
     Count
 };
 
@@ -38,6 +39,7 @@ void FullScreenQuad::Initialize(_In_ ID3D12Device* d3dDevice)
         D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
     CD3DX12_DESCRIPTOR_RANGE textureSRVs(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+    CD3DX12_DESCRIPTOR_RANGE textureSRVs_2(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 1);
 
     CD3DX12_STATIC_SAMPLER_DESC sampler(
         0, // register
@@ -56,6 +58,7 @@ void FullScreenQuad::Initialize(_In_ ID3D12Device* d3dDevice)
     CD3DX12_ROOT_PARAMETER rootParameters[static_cast<uint32_t>(RootParameterIndex::Count)] = {};
     rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
     rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureSRVs, D3D12_SHADER_VISIBILITY_PIXEL);
+    rootParameters[RootParameterIndex::TextureSRV_2].InitAsDescriptorTable(1, &textureSRVs_2, D3D12_SHADER_VISIBILITY_PIXEL);
 
     CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
     rootSignatureDesc.Init(_countof(rootParameters), rootParameters, 1, &sampler, rootSignatureFlags);
@@ -77,6 +80,24 @@ void FullScreenQuad::Draw(
     d3dCommandList->SetGraphicsRootSignature(m_d3dRootSignature.Get());
     d3dCommandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, constantBuffer);
     d3dCommandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
+    d3dCommandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV_2, texture);
+    d3dCommandList->SetPipelineState(d3dPSO);
+    d3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    d3dCommandList->DrawInstanced(3, 1, 0, 0);
+}
+
+_Use_decl_annotations_
+void FullScreenQuad::Draw(
+    ID3D12GraphicsCommandList* d3dCommandList,
+    ID3D12PipelineState* d3dPSO,
+    D3D12_GPU_DESCRIPTOR_HANDLE texture,
+    D3D12_GPU_DESCRIPTOR_HANDLE texture2,
+    D3D12_GPU_VIRTUAL_ADDRESS constantBuffer)
+{
+    d3dCommandList->SetGraphicsRootSignature(m_d3dRootSignature.Get());
+    d3dCommandList->SetGraphicsRootConstantBufferView(RootParameterIndex::ConstantBuffer, constantBuffer);
+    d3dCommandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
+    d3dCommandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV_2, texture2);
     d3dCommandList->SetPipelineState(d3dPSO);
     d3dCommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     d3dCommandList->DrawInstanced(3, 1, 0, 0);
