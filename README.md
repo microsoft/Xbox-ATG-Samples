@@ -42,6 +42,11 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td><a href="XDKSamples/Audio/SimplePlaySound">XDK</a></td>
  </tr>
  <tr>
+  <td>XAudio2: Streaming</td>
+  <td><a href="UWPSamples/Audio/SimplePlaySoundStreamUWP">UWP</a></td>
+  <td><a href="XDKSamples/Audio/SimplePlaySoundStream">XDK</a></td>
+ </tr>
+ <tr>
   <td>XAudio2: 3D playback</td>
   <td><a href="UWPSamples/Audio/SimplePlay3DSoundUWP">UWP</a></td>
   <td><a href="XDKSamples/Audio/SimplePlay3DSoundXDK">XDK</a></td>
