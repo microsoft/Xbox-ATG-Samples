@@ -434,11 +434,14 @@ int64_t Sample::GetCurrentRenderTime()
 #elif defined(USE_XAUDIO2)
 	if (m_pAudioReaderOutputWFX)
 	{
-		if (m_VoiceContext.m_llLastBufferStartTime != 0)
+		//Take a snapshot of the voice context before processing to ensure it does not change between operations
+		PlaySoundStreamVoiceContext voiceContextSnap = m_VoiceContext;
+		
+		if (voiceContextSnap.m_llLastBufferStartTime != 0)
 		{
-			llMasterClock = m_VoiceContext.m_qwRenderedBytes * 10000000ll
-				/ (m_pAudioReaderOutputWFX->nSamplesPerSec * m_pAudioReaderOutputWFX->wBitsPerSample * m_pAudioReaderOutputWFX->nChannels / 8);
-			llMasterClock += GetCurrentTimeInHNS() - m_VoiceContext.m_llLastBufferStartTime;
+			llMasterClock = (voiceContextSnap.m_qwRenderedBytes * 10000000ll
+				/ (m_pAudioReaderOutputWFX->nSamplesPerSec * m_pAudioReaderOutputWFX->wBitsPerSample * m_pAudioReaderOutputWFX->nChannels / 8))
+				+ GetCurrentTimeInHNS() - voiceContextSnap.m_llLastBufferStartTime;
 		}
 	}
 #endif
