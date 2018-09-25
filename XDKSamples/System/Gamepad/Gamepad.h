@@ -52,6 +52,7 @@ private:
 
     bool                    m_currentGamepadNeedsRefresh;
     std::wstring            m_buttonString;
+    bool		            m_trusted;
     double                  m_leftTrigger;
     double                  m_rightTrigger;
     double                  m_leftStickX;

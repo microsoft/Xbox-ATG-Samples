@@ -35,7 +35,9 @@ namespace GamepadManager
     }
 };
 
-Sample::Sample()
+Sample::Sample() :
+    m_currentGamepadNeedsRefresh(false),
+    m_trusted(false)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_UNKNOWN);
 }
@@ -92,13 +94,23 @@ void Sample::Update(DX::StepTimer const& )
         if (m_currentGamepad != mostRecentGamepad)
         {
             m_currentGamepad = mostRecentGamepad;
+        
+#if _XDK_VER >= 0x42ED07D9 /* XDK Edition 180400 */
+            auto trustedGamepad = dynamic_cast<Windows::Xbox::Input::IGamepad2^>(m_currentGamepad);
+
+            // Do not make policy decisions soley based on the "IsTrusted" property!
+            // It is meant as a tool alongside other game metrics
+            m_trusted = trustedGamepad->IsTrusted;
+#endif
         }
+
         m_currentGamepadNeedsRefresh = false;
     }
 
     if (m_currentGamepad == nullptr)
     {
         m_buttonString.clear();
+        m_trusted = false;
         PIXEndEvent();
         return;
     }
@@ -242,6 +254,19 @@ void Sample::Render()
 
         swprintf(tempString, 255, L"[RThumb]  X: %1.3f  Y: %1.3f", m_rightStickX, m_rightStickY);
         DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), tempString, pos);
+    
+        pos.y += m_font->GetLineSpacing() * 2.f;
+
+#if _XDK_VER >= 0x42ED07D9 /* XDK Edition 180400 */
+        if (m_trusted)
+        {
+            DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"IsTrusted: True", pos);
+        }
+        else
+        {
+            DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"IsTrusted: False", pos);
+        }
+#endif
     }
     else
     {
