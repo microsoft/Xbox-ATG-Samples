@@ -80,7 +80,7 @@ private:
         ANALYTICSINFO,
         EASCLIENTINFO,
         GAMINGDEVICEINFO,
-        APICONTRACT,
+        APICONTRACT_PAGE,
         CPUSETS,
         DISPLAYINFO,
         DXGI,
