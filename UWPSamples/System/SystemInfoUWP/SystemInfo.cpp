@@ -429,7 +429,7 @@ void Sample::Render()
         }
         break;
 
-    case InfoPage::APICONTRACT:
+    case InfoPage::APICONTRACT_PAGE:
         {
             y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"IsApiContractPresent", mid, y, ATG::Colors::LightGrey, m_scale);
 
