@@ -183,6 +183,14 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 
 <table>
  <tr>
+  <td>Bokeh Effect</td>
+  <td><a href="XDKSamples/Graphics/Bokeh">XDK DX11</a></td>
+  <td><a href="XDKSamples/Graphics/Bokeh12">XDK DX12</a></td>
+ </tr>
+</table>
+
+<table>
+ <tr>
   <td>Media Foundation</td>
   <td><a href="PCSamples/Graphics/VideoTexturePC12">PC DX12</a></td>
   <td><a href="UWPSamples/Graphics/VideoTextureUWP">UWP DX11</a></td>
