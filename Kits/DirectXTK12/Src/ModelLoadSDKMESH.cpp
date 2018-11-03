@@ -28,11 +28,12 @@ namespace
 {
     enum
     {
-        PER_VERTEX_COLOR = 0x1,
-        SKINNING = 0x2,
-        DUAL_TEXTURE = 0x4,
-        NORMAL_MAPS = 0x8,
-        BIASED_VERTEX_NORMALS = 0x10,
+        PER_VERTEX_COLOR        = 0x1,
+        SKINNING                = 0x2,
+        DUAL_TEXTURE            = 0x4,
+        NORMAL_MAPS             = 0x8,
+        BIASED_VERTEX_NORMALS   = 0x10,
+        USES_OBSOLETE_DEC3N     = 0x20,
     };
 
     int GetUniqueTextureIndex(const wchar_t* textureName, std::map<std::wstring, int>& textureDictionary)
@@ -59,17 +60,17 @@ namespace
         _Out_ Model::ModelMaterialInfo& m,
         _Inout_ std::map<std::wstring, int32_t>& textureDictionary)
     {
-        wchar_t matName[DXUT::MAX_MATERIAL_NAME];
-        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.Name, -1, matName, DXUT::MAX_MATERIAL_NAME);
+        wchar_t matName[DXUT::MAX_MATERIAL_NAME] = {};
+        MultiByteToWideChar(CP_UTF8, 0, mh.Name, -1, matName, DXUT::MAX_MATERIAL_NAME);
 
-        wchar_t diffuseName[DXUT::MAX_TEXTURE_NAME];
-        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.DiffuseTexture, -1, diffuseName, DXUT::MAX_TEXTURE_NAME);
+        wchar_t diffuseName[DXUT::MAX_TEXTURE_NAME] = {};
+        MultiByteToWideChar(CP_UTF8, 0, mh.DiffuseTexture, -1, diffuseName, DXUT::MAX_TEXTURE_NAME);
 
-        wchar_t specularName[DXUT::MAX_TEXTURE_NAME];
-        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.SpecularTexture, -1, specularName, DXUT::MAX_TEXTURE_NAME);
+        wchar_t specularName[DXUT::MAX_TEXTURE_NAME] = {};
+        MultiByteToWideChar(CP_UTF8, 0, mh.SpecularTexture, -1, specularName, DXUT::MAX_TEXTURE_NAME);
 
-        wchar_t normalName[DXUT::MAX_TEXTURE_NAME];
-        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.NormalTexture, -1, normalName, DXUT::MAX_TEXTURE_NAME);
+        wchar_t normalName[DXUT::MAX_TEXTURE_NAME] = {};
+        MultiByteToWideChar(CP_UTF8, 0, mh.NormalTexture, -1, normalName, DXUT::MAX_TEXTURE_NAME);
 
         if ((flags & DUAL_TEXTURE) && !mh.SpecularTexture[0])
         {
@@ -210,7 +211,10 @@ namespace
                     case D3DDECLTYPE_DXGI_R8G8B8A8_SNORM:    desc.Format = DXGI_FORMAT_R8G8B8A8_SNORM; offset += 4; break;
 
                     #if defined(_XBOX_ONE) && defined(_TITLE)
+                    case D3DDECLTYPE_DEC3N:                  desc.Format = DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM; offset += 4; break;
                     case (32 + DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM): desc.Format = DXGI_FORMAT_R10G10B10_SNORM_A2_UNORM; offset += 4; break;
+                    #else
+                    case D3DDECLTYPE_DEC3N:                  desc.Format = DXGI_FORMAT_R10G10B10A2_UNORM; flags |= USES_OBSOLETE_DEC3N; offset += 4; break;
                     #endif
 
                     default:
@@ -409,6 +413,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
     std::vector<unsigned int> materialFlags;
     materialFlags.resize(header->NumVertexBuffers);
 
+    bool dec3nwarning = false;
     for (UINT j = 0; j < header->NumVertexBuffers; ++j)
     {
         auto& vh = vbArray[j];
@@ -432,7 +437,18 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
             flags &= ~NORMAL_MAPS;
         }
 
+        if (flags & USES_OBSOLETE_DEC3N)
+        {
+            dec3nwarning = true;
+        }
+
         materialFlags[j] = flags;
+    }
+
+    if (dec3nwarning)
+    {
+        DebugTrace("WARNING: Vertex declaration uses legacy Direct3D 9 D3DDECLTYPE_DEC3N which has no DXGI equivalent\n"
+                   "         (treating as DXGI_FORMAT_R10G10B10A2_UNORM which is not a signed format)\n");
     }
 
     // Validate index buffers
@@ -490,8 +506,8 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(const uint8_t* meshData
         }
 
         auto mesh = std::make_shared<ModelMesh>();
-        wchar_t meshName[DXUT::MAX_MESH_NAME];
-        MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, mh.Name, -1, meshName, DXUT::MAX_MESH_NAME);
+        wchar_t meshName[DXUT::MAX_MESH_NAME] = {};
+        MultiByteToWideChar(CP_UTF8, 0, mh.Name, -1, meshName, DXUT::MAX_MESH_NAME);
         mesh->name = meshName;
 
         // Extents
