@@ -16,60 +16,15 @@ using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
 
-Sample::Sample() :
+Sample::Sample() noexcept(false) :
     m_useDeferral(false),
     m_consoleIsValid(false),
     m_frame(0)
 {
+    // 2D only rendering
     m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_UNKNOWN);
+
     m_console = std::make_unique<DX::TextConsoleImage>();
-}
-
-void Sample::ShowInstructions()
-{
-    m_logCache.insert(m_logCache.begin(), ref new Platform::String(L"Simple PLM"));
-    m_logCache.insert(m_logCache.begin(), ref new Platform::String(L"Launch Settings with A button"));
-    m_logCache.insert(m_logCache.begin(), ref new Platform::String(L"Toggle suspend deferral with B button (default is off)"));
-    m_logCache.insert(m_logCache.begin(), ref new Platform::String(L"Show AccountPicker with X button"));
-    m_logCache.insert(m_logCache.begin(), ref new Platform::String(L"Perform a RestartAplicationOnly with Y button"));
-}
-
-void Sample::LogPLMEvent(const wchar_t* primaryLog, const wchar_t* secondaryData)
-{
-    unsigned int tid = GetCurrentThreadId();
-    SYSTEMTIME curTime;
-    GetSystemTime(&curTime);
-
-    wchar_t timeAndTid[25];
-    swprintf_s(timeAndTid, L"[%02d:%02d:%02d:%03d](%d)", curTime.wHour, curTime.wMinute, curTime.wSecond, curTime.wMilliseconds, tid);
-    Platform::String^ LogLine = ref new Platform::String(timeAndTid) + " " + ref new Platform::String(primaryLog) + " " + ref new Platform::String(secondaryData);
-
-    //Output to Debug Console.
-    OutputDebugStringW(LogLine->Data());
-    OutputDebugStringW(L"\n");
-
-    //Output to screen. We must cache screen logs if a log occurs when there is no valid screen console yet.
-    if (!m_consoleIsValid)
-    {
-        m_logCache.insert(m_logCache.begin(), LogLine);
-    }
-    else
-    {
-        m_console->WriteLine(LogLine->Data());
-    }
-}
-
-void Sample::ToggleDeferral()
-{
-    m_useDeferral = !m_useDeferral;
-    if (m_useDeferral)
-    {
-        LogPLMEvent(L"Will use a suspend deferral.");
-    }
-    else
-    {
-        LogPLMEvent(L"Will not use a suspend deferral.");
-    }
 }
 
 // Initialize the Direct3D resources required to run.
@@ -117,20 +72,32 @@ void Sample::Update(DX::StepTimer const&)
         {
             ExitSample();
         }
+
         if (m_gamePadButtons.b == GamePad::ButtonStateTracker::PRESSED)
         {
-            ToggleDeferral();
+            m_useDeferral = !m_useDeferral;
+            if (m_useDeferral)
+            {
+                LogPLMEvent(L"Will use a suspend deferral.");
+            }
+            else
+            {
+                LogPLMEvent(L"Will not use a suspend deferral.");
+            }
         }
+
         if (m_gamePadButtons.y == GamePad::ButtonStateTracker::PRESSED)
         {
             LogPLMEvent(L"Performing a Restart");
             Windows::ApplicationModel::Core::CoreApplication::RestartApplicationOnly("Restart", nullptr);
         }
+
         if (m_gamePadButtons.x == GamePad::ButtonStateTracker::PRESSED)
         {
             LogPLMEvent(L"Showing AccountPicker");
             Windows::Xbox::UI::SystemUI::ShowAccountPickerAsync(nullptr, Windows::Xbox::UI::AccountPickerOptions::None);
         }
+
         if (m_gamePadButtons.a == GamePad::ButtonStateTracker::PRESSED)
         {
             LogPLMEvent(L"Launching into Settings");
@@ -224,13 +191,56 @@ void Sample::CreateDeviceDependentResources()
 // Allocate all memory resources that change on a window SizeChanged event.
 void Sample::CreateWindowSizeDependentResources()
 {
+    auto viewport = m_deviceResources->GetScreenViewport();
+    m_console->SetViewport(viewport);
+
     m_console->SetWindow(m_deviceResources->GetOutputSize(), true);
-    //Now that the Console is valid we can flush any logs to the console.
+
+    // Now that the Console is valid we can flush any logs to the console.
     m_consoleIsValid = true;
     while (!m_logCache.empty())
     {
-        m_console->WriteLine(m_logCache.back()->Data());
+        m_console->WriteLine(m_logCache.back().c_str());
         m_logCache.pop_back();
     }
 }
 #pragma endregion
+
+void Sample::ShowInstructions()
+{
+    m_logCache.insert(m_logCache.begin(), L"Simple PLM");
+    m_logCache.insert(m_logCache.begin(), L"Launch Settings with A button");
+    m_logCache.insert(m_logCache.begin(), L"Toggle suspend deferral with B button (default is off)");
+    m_logCache.insert(m_logCache.begin(), L"Show AccountPicker with X button");
+    m_logCache.insert(m_logCache.begin(), L"Perform a RestartAplicationOnly with Y button");
+}
+
+void Sample::LogPLMEvent(const wchar_t* primaryLog, const wchar_t* secondaryData)
+{
+    unsigned int tid = GetCurrentThreadId();
+    SYSTEMTIME curTime;
+    GetSystemTime(&curTime);
+
+    wchar_t timeAndTid[25];
+    swprintf_s(timeAndTid, L"[%02d:%02d:%02d:%03d](%d)", curTime.wHour, curTime.wMinute, curTime.wSecond, curTime.wMilliseconds, tid);
+
+    std::wstring logLine = timeAndTid;
+    logLine += L" ";
+    logLine += primaryLog;
+    logLine += L" ";
+    logLine += secondaryData;
+
+    //Output to Debug Console.
+    OutputDebugStringW(logLine.c_str());
+    OutputDebugStringW(L"\n");
+
+    //Output to screen. We must cache screen logs if a log occurs when there is no valid screen console yet.
+    if (!m_consoleIsValid)
+    {
+        m_logCache.insert(m_logCache.begin(), logLine);
+    }
+    else
+    {
+        m_console->WriteLine(logLine.c_str());
+    }
+}

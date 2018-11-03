@@ -15,8 +15,14 @@ using Microsoft::WRL::ComPtr;
 
 Sample::Sample() :
     m_frame(0),
-    m_pMasteringVoice(nullptr),
-    m_pSourceVoice(nullptr)
+	m_pMasteringVoice(nullptr),
+	m_pSourceVoice(nullptr),
+	m_DoneSubmitting(false),
+	m_waveSize(0),
+	m_currentPosition(0),
+	m_Buffers{},
+	m_NumberOfBuffersConsumed(0),
+	m_NumberOfBuffersProduced(0)
 {
     // Renders only 2D, so no need for a depth buffer.
     m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_UNKNOWN);
@@ -48,15 +54,8 @@ void Sample::Initialize(IUnknown* window)
 
     DX::ThrowIfFailed(m_pXAudio2->CreateMasteringVoice(&m_pMasteringVoice));
 
-	m_NumberOfBuffersConsumed = 0;
-	m_NumberOfBuffersProduced = 0;
-	m_currentPosition = 0;
-	m_DoneSubmitting = false;
-
 	// Open the file for reading and parse its header
-    DX::ThrowIfFailed(
-        LoadPCMFile(L"71_setup_sweep_xbox.wav")
-    );
+    DX::ThrowIfFailed(LoadPCMFile(L"71_setup_sweep_xbox.wav"));
 
 	// Start the voice.
 	DX::ThrowIfFailed(m_pSourceVoice->Start(0));
@@ -120,7 +119,7 @@ void Sample::Render()
     }
 
 	// Check to see if buffer has finished playing
-	if (!m_DoneSubmitting)
+	if (!m_DoneSubmitting && m_pSourceVoice)
 	{
 		XAUDIO2_VOICE_STATE state;
 		m_pSourceVoice->GetState(&state, XAUDIO2_VOICE_NOSAMPLESPLAYED);

@@ -25,6 +25,7 @@
 #include <exception>
 #include <memory>
 #include <stdexcept>
+#include <string>
 
 #include <stdio.h>
 #include <pix.h>

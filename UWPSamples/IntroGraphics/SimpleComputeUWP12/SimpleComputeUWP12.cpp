@@ -67,6 +67,12 @@ namespace
 
         pCmdList->ResourceBarrier(1, &barrierDesc);
     }
+
+    struct CB_FractalCS
+    {
+        DirectX::XMFLOAT4 MaxThreadIter;
+        DirectX::XMFLOAT4 Window;
+    };
 }
 
 Sample::Sample() :
@@ -75,6 +81,8 @@ Sample::Sample() :
     m_usingAsyncCompute(false),
     m_renderIndex(0),
     m_terminateThread(false),
+    m_suspendThread(false),
+    m_computeThread(nullptr),
     m_fractalMaxIterations(300)
 {
     // Renders only 2D, so no need for a depth buffer.
@@ -104,6 +112,10 @@ void Sample::Initialize(::IUnknown* window, int width, int height, DXGI_MODE_ROT
 
     m_deviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
+
+    m_computeResumeSignal.Attach(CreateEventEx(nullptr, nullptr, 0, EVENT_MODIFY_STATE | SYNCHRONIZE));
+    if (!m_computeResumeSignal.IsValid())
+        throw std::exception("CreateEvent");
 
     m_computeThread = new std::thread(&Sample::AsyncComputeThreadProc, this);
 
@@ -413,6 +425,8 @@ void Sample::OnDeactivated()
 
 void Sample::OnSuspending()
 {
+    ResetEvent(m_computeResumeSignal.Get());
+    m_suspendThread = true; 
 }
 
 void Sample::OnResuming()
@@ -420,6 +434,9 @@ void Sample::OnResuming()
     m_timer.ResetElapsedTime();
     m_gamePadButtons.Reset();
     m_keyboardButtons.Reset();
+
+    m_suspendThread = false;
+    SetEvent(m_computeResumeSignal.Get());
 }
 
 void Sample::OnWindowSizeChanged(int width, int height, DXGI_MODE_ROTATION rotation)
@@ -799,6 +816,11 @@ void Sample::AsyncComputeThreadProc()
 
     while (!m_terminateThread)
     {
+        if (m_suspendThread)
+        {
+            (void)WaitForSingleObject(m_computeResumeSignal.Get(), INFINITE);
+        }
+
         LARGE_INTEGER CurrentFrameTime;
         QueryPerformanceCounter(&CurrentFrameTime);
         double DeltaTime = (double)(CurrentFrameTime.QuadPart - LastFrameTime.QuadPart) / (double)PerfFreq.QuadPart;
@@ -830,6 +852,11 @@ void Sample::AsyncComputeThreadProc()
                 if (!m_usingAsyncCompute)																// user has request synchronous compute
                 {
                     continue;
+                }
+
+                if (m_suspendThread)
+                {
+                    (void)WaitForSingleObject(m_computeResumeSignal.Get(), INFINITE);
                 }
 
                 m_computeFPS.Tick(static_cast<FLOAT>(DeltaTime));

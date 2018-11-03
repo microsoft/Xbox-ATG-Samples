@@ -13,6 +13,7 @@
 #pragma once
 
 #include "DeviceResources.h"
+#include "PerformanceTimersXbox.h"
 #include "StepTimer.h"
 
 constexpr int PlaneCount = _countof(XG_RESOURCE_LAYOUT::Plane);

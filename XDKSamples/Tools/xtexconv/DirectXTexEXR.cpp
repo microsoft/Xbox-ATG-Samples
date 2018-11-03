@@ -219,7 +219,7 @@ HRESULT DirectX::GetMetadataFromEXRFile(const wchar_t* szFile, TexMetadata& meta
         return E_INVALIDARG;
 
     char fileName[MAX_PATH];
-    int result = WideCharToMultiByte(CP_ACP, 0, szFile, -1, fileName, MAX_PATH, nullptr, nullptr);
+    int result = WideCharToMultiByte(CP_UTF8, 0, szFile, -1, fileName, MAX_PATH, nullptr, nullptr);
     if (result <= 0)
     {
         *fileName = 0;
@@ -299,7 +299,7 @@ HRESULT DirectX::LoadFromEXRFile(const wchar_t* szFile, TexMetadata* metadata, S
     }
 
     char fileName[MAX_PATH];
-    int result = WideCharToMultiByte(CP_ACP, 0, szFile, -1, fileName, MAX_PATH, nullptr, nullptr);
+    int result = WideCharToMultiByte(CP_UTF8, 0, szFile, -1, fileName, MAX_PATH, nullptr, nullptr);
     if (result <= 0)
     {
         *fileName = 0;
@@ -408,7 +408,7 @@ HRESULT DirectX::SaveToEXRFile(const Image& image, const wchar_t* szFile)
     }
 
     char fileName[MAX_PATH];
-    int result = WideCharToMultiByte(CP_ACP, 0, szFile, -1, fileName, MAX_PATH, nullptr, nullptr);
+    int result = WideCharToMultiByte(CP_UTF8, 0, szFile, -1, fileName, MAX_PATH, nullptr, nullptr);
     if (result <= 0)
     {
         *fileName = 0;

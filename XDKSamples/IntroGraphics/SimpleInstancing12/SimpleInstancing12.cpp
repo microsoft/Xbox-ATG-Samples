@@ -12,8 +12,6 @@
 #include "ControllerFont.h"
 #include "ReadData.h"
 
-#pragma warning(disable : 4238)
-
 extern void ExitSample();
 
 using namespace DirectX;
@@ -450,6 +448,8 @@ void Sample::CreateDeviceDependentResources()
         device->CreateGraphicsPipelineState(&psoDesc,
             IID_GRAPHICS_PPV_ARGS(m_pipelineState.ReleaseAndGetAddressOf())));
 
+    CD3DX12_HEAP_PROPERTIES heapUpload(D3D12_HEAP_TYPE_UPLOAD);
+
     // Create and initialize the vertex buffer defining a cube.
     {
         static const Vertex s_vertexData[] =
@@ -489,10 +489,12 @@ void Sample::CreateDeviceDependentResources()
         // recommended. Every time the GPU needs it, the upload heap will be marshalled 
         // over. Please read up on Default Heap usage. An upload heap is used here for 
         // code simplicity and because there are very few verts to actually transfer.
+        auto resDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(s_vertexData));
+
         DX::ThrowIfFailed(
-            device->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+            device->CreateCommittedResource(&heapUpload,
                 D3D12_HEAP_FLAG_NONE,
-                &CD3DX12_RESOURCE_DESC::Buffer(sizeof(s_vertexData)),
+                &resDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
                 IID_GRAPHICS_PPV_ARGS(m_vertexBuffer.ReleaseAndGetAddressOf())));
@@ -548,10 +550,12 @@ void Sample::CreateDeviceDependentResources()
             }
         }
 
+        auto resDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(uint32_t) * c_maxInstances);
+
         DX::ThrowIfFailed(
-            device->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+            device->CreateCommittedResource(&heapUpload,
                 D3D12_HEAP_FLAG_NONE,
-                &CD3DX12_RESOURCE_DESC::Buffer(sizeof(uint32_t) * c_maxInstances),
+                &resDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
                 IID_GRAPHICS_PPV_ARGS(m_boxColors.ReleaseAndGetAddressOf())));
@@ -588,11 +592,13 @@ void Sample::CreateDeviceDependentResources()
             20, 23, 22,
         };
 
+        auto resDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(s_indexData));
+
         // See note above
         DX::ThrowIfFailed(
-            device->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+            device->CreateCommittedResource(&heapUpload,
                 D3D12_HEAP_FLAG_NONE,
-                &CD3DX12_RESOURCE_DESC::Buffer(sizeof(s_indexData)),
+                &resDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
                 IID_GRAPHICS_PPV_ARGS(m_indexBuffer.ReleaseAndGetAddressOf())));

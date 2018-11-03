@@ -17,8 +17,6 @@ using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
 
-#pragma warning(disable : 4238)
-
 namespace
 {
     struct Vertex
@@ -340,6 +338,8 @@ void Sample::CreateDeviceDependentResources()
         device->CreateGraphicsPipelineState(&psoDesc,
             IID_PPV_ARGS(m_pipelineState.ReleaseAndGetAddressOf())));
 
+    CD3DX12_HEAP_PROPERTIES heapUpload(D3D12_HEAP_TYPE_UPLOAD);
+
     // Create vertex buffer.
     {
         static const Vertex s_vertexData[4] =
@@ -354,10 +354,12 @@ void Sample::CreateDeviceDependentResources()
         // recommended. Every time the GPU needs it, the upload heap will be marshalled 
         // over. Please read up on Default Heap usage. An upload heap is used here for 
         // code simplicity and because there are very few verts to actually transfer.
+        auto resDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(s_vertexData));
+
         DX::ThrowIfFailed(
-            device->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+            device->CreateCommittedResource(&heapUpload,
                 D3D12_HEAP_FLAG_NONE,
-                &CD3DX12_RESOURCE_DESC::Buffer(sizeof(s_vertexData)),
+                &resDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
                 IID_PPV_ARGS(m_vertexBuffer.ReleaseAndGetAddressOf())));
@@ -385,10 +387,12 @@ void Sample::CreateDeviceDependentResources()
         };
 
         // See note above
+        auto resDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(s_indexData));
+
         DX::ThrowIfFailed(
-            device->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+            device->CreateCommittedResource(&heapUpload,
                 D3D12_HEAP_FLAG_NONE,
-                &CD3DX12_RESOURCE_DESC::Buffer(sizeof(s_indexData)),
+                &resDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
                 IID_PPV_ARGS(m_indexBuffer.ReleaseAndGetAddressOf())));
@@ -424,9 +428,10 @@ void Sample::CreateDeviceDependentResources()
         txtDesc.Width = width;
         txtDesc.Height = height;
 
+        CD3DX12_HEAP_PROPERTIES heapDefault(D3D12_HEAP_TYPE_DEFAULT);
         DX::ThrowIfFailed(
             device->CreateCommittedResource(
-                &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+                &heapDefault,
                 D3D12_HEAP_FLAG_NONE,
                 &txtDesc,
                 D3D12_RESOURCE_STATE_COPY_DEST,
@@ -436,11 +441,13 @@ void Sample::CreateDeviceDependentResources()
         const UINT64 uploadBufferSize = GetRequiredIntermediateSize(m_texture.Get(), 0, 1);
 
         // Create the GPU upload buffer.
+        auto resDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize);
+
         DX::ThrowIfFailed(
             device->CreateCommittedResource(
-                &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+                &heapUpload,
                 D3D12_HEAP_FLAG_NONE,
-                &CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize),
+                &resDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
                 IID_PPV_ARGS(textureUploadHeap.GetAddressOf())));
@@ -451,7 +458,9 @@ void Sample::CreateDeviceDependentResources()
         textureData.SlicePitch = image.size();
 
         UpdateSubresources(commandList, m_texture.Get(), textureUploadHeap.Get(), 0, 0, 1, &textureData);
-        commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_texture.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
+
+        auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(m_texture.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+        commandList->ResourceBarrier(1, &barrier);
 
         // Describe and create a SRV for the texture.
         D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
