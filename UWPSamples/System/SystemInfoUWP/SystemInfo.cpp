@@ -444,9 +444,11 @@ void Sample::Render()
             bool isuniversal4 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4, 0);
             bool isuniversal5 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5, 0);
             bool isuniversal6 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 6, 0);
+            bool isuniversal7 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7, 0);
             bool isphone = ApiInformation::IsApiContractPresent("Windows.Phone.PhoneContract", 1, 0);
             bool isstore2 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 2, 0);
             bool isstore3 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 3, 0);
+            bool isstore4 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 4, 0);
             bool xliveStorage = ApiInformation::IsApiContractPresent("Windows.Gaming.XboxLive.StorageApiContract", 1, 0);
             bool xliveSecure = ApiInformation::IsApiContractPresent("Windows.Networking.XboxLive.XboxLiveSecureSocketsContract", 1, 0);
 
@@ -465,6 +467,7 @@ void Sample::Render()
             if (isuniversal4) { wcscat_s(contracts, L", 4.0"); }
             if (isuniversal5) { wcscat_s(contracts, L", 5.0"); }
             if (isuniversal6) { wcscat_s(contracts, L", 6.0"); }
+            if (isuniversal7) { wcscat_s(contracts, L", 7.0"); }
 
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UniversalApiContract", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), contracts, right, y, m_scale);
@@ -476,6 +479,7 @@ void Sample::Render()
             wcscpy_s(contracts, L"1.0");
             if (isstore2) { wcscat_s(contracts, L", 2.0"); }
             if (isstore3) { wcscat_s(contracts, L", 3.0"); }
+            if (isstore4) { wcscat_s(contracts, L", 4.0"); }
 
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"StoreContract", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), contracts, right, y, m_scale);
@@ -1035,6 +1039,11 @@ void Sample::Render()
                 #if defined(NTDDI_WIN10_RS4) && (NTDDI_VERSION >= NTDDI_WIN10_RS4)
                 case D3D_SHADER_MODEL_6_2: shaderModelVer = L"6.2"; break;
                 #endif
+
+                #if defined(NTDDI_WIN10_RS5) && (NTDDI_VERSION >= NTDDI_WIN10_RS5)
+                case D3D_SHADER_MODEL_6_3: shaderModelVer = L"6.3"; break;
+                case D3D_SHADER_MODEL_6_4: shaderModelVer = L"6.4"; break;
+                #endif
                 }
 
                 wchar_t buff[64] = {};
@@ -1311,6 +1320,37 @@ void Sample::Render()
 
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Cross node SharingTier", left, y, m_scale);
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), shareTier, right, y, m_scale);
+                }
+                #endif
+
+                // Optional Direct3D 12 features for Windows 10 October 2018 Update
+                #if defined(NTDDI_WIN10_RS5) && (NTDDI_VERSION >= NTDDI_WIN10_RS5)
+                D3D12_FEATURE_DATA_D3D12_OPTIONS5 d3d12opts5 = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &d3d12opts5, sizeof(d3d12opts5))))
+                {
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"SRVOnlyTiledResourceTier3", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts5.SRVOnlyTiledResourceTier3 ? L"true" : L"false", right, y, m_scale);
+
+                    const wchar_t* passTier = L"Unknown";
+                    switch (d3d12opts5.RenderPassesTier)
+                    {
+                    case D3D12_RENDER_PASS_TIER_0: passTier = L"Tier 0"; break;
+                    case D3D12_RENDER_PASS_TIER_1: passTier = L"Tier 1"; break;
+                    case D3D12_RENDER_PASS_TIER_2: passTier = L"Tier 2"; break;
+                    }
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"RenderPassesTier", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), passTier, right, y, m_scale);
+
+                    const wchar_t* rtTier = L"Unknown";
+                    switch (d3d12opts5.RaytracingTier)
+                    {
+                    case D3D12_RAYTRACING_TIER_NOT_SUPPORTED: rtTier = L"Not Supported"; break;
+                    case D3D12_RAYTRACING_TIER_1_0: rtTier = L"Tier 1"; break;
+                    }
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"RaytracingTier", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), rtTier, right, y, m_scale);
                 }
                 #endif
             }
