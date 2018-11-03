@@ -105,6 +105,7 @@ private:
     SmoothedFPS                                 m_computeFPS;
 
     std::atomic<bool>                           m_terminateThread;
+    std::atomic<bool>                           m_suspendThread;
     std::thread	*                               m_computeThread;
 
     CB_FractalCS*                               m_cbFractalData;
@@ -129,6 +130,8 @@ private:
     std::atomic<bool>                           m_usingAsyncCompute;
     bool                                        m_requestUsingAsyncCompute;
     std::atomic<bool>                           m_asyncComputeActive;
+
+    Microsoft::WRL::Wrappers::Event             m_computeResumeSignal;
 
     // DirectXTK objects.
     std::unique_ptr<DirectX::SpriteBatch>       m_spriteBatch;

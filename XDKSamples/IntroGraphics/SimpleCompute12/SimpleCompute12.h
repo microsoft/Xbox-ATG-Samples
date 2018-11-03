@@ -71,17 +71,6 @@ public:
     bool RequestHDRMode() const { return m_deviceResources ? (m_deviceResources->GetDeviceOptions() & DX::DeviceResources::c_EnableHDR) != 0 : false; }
 
 private:
-    struct CB_FractalCS
-    {
-        DirectX::XMFLOAT4 MaxThreadIter;
-        DirectX::XMFLOAT4 Window;
-    };
-    struct Vertex
-    {
-        DirectX::XMFLOAT4 position;
-        DirectX::XMFLOAT2 texcoord;
-    };
-
     void Update(DX::StepTimer const& timer);
     void Render();
 
@@ -125,11 +114,11 @@ private:
     SmoothedFPS                                         m_computeFPS;
 
     std::atomic<bool>                                   m_terminateThread;
+    std::atomic<bool>                                   m_suspendThread;
     std::thread *                                       m_computeThread;
 
     std::atomic<uint32_t>                               m_renderIndex;              // which bank of fractal data the renderer is using, the value is either 0 or 1, compute is using the inverse
 
-    CB_FractalCS*                                       m_fractalData;              // data for compute shader constant buffer on how many iterations on the Mandelbrot set and the bounds
     DirectX::XMFLOAT4									m_window;                   // the bounds for the Mandelbrot set being calculated on the CPU
     uint32_t                                            m_fractalMaxIterations;	    // number of iterations when calculating the Mandelbrot set on the CPU
     std::atomic<bool>                                   m_windowUpdated;
@@ -159,6 +148,8 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Fence>                 m_computeFence;             // fence used by the async compute shader to stall waiting for task is complete, so it can signal render when it's done
     uint64_t                                            m_computeFenceValue;
     Microsoft::WRL::Wrappers::Event                     m_computeFenceEvent;
+
+    Microsoft::WRL::Wrappers::Event                     m_computeResumeSignal;
 
     // DirectXTK objects.
     std::unique_ptr<DirectX::DescriptorHeap>            m_resourceDescriptors;

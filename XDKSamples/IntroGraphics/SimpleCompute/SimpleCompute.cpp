@@ -45,13 +45,14 @@ Sample::Sample() :
     , m_asyncComputeActive(false)
     , m_renderIndex(0)
     , m_terminateThread(false)
+    , m_suspendThread(false)
+    , m_computeThread(nullptr)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_UNKNOWN, 2 
 #ifdef USE_FAST_SEMANTICS
         , DX::DeviceResources::c_FastSemantics
 #endif
         );
-
 
     m_help = std::make_unique<ATG::Help>(g_SampleTitle, g_SampleDescription, g_HelpButtons, _countof(g_HelpButtons));
 }
@@ -69,6 +70,10 @@ void Sample::Initialize(IUnknown* window)
 
     m_deviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
+
+    m_computeResumeSignal.Attach(CreateEventEx(nullptr, nullptr, 0, EVENT_MODIFY_STATE | SYNCHRONIZE));
+    if (!m_computeResumeSignal.IsValid())
+        throw std::exception("CreateEvent");
 
     m_computeThread = new std::thread(&Sample::AsyncComputeThreadProc, this);
 }
@@ -294,6 +299,9 @@ void Sample::Clear()
 // Message handlers
 void Sample::OnSuspending()
 {
+    ResetEvent(m_computeResumeSignal.Get());
+    m_suspendThread = true;
+
     auto context = m_deviceResources->GetD3DDeviceContext();
     context->Suspend(0);
 }
@@ -304,6 +312,9 @@ void Sample::OnResuming()
     context->Resume();
     m_timer.ResetElapsedTime();
     m_gamePadButtons.Reset();
+
+    m_suspendThread = false;
+    SetEvent(m_computeResumeSignal.Get());
 }
 #pragma endregion
 
@@ -431,6 +442,11 @@ void Sample::AsyncComputeThreadProc()
 
     while (!m_terminateThread)
     {
+        if (m_suspendThread)
+        {
+            (void)WaitForSingleObject(m_computeResumeSignal.Get(), INFINITE);
+        }
+
         LARGE_INTEGER CurrentFrameTime;
         QueryPerformanceCounter(&CurrentFrameTime);
         double DeltaTime = (double)(CurrentFrameTime.QuadPart - LastFrameTime.QuadPart) / (double)PerfFreq.QuadPart;
@@ -440,6 +456,11 @@ void Sample::AsyncComputeThreadProc()
         {
             if (m_windowUpdated)
             {
+                if (m_suspendThread)
+                {
+                    (void)WaitForSingleObject(m_computeResumeSignal.Get(), INFINITE);
+                }
+
                 m_computeFPS.Tick((float)DeltaTime);
 
                 pCBData->Window = m_window;

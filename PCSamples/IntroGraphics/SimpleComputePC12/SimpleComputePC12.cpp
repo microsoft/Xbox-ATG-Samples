@@ -68,6 +68,12 @@ namespace
 
         pCmdList->ResourceBarrier(1, &barrierDesc);
     }
+
+    struct CB_FractalCS
+    {
+        DirectX::XMFLOAT4 MaxThreadIter;
+        DirectX::XMFLOAT4 Window;
+    };
 }
 
 Sample::Sample() noexcept(false) :
@@ -158,6 +164,7 @@ void Sample::Update(DX::StepTimer const& timer)
             if (pad.IsViewPressed())
             {
                 ExitSample();
+                m_terminateThread = true;
             }
 
             if ((m_gamePadButtons.a == DirectX::GamePad::ButtonStateTracker::PRESSED))

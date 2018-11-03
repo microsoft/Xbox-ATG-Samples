@@ -80,17 +80,6 @@ public:
     void GetDefaultSize( int& width, int& height ) const;
 
 private:
-    struct CB_FractalCS
-    {
-        DirectX::XMFLOAT4 MaxThreadIter;
-        DirectX::XMFLOAT4 Window;
-    };
-    struct Vertex
-    {
-        DirectX::XMFLOAT4 position;
-        DirectX::XMFLOAT2 texcoord;
-    };
-
     void Update(DX::StepTimer const& timer);
     void Render();
 
@@ -143,7 +132,6 @@ private:
 
     std::atomic<uint32_t>                       m_renderIndex;          // which bank of fractal data the renderer is using, the value is either 0 or 1, compute is using the inverse
 
-    CB_FractalCS*                               m_fractalData;          // data for compute shader constant buffer on how many iterations on the Mandelbrot set and the bounds
     DirectX::XMFLOAT4                           m_window;               // the bounds for the Mandelbrot set being calculated on the CPU
     uint32_t                                    m_fractalMaxIterations; // number of iterations when calculating the Mandelbrot set on the CPU
     std::atomic<bool>							m_windowUpdated;
