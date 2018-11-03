@@ -127,7 +127,7 @@ void DeviceResources::CreateDeviceResources()
 
     m_fence->SetName(L"DeviceResources");
 
-    m_fenceEvent.Attach(CreateEvent(nullptr, FALSE, FALSE, nullptr));
+    m_fenceEvent.Attach(CreateEventEx(nullptr, nullptr, 0, EVENT_MODIFY_STATE | SYNCHRONIZE));
     if (!m_fenceEvent.IsValid())
     {
         throw std::exception("CreateEvent");

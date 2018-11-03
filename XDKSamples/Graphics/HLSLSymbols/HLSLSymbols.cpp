@@ -17,8 +17,6 @@ using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
 
-#pragma warning( disable : 4238 )   // nonstandard extension used: class rvalue used as lvalue
-
 Sample::Sample() noexcept(false) :
     m_frame(0)
 {

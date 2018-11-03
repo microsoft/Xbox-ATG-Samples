@@ -26,10 +26,10 @@
     <ClInclude Include="DeviceResources.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Kits\ATGTK\ATGColors.h">
+    <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h">
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Kits\ATGTK\TextConsole.h">
+    <ClInclude Include="..\..\..\Kits\ATGTK\TextConsole.h">
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
     <ClInclude Include="SimplePLM.h" />
@@ -40,7 +40,7 @@
     <ClCompile Include="DeviceResources.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Kits\ATGTK\TextConsole.cpp">
+    <ClCompile Include="..\..\..\Kits\ATGTK\TextConsole.cpp">
       <Filter>ATG Tool Kit</Filter>
     </ClCompile>
     <ClCompile Include="SimplePLM.cpp" />
@@ -64,12 +64,12 @@
     <Image Include="Assets\WideLogo.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="..\..\..\..\Media\Textures\ATGSampleBackground.DDS">
+    <Image Include="..\..\..\Media\Textures\ATGSampleBackground.DDS">
       <Filter>Media</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\Media\Fonts\Courier_16.spritefont">
+    <None Include="..\..\..\Media\Fonts\Courier_16.spritefont">
       <Filter>Media</Filter>
     </None>
     <None Include="..\Readme.docx" />

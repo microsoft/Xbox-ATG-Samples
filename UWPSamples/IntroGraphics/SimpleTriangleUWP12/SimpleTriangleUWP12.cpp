@@ -17,8 +17,6 @@ using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
 
-#pragma warning( disable : 4238 )
-
 namespace
 {
     struct Vertex
@@ -263,10 +261,13 @@ void Sample::CreateDeviceDependentResources()
         // recommended. Every time the GPU needs it, the upload heap will be marshalled 
         // over. Please read up on Default Heap usage. An upload heap is used here for 
         // code simplicity and because there are very few verts to actually transfer.
+        CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
+        auto resDesc = CD3DX12_RESOURCE_DESC::Buffer(sizeof(s_vertexData));
+
         DX::ThrowIfFailed(
-            device->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+            device->CreateCommittedResource(&heapProps,
                 D3D12_HEAP_FLAG_NONE,
-                &CD3DX12_RESOURCE_DESC::Buffer(sizeof(s_vertexData)),
+                &resDesc,
                 D3D12_RESOURCE_STATE_GENERIC_READ,
                 nullptr,
                 IID_PPV_ARGS(m_vertexBuffer.ReleaseAndGetAddressOf())));

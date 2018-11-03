@@ -9,6 +9,9 @@
 #include "SimpleESRAM.h"
 #include "PIXHelpers.h"
 
+#include "ATGColors.h"
+#include "ControllerFont.h"
+
 extern void ExitSample();
 
 using namespace DirectX;
@@ -406,6 +409,9 @@ Sample::Sample()
     , m_generator(std::random_device()())
     , m_showOverlay(SupportsESRAM())
     , m_mapScheme(SupportsESRAM() ? EMS_Simple : EMS_None)
+    , m_colorDesc{}
+    , m_depthDesc{}
+    , m_esramOverlayDesc{}
 { 
     m_deviceResources = std::make_unique<DX::DeviceResources>(c_colorFormat, DXGI_FORMAT_UNKNOWN);
 }

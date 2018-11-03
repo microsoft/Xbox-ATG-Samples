@@ -18,7 +18,7 @@ class Sample
 {
 public:
 
-    Sample();
+    Sample() noexcept(false);
 
     // Initialization and management
     void Initialize(IUnknown* window);
@@ -33,7 +33,7 @@ public:
     //SampleFunctions
     void ShowInstructions();
     void LogPLMEvent(const wchar_t* primaryLog, const wchar_t* secondaryData = L"");
-    bool GetUseDeferral() { return m_useDeferral; }
+    bool GetUseDeferral() const { return m_useDeferral; }
 
 private:
 
@@ -61,10 +61,8 @@ private:
     std::unique_ptr<DirectX::GraphicsMemory>    m_graphicsMemory;
 
     // Sample Specific
-    void ToggleDeferral();
-
-    std::unique_ptr<DX::TextConsoleImage>	m_console;
-    bool									m_useDeferral;
-    bool									m_consoleIsValid;
-    std::vector<Platform::String^>			m_logCache;
+    std::unique_ptr<DX::TextConsoleImage>   m_console;
+    bool                                    m_useDeferral;
+    bool                                    m_consoleIsValid;
+    std::vector<std::wstring>               m_logCache;
 };

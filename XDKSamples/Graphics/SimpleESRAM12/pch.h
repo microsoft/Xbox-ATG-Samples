@@ -34,9 +34,7 @@
 #include <pix.h>
 #include <xgmemory.h>
 
-#include "ATGColors.h"
 #include "CommonStates.h"
-#include "ControllerFont.h"
 #include "DescriptorHeap.h"
 #include "DirectXHelpers.h"
 #include "Effects.h"
@@ -44,7 +42,6 @@
 #include "GeometricPrimitive.h"
 #include "GraphicsMemory.h"
 #include "Model.h"
-#include "PerformanceTimersXbox.h"
 #include "PostProcess.h"
 #include "RenderTargetState.h"
 #include "ResourceUploadBatch.h"

@@ -8,6 +8,9 @@
 #include "pch.h"
 #include "SimpleESRAM12.h"
 
+#include "ATGColors.h"
+#include "ControllerFont.h"
+
 extern void ExitSample();
 
 using namespace DirectX;
@@ -405,7 +408,10 @@ Sample::Sample()
     , m_generator(std::random_device()())
     , m_showOverlay(SupportsESRAM())
     , m_mapScheme(SupportsESRAM() ? EMS_Simple : EMS_None)
-{ 
+    , m_colorDesc{}
+    , m_depthDesc{}
+    , m_esramOverlayDesc{}
+{
     m_deviceResources = std::make_unique<DX::DeviceResources>(c_colorFormat, DXGI_FORMAT_UNKNOWN);
 }
 
@@ -632,8 +638,8 @@ void Sample::Render()
     auto commandList = m_deviceResources->GetCommandList();
 
     // Choose ESRAM or DRAM targets based on 
-    D3D12_CPU_DESCRIPTOR_HANDLE rtvDescriptor = m_rtvPile->GetCpuHandle(RTV_Main);
-    D3D12_CPU_DESCRIPTOR_HANDLE dsvDescriptor = m_dsvPile->GetCpuHandle(DSV_Main);
+    auto rtvDescriptor = m_rtvPile->GetCpuHandle(RTV_Main);
+    auto dsvDescriptor = m_dsvPile->GetCpuHandle(DSV_Main);
 
     // Begin frame
     m_profiler->BeginFrame(commandList);
