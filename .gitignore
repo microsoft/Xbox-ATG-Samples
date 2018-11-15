@@ -24,6 +24,8 @@ Bin
 ipch
 Debug
 Durango
+Durango11
+Durango12
 Profile
 Release
 x64
@@ -31,6 +33,10 @@ Kits/DirectXTK/Src/Shaders/Compiled/XboxOne*.*
 Kits/DirectXTK12/Src/Shaders/Compiled/XboxOne*.*
 UWPSamples/Graphics/SimplePBR12_UWP/Compiled/
 XDKSamples/Graphics/SimplePBR12_Xbox/Compiled/
+XDKSamples/Graphics/SimpleDmaDecompression/zlib/lib/
+XDKSamples/Graphics/SimpleDmaDecompression/zlib/obj/
+XDKSamples/Graphics/SimpleDmaDecompression/zopfli/lib/
+XDKSamples/Graphics/SimpleDmaDecompression/zopfli/obj/
 UWPSamples/Tools/errorlookup/errorlookup/obj/
 UWPSamples/Tools/errorlookup/errorlookup/project.lock.json
 /wiki
