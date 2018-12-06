@@ -47,6 +47,7 @@ class Sample
 {
 public:
     Sample();
+    ~Sample();
 
     // Initialization and management
     void Initialize(IUnknown* window);

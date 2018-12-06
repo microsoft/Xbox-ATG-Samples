@@ -278,34 +278,14 @@ void Sample::CreateDeviceDependentResources()
 {
     auto device = m_deviceResources->GetD3DDevice();
 
-    // Create a root signature with one constant buffer view
-    {
-        CD3DX12_ROOT_PARAMETER rp = {};
-        rp.InitAsConstantBufferView(c_rootParameterCB, 0);
+    // Create a root signature.
+    auto triangleVSBlob = DX::ReadData(L"TriangleVS.cso");
 
-        CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
-        rootSignatureDesc.Init(1, &rp, 0, nullptr,
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS);
+    // Xbox One best practice is to use HLSL-based root signatures to support shader precompilation.
 
-        ComPtr<ID3DBlob> signature;
-        ComPtr<ID3DBlob> error;
-        HRESULT hr = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
-        if (FAILED(hr))
-        {
-            if (error)
-            {
-                OutputDebugStringA(reinterpret_cast<const char*>(error->GetBufferPointer()));
-            }
-            throw DX::com_exception(hr);
-        }
-
-        DX::ThrowIfFailed(
-            device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(),
-                IID_GRAPHICS_PPV_ARGS(m_rootSignature.ReleaseAndGetAddressOf())));
-    }
+    DX::ThrowIfFailed(
+        device->CreateRootSignature(0, triangleVSBlob.data(), triangleVSBlob.size(),
+            IID_GRAPHICS_PPV_ARGS(m_rootSignature.ReleaseAndGetAddressOf())));
 
     // Create the constant buffer memory and map the CPU and GPU addresses
     {
@@ -328,8 +308,6 @@ void Sample::CreateDeviceDependentResources()
 
     // Load the shader blob for the vertex shader that will be shared by two pipeline state objects
     {
-        auto triangleVSBlob = DX::ReadData(L"TriangleVS.cso");
-
         // Input element descriptor also shared by two pipeline state objects
         static const D3D12_INPUT_ELEMENT_DESC s_inputElementDesc[] =
         {

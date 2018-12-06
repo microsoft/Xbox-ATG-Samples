@@ -171,23 +171,16 @@ void Sample::CreateDeviceDependentResources()
 
     m_graphicsMemory = std::make_unique<GraphicsMemory>(device);
 
-    // Create an empty root signature.
-    {
-        CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
-        rootSignatureDesc.Init(0, nullptr, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
-
-        ComPtr<ID3DBlob> signature;
-        ComPtr<ID3DBlob> error;
-        DX::ThrowIfFailed(
-            D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error));
-        DX::ThrowIfFailed(
-            device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(),
-                IID_GRAPHICS_PPV_ARGS(m_rootSignature.ReleaseAndGetAddressOf())));
-    }
-
-    // Create the pipeline state, which includes loading shaders.
+    // Create root signature.
     auto vertexShaderBlob = DX::ReadData(L"VertexShader.cso");
 
+    // Xbox One best practice is to use HLSL-based root signatures to support shader precompilation.
+
+    DX::ThrowIfFailed(
+        device->CreateRootSignature(0, vertexShaderBlob.data(), vertexShaderBlob.size(),
+            IID_GRAPHICS_PPV_ARGS(m_rootSignature.ReleaseAndGetAddressOf())));
+
+    // Create the pipeline state, which includes loading shaders.
     auto pixelShaderBlob = DX::ReadData(L"PixelShader.cso");
 
     static const D3D12_INPUT_ELEMENT_DESC s_inputElementDesc[2] =

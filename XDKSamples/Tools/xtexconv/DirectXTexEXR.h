@@ -9,7 +9,6 @@
 
 #include "directxtex.h"
 
-#pragma comment(lib,"IlmImf-2_2.lib")
 
 namespace DirectX
 {

@@ -147,6 +147,14 @@ Sample::Sample()
     std::fill_n(m_esramRatios, _countof(m_esramRatios), 1.0f);
 }
 
+Sample::~Sample()
+{
+    if (m_deviceResources)
+    {
+        m_deviceResources->WaitForGpu();
+    }
+}
+
 // Initialize the Direct3D resources required to run.
 void Sample::Initialize(IUnknown* window)
 {

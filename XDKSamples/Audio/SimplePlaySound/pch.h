@@ -41,6 +41,10 @@
 
 #include <xaudio2.h>
 
+#include <apu.h>
+#include <shapexmacontext.h>
+#include <xma2defs.h>
+
 namespace DX
 {
     // Helper class for COM exceptions

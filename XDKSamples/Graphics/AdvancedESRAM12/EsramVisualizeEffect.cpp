@@ -22,26 +22,10 @@ namespace ATG
 
         auto shaderBlob = DX::ReadData(s_shaderFilename);
 
-        // Create root signature.
-        D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS | 
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS;
-
-        CD3DX12_DESCRIPTOR_RANGE textureUAVs(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0);
-
-        CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount] = {};
-        rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0);
-        rootParameters[RootParameterIndex::TextureUAV].InitAsDescriptorTable(1, &textureUAVs);
-
-        CD3DX12_ROOT_SIGNATURE_DESC rsDesc = {};
-        rsDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
-
-        ComPtr<ID3DBlob> rsBlob, errorBlob;
-        DX::ThrowIfFailed(D3D12SerializeRootSignature(&rsDesc, D3D_ROOT_SIGNATURE_VERSION_1, &rsBlob, &errorBlob));
-        DX::ThrowIfFailed(device->CreateRootSignature(0, rsBlob->GetBufferPointer(), rsBlob->GetBufferSize(), IID_GRAPHICS_PPV_ARGS(m_rootSignature.GetAddressOf())));
+        // Xbox One best practice is to use HLSL-based root signatures to support shader precompilation.
+        DX::ThrowIfFailed(
+            device->CreateRootSignature(0, shaderBlob.data(), shaderBlob.size(),
+                IID_GRAPHICS_PPV_ARGS(m_rootSignature.ReleaseAndGetAddressOf())));
 
         SetDebugObjectName(m_rootSignature.Get(), L"EsramVisualizeEffect");
         

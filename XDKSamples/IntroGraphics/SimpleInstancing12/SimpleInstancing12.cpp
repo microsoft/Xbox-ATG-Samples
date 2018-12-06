@@ -388,34 +388,16 @@ void Sample::CreateDeviceDependentResources()
         m_batch = std::make_unique<SpriteBatch>(device, resourceUpload, pd);
     }
 
-    // Create a root signature
-    {
-        CD3DX12_ROOT_PARAMETER rootParameters[2] = {};
-        rootParameters[0].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_VERTEX);
-        rootParameters[1].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
-
-        // Allow input layout and deny uneccessary access to certain pipeline stages.
-        D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS;
-
-        CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
-        rootSignatureDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
-
-        ComPtr<ID3DBlob> signature;
-        ComPtr<ID3DBlob> error;
-        DX::ThrowIfFailed(
-            D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error));
-        DX::ThrowIfFailed(
-            device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(),
-                IID_GRAPHICS_PPV_ARGS(m_rootSignature.ReleaseAndGetAddressOf())));
-    }
-
-    // Create the pipeline state, which includes loading shaders.
+    // Create a root signature.
     auto vertexShaderBlob = DX::ReadData(L"VertexShader.cso");
 
+    // Xbox One best practice is to use HLSL-based root signatures to support shader precompilation.
+
+    DX::ThrowIfFailed(
+        device->CreateRootSignature(0, vertexShaderBlob.data(), vertexShaderBlob.size(),
+            IID_GRAPHICS_PPV_ARGS(m_rootSignature.ReleaseAndGetAddressOf())));
+
+    // Create the pipeline state, which includes loading shaders.
     auto pixelShaderBlob = DX::ReadData(L"PixelShader.cso");
 
     static const D3D12_INPUT_ELEMENT_DESC s_inputElementDesc[] =

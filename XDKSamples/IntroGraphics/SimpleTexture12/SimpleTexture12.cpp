@@ -234,55 +234,16 @@ void Sample::CreateDeviceDependentResources()
             device->CreateDescriptorHeap(&srvHeapDesc, IID_GRAPHICS_PPV_ARGS(m_srvHeap.ReleaseAndGetAddressOf())));
     }
 
-    // Create a root signature with one sampler and one texture
-    {
-        CD3DX12_DESCRIPTOR_RANGE descRange = {};
-        descRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-
-        CD3DX12_ROOT_PARAMETER rp = {};
-        rp.InitAsDescriptorTable(1, &descRange, D3D12_SHADER_VISIBILITY_PIXEL);
-
-        // Use a static sampler that matches the defaults
-        // https://msdn.microsoft.com/en-us/library/windows/desktop/dn913202(v=vs.85).aspx#static_sampler
-        D3D12_STATIC_SAMPLER_DESC samplerDesc = {};
-        samplerDesc.Filter = D3D12_FILTER_ANISOTROPIC;
-        samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-        samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-        samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-        samplerDesc.MaxAnisotropy = 16;
-        samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-        samplerDesc.BorderColor = D3D12_STATIC_BORDER_COLOR_OPAQUE_WHITE;
-        samplerDesc.MinLOD = 0;
-        samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;
-        samplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
-
-        CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc = {};
-        rootSignatureDesc.Init(1, &rp, 1, &samplerDesc,
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
-            | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS);
-
-        ComPtr<ID3DBlob> signature;
-        ComPtr<ID3DBlob> error;
-        HRESULT hr = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
-        if (FAILED(hr))
-        {
-            if (error)
-            {
-                OutputDebugStringA(reinterpret_cast<const char*>(error->GetBufferPointer()));
-            }
-            throw DX::com_exception(hr);
-        }
-
-        DX::ThrowIfFailed(
-            device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(),
-                IID_GRAPHICS_PPV_ARGS(m_rootSignature.ReleaseAndGetAddressOf())));
-    }
-
-    // Create the pipeline state, which includes loading shaders.
+    // Create root signature.
     auto vertexShaderBlob = DX::ReadData(L"VertexShader.cso");
 
+    // Xbox One best practice is to use HLSL-based root signatures to support shader precompilation.
+
+    DX::ThrowIfFailed(
+        device->CreateRootSignature(0, vertexShaderBlob.data(), vertexShaderBlob.size(),
+            IID_GRAPHICS_PPV_ARGS(m_rootSignature.ReleaseAndGetAddressOf())));
+
+    // Create the pipeline state, which includes loading shaders.
     auto pixelShaderBlob = DX::ReadData(L"PixelShader.cso");
 
     static const D3D12_INPUT_ELEMENT_DESC s_inputElementDesc[2] =

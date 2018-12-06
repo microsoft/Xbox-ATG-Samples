@@ -421,25 +421,14 @@ void Sample::CreateShaders()
 {
     auto device = m_deviceResources->GetD3DDevice();
 
-    {
-        // Define root table layout.
-        CD3DX12_DESCRIPTOR_RANGE descRange[1];
-        descRange[c_rootParameterCB].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
-        CD3DX12_ROOT_PARAMETER rootParameters[1];
-        rootParameters[c_rootParameterCB].InitAsDescriptorTable(
-            1, &descRange[c_rootParameterCB], D3D12_SHADER_VISIBILITY_ALL); // b0
+    // Create root signature.
+    auto vertexShaderBlob = DX::ReadData(L"BezierVS.cso");
 
-        // Create the root signature.
-        CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc(_countof(rootParameters), rootParameters, 0, nullptr,
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+    // Xbox One best practice is to use HLSL-based root signatures to support shader precompilation.
 
-        ComPtr<ID3DBlob> signature;
-        ComPtr<ID3DBlob> error;
-        DX::ThrowIfFailed(D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error));
-        DX::ThrowIfFailed(
-            device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(),
-                IID_GRAPHICS_PPV_ARGS(m_rootSignature.ReleaseAndGetAddressOf())));
-    }
+    DX::ThrowIfFailed(
+        device->CreateRootSignature(0, vertexShaderBlob.data(), vertexShaderBlob.size(),
+            IID_GRAPHICS_PPV_ARGS(m_rootSignature.ReleaseAndGetAddressOf())));
 
     // Create our vertex input layout.
     const D3D12_INPUT_ELEMENT_DESC c_inputElementDesc[] =
@@ -448,8 +437,6 @@ void Sample::CreateShaders()
     };
 
     // Load shaders.
-    auto vertexShaderBlob = DX::ReadData(L"BezierVS.cso");
-
     std::vector<uint8_t> hullShaderBlobs[c_numHullShaders];
     hullShaderBlobs[(int)PartitionMode::PartitionInteger] = DX::ReadData(L"BezierHS_int.cso");
     hullShaderBlobs[(int)PartitionMode::PartitionFractionalEven] = DX::ReadData(L"BezierHS_fracEven.cso");
