@@ -23,6 +23,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>{255cbc94-a257-42f1-af1a-5eca358efa4c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Telemetry\ARM64">
+      <UniqueIdentifier>{2ff99e5e-7961-486f-b718-912ebacec162}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -93,6 +96,9 @@
     </None>
     <None Include="..\..\..\Kits\Telemetry\Win32\ATGTelemetryUWP.dll">
       <Filter>Common\Telemetry\Win32</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\ARM64\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\ARM64</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
