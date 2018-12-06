@@ -12,11 +12,17 @@
 
 #pragma once
 
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#include "RenderTargetState.h"
+#include "ResourceUploadBatch.h"
+#endif
 #include "SpriteBatch.h"
 #include "SpriteFont.h"
 
 #include <mutex>
 #include <vector>
+
+#include <wrl/client.h>
 
 
 namespace DX
@@ -113,7 +119,7 @@ namespace DX
         unsigned int                                    m_currentLine;
 
         std::unique_ptr<wchar_t[]>                      m_buffer;
-        std::unique_ptr<Line[]>							m_lines;
+        std::unique_ptr<Line[]>                         m_lines;
         std::vector<wchar_t>                            m_tempBuffer;
 
         std::unique_ptr<DirectX::SpriteBatch>           m_batch;

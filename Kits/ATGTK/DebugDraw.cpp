@@ -52,7 +52,7 @@ namespace
             XMStoreFloat4(&verts[i].color, color);
         }
 
-        batch->DrawIndexed(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, s_indices, _countof(s_indices), verts, 8);
+        batch->DrawIndexed(D3D_PRIMITIVE_TOPOLOGY_LINELIST, s_indices, _countof(s_indices), verts, 8);
     }
 }
 
@@ -141,7 +141,7 @@ void XM_CALLCONV DX::Draw(PrimitiveBatch<VertexPositionColor>* batch,
         XMStoreFloat4(&verts[j].color, color);
     }
 
-    batch->Draw(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, verts, _countof(verts));
+    batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINELIST, verts, _countof(verts));
 }
 
 
@@ -218,7 +218,7 @@ void XM_CALLCONV DX::DrawRing(PrimitiveBatch<VertexPositionColor>* batch,
     }
     verts[c_ringSegments] = verts[0];
 
-    batch->Draw(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP, verts, c_ringSegments + 1);
+    batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP, verts, c_ringSegments + 1);
 }
 
 
@@ -253,7 +253,7 @@ void XM_CALLCONV DX::DrawRay(PrimitiveBatch<VertexPositionColor>* batch,
     XMStoreFloat4(&verts[1].color, color);
     XMStoreFloat4(&verts[2].color, color);
 
-    batch->Draw(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP, verts, 2);
+    batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP, verts, 2);
 }
 
 
@@ -274,5 +274,5 @@ void XM_CALLCONV DX::DrawTriangle(PrimitiveBatch<VertexPositionColor>* batch,
     XMStoreFloat4(&verts[2].color, color);
     XMStoreFloat4(&verts[3].color, color);
 
-    batch->Draw(D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP, verts, 4);
+    batch->Draw(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP, verts, 4);
 }
