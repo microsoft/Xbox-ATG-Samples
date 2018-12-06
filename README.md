@@ -347,11 +347,20 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
  </tr>
 </table>
 
+### DirectX Raytracing (DXR)
+
+<table>
+ <tr>
+  <td><a href="PCSamples/Raytracing/SimpleRaytracingTriangle_PC12">SimpleTriangle</a></td>
+  <td><a href="PCSamples/Raytracing/RaytracingAO_PC12">Raytracing AO</a></td>
+ </tr>
+</table>
+
 # Requirements
 
 ## UWP apps
 * Windows 10 Anniversary Update (Version 1607) or later
-* Visual Studio 2017 ([15.7](https://blogs.msdn.microsoft.com/chuckw/2018/05/07/vs-2017-15-7-update/) or [15.8](https://blogs.msdn.microsoft.com/chuckw/2018/08/16/vs-2017-15-8-update/) update) with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, and *Windows 10 SDK ([10.0.17134.0](https://blogs.msdn.microsoft.com/chuckw/2018/05/02/windows-10-april-2018-update-sdk/))*.
+* Visual Studio 2017 ([15.8](https://blogs.msdn.microsoft.com/chuckw/2018/08/16/vs-2017-15-8-update/) or [15.9](https://blogs.msdn.microsoft.com/chuckw/2018/11/15/vs-2017-15-9-update/) update) with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, and *Windows 10 SDK ([10.0.17763.0](https://blogs.msdn.microsoft.com/chuckw/2018/10/02/windows-10-october-2018-update/))*.
 
 ## XDK apps
 * Xbox One Development Kit
@@ -362,6 +371,7 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 * Visual Studio 2015 Update 3 -or- Visual Studio 2017 (_via upgrade in place_) with the *Desktop development with C++* workload and *Windows 8.1 SDK* component.
 * _DirectX 11:_ Windows 7 Service Pack 1 with the DirectX 11.1 Runtime via [KB2670838](http://support.microsoft.com/kb/2670838) or later.
 * _DirectX 12:_ Windows 10; requires the Windows 10 Anniversary Update SDK (14393) or later to build.
+* _DirectX Raytracing:_ Windows 10 October 2018 Update or later.
 
 # Privacy Statement
 

@@ -1,0 +1,295 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <RootNamespace>RaytracingAOPC12</RootNamespace>
+    <ProjectGuid>{237251BF-9496-4F10-A4D5-1E7F0FE1EC6D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <ProjectName>RaytracingAO_PC12</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(IntDir)\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\libs\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(IntDir)\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)..\libs\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>..\..\..\Kits\D3D12RaytracingFallback\Include;.\Assets;..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;uuid.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;odbc32.lib;odbccp32.lib;runtimeobject.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+    </Link>
+    <FXCompile>
+      <ShaderModel>5.1</ShaderModel>
+      <VariableName>g_p%(Filename)</VariableName>
+      <HeaderFileOutput>$(IntDir)\CompiledShaders\%(Filename).hlsl.h</HeaderFileOutput>
+      <ObjectFileOutput />
+      <EntryPointName />
+    </FXCompile>
+    <PreLinkEvent>
+      <Command>cd "$(ProjectDir)..\..\..\Kits\D3D12RaytracingFallback\tools\x64\"</Command>
+    </PreLinkEvent>
+    <PostBuildEvent>
+      <Command>cd "$(ProjectDir)..\..\..\Kits\D3D12RaytracingFallback\tools\x64\"
+        PostbuildCopy.bat "$(ProjectDir)\$(Platform)\$(Configuration)\"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Sideload required DXR binaries.</Message>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>cd "$(ProjectDir)..\..\..\Kits\D3D12RaytracingFallback\tools\x64\"</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>..\..\..\Kits\D3D12RaytracingFallback\Include;.\Assets;..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <FloatingPointModel>Fast</FloatingPointModel>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;uuid.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;odbc32.lib;odbccp32.lib;runtimeobject.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <FXCompile>
+      <ShaderModel>5.1</ShaderModel>
+      <VariableName>g_p%(Filename)</VariableName>
+      <HeaderFileOutput>$(IntDir)\CompiledShaders\%(Filename).hlsl.h</HeaderFileOutput>
+      <ObjectFileOutput />
+      <EntryPointName />
+    </FXCompile>
+    <PreLinkEvent>
+      <Command>cd "$(ProjectDir)..\..\..\Kits\D3D12RaytracingFallback\tools\x64\"</Command>
+    </PreLinkEvent>
+    <PostBuildEvent>
+      <Command>cd "$(ProjectDir)..\..\..\Kits\D3D12RaytracingFallback\tools\x64\"
+        PostbuildCopy.bat "$(ProjectDir)\$(Platform)\$(Configuration)\"</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Sideload required DXR binaries.</Message>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>cd "$(ProjectDir)..\..\..\Kits\D3D12RaytracingFallback\tools\x64\"</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h" />
+    <ClInclude Include="..\..\..\Kits\ATGTK\ControllerHelp.h" />
+    <ClInclude Include="..\..\..\Kits\ATGTK\ReadData.h" />
+    <ClInclude Include="AO.h" />
+    <ClInclude Include="Assets\AORaytracingHlslCompat.h" />
+    <ClInclude Include="Assets\GlobalSharedHlslCompat.h" />
+    <ClInclude Include="Assets\HlslCompat.h" />
+    <ClInclude Include="Assets\SSAOHlslCompat.h" />
+    <ClInclude Include="CosineHemiSampler.h" />
+    <ClInclude Include="GeneralHelper.h" />
+    <ClInclude Include="Lighting.h" />
+    <ClInclude Include="Menus.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="RaytracingAOPC12.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="RayTracingHelper.h" />
+    <ClInclude Include="Sampler.h" />
+    <ClInclude Include="SSAO.h" />
+    <ClInclude Include="StepTimer.h" />
+    <ClInclude Include="DeviceResources.h" />
+    <ClInclude Include="..\..\..\Kits\ATGTK\d3dx12.h" />
+    <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h" />
+    <ClInclude Include="..\..\..\Kits\ATGTK\FindMedia.h" />
+    <ClInclude Include="StratifiedSampler.h" />
+    <ClInclude Include="UniformHemiSampler.h" />
+    <ClInclude Include="UniformSampler.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Kits\ATGTK\ControllerHelp.cpp" />
+    <ClCompile Include="AO.cpp" />
+    <ClCompile Include="CosineHemiSampler.cpp" />
+    <ClCompile Include="Menus.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="RaytracingAOPC12.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="DeviceResources.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Sampler.cpp" />
+    <ClCompile Include="SSAO.cpp" />
+    <ClCompile Include="UniformHemiSampler.cpp" />
+    <ClCompile Include="UniformSampler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\Media\Meshes\Dragon\Dragon_Normal.dds">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </Image>
+    <Image Include="atg.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="settings.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Kits\D3D12RaytracingFallback\src\FallbackLayer.vcxproj">
+      <Project>{4be280a6-1066-41ca-acdd-6bb7e532508b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Kits\DirectXTK12\DirectXTK_Desktop_2017_Win10.vcxproj">
+      <Project>{3e0e8608-cd9b-4c76-af33-29ca38f2c9f0}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont" />
+    <None Include="..\..\..\Media\Fonts\SegoeUI_22.spritefont" />
+    <None Include="..\..\..\Media\Fonts\SegoeUI_24.spritefont" />
+    <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont" />
+    <None Include="..\..\..\Media\Meshes\Dragon\Dragon.sdkmesh">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\Media\Meshes\Maze\Maze1.sdkmesh">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </None>
+    <None Include="..\..\..\Media\Textures\ATGSampleBackground.DDS" />
+    <None Include="..\..\..\Media\Textures\callout_circle.dds" />
+    <None Include="..\..\..\Media\Textures\gamepad.dds" />
+    <None Include="Assets\GeneralH.hlsli" />
+    <None Include="Assets\SSAOBlurAndUpsampleCS.hlsli" />
+    <None Include="Assets\SSAORenderCS.hlsli" />
+    <None Include="Readme.docx" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Assets\AORaytracing.hlsl">
+      <FileType>Document</FileType>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)\CompiledShaders\%(Filename).hlsl.h</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)\CompiledShaders\%(Filename).hlsl.h</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"dxc.exe" -nologo -Zpr -Zi -Zss -Fd "$(IntDir)\%(Filename).pdb" -Fh "$(IntDir)\CompiledShaders\%(Filename).hlsl.h" -Vn g_p%(Filename) -T lib_6_1 "%(Identity)"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(Identity)</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(SolutionDir)..\tools\x64\dxc.exe" -nologo -Zpr -Zi -Zss -Fd "$(IntDir)\%(Filename).pdb" -Fh "$(IntDir)\CompiledShaders\%(Filename).hlsl.h" -Vn g_p%(Filename) -T lib_6_1 "%(Identity)"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Identity)</Message>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Library</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">6.3</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Library</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6.3</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="Assets\GBufferGS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+    </FxCompile>
+    <None Include="Assets\GBufferH.hlsl">
+      <FileType>Document</FileType>
+    </None>
+    <FxCompile Include="Assets\GBufferPS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Assets\GBufferVS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAOBlurUpsampleBlendOutCS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAOBlurUpsampleCS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAOBlurUpsamplePreMinBlendOutCS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAOBlurUpsamplePreMinCS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAOGBufferRenderCS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAOPrepareDepthBuffers1CS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAOPrepareDepthBuffers2CS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAORender1CS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAORender2CS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

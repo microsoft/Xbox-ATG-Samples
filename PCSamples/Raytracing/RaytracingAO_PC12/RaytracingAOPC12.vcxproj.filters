@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>79715f41-dc21-4008-8930-ba52e29f276c</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>2063af08-4077-43e4-9352-22dfdda5b022</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dds;dlg;fbx;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ATG Tool Kit">
+      <UniqueIdentifier>0d61bf66-155c-491a-93e6-8d446574ea01</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Menus">
+      <UniqueIdentifier>{97d36c62-af61-49bf-9caa-cc99620573a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lighting">
+      <UniqueIdentifier>{94dcc581-bde1-45c0-ae73-b5d814ca1bec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mesh">
+      <UniqueIdentifier>{e3e106d3-2f5f-415e-866c-43ca299b8160}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders">
+      <UniqueIdentifier>{19aab56f-4642-4781-859e-1850f23144e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders\AO">
+      <UniqueIdentifier>{c15457a9-1968-40ee-898d-672d2fee8f76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders\SSAO">
+      <UniqueIdentifier>{5c7c4ba3-01c7-446f-843c-669ec4f30c7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders\Util">
+      <UniqueIdentifier>{0f9597b1-e183-4776-8ae0-27b0f55b42b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sampler">
+      <UniqueIdentifier>{c7e705b3-03cb-49aa-b87f-3c376110898d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Meshes">
+      <UniqueIdentifier>{7879ed83-b4d7-4f62-960c-137b48f433e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Meshes\Dragon">
+      <UniqueIdentifier>{f4222458-bf0f-4952-baab-ee3dee30b4eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Meshes\Maze">
+      <UniqueIdentifier>{988aa075-8c71-4e14-b5bf-6256546c5e75}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="StepTimer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceResources.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="RaytracingAOPC12.h" />
+    <ClInclude Include="RayTracingHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Menus.h">
+      <Filter>Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneralHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="AO.h">
+      <Filter>Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="Lighting.h">
+      <Filter>Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="SSAO.h">
+      <Filter>Lighting</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\AORaytracingHlslCompat.h">
+      <Filter>Assets\Shaders\AO</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\HlslCompat.h">
+      <Filter>Assets\Shaders\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\SSAOHlslCompat.h">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </ClInclude>
+    <ClInclude Include="Assets\GlobalSharedHlslCompat.h">
+      <Filter>Assets\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="CosineHemiSampler.h">
+      <Filter>Sampler</Filter>
+    </ClInclude>
+    <ClInclude Include="Sampler.h">
+      <Filter>Sampler</Filter>
+    </ClInclude>
+    <ClInclude Include="StratifiedSampler.h">
+      <Filter>Sampler</Filter>
+    </ClInclude>
+    <ClInclude Include="UniformHemiSampler.h">
+      <Filter>Sampler</Filter>
+    </ClInclude>
+    <ClInclude Include="UniformSampler.h">
+      <Filter>Sampler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Kits\ATGTK\ReadData.h" />
+    <ClInclude Include="..\..\..\..\Kits\ATGTK\ATGColors.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Kits\ATGTK\ControllerFont.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Kits\ATGTK\ControllerHelp.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Kits\ATGTK\d3dx12.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Kits\ATGTK\FindMedia.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="DeviceResources.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\Kits\ATGTK\ControllerHelp.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
+    <ClCompile Include="RaytracingAOPC12.cpp" />
+    <ClCompile Include="Menus.cpp">
+      <Filter>Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="AO.cpp">
+      <Filter>Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="SSAO.cpp">
+      <Filter>Lighting</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="CosineHemiSampler.cpp">
+      <Filter>Sampler</Filter>
+    </ClCompile>
+    <ClCompile Include="Sampler.cpp">
+      <Filter>Sampler</Filter>
+    </ClCompile>
+    <ClCompile Include="UniformHemiSampler.cpp">
+      <Filter>Sampler</Filter>
+    </ClCompile>
+    <ClCompile Include="UniformSampler.cpp">
+      <Filter>Sampler</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="atg.ico">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="..\..\..\..\Media\Meshes\Dragon\Dragon_Normal.dds">
+      <Filter>Assets\Meshes\Dragon</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="settings.manifest">
+      <Filter>Assets</Filter>
+    </Manifest>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\Media\Textures\ATGSampleBackground.DDS">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\..\Media\Textures\callout_circle.dds">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\..\Media\Textures\gamepad.dds">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\..\Media\Fonts\SegoeUI_18.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\..\Media\Fonts\SegoeUI_22.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\..\Media\Fonts\SegoeUI_24.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Readme.docx" />
+    <None Include="Assets\SSAORenderCS.hlsli">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </None>
+    <None Include="Assets\SSAOBlurAndUpsampleCS.hlsli">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </None>
+    <None Include="Assets\GBufferH.hlsl">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </None>
+    <None Include="..\..\..\..\Media\Meshes\Dragon\Dragon.sdkmesh">
+      <Filter>Assets\Meshes\Dragon</Filter>
+    </None>
+    <None Include="..\..\..\..\Media\Meshes\Maze\Maze1.sdkmesh">
+      <Filter>Assets\Meshes\Maze</Filter>
+    </None>
+    <None Include="Assets\GeneralH.hlsli">
+      <Filter>Assets\Shaders\Util</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Assets\SSAOBlurUpsampleCS.hlsl">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAOBlurUpsamplePreMinBlendOutCS.hlsl">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAOBlurUpsamplePreMinCS.hlsl">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAOGBufferRenderCS.hlsl">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAOPrepareDepthBuffers1CS.hlsl">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAOPrepareDepthBuffers2CS.hlsl">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAORender1CS.hlsl">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAORender2CS.hlsl">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\SSAOBlurUpsampleBlendOutCS.hlsl">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\GBufferPS.hlsl">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\GBufferVS.hlsl">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\GBufferGS.hlsl">
+      <Filter>Assets\Shaders\SSAO</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\AORaytracing.hlsl">
+      <Filter>Assets\Shaders\AO</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>
