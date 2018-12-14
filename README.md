@@ -320,6 +320,14 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 
 <table>
  <tr>
+  <td>Device RGB Lamp Array</td>
+  <td><a href="UWPSamples/System/LampArrayUWP">UWP</a></td>
+  <td><a href="XDKSamples/System/LampArrayXDK">XDK</a></td>
+ </tr>
+</table>
+
+<table>
+ <tr>
   <td>Xbox One X Front Panel</td>
   <td><a href="XDKSamples/System/SimpleFrontPanel">Basic</a></td>
   <td><a href="XDKSamples/System/FrontPanelText">Text</a></td>

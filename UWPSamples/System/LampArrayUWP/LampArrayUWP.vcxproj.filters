@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>e2abdcd3-5cbf-4eca-8bf4-b2e5c7699ad1</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>28cc86f1-ecb8-422a-a91f-42f5209b9052</UniqueIdentifier>
+      <Extensions>bmp;dds;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Filter Include="ATG Tool Kit">
+      <UniqueIdentifier>8baaa16d-e85c-4cfc-9ee4-22b42b2e1d0b</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry">
+      <UniqueIdentifier>f99c7243-c2c2-4b71-91d8-d7694b8ad692</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\ARM">
+      <UniqueIdentifier>093b909e-2898-4fcc-a1d3-57e8cb337fea</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\Win32">
+      <UniqueIdentifier>4c4cbced-7983-417f-828b-086ffc8cc730</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\x64">
+      <UniqueIdentifier>c7b9613d-f51e-4a5b-99e8-e324d7c69edd</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Telemetry\ARM64">
+      <UniqueIdentifier>c6ba80b4-c686-4664-a651-79356e81560d</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="LampArrayUWP.h" />
+    <ClInclude Include="StepTimer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceResources.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h">
+      <Filter>ATG Tool Kit</Filter>
+    </ClInclude>
+    <ClInclude Include="LightingManager.h" />
+    <ClInclude Include="SnakeEffect.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="LampArrayUWP.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="DeviceResources.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="LightingManager.cpp" />
+    <ClCompile Include="SnakeEffect.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Logo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SmallLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\WideLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Kits\Telemetry\ARM\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\ARM</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\Win32\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\Win32</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\x64\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\x64</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\ARM64\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\ARM64</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_24.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Readme.docx" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+</Project>
