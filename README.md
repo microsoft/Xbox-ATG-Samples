@@ -191,6 +191,13 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 
 <table>
  <tr>
+  <td>Fast Block Compress</td>
+  <td><a href="XDKSamples/Graphics/FastBlockCompress">XDK</a></td>
+ </tr>
+</table>
+
+<table>
+ <tr>
   <td>Media Foundation</td>
   <td><a href="PCSamples/Graphics/VideoTexturePC12">PC DX12</a></td>
   <td><a href="UWPSamples/Graphics/VideoTextureUWP">UWP DX11</a></td>
