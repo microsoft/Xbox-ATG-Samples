@@ -92,7 +92,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">
     <Link>
-      <AdditionalDependencies>d3d11_x.lib;combase.lib;kernelx.lib;uuid.lib;etwplus.lib;zopfli140Durango.lib;ZLib140Durango.lib;StreamingDmaCompressionLib11.lib;%(XboxExtensionsDependencies);</AdditionalDependencies>
+      <AdditionalDependencies>d3d11_x.lib;combase.lib;kernelx.lib;uuid.lib;etwplus.lib;%(XboxExtensionsDependencies);</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -123,7 +123,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">
     <Link>
-      <AdditionalDependencies>pixEvt.lib;d3d11_x.lib;combase.lib;kernelx.lib;uuid.lib;etwplus.lib;zopfli140Durangoi.lib;ZLib140Durangoi.lib;StreamingDmaCompressionLib11.lib;%(XboxExtensionsDependencies);</AdditionalDependencies>
+      <AdditionalDependencies>pixEvt.lib;d3d11_x.lib;combase.lib;kernelx.lib;uuid.lib;etwplus.lib;%(XboxExtensionsDependencies);</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -154,7 +154,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">
     <Link>
-      <AdditionalDependencies>pixEvt.lib;d3d11_x.lib;combase.lib;kernelx.lib;uuid.lib;etwplus.lib;zopfli140Durangod.lib;ZLib140Durangod.lib;StreamingDmaCompressionLib11.lib;%(XboxExtensionsDependencies);</AdditionalDependencies>
+      <AdditionalDependencies>pixEvt.lib;d3d11_x.lib;combase.lib;kernelx.lib;uuid.lib;etwplus.lib;%(XboxExtensionsDependencies);</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
@@ -206,6 +206,12 @@
     </ProjectReference>
     <ProjectReference Include="..\StreamingDmaCompressionLib\StreamingDmaCompressionLib11\StreamingDmaCompressionLib11.vcxproj">
       <Project>{34a0c144-1335-4abb-8efa-f08b1994e86d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\zlib\ZLib.vcxproj">
+      <Project>{4da6d138-dacd-476f-91d5-389b90fa8d12}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\zopfli\zopfli.vcxproj">
+      <Project>{162a8de3-a3a5-4eec-afb7-8ca8862143ac}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
