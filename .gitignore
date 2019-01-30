@@ -45,3 +45,4 @@ packages
 !Kits/Telemetry/ARM
 !Kits/Telemetry/Win32
 !Kits/Telemetry/x64
+!Kits/D3D12RaytracingFallback/Tools/x64
