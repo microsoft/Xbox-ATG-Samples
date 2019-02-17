@@ -293,6 +293,7 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
   <td>Input</td>
   <td><a href="UWPSamples/System/InputInterfacingUWP">Interfacing UWP</a></td>
   <td><a href="UWPSamples/System/MouseCursor">Mouse UWP</a></td>
+  <td><a href="XDKSamples/System/MouseCursorXDK">Mouse XDK</a></td>
  </tr>
  <tr>
   <td>User Gamepad Pairing</td>

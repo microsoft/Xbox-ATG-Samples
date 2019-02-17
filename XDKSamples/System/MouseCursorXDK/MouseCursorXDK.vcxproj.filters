@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>a20305c6-446b-4a99-b296-3a245c62ba67</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>a4fdf990-e69e-49b7-9ea5-d8181eb0f7a0</UniqueIdentifier>
+      <Extensions>bmp;dds;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Filter Include="Assets\FPSRoom">
+      <UniqueIdentifier>{5fb483fe-91c8-4f3d-b969-44355a216354}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\RTSMap">
+      <UniqueIdentifier>{05211b62-a1e6-49aa-a3d0-a06b875074a7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="StepTimer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Telemetry.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DeviceResources.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h" />
+    <ClInclude Include="MouseCursor.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="DeviceResources.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseCursor.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Logo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SmallLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\WideLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-100.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-140.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-180.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\ABox001LightingMap.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\ACeilingLightingMap.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\AFloortLightingMap.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\AWallsLightingMap.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+    <Image Include="Assets\background_flat.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\Ceiling.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\Cement.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\clouds.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+    <Image Include="Assets\green_tile.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\green_tile_border.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\RTSMap\LabelBase.dds">
+      <Filter>Assets\RTSMap</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\RTSMap\Labels.dds">
+      <Filter>Assets\RTSMap</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\RTSMap\Map3DColor.dds">
+      <Filter>Assets\RTSMap</Filter>
+    </Image>
+    <Image Include="..\..\..\Media\Meshes\FPSRoom\Pillar.dds">
+      <Filter>Assets\FPSRoom</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Readme.docx" />
+    <None Include="..\..\..\Media\Fonts\SegoeUI_22.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_24.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_34.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\Courier_36.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Media\Meshes\FPSRoom\FPSRoom.sdkmesh">
+      <Filter>Assets\FPSRoom</Filter>
+    </None>
+    <None Include="..\..\..\Media\Meshes\RTSMap\3DRTSMap.sdkmesh">
+      <Filter>Assets\RTSMap</Filter>
+    </None>
+  </ItemGroup>
+</Project>
