@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------
-// D3D12RaytracingAO.h
+// SimpleRaytracingTriangle_PC12.h
 //
 // Advanced Technology Group (ATG)
 // Copyright (C) Microsoft Corporation. All rights reserved.

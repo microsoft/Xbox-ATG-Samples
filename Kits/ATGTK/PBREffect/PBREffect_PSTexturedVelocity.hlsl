@@ -27,7 +27,7 @@ PSOut_Velocity PSTexturedVelocity(VSOut_Velocity pin)
     const float3 L = normalize(-PBR_LightDirection[0]);               // light vector ("to light" oppositve of light's direction)
      
     // Before lighting, peturb the surface's normal by the one given in normal map.
-    float3 localNormal = BiasX2(PBR_NormalTexture.Sample(PBR_SurfaceSampler, pin.current.TexCoord).xyz);
+    float3 localNormal = TwoChannelNormalX2(PBR_NormalTexture.Sample(PBR_SurfaceSampler, pin.current.TexCoord).xy);
     
     float3 N = PeturbNormal( localNormal, pin.current.NormalWS, pin.current.TangentWS);
 

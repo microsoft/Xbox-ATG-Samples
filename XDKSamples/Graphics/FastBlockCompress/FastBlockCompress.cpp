@@ -342,6 +342,8 @@ void Sample::Update(DX::StepTimer const& timer)
 
 		m_gpuTimer.Stop(m_computeCommandList.Get());
 
+        m_computeCommandList->FlushPipelineX(D3D12XBOX_FLUSH_BOP_CS_PARTIAL, D3D12_GPU_VIRTUAL_ADDRESS_NULL, D3D12XBOX_FLUSH_RANGE_ALL);
+
 		// Then compress all of the mips
 		ComPtr<ID3D12Resource> intermediateUAV[3];
 

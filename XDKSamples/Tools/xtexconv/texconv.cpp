@@ -106,6 +106,8 @@ enum OPTIONS
     OPT_COLORKEY,
     OPT_TONEMAP,
     OPT_X2_BIAS,
+    OPT_PRESERVE_ALPHA_COVERAGE,
+    OPT_INVERT_Y,
     OPT_FILELIST,
     OPT_ROTATE_COLOR,
     OPT_PAPER_WHITE_NITS,
@@ -193,6 +195,8 @@ const SValue g_pOptions[] =
     { L"c",             OPT_COLORKEY },
     { L"tonemap",       OPT_TONEMAP },
     { L"x2bias",        OPT_X2_BIAS },
+    { L"keepcoverage",  OPT_PRESERVE_ALPHA_COVERAGE },
+    { L"inverty",       OPT_INVERT_Y },
     { L"flist",         OPT_FILELIST },
     { L"rotatecolor",   OPT_ROTATE_COLOR },
     { L"nits",          OPT_PAPER_WHITE_NITS },
@@ -498,7 +502,7 @@ namespace
     void SearchForFiles(const wchar_t* path, std::list<SConversion>& files, bool recursive)
     {
         // Process files
-        WIN32_FIND_DATA findData = {};
+        WIN32_FIND_DATAW findData = {};
         ScopedFindHandle hFile(safe_handle(FindFirstFileExW(path,
             FindExInfoBasic, &findData,
             FindExSearchNameMatch, nullptr,
@@ -518,7 +522,7 @@ namespace
                     files.push_back(conv);
                 }
 
-                if (!FindNextFile(hFile.get(), &findData))
+                if (!FindNextFileW(hFile.get(), &findData))
                     break;
             }
         }
@@ -563,7 +567,7 @@ namespace
                     }
                 }
 
-                if (!FindNextFile(hFile.get(), &findData))
+                if (!FindNextFileW(hFile.get(), &findData))
                     break;
             }
         }
@@ -700,7 +704,7 @@ namespace
 
         if (!s_CreateDXGIFactory1)
         {
-            HMODULE hModDXGI = LoadLibrary(L"dxgi.dll");
+            HMODULE hModDXGI = LoadLibraryW(L"dxgi.dll");
             if (!hModDXGI)
                 return false;
 
@@ -776,6 +780,8 @@ namespace
         wprintf(L"   -nits <value>       paper-white value in nits to use for HDR10 (def: 200.0)\n");
         wprintf(L"   -tonemap            Apply a tonemap operator based on maximum luminance\n");
         wprintf(L"   -x2bias             Enable *2 - 1 conversion cases for unorm/pos-only-float\n");
+        wprintf(L"   -keepcoverage <ref> Preserve alpha coverage in generated mips for alpha test ref\n");
+        wprintf(L"   -inverty            Invert Y (i.e. green) channel values\n");
         wprintf(L"   -flist <filename>   use text file with a list of input files (one per line)\n");
 
         wprintf(L"\n   <format>: ");
@@ -825,7 +831,7 @@ namespace
 
         if (!s_DynamicD3D11CreateDevice)
         {
-            HMODULE hModD3D11 = LoadLibrary(L"d3d11.dll");
+            HMODULE hModD3D11 = LoadLibraryW(L"d3d11.dll");
             if (!hModD3D11)
                 return false;
 
@@ -1140,6 +1146,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
     DWORD colorKey = 0;
     DWORD dwRotateColor = 0;
     float paperWhiteNits = 200.f;
+    float preserveAlphaCoverageRef = 0.0f;
 
     wchar_t szPrefix[MAX_PATH];
     wchar_t szSuffix[MAX_PATH];
@@ -1207,6 +1214,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             case OPT_FILELIST:
             case OPT_ROTATE_COLOR:
             case OPT_PAPER_WHITE_NITS:
+            case OPT_PRESERVE_ALPHA_COVERAGE:
             case OPT_XGMODE:
                 if (!*pValue)
                 {
@@ -1594,15 +1602,27 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             case OPT_PAPER_WHITE_NITS:
                 if (swscanf_s(pValue, L"%f", &paperWhiteNits) != 1)
                 {
-                    wprintf(L"Invalid value specified with -nits (%ls)\n", pValue);
-                    wprintf(L"\n");
+                    wprintf(L"Invalid value specified with -nits (%ls)\n\n", pValue);
                     PrintUsage();
                     return 1;
                 }
                 else if (paperWhiteNits > 10000.f || paperWhiteNits <= 0.f)
                 {
-                    wprintf(L"-nits (%ls) parameter must be between 0 and 10000\n", pValue);
-                    wprintf(L"\n");
+                    wprintf(L"-nits (%ls) parameter must be between 0 and 10000\n\n", pValue);
+                    return 1;
+                }
+                break;
+
+            case OPT_PRESERVE_ALPHA_COVERAGE:
+                if (swscanf_s(pValue, L"%f", &preserveAlphaCoverageRef) != 1)
+                {
+                    wprintf(L"Invalid value specified with -keepcoverage (%ls)\n\n", pValue);
+                    PrintUsage();
+                    return 1;
+                }
+                else if (preserveAlphaCoverageRef < 0.0f || preserveAlphaCoverageRef > 1.0f)
+                {
+                    wprintf(L"-keepcoverage (%ls) parameter must be between 0.0 and 1.0\n\n", pValue);
                     return 1;
                 }
                 break;
@@ -1706,6 +1726,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
     // Convert images
     bool nonpow2warn = false;
     bool non4bc = false;
+    bool preserveAlphaCoverage = false;
     ComPtr<ID3D11Device> pDevice;
 
     for (auto pConv = conversion.begin(); pConv != conversion.end(); ++pConv)
@@ -2550,6 +2571,60 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             cimage.reset();
         }
 
+        // --- Invert Y Channel --------------------------------------------------------
+        if (dwOptions & (DWORD64(1) << OPT_INVERT_Y))
+        {
+            std::unique_ptr<ScratchImage> timage(new (std::nothrow) ScratchImage);
+            if (!timage)
+            {
+                wprintf(L"\nERROR: Memory allocation failed\n");
+                return 1;
+            }
+
+            hr = TransformImage(image->GetImages(), image->GetImageCount(), image->GetMetadata(),
+                [&](XMVECTOR* outPixels, const XMVECTOR* inPixels, size_t width, size_t y)
+            {
+                static const XMVECTORU32 s_selecty = { { { XM_SELECT_0, XM_SELECT_1, XM_SELECT_0, XM_SELECT_0 } } };
+
+                UNREFERENCED_PARAMETER(y);
+
+                for (size_t j = 0; j < width; ++j)
+                {
+                    XMVECTOR value = inPixels[j];
+
+                    XMVECTOR inverty = XMVectorSubtract(g_XMOne, value);
+
+                    outPixels[j] = XMVectorSelect(value, inverty, s_selecty);
+                }
+            }, *timage);
+            if (FAILED(hr))
+            {
+                wprintf(L" FAILED [inverty] (%x)\n", hr);
+                return 1;
+            }
+
+            auto& tinfo = timage->GetMetadata();
+            tinfo;
+
+            assert(info.width == tinfo.width);
+            assert(info.height == tinfo.height);
+            assert(info.depth == tinfo.depth);
+            assert(info.arraySize == tinfo.arraySize);
+            assert(info.mipLevels == tinfo.mipLevels);
+            assert(info.miscFlags == tinfo.miscFlags);
+            assert(info.format == tinfo.format);
+            assert(info.dimension == tinfo.dimension);
+
+            image.swap(timage);
+            cimage.reset();
+        }
+
+        // --- Determine whether preserve alpha coverage is required (if requested) ----
+        if (preserveAlphaCoverageRef > 0.0f && HasAlpha(info.format) && !image->IsAlphaAllOpaque())
+        {
+            preserveAlphaCoverage = true;
+        }
+
         // --- Generate mips -----------------------------------------------------------
         DWORD dwFilter3D = dwFilter;
         if (!ispow2(info.width) || !ispow2(info.height) || !ispow2(info.depth))
@@ -2566,9 +2641,11 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             }
         }
 
-        if ((!tMips || info.mipLevels != tMips) && (info.mipLevels != 1))
+        if ((!tMips || info.mipLevels != tMips || preserveAlphaCoverage) && (info.mipLevels != 1))
         {
             // Mips generation only works on a single base image, so strip off existing mip levels
+            // Also required for preserve alpha coverage so that existing mips are regenerated
+
             std::unique_ptr<ScratchImage> timage(new (std::nothrow) ScratchImage);
             if (!timage)
             {
@@ -2688,6 +2765,52 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             assert(info.arraySize == tinfo.arraySize);
             assert(info.miscFlags == tinfo.miscFlags);
             assert(info.format == tinfo.format);
+            assert(info.dimension == tinfo.dimension);
+
+            image.swap(timage);
+            cimage.reset();
+        }
+
+        // --- Preserve mipmap alpha coverage (if requested) ---------------------------
+        if (preserveAlphaCoverage && info.mipLevels != 1 && (info.dimension != TEX_DIMENSION_TEXTURE3D))
+        {
+            std::unique_ptr<ScratchImage> timage(new (std::nothrow) ScratchImage);
+            if (!timage)
+            {
+                wprintf(L"\nERROR: Memory allocation failed\n");
+                return 1;
+            }
+
+            hr = timage->Initialize(image->GetMetadata());
+            if (FAILED(hr))
+            {
+                wprintf(L" FAILED [keepcoverage] (%x)\n", hr);
+                return 1;
+            }
+            
+            const size_t items = image->GetMetadata().arraySize;
+            for (size_t item = 0; item < items; ++item)
+            {
+                auto img = image->GetImage(0, item, 0);
+                assert(img);
+
+                hr = ScaleMipMapsAlphaForCoverage(img, info.mipLevels, info, item, preserveAlphaCoverageRef, *timage);
+                if (FAILED(hr))
+                {
+                    wprintf(L" FAILED [keepcoverage] (%x)\n", hr);
+                    return 1;
+                }
+            }
+
+            auto& tinfo = timage->GetMetadata();
+            tinfo;
+
+            assert(info.width == tinfo.width);
+            assert(info.height == tinfo.height);
+            assert(info.depth == tinfo.depth);
+            assert(info.arraySize == tinfo.arraySize);
+            assert(info.mipLevels == tinfo.mipLevels);
+            assert(info.miscFlags == tinfo.miscFlags);
             assert(info.dimension == tinfo.dimension);
 
             image.swap(timage);

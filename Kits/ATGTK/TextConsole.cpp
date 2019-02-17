@@ -22,8 +22,11 @@ using namespace DX;
 const XMVECTORF32 TextConsole::Line::s_defaultColor = Colors::Transparent;
 
 TextConsole::TextConsole()
-    : m_foregroundColor(1.f, 1.f, 1.f, 1.f),
-    m_debugOutput(false)
+    : m_layout{},
+    m_foregroundColor(1.f, 1.f, 1.f, 1.f),
+    m_debugOutput(false),
+    m_columns(0),
+    m_rows(0)
 {
     Clear();
 }
@@ -37,8 +40,11 @@ TextConsole::TextConsole(
     const RenderTargetState& rtState,
     const wchar_t* fontName,
     D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptor)
-    : m_foregroundColor(1.f, 1.f, 1.f, 1.f),
-    m_debugOutput(false)
+    : m_layout{},
+    m_foregroundColor(1.f, 1.f, 1.f, 1.f),
+    m_debugOutput(false),
+    m_columns(0),
+    m_rows(0)
 {
     RestoreDevice(device, upload, rtState, fontName, cpuDescriptor, gpuDescriptor);
 
@@ -47,8 +53,11 @@ TextConsole::TextConsole(
 #else
 _Use_decl_annotations_
 TextConsole::TextConsole(ID3D11DeviceContext* context, const wchar_t* fontName)
-    : m_foregroundColor(1.f, 1.f, 1.f, 1.f),
-    m_debugOutput(false)
+    : m_layout{},
+    m_foregroundColor(1.f, 1.f, 1.f, 1.f),
+    m_debugOutput(false),
+    m_columns(0),
+    m_rows(0)
 {
     RestoreDevice(context, fontName);
 
@@ -63,6 +72,9 @@ void TextConsole::Render(_In_ ID3D12GraphicsCommandList* commandList)
 void TextConsole::Render()
 #endif
 {
+    if (!m_lines)
+        return;
+
     std::lock_guard<std::mutex> lock(m_mutex);
 
     float lineSpacing = m_font->GetLineSpacing();

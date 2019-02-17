@@ -29,6 +29,14 @@ float3 PeturbNormal(float3 localNormal, float3 surfaceNormalWS, float3 surfaceTa
     return mul(localNormal, TBN);                // transform to local to world (tangent space)
 }
 
+// Normal z component reconstruction for supporting BC5
+float3 TwoChannelNormalX2(float2 normal)
+{
+    float2 xy = 2.0f * normal - 1.0f;
+    float z = sqrt(1 - dot(xy, xy));
+    return float3(xy.x, xy.y, z);
+}
+
 // Shlick's approximation of Fresnel
 // https://en.wikipedia.org/wiki/Schlick%27s_approximation
 float3 Fresnel_Shlick(in float3 f0, in float3 f90, in float x)

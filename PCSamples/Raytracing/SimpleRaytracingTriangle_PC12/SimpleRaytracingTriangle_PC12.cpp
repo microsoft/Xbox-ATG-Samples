@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------------------------
-// D3D12RaytracingAO.cpp
+// SimpleRaytracingTriangle_PC12.cpp
 //
 // Advanced Technology Group (ATG)
 // Copyright (C) Microsoft Corporation. All rights reserved.

@@ -154,14 +154,13 @@ public:
         memset(m_memory, 0, size);
     }
 
-    virtual ~TimestampAllocator()
+    virtual ~TimestampAllocator() noexcept
     {
-        if (!VirtualFree(m_memory, m_size, MEM_RELEASE))
+        if (m_memory)
         {
-            DX::ThrowIfFailed(GetLastError());
+            (void)VirtualFree(m_memory, m_size, MEM_RELEASE);
+            m_memory = nullptr;
         }
-
-        m_memory = nullptr;
     }
 
     t_Type* GetNext()
