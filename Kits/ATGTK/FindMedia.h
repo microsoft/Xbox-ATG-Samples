@@ -10,10 +10,6 @@
 
 #pragma once
 
-#if defined(WINAPI_FAMILY) && (WINAPI_FAMILY != WINAPI_FAMILY_DESKTOP_APP)
-#error This header only works with Windows desktop apps
-#endif
-
 #include <exception>
 #include <string.h>
 

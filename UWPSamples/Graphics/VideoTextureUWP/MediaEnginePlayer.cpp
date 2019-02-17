@@ -239,10 +239,11 @@ bool MediaEnginePlayer::TransferFrame(ID3D11Texture2D* texture, MFVideoNormalize
             DX::ThrowIfFailed(dxgiTexture->GetSharedHandle(&textureHandle));
 
             ComPtr<ID3D11Texture2D> mediaTexture;
-            DX::ThrowIfFailed(m_device->OpenSharedResource(textureHandle, IID_PPV_ARGS(mediaTexture.GetAddressOf())));
-
-            if (m_mediaEngine->TransferVideoFrame(mediaTexture.Get(), &rect, &rcTarget, &m_bkgColor) == S_OK)
-                return true;
+            if (SUCCEEDED(m_device->OpenSharedResource(textureHandle, IID_PPV_ARGS(mediaTexture.GetAddressOf()))))
+            {
+                if (m_mediaEngine->TransferVideoFrame(mediaTexture.Get(), &rect, &rcTarget, &m_bkgColor) == S_OK)
+                    return true;
+            }
         }
     }
 
