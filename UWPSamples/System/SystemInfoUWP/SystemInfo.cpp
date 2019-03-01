@@ -1008,6 +1008,7 @@ void Sample::Render()
 
                 // Determine maximum shader model / root signature
                 D3D12_FEATURE_DATA_ROOT_SIGNATURE rootSig = {};
+                rootSig.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_1;
                 if (FAILED(device->CheckFeatureSupport(D3D12_FEATURE_ROOT_SIGNATURE, &rootSig, sizeof(rootSig))))
                 {
                     rootSig.HighestVersion = D3D_ROOT_SIGNATURE_VERSION_1_0;
@@ -1021,6 +1022,13 @@ void Sample::Render()
                 }
 
                 D3D12_FEATURE_DATA_SHADER_MODEL shaderModel = {};
+                #if defined(NTDDI_WIN10_RS5) && (NTDDI_VERSION >= NTDDI_WIN10_RS5)
+                shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_4;
+                #elif defined(NTDDI_WIN10_RS4) && (NTDDI_VERSION >= NTDDI_WIN10_RS4)
+                shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_2;
+                #else
+                shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_0;
+                #endif
                 if (FAILED(device->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &shaderModel, sizeof(shaderModel))))
                 {
                     shaderModel.HighestShaderModel = D3D_SHADER_MODEL_5_1;
