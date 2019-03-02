@@ -1029,7 +1029,13 @@ void Sample::Render()
                 #else
                 shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_0;
                 #endif
-                if (FAILED(device->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &shaderModel, sizeof(shaderModel))))
+                HRESULT hr = device->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &shaderModel, sizeof(shaderModel));
+                while (hr == E_INVALIDARG && shaderModel.HighestShaderModel > D3D_SHADER_MODEL_6_0)
+                {
+                    shaderModel.HighestShaderModel = static_cast<D3D_SHADER_MODEL>(static_cast<int>(shaderModel.HighestShaderModel) - 1);
+                    hr = device->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &shaderModel, sizeof(shaderModel));
+                }
+                if (FAILED(hr))
                 {
                     shaderModel.HighestShaderModel = D3D_SHADER_MODEL_5_1;
                 }
