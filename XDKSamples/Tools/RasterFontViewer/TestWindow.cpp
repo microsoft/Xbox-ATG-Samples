@@ -23,46 +23,37 @@ TestWindow::TestWindow(const PaintCallback & onPaint)
     // Register class and create window
     {
         // Register class
-        WNDCLASSEX wcex = {};
-        wcex.cbSize = sizeof(WNDCLASSEX);
+        WNDCLASSEXW wcex = {};
+        wcex.cbSize = sizeof(WNDCLASSEXW);
         wcex.style = CS_HREDRAW | CS_VREDRAW;
         wcex.lpfnWndProc = s_WndProc;
         wcex.cbClsExtra = 0;
         wcex.cbWndExtra = 0;
         wcex.hInstance = hInstance;
-        wcex.hIcon = LoadIcon(hInstance, L"IDI_ICON");
-        wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+        wcex.hIcon = LoadIconW(hInstance, L"IDI_ICON");
+        wcex.hCursor = LoadCursorW(nullptr, IDC_ARROW);
         wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
         wcex.lpszMenuName = nullptr;
         wcex.lpszClassName = g_szClassName;
-        wcex.hIconSm = LoadIcon(wcex.hInstance, L"IDI_ICON");
+        wcex.hIconSm = LoadIconW(wcex.hInstance, L"IDI_ICON");
 
-        DX::ThrowLastErrWhenFalse(RegisterClassEx(&wcex));
+        DX::ThrowLastErrWhenFalse(RegisterClassExW(&wcex));
 
         // Create window
         int w = 1024;
         int h = 768;
 
-        RECT rc;
-        rc.top = 0;
-        rc.left = 0;
-        rc.right = static_cast<LONG>(w);
-        rc.bottom = static_cast<LONG>(h);
+        RECT rc = { 0, 0, static_cast<LONG>(w), static_cast<LONG>(h) };
 
         AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
-        HWND hwnd = CreateWindowEx(0, g_szClassName, g_szAppName, WS_OVERLAPPEDWINDOW,
+        HWND hwnd = CreateWindowExW(0, g_szClassName, g_szAppName, WS_OVERLAPPEDWINDOW,
             CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance,
             nullptr);
-        
-        // Change to CreateWindowEx(WS_EX_TOPMOST, L"SimpleTrianglePCWindowClass", g_szAppName, WS_POPUP,
-        // to default to fullscreen.
 
         DX::ThrowLastErrWhenFalse(hwnd);
-       
 
         ShowWindow(hwnd, SW_SHOWDEFAULT);
-        // Change nCmdShow to SW_SHOWMAXIMIZED to default to fullscreen.
 
         SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 

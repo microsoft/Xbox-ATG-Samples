@@ -42,10 +42,16 @@ namespace
 #   include "Shaders/Compiled/GenerateMips_main.inc"
 #endif
 
-    bool FormatIsUAVCompatible(DXGI_FORMAT format)
+    bool FormatIsUAVCompatible(_In_ ID3D12Device* device, bool typedUAVLoadAdditionalFormats, DXGI_FORMAT format)
     {
         switch (format)
         {
+        case DXGI_FORMAT_R32_FLOAT:
+        case DXGI_FORMAT_R32_UINT:
+        case DXGI_FORMAT_R32_SINT:
+            // Unconditionally supported.
+            return true;
+
         case DXGI_FORMAT_R32G32B32A32_FLOAT:
         case DXGI_FORMAT_R32G32B32A32_UINT:
         case DXGI_FORMAT_R32G32B32A32_SINT:
@@ -55,16 +61,52 @@ namespace
         case DXGI_FORMAT_R8G8B8A8_UNORM:
         case DXGI_FORMAT_R8G8B8A8_UINT:
         case DXGI_FORMAT_R8G8B8A8_SINT:
-        case DXGI_FORMAT_R32_FLOAT:
-        case DXGI_FORMAT_R32_UINT:
-        case DXGI_FORMAT_R32_SINT:
         case DXGI_FORMAT_R16_FLOAT:
         case DXGI_FORMAT_R16_UINT:
         case DXGI_FORMAT_R16_SINT:
         case DXGI_FORMAT_R8_UNORM:
         case DXGI_FORMAT_R8_UINT:
         case DXGI_FORMAT_R8_SINT:
-            return true;
+            // All these are supported if this optional feature is set.
+            return typedUAVLoadAdditionalFormats;
+
+        case DXGI_FORMAT_R16G16B16A16_UNORM:
+        case DXGI_FORMAT_R16G16B16A16_SNORM:
+        case DXGI_FORMAT_R32G32_FLOAT:
+        case DXGI_FORMAT_R32G32_UINT:
+        case DXGI_FORMAT_R32G32_SINT:
+        case DXGI_FORMAT_R10G10B10A2_UNORM:
+        case DXGI_FORMAT_R10G10B10A2_UINT:
+        case DXGI_FORMAT_R11G11B10_FLOAT:
+        case DXGI_FORMAT_R8G8B8A8_SNORM:
+        case DXGI_FORMAT_R16G16_FLOAT:
+        case DXGI_FORMAT_R16G16_UNORM:
+        case DXGI_FORMAT_R16G16_UINT:
+        case DXGI_FORMAT_R16G16_SNORM:
+        case DXGI_FORMAT_R16G16_SINT:
+        case DXGI_FORMAT_R8G8_UNORM:
+        case DXGI_FORMAT_R8G8_UINT:
+        case DXGI_FORMAT_R8G8_SNORM:
+        case DXGI_FORMAT_R8G8_SINT:
+        case DXGI_FORMAT_R16_UNORM:
+        case DXGI_FORMAT_R16_SNORM:
+        case DXGI_FORMAT_R8_SNORM:
+        case DXGI_FORMAT_A8_UNORM:
+        case DXGI_FORMAT_B5G6R5_UNORM:
+        case DXGI_FORMAT_B5G5R5A1_UNORM:
+        case DXGI_FORMAT_B4G4R4A4_UNORM:
+            // Conditionally supported by specific devices.
+            if (typedUAVLoadAdditionalFormats)
+            {
+                D3D12_FEATURE_DATA_FORMAT_SUPPORT formatSupport = { format, D3D12_FORMAT_SUPPORT1_NONE, D3D12_FORMAT_SUPPORT2_NONE };
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_FORMAT_SUPPORT, &formatSupport, sizeof(formatSupport))))
+                {
+                    const DWORD mask = D3D12_FORMAT_SUPPORT2_UAV_TYPED_LOAD | D3D12_FORMAT_SUPPORT2_UAV_TYPED_STORE;
+                    return ((formatSupport.Support2 & mask) == mask);
+                }
+            }
+            return false;
+
         default:
             return false;
         }
@@ -105,26 +147,60 @@ namespace
         case DXGI_FORMAT_R32G32B32A32_UINT:
         case DXGI_FORMAT_R32G32B32A32_SINT:
             return DXGI_FORMAT_R32G32B32A32_TYPELESS;
+
         case DXGI_FORMAT_R16G16B16A16_FLOAT:
+        case DXGI_FORMAT_R16G16B16A16_UNORM:
         case DXGI_FORMAT_R16G16B16A16_UINT:
+        case DXGI_FORMAT_R16G16B16A16_SNORM:
         case DXGI_FORMAT_R16G16B16A16_SINT:
             return DXGI_FORMAT_R16G16B16A16_TYPELESS;
+
+        case DXGI_FORMAT_R32G32_FLOAT:
+        case DXGI_FORMAT_R32G32_UINT:
+        case DXGI_FORMAT_R32G32_SINT:
+            return DXGI_FORMAT_R32G32_TYPELESS;
+
+        case DXGI_FORMAT_R10G10B10A2_UNORM:
+        case DXGI_FORMAT_R10G10B10A2_UINT:
+            return DXGI_FORMAT_R10G10B10A2_TYPELESS;
+
         case DXGI_FORMAT_R8G8B8A8_UNORM:
         case DXGI_FORMAT_R8G8B8A8_UINT:
+        case DXGI_FORMAT_R8G8B8A8_SNORM:
         case DXGI_FORMAT_R8G8B8A8_SINT:
             return DXGI_FORMAT_R8G8B8A8_TYPELESS;
+
+        case DXGI_FORMAT_R16G16_FLOAT:
+        case DXGI_FORMAT_R16G16_UNORM:
+        case DXGI_FORMAT_R16G16_UINT:
+        case DXGI_FORMAT_R16G16_SNORM:
+        case DXGI_FORMAT_R16G16_SINT:
+            return DXGI_FORMAT_R16G16_TYPELESS;
+
         case DXGI_FORMAT_R32_FLOAT:
         case DXGI_FORMAT_R32_UINT:
         case DXGI_FORMAT_R32_SINT:
             return DXGI_FORMAT_R32_TYPELESS;
+
+        case DXGI_FORMAT_R8G8_UNORM:
+        case DXGI_FORMAT_R8G8_UINT:
+        case DXGI_FORMAT_R8G8_SNORM:
+        case DXGI_FORMAT_R8G8_SINT:
+            return DXGI_FORMAT_R8G8_TYPELESS;
+
         case DXGI_FORMAT_R16_FLOAT:
+        case DXGI_FORMAT_R16_UNORM:
         case DXGI_FORMAT_R16_UINT:
+        case DXGI_FORMAT_R16_SNORM:
         case DXGI_FORMAT_R16_SINT:
             return DXGI_FORMAT_R16_TYPELESS;
+
         case DXGI_FORMAT_R8_UNORM:
         case DXGI_FORMAT_R8_UINT:
+        case DXGI_FORMAT_R8_SNORM:
         case DXGI_FORMAT_R8_SINT:
             return DXGI_FORMAT_R8_TYPELESS;
+
         default:
             return format;
         }
@@ -227,7 +303,19 @@ public:
         _In_ ID3D12Device* device)
         : mDevice(device)
         , mInBeginEndBlock(false)
+        , mTypedUAVLoadAdditionalFormats(false)
+        , mStandardSwizzle64KBSupported(false)
     {
+        assert(device != 0);
+        D3D12_FEATURE_DATA_D3D12_OPTIONS options = {};
+        if (SUCCEEDED(device->CheckFeatureSupport(
+            D3D12_FEATURE_D3D12_OPTIONS,
+            &options,
+            sizeof(options))))
+        {
+            mTypedUAVLoadAdditionalFormats = options.TypedUAVLoadAdditionalFormats != 0;
+            mStandardSwizzle64KBSupported = options.StandardSwizzle64KBSupported != 0;
+        }
     }
 
     // Call this before your multiple calls to Upload.
@@ -328,9 +416,12 @@ public:
         {
             throw std::exception("GenerateMips only supports 2D textures of array size 1");
         }
-        if (!FormatIsUAVCompatible(desc.Format) && !FormatIsSRGB(desc.Format) && !FormatIsBGR(desc.Format))
+
+        bool uavCompat = FormatIsUAVCompatible(mDevice.Get(), mTypedUAVLoadAdditionalFormats, desc.Format);
+
+        if (!uavCompat && !FormatIsSRGB(desc.Format) && !FormatIsBGR(desc.Format))
         {
-            throw std::exception("GenerateMips doesn't support this texture format");
+            throw std::exception("GenerateMips doesn't support this texture format on this device");
         }
 
         // Ensure that we have valid generate mips data
@@ -341,12 +432,23 @@ public:
 
         // If the texture's format doesn't support UAVs we'll have to copy it to a texture that does first.
         // This is true of BGRA or sRGB textures, for example. 
-        if (FormatIsUAVCompatible(desc.Format))
+        if (uavCompat)
         {
             GenerateMips_UnorderedAccessPath(resource);
         }
+        else if (!mTypedUAVLoadAdditionalFormats)
+        {
+            throw std::exception("GenerateMips needs TypedUAVLoadAdditionalFormats device support for sRGB/BGR");
+        }
         else if (FormatIsBGR(desc.Format))
         {
+#if !defined(_XBOX_ONE) || !defined(_TITLE)
+            if (!mStandardSwizzle64KBSupported)
+            {
+                throw std::exception("GenerateMips needs StandardSwizzle64KBSupported device support for BGR");
+            }
+#endif
+
             GenerateMips_TexturePathBGR(resource);
         }
         else
@@ -438,6 +540,31 @@ public:
         return future;
     }
 
+    bool IsSupportedForGenerateMips(DXGI_FORMAT format)
+    {
+        if (FormatIsUAVCompatible(mDevice.Get(), mTypedUAVLoadAdditionalFormats, format))
+            return true;
+
+        if (FormatIsBGR(format))
+        {
+#if defined(_XBOX_ONE) && defined(_TITLE)
+            // We know the RGB and BGR memory layouts match for Xbox One
+            return true;
+#else
+            // BGR path requires DXGI_FORMAT_R8G8B8A8_UNORM support for UAV load/store plus matching layouts
+            return mTypedUAVLoadAdditionalFormats && mStandardSwizzle64KBSupported;
+#endif
+        }
+
+        if (FormatIsSRGB(format))
+        {
+            // sRGB path requires DXGI_FORMAT_R8G8B8A8_UNORM support for UAV load/store
+            return mTypedUAVLoadAdditionalFormats;
+        }
+
+        return false;
+    }
+
 private:
     // Resource is UAV compatible
     void GenerateMips_UnorderedAccessPath(
@@ -466,9 +593,13 @@ private:
 
             SetDebugObjectName(staging.Get(), L"GenerateMips Staging");
 
-            // Copy the resource to staging
+            // Copy the top mip of resource to staging
             Transition(resource, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_SOURCE);
-            mList->CopyResource(staging.Get(), resource);
+
+            CD3DX12_TEXTURE_COPY_LOCATION src(resource, 0);
+            CD3DX12_TEXTURE_COPY_LOCATION dst(staging.Get(), 0);
+            mList->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
+
             Transition(staging.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
         }
         else
@@ -593,8 +724,18 @@ private:
         if (staging.Get() != resource)
         {
             // Transition the resources ready for copy
-            Transition(staging.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_SOURCE);
-            Transition(resource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
+            D3D12_RESOURCE_BARRIER barrier[2] = {};
+            barrier[0].Type = barrier[1].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+            barrier[0].Transition.Subresource = barrier[1].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+            barrier[0].Transition.pResource = staging.Get();
+            barrier[0].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+            barrier[0].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
+
+            barrier[1].Transition.pResource = resource;
+            barrier[1].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_SOURCE;
+            barrier[1].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+
+            mList->ResourceBarrier(2, barrier);
 
             // Copy the entire resource back
             mList->CopyResource(resource, staging.Get());
@@ -637,18 +778,35 @@ private:
 
         SetDebugObjectName(resourceCopy.Get(), L"GenerateMips Resource Copy");
 
-        // Copy the resource data
+        // Copy the top mip of resource data
         Transition(resource, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_SOURCE);
-        mList->CopyResource(resourceCopy.Get(), resource);
+
+        CD3DX12_TEXTURE_COPY_LOCATION src(resource, 0);
+        CD3DX12_TEXTURE_COPY_LOCATION dst(resourceCopy.Get(), 0);
+        mList->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
+
         Transition(resourceCopy.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
         
         // Generate the mips
         GenerateMips_UnorderedAccessPath(resourceCopy.Get());
 
         // Direct copy back
-        Transition(resourceCopy.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_SOURCE);
-        Transition(resource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
+        D3D12_RESOURCE_BARRIER barrier[2] = {};
+        barrier[0].Type = barrier[1].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        barrier[0].Transition.Subresource = barrier[1].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+        barrier[0].Transition.pResource = resourceCopy.Get();
+        barrier[0].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+        barrier[0].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
+
+        barrier[1].Transition.pResource = resource;
+        barrier[1].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_SOURCE;
+        barrier[1].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+
+        mList->ResourceBarrier(2, barrier);
+
+        // Copy the entire resource back
         mList->CopyResource(resource, resourceCopy.Get());
+
         Transition(resource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
         // Track these object lifetimes on the GPU
@@ -663,17 +821,18 @@ private:
         const auto resourceDesc = resource->GetDesc();
         assert(FormatIsBGR(resourceDesc.Format));
 
-        // Create a resource with the same description, but without SRGB, and with UAV flags
+        // Create a resource with the same description with RGB and with UAV flags
         auto copyDesc = resourceDesc;
         copyDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         copyDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
+#if !defined(_XBOX_ONE) || !defined(_TITLE)
+        copyDesc.Layout = D3D12_TEXTURE_LAYOUT_64KB_STANDARD_SWIZZLE;
+#endif
 
         D3D12_HEAP_DESC heapDesc = {};
-        auto allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &resourceDesc);
+        auto allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &copyDesc);
         heapDesc.SizeInBytes = allocInfo.SizeInBytes;
         heapDesc.Flags = D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES;
-        heapDesc.Properties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
-        heapDesc.Properties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
         heapDesc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
 
         ComPtr<ID3D12Heap> heap;
@@ -695,6 +854,7 @@ private:
         // Create a BGRA alias
         auto aliasDesc = resourceDesc;
         aliasDesc.Format = (resourceDesc.Format == DXGI_FORMAT_B8G8R8X8_UNORM || resourceDesc.Format == DXGI_FORMAT_B8G8R8X8_UNORM_SRGB) ? DXGI_FORMAT_B8G8R8X8_UNORM : DXGI_FORMAT_B8G8R8A8_UNORM;
+        aliasDesc.Layout = copyDesc.Layout;
 
         ComPtr<ID3D12Resource> aliasCopy;
         ThrowIfFailed(mDevice->CreatePlacedResource(
@@ -705,20 +865,51 @@ private:
             nullptr,
             IID_GRAPHICS_PPV_ARGS(aliasCopy.GetAddressOf())));
 
-        // Copy the resource data
-        AliasBarrier(nullptr, aliasCopy.Get());
-        Transition(resource, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_SOURCE);
-        mList->CopyResource(aliasCopy.Get(), resource);
+        SetDebugObjectName(aliasCopy.Get(), L"GenerateMips BGR Alias Copy");
+
+        // Copy the top mip of the resource data BGR to RGB
+        D3D12_RESOURCE_BARRIER aliasBarrier[3] = {};
+        aliasBarrier[0].Type = D3D12_RESOURCE_BARRIER_TYPE_ALIASING;
+        aliasBarrier[0].Aliasing.pResourceAfter = aliasCopy.Get();
+
+        aliasBarrier[1].Type = aliasBarrier[2].Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+        aliasBarrier[1].Transition.Subresource = aliasBarrier[2].Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+        aliasBarrier[1].Transition.pResource = resource;
+        aliasBarrier[1].Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+        aliasBarrier[1].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
+
+        mList->ResourceBarrier(2, aliasBarrier);
+
+        CD3DX12_TEXTURE_COPY_LOCATION src(resource, 0);
+        CD3DX12_TEXTURE_COPY_LOCATION dst(aliasCopy.Get(), 0);
+        mList->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
 
         // Generate the mips
-        AliasBarrier(aliasCopy.Get(), resourceCopy.Get());
-        Transition(resourceCopy.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
+        aliasBarrier[0].Aliasing.pResourceBefore = aliasCopy.Get();
+        aliasBarrier[0].Aliasing.pResourceAfter = resourceCopy.Get();
+
+        aliasBarrier[1].Transition.pResource = resourceCopy.Get();
+        aliasBarrier[1].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+        aliasBarrier[1].Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+
+        mList->ResourceBarrier(2, aliasBarrier);
         GenerateMips_UnorderedAccessPath(resourceCopy.Get());
 
-        // Direct copy back
-        AliasBarrier(resourceCopy.Get(), aliasCopy.Get());
-        Transition(aliasCopy.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COPY_SOURCE);
-        Transition(resource, D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
+        // Direct copy back RGB to BGR
+        aliasBarrier[0].Aliasing.pResourceBefore = resourceCopy.Get();
+        aliasBarrier[0].Aliasing.pResourceAfter = aliasCopy.Get();
+
+        aliasBarrier[1].Transition.pResource = aliasCopy.Get();
+        aliasBarrier[1].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+        aliasBarrier[1].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_SOURCE;
+
+        aliasBarrier[2].Transition.pResource = resource;
+        aliasBarrier[2].Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_SOURCE;
+        aliasBarrier[2].Transition.StateAfter = D3D12_RESOURCE_STATE_COPY_DEST;
+
+        mList->ResourceBarrier(3, aliasBarrier);
+
+        // Copy the entire resource back
         mList->CopyResource(resource, aliasCopy.Get());
         Transition(resource, D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
 
@@ -729,19 +920,6 @@ private:
         mTrackedObjects.push_back(resource);
     }
 
-    void AliasBarrier(_In_opt_ ID3D12Resource* before, _In_ ID3D12Resource* after)
-    {
-        if (before == after)
-            return;
-
-        D3D12_RESOURCE_BARRIER desc = {};
-        desc.Type = D3D12_RESOURCE_BARRIER_TYPE_ALIASING;
-        desc.Aliasing.pResourceBefore = before;
-        desc.Aliasing.pResourceAfter = after;
-
-        mList->ResourceBarrier(1, &desc);
-    }
-    
     struct UploadBatch
     {
         std::vector<ComPtr<ID3D12DeviceChild>>  TrackedObjects;
@@ -761,6 +939,8 @@ private:
     std::vector<ComPtr<ID3D12DeviceChild>>      mTrackedObjects;
     std::vector<SharedGraphicsResource>         mTrackedMemoryResources;
     bool                                        mInBeginEndBlock;
+    bool                                        mTypedUAVLoadAdditionalFormats;
+    bool                                        mStandardSwizzle64KBSupported;
 };
 
 
@@ -840,4 +1020,10 @@ void ResourceUploadBatch::Transition(
 std::future<void> ResourceUploadBatch::End(_In_ ID3D12CommandQueue* commandQueue)
 {
     return pImpl->End(commandQueue);
+}
+
+
+bool __cdecl ResourceUploadBatch::IsSupportedForGenerateMips(DXGI_FORMAT format)
+{
+    return pImpl->IsSupportedForGenerateMips(format);
 }
