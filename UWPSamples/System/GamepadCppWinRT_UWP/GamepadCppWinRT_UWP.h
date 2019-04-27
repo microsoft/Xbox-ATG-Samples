@@ -17,7 +17,7 @@ class Sample : public DX::IDeviceNotify
 {
 public:
 
-    Sample();
+    Sample() noexcept(false);
 
     // Initialization and management
     void Initialize(::IUnknown* window, int width, int height, DXGI_MODE_ROTATION rotation);

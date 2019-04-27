@@ -76,7 +76,28 @@ namespace
     float footstepsRightTriggerLevels[] = { 0.0f, 0.0f, 0.3f, 0.0f };
 }
 
-Sample::Sample()
+Sample::Sample() noexcept(false) :
+	m_currentGamepadNeedsRefresh(false),
+	m_connected(false),
+	m_leftMotorSpeed(0),
+	m_leftTriggerLevel(0),
+	m_rightMotorSpeed(0),
+	m_rightTriggerLevel(0),
+	m_dPadPressed(false),
+	m_selectedTriggerEffect(TRIGGEREFFECTS::TRIGGEREFFECTS_IMPULSETEST),
+	m_triggerEffectCounter(0),
+	m_leftTriggerArraySize(0),
+	m_pLeftTriggerDurations(nullptr),
+	m_pLeftTriggerLevels(nullptr),
+	m_rightTriggerArraySize(0),
+	m_pRightTriggerDurations(nullptr),
+	m_pRightTriggerLevels(nullptr),
+	m_leftTriggerIndex(0),
+	m_rightTriggerIndex(0),
+	m_frequency(0),
+	m_counter(0),
+	m_leftTriggerIndexUpdateTime(0),
+	m_rightTriggerIndexUpdateTime(0)
 {
     // Renders only 2D, so no need for a depth buffer.
     m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_UNKNOWN);

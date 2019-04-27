@@ -50,7 +50,7 @@ namespace ATG
 
         if (!LookupByName(name, table, result))
         {
-            wprintf(L"Invalid value specified with -%ls (%ls)\n", LookupByValue(option, g_Options), name);
+            wprintf(L"Invalid value specified with -%ls (%ls)\n", LookupByValue(option, ::g_Options), name);
             wprintf(pleaseUseMsg);
             PrintTable(_countof(pleaseUseMsg) - 1, table);
             wprintf(L"\n\n");

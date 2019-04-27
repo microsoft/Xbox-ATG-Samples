@@ -127,18 +127,18 @@ namespace ATG
     };
 
     SPECIALIZE_SELECT_GET_BUFFER(int8_t)
-        SPECIALIZE_SELECT_GET_BUFFER(uint8_t)
-        SPECIALIZE_SELECT_GET_BUFFER(int16_t)
-        SPECIALIZE_SELECT_GET_BUFFER(uint16_t)
-        SPECIALIZE_SELECT_GET_BUFFER(int32_t)
-        SPECIALIZE_SELECT_GET_BUFFER(uint32_t)
-        SPECIALIZE_SELECT_GET_BUFFER(int64_t)
-        SPECIALIZE_SELECT_GET_BUFFER(uint64_t)
-        SPECIALIZE_SELECT_GET_BUFFER(wchar_t)
-        SPECIALIZE_SELECT_GET_BUFFER(char)
+    SPECIALIZE_SELECT_GET_BUFFER(uint8_t)
+    SPECIALIZE_SELECT_GET_BUFFER(int16_t)
+    SPECIALIZE_SELECT_GET_BUFFER(uint16_t)
+    SPECIALIZE_SELECT_GET_BUFFER(int32_t)
+    SPECIALIZE_SELECT_GET_BUFFER(uint32_t)
+    SPECIALIZE_SELECT_GET_BUFFER(int64_t)
+    SPECIALIZE_SELECT_GET_BUFFER(uint64_t)
+    SPECIALIZE_SELECT_GET_BUFFER(wchar_t)
+    SPECIALIZE_SELECT_GET_BUFFER(char)
 #undef SPECIALIZE_SELECT_GET_BUFFER
 
-        template<typename EltType>
+    template<typename EltType>
     using IGetBuffer_t = typename SelectIGetBufferBase<EltType>::BaseType;
 
     class IVisitor
@@ -186,16 +186,16 @@ namespace ATG
         void VisitPrimitiveElement(wchar_t &elt) override { static_cast<VisitorTemplates*>(this)->ImplementVisitPrimitiveElement(elt); }
         void VisitPrimitiveElement(char &elt) override { static_cast<VisitorTemplates*>(this)->ImplementVisitPrimitiveElement(elt); }
 
-        void VisitPrimitiveCollection(IGetBuffer_t<   int8_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->ImplementVisitPrimitiveCollection<   int8_t>(getBuffer); }
-        void VisitPrimitiveCollection(IGetBuffer_t<  uint8_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->ImplementVisitPrimitiveCollection<  uint8_t>(getBuffer); }
-        void VisitPrimitiveCollection(IGetBuffer_t<  int16_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->ImplementVisitPrimitiveCollection<  int16_t>(getBuffer); }
-        void VisitPrimitiveCollection(IGetBuffer_t< uint16_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->ImplementVisitPrimitiveCollection< uint16_t>(getBuffer); }
-        void VisitPrimitiveCollection(IGetBuffer_t<  int32_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->ImplementVisitPrimitiveCollection<  int32_t>(getBuffer); }
-        void VisitPrimitiveCollection(IGetBuffer_t< uint32_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->ImplementVisitPrimitiveCollection< uint32_t>(getBuffer); }
-        void VisitPrimitiveCollection(IGetBuffer_t<  int64_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->ImplementVisitPrimitiveCollection<  int64_t>(getBuffer); }
-        void VisitPrimitiveCollection(IGetBuffer_t< uint64_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->ImplementVisitPrimitiveCollection< uint64_t>(getBuffer); }
-        void VisitPrimitiveCollection(IGetBuffer_t<  wchar_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->ImplementVisitPrimitiveCollection<  wchar_t>(getBuffer); }
-        void VisitPrimitiveCollection(IGetBuffer_t<     char> &getBuffer) override { static_cast<VisitorTemplates*>(this)->ImplementVisitPrimitiveCollection<     char>(getBuffer); }
+        void VisitPrimitiveCollection(IGetBuffer_t<   int8_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->template ImplementVisitPrimitiveCollection<   int8_t>(getBuffer); }
+        void VisitPrimitiveCollection(IGetBuffer_t<  uint8_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->template ImplementVisitPrimitiveCollection<  uint8_t>(getBuffer); }
+        void VisitPrimitiveCollection(IGetBuffer_t<  int16_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->template ImplementVisitPrimitiveCollection<  int16_t>(getBuffer); }
+        void VisitPrimitiveCollection(IGetBuffer_t< uint16_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->template ImplementVisitPrimitiveCollection< uint16_t>(getBuffer); }
+        void VisitPrimitiveCollection(IGetBuffer_t<  int32_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->template ImplementVisitPrimitiveCollection<  int32_t>(getBuffer); }
+        void VisitPrimitiveCollection(IGetBuffer_t< uint32_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->template ImplementVisitPrimitiveCollection< uint32_t>(getBuffer); }
+        void VisitPrimitiveCollection(IGetBuffer_t<  int64_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->template ImplementVisitPrimitiveCollection<  int64_t>(getBuffer); }
+        void VisitPrimitiveCollection(IGetBuffer_t< uint64_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->template ImplementVisitPrimitiveCollection< uint64_t>(getBuffer); }
+        void VisitPrimitiveCollection(IGetBuffer_t<  wchar_t> &getBuffer) override { static_cast<VisitorTemplates*>(this)->template ImplementVisitPrimitiveCollection<  wchar_t>(getBuffer); }
+        void VisitPrimitiveCollection(IGetBuffer_t<     char> &getBuffer) override { static_cast<VisitorTemplates*>(this)->template ImplementVisitPrimitiveCollection<     char>(getBuffer); }
 
         void VisitElement(class VisitorContext &ctx) override
         {
@@ -264,7 +264,7 @@ namespace ATG
             if (!cached)
             {
                 cached = new ClassVisitorActions<T>;
-                *cached = CreateClassVisitor<T>();
+                *cached = T::CreateClassVisitor();
                 m_cleanupActions.emplace_back(new VisitorActionsHolder<ClassVisitorActions<T>>(&cached));
             }
             return *cached;
@@ -500,7 +500,7 @@ namespace ATG
 
             void Execute(ResolvedActionContext &) override
             {
-                m_continuation(result);
+                m_continuation(m_result);
             }
 
             T &GetResult() const

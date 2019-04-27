@@ -21,7 +21,14 @@ using namespace Platform::Collections;
 
 using Microsoft::WRL::ComPtr;
 
-Sample::Sample()
+Sample::Sample() noexcept(false) :
+    m_currentGamepadNeedsRefresh(false),
+    m_leftTrigger(0),
+    m_rightTrigger(0),
+    m_leftStickX(0),
+    m_leftStickY(0),
+    m_rightStickX(0),
+    m_rightStickY(0)
 {
     // Renders only 2D, so no need for a depth buffer.
     m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_UNKNOWN);

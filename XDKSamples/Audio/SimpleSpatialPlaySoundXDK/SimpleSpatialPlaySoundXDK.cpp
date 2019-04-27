@@ -141,12 +141,14 @@ namespace
 
 Sample::Sample() :
     m_numChannels(0),
+    WavChannels{},
     m_bThreadActive(false),
     m_bPlayingSound(false),
     m_availableObjects(0),
     m_frame(0),
     m_fileLoaded(false),
-    m_curFile(0)
+    m_curFile(0),
+    m_workThread(nullptr)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
 }
@@ -164,19 +166,19 @@ void Sample::Initialize(IUnknown* window)
     m_deviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
 
- 	InitializeSpatialStream();
+    InitializeSpatialStream();
 
-	SetChannelPosVolumes();
+    SetChannelPosVolumes();
 
-	for (UINT32 i = 0; i < MAX_CHANNELS; i++)
-	{
-		WavChannels[i].buffersize = 0;
-		WavChannels[i].curBufferLoc = 0;
-		WavChannels[i].object = nullptr;
+    for (UINT32 i = 0; i < MAX_CHANNELS; i++)
+    {
+        WavChannels[i].buffersize = 0;
+        WavChannels[i].curBufferLoc = 0;
+        WavChannels[i].object = nullptr;
 
-	}
+    }
 
-	m_fileLoaded = LoadFile(g_FileList[m_curFile]);
+    m_fileLoaded = LoadFile(g_FileList[m_curFile]);
 }
 
 #pragma region Frame Update
@@ -201,108 +203,111 @@ void Sample::Update(DX::StepTimer const&)
 {
     PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
 
-	//Are we resetting the renderer?  This will happen if we get an invalid stream 
-	//  which can happen when render mode changes or device changes
-	if (m_Renderer->IsResetting())
-	{
-		//clear out renderer
-		m_Renderer.Reset();
+    //Are we resetting the renderer?  This will happen if we get an invalid stream 
+    //  which can happen when render mode changes or device changes
+    if (m_Renderer->IsResetting())
+    {
+        //clear out renderer
+        m_Renderer.Reset();
 
-		// Create a new ISAC instance
-		m_Renderer = Microsoft::WRL::Make<ISACRenderer>();
+        // Create a new ISAC instance
+        m_Renderer = Microsoft::WRL::Make<ISACRenderer>();
 
-		// Initialize Default Audio Device
-		m_Renderer->InitializeAudioDeviceAsync();
+        // Initialize Default Audio Device
+        m_Renderer->InitializeAudioDeviceAsync();
 
-		//Reset all the Objects that were being used
-		for (int chan = 0; chan < MAX_CHANNELS; chan++)
-		{
-			WavChannels[chan].object = nullptr;
-		}
-	}
-	
-	auto pad = m_gamePad->GetState(0);
-	if (pad.IsConnected())
-	{
-		m_gamePadButtons.Update(pad);
+        //Reset all the Objects that were being used
+        for (int chan = 0; chan < MAX_CHANNELS; chan++)
+        {
+            WavChannels[chan].object = nullptr;
+        }
+    }
+    
+    auto pad = m_gamePad->GetState(0);
+    if (pad.IsConnected())
+    {
+        m_gamePadButtons.Update(pad);
 
-		if (pad.IsViewPressed())
-		{
+        if (pad.IsViewPressed())
+        {
             ExitSample();
-		}
-		if (m_gamePadButtons.a == m_gamePadButtons.RELEASED)
-		{
-			//if we have an active renderer
-			if (m_Renderer && m_Renderer->IsActive())
-			{
-				//Start spatial worker thread
-				if (!m_bThreadActive)
-				{
-					//reload file to start again
-					m_fileLoaded = LoadFile(g_FileList[m_curFile]);
-					//startup spatial thread
-					m_bThreadActive = true;
-					m_bPlayingSound = true;
-					m_workThread = CreateThreadpoolWork(SpatialWorkCallback, this, nullptr);
-					SubmitThreadpoolWork(m_workThread);
-				}
-				else
-				{
-					//stop and shutdown spatial worker thread
-					m_bThreadActive = false;
-					m_bPlayingSound = false;
-					WaitForThreadpoolWorkCallbacks(m_workThread, FALSE);
-					CloseThreadpoolWork(m_workThread);
-				}
-			}
-		}
-		else if (m_gamePadButtons.b == m_gamePadButtons.RELEASED)
-		{
-			//if we have an active renderer
-			if (m_Renderer && m_Renderer->IsActive())
-			{
-				//if spatial thread active and playing, shutdown and start new file
-				if (m_bThreadActive && m_bPlayingSound)
-				{
-					m_bThreadActive = false;
-					m_bPlayingSound = false;
-					WaitForThreadpoolWorkCallbacks(m_workThread, FALSE);
-					CloseThreadpoolWork(m_workThread);
+        }
+        if (m_gamePadButtons.a == m_gamePadButtons.RELEASED)
+        {
+            //if we have an active renderer
+            if (m_Renderer && m_Renderer->IsActive())
+            {
+                //Start spatial worker thread
+                if (!m_bThreadActive)
+                {
+                    //reload file to start again
+                    m_fileLoaded = LoadFile(g_FileList[m_curFile]);
+                    //startup spatial thread
+                    m_bThreadActive = true;
+                    m_bPlayingSound = true;
+                    m_workThread = CreateThreadpoolWork(SpatialWorkCallback, this, nullptr);
+                    SubmitThreadpoolWork(m_workThread);
+                }
+                else
+                {
+                    //stop and shutdown spatial worker thread
+                    m_bThreadActive = false;
+                    m_bPlayingSound = false;
+                    WaitForThreadpoolWorkCallbacks(m_workThread, FALSE);
+                    CloseThreadpoolWork(m_workThread);
+                    m_workThread = nullptr;
+                }
+            }
+        }
+        else if (m_gamePadButtons.b == m_gamePadButtons.RELEASED)
+        {
+            //if we have an active renderer
+            if (m_Renderer && m_Renderer->IsActive())
+            {
+                //if spatial thread active and playing, shutdown and start new file
+                if (m_bThreadActive && m_bPlayingSound)
+                {
+                    m_bThreadActive = false;
+                    m_bPlayingSound = false;
+                    WaitForThreadpoolWorkCallbacks(m_workThread, FALSE);
+                    CloseThreadpoolWork(m_workThread);
+                    m_workThread = nullptr;
 
-					//load next file
-					m_curFile++;
-					if (m_curFile == numFiles) m_curFile = 0;
-					m_fileLoaded = LoadFile(g_FileList[m_curFile]);
+                    //load next file
+                    m_curFile++;
+                    if (m_curFile == numFiles) m_curFile = 0;
+                    m_fileLoaded = LoadFile(g_FileList[m_curFile]);
 
-					//if successfully loaded, start up thread and playing new file
-					if (m_fileLoaded)
-					{
-						m_bThreadActive = true;
-						m_bPlayingSound = true;
-						m_workThread = CreateThreadpoolWork(SpatialWorkCallback, this, nullptr);
-						SubmitThreadpoolWork(m_workThread);
-					}
-				}
-				else
-				{
-					//if thread active but paused, shutdown thread to load new file
-					if (m_bThreadActive)
-					{
-						m_bThreadActive = false;
-						m_bPlayingSound = false;
-						WaitForThreadpoolWorkCallbacks(m_workThread, FALSE);
-						CloseThreadpoolWork(m_workThread);
-					}
+                    //if successfully loaded, start up thread and playing new file
+                    if (m_fileLoaded)
+                    {
+                        m_bThreadActive = true;
+                        m_bPlayingSound = true;
+                        m_workThread = CreateThreadpoolWork(SpatialWorkCallback, this, nullptr);
+                        SubmitThreadpoolWork(m_workThread);
+                    }
+                }
+                else
+                {
+                    //if thread active but paused, shutdown thread to load new file
+                    if (m_bThreadActive)
+                    {
+                        m_bThreadActive = false;
+                        m_bPlayingSound = false;
+                        WaitForThreadpoolWorkCallbacks(m_workThread, FALSE);
+                        CloseThreadpoolWork(m_workThread);
+                        m_workThread = nullptr;
+                    }
 
-					//load next file
-					m_curFile++;
-					if (m_curFile == numFiles) m_curFile = 0;
-					m_fileLoaded = LoadFile(g_FileList[m_curFile]);
-				}
-			}
-		}
+                    //load next file
+                    m_curFile++;
+                    if (m_curFile == numFiles) m_curFile = 0;
+                    m_fileLoaded = LoadFile(g_FileList[m_curFile]);
+                }
+            }
+        }
 
-	}
+    }
     else
     {
         m_gamePadButtons.Reset();
@@ -328,40 +333,40 @@ void Sample::Render()
 
     auto context = m_deviceResources->GetD3DDeviceContext();
     PIXBeginEvent(context, PIX_COLOR_DEFAULT, L"Render");
-	auto rect = m_deviceResources->GetOutputSize();
-	auto safeRect = SimpleMath::Viewport::ComputeTitleSafeArea(rect.right, rect.bottom);
+    auto rect = m_deviceResources->GetOutputSize();
+    auto safeRect = SimpleMath::Viewport::ComputeTitleSafeArea(rect.right, rect.bottom);
 
-	XMFLOAT2 pos(float(safeRect.left), float(safeRect.top));
+    XMFLOAT2 pos(float(safeRect.left), float(safeRect.top));
 
-	m_spriteBatch->Begin();
+    m_spriteBatch->Begin();
 
     float spacing = m_font->GetLineSpacing();
 
-	m_font->DrawString(m_spriteBatch.get(), L"Simple Spatial Playback:", pos, ATG::Colors::White);
+    m_font->DrawString(m_spriteBatch.get(), L"Simple Spatial Playback:", pos, ATG::Colors::White);
     pos.y += spacing * 1.5f;
 
-	if (!m_Renderer->IsActive())
-	{
-		m_font->DrawString(m_spriteBatch.get(), L"Spatial Renderer Not Available", pos, ATG::Colors::Orange);
-		pos.y += spacing * 2.f;
-	}
-	else
-	{
+    if (!m_Renderer->IsActive())
+    {
+        m_font->DrawString(m_spriteBatch.get(), L"Spatial Renderer Not Available", pos, ATG::Colors::Orange);
+        pos.y += spacing * 2.f;
+    }
+    else
+    {
         wchar_t str[256] = {};
         swprintf_s(str, L"   File: %ls", g_FileList[m_curFile]);
-		m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-		pos.y += spacing;
-		swprintf_s(str, L"   State: %ls", ((m_bPlayingSound) ? L"Playing" : L"Stopped"));
-		m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
-		pos.y += spacing * 1.5f;
+        m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
+        pos.y += spacing;
+        swprintf_s(str, L"   State: %ls", ((m_bPlayingSound) ? L"Playing" : L"Stopped"));
+        m_font->DrawString(m_spriteBatch.get(), str, pos, ATG::Colors::White);
+        pos.y += spacing * 1.5f;
 
         DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"Use [A] to start/stop playback", pos, ATG::Colors::White);
-		pos.y += spacing;
+        pos.y += spacing;
         DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"Use [B] to change to next file", pos, ATG::Colors::White);
-		pos.y += spacing;
+        pos.y += spacing;
         DX::DrawControllerString(m_spriteBatch.get(), m_font.get(), m_ctrlFont.get(), L"Use [View] to exit", pos, ATG::Colors::White);
     }
-	m_spriteBatch->End();
+    m_spriteBatch->End();
 
     PIXEndEvent(context);
 
@@ -420,11 +425,11 @@ void Sample::CreateDeviceDependentResources()
 
     m_graphicsMemory = std::make_unique<GraphicsMemory>(device, m_deviceResources->GetBackBufferCount());
 
-	auto context = m_deviceResources->GetD3DDeviceContext();
+    auto context = m_deviceResources->GetD3DDeviceContext();
 
-	m_spriteBatch = std::make_unique<SpriteBatch>(context);
+    m_spriteBatch = std::make_unique<SpriteBatch>(context);
 
-	m_font = std::make_unique<SpriteFont>(device, L"SegoeUI_18.spritefont");
+    m_font = std::make_unique<SpriteFont>(device, L"SegoeUI_18.spritefont");
 
     m_ctrlFont = std::make_unique<SpriteFont>(device, L"XboxOneControllerSmall.spritefont");
 }
@@ -437,138 +442,138 @@ void Sample::CreateWindowSizeDependentResources()
 
 HRESULT Sample::InitializeSpatialStream(void)
 {
-	HRESULT hr = S_OK;
+    HRESULT hr = S_OK;
 
-	if (!m_Renderer)
-	{
-		// Create a new ISAC instance
-		m_Renderer = Microsoft::WRL::Make<ISACRenderer>();
-		// Selects the Default Audio Device
-		hr = m_Renderer->InitializeAudioDeviceAsync();
-	}
+    if (!m_Renderer)
+    {
+        // Create a new ISAC instance
+        m_Renderer = Microsoft::WRL::Make<ISACRenderer>();
+        // Selects the Default Audio Device
+        hr = m_Renderer->InitializeAudioDeviceAsync();
+    }
 
-	return hr;
+    return hr;
 }
 
 bool Sample::LoadFile(LPCWSTR inFile)
 {
-	//clear and reset wavchannels
-	for (UINT32 i = 0; i < MAX_CHANNELS; i++)
-	{
-		if (WavChannels[i].buffersize)
-		{
-			delete[] WavChannels[i].wavBuffer;
-		}
-		WavChannels[i].buffersize = 0;
-		WavChannels[i].curBufferLoc = 0;
-		WavChannels[i].object = nullptr;
-	}
+    //clear and reset wavchannels
+    for (UINT32 i = 0; i < MAX_CHANNELS; i++)
+    {
+        if (WavChannels[i].buffersize)
+        {
+            delete[] WavChannels[i].wavBuffer;
+        }
+        WavChannels[i].buffersize = 0;
+        WavChannels[i].curBufferLoc = 0;
+        WavChannels[i].object = nullptr;
+    }
 
-	HRESULT hr = S_OK;
-	std::unique_ptr<uint8_t[]>              m_waveFile;
-	DX::WAVData  WavData;
-	hr = DX::LoadWAVAudioFromFileEx(inFile, m_waveFile, WavData);
-	if (FAILED(hr))
-	{
-		return false;
-	}
+    HRESULT hr = S_OK;
+    std::unique_ptr<uint8_t[]>              m_waveFile;
+    DX::WAVData  WavData;
+    hr = DX::LoadWAVAudioFromFileEx(inFile, m_waveFile, WavData);
+    if (FAILED(hr))
+    {
+        return false;
+    }
 
-	if ((WavData.wfx->wFormatTag == 1 || WavData.wfx->wFormatTag == 65534) && WavData.wfx->nSamplesPerSec == 48000)
-	{
-		m_numChannels = WavData.wfx->nChannels;
+    if ((WavData.wfx->wFormatTag == 1 || WavData.wfx->wFormatTag == 65534) && WavData.wfx->nSamplesPerSec == 48000)
+    {
+        m_numChannels = WavData.wfx->nChannels;
 
-		int numSamples = WavData.audioBytes / (2 * m_numChannels);
-		for (int i = 0; i < m_numChannels; i++)
-		{
-			WavChannels[i].wavBuffer = new char[numSamples * 4];
-			WavChannels[i].buffersize = numSamples * 4;
-		}
+        int numSamples = WavData.audioBytes / (2 * m_numChannels);
+        for (int i = 0; i < m_numChannels; i++)
+        {
+            WavChannels[i].wavBuffer = new char[numSamples * 4];
+            WavChannels[i].buffersize = numSamples * 4;
+        }
 
-		float * tempnew;
-		short * tempdata = (short *)WavData.startAudio;
+        float * tempnew;
+        short * tempdata = (short *)WavData.startAudio;
 
-		for (int i = 0; i < numSamples; i++)
-		{
-			for (int j = 0; j < m_numChannels; j++)
-			{
-				int chan = j;
-				tempnew = (float *)WavChannels[chan].wavBuffer;
-				int sample = (i * m_numChannels) + chan;
-				tempnew[i] = (float)tempdata[sample] / 32768;
-			}
-		}
-	}
-	else if ((WavData.wfx->wFormatTag == 3) && WavData.wfx->nSamplesPerSec == 48000)
-	{
-		m_numChannels = WavData.wfx->nChannels;
-		int numSamples = WavData.audioBytes / (4 * m_numChannels);
-		for (int i = 0; i < m_numChannels; i++)
-		{
-			WavChannels[i].wavBuffer = new char[numSamples * 4];
-			WavChannels[i].buffersize = numSamples * 4;
-		}
+        for (int i = 0; i < numSamples; i++)
+        {
+            for (int j = 0; j < m_numChannels; j++)
+            {
+                int chan = j;
+                tempnew = (float *)WavChannels[chan].wavBuffer;
+                int sample = (i * m_numChannels) + chan;
+                tempnew[i] = (float)tempdata[sample] / 32768;
+            }
+        }
+    }
+    else if ((WavData.wfx->wFormatTag == 3) && WavData.wfx->nSamplesPerSec == 48000)
+    {
+        m_numChannels = WavData.wfx->nChannels;
+        int numSamples = WavData.audioBytes / (4 * m_numChannels);
+        for (int i = 0; i < m_numChannels; i++)
+        {
+            WavChannels[i].wavBuffer = new char[numSamples * 4];
+            WavChannels[i].buffersize = numSamples * 4;
+        }
 
-		float * tempnew;
-		float * tempdata = (float *)WavData.startAudio;
+        float * tempnew;
+        float * tempdata = (float *)WavData.startAudio;
 
-		for (int i = 0; i < numSamples; i++)
-		{
-			for (int j = 0; j < m_numChannels; j++)
-			{
-				int chan = j;
-				tempnew = (float *)WavChannels[chan].wavBuffer;
-				int sample = (i * m_numChannels) + chan;
-				tempnew[i] = (float)tempdata[sample];
-			}
-		}
-	}
-	else
-	{
-		return false;
-	}
+        for (int i = 0; i < numSamples; i++)
+        {
+            for (int j = 0; j < m_numChannels; j++)
+            {
+                int chan = j;
+                tempnew = (float *)WavChannels[chan].wavBuffer;
+                int sample = (i * m_numChannels) + chan;
+                tempnew[i] = (float)tempdata[sample];
+            }
+        }
+    }
+    else
+    {
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 
 
 void Sample::SetChannelPosVolumes(void)
 {
-	WavChannels[0].volume = 1.f;
-	WavChannels[0].objType = AudioObjectType_FrontLeft;
+    WavChannels[0].volume = 1.f;
+    WavChannels[0].objType = AudioObjectType_FrontLeft;
 
-	WavChannels[1].volume = 1.f;
-	WavChannels[1].objType = AudioObjectType_FrontRight;
+    WavChannels[1].volume = 1.f;
+    WavChannels[1].objType = AudioObjectType_FrontRight;
 
-	WavChannels[2].volume = 1.f;
-	WavChannels[2].objType = AudioObjectType_FrontCenter;
+    WavChannels[2].volume = 1.f;
+    WavChannels[2].objType = AudioObjectType_FrontCenter;
 
-	WavChannels[3].volume = 1.f;
-	WavChannels[3].objType = AudioObjectType_LowFrequency;
+    WavChannels[3].volume = 1.f;
+    WavChannels[3].objType = AudioObjectType_LowFrequency;
 
-	WavChannels[4].volume = 1.f;
-	WavChannels[4].objType = AudioObjectType_BackLeft;
+    WavChannels[4].volume = 1.f;
+    WavChannels[4].objType = AudioObjectType_BackLeft;
 
-	WavChannels[5].volume = 1.f;
-	WavChannels[5].objType = AudioObjectType_BackRight;
+    WavChannels[5].volume = 1.f;
+    WavChannels[5].objType = AudioObjectType_BackRight;
 
-	WavChannels[6].volume = 1.f;
-	WavChannels[6].objType = AudioObjectType_SideLeft;
+    WavChannels[6].volume = 1.f;
+    WavChannels[6].objType = AudioObjectType_SideLeft;
 
-	WavChannels[7].volume = 1.f;
-	WavChannels[7].objType = AudioObjectType_SideRight;
+    WavChannels[7].volume = 1.f;
+    WavChannels[7].objType = AudioObjectType_SideRight;
 
-	WavChannels[8].volume = 1.f;
-	WavChannels[8].objType = AudioObjectType_TopFrontLeft;
+    WavChannels[8].volume = 1.f;
+    WavChannels[8].objType = AudioObjectType_TopFrontLeft;
 
-	WavChannels[9].volume = 1.f;
-	WavChannels[9].objType = AudioObjectType_TopFrontRight;
+    WavChannels[9].volume = 1.f;
+    WavChannels[9].objType = AudioObjectType_TopFrontRight;
 
-	WavChannels[10].volume = 1.f;
-	WavChannels[10].objType = AudioObjectType_TopBackLeft;
+    WavChannels[10].volume = 1.f;
+    WavChannels[10].objType = AudioObjectType_TopBackLeft;
 
-	WavChannels[11].volume = 1.f;
-	WavChannels[11].objType = AudioObjectType_TopBackRight;
+    WavChannels[11].volume = 1.f;
+    WavChannels[11].objType = AudioObjectType_TopBackRight;
 
 }
 

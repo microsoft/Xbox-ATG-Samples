@@ -28,7 +28,7 @@ public:
         TRIGGEREFFECTS_FOOTSTEPS
     };
 
-    Sample();
+    Sample() noexcept(false);
 
     // Initialization and management
     void Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATION rotation);
@@ -92,13 +92,13 @@ private:
     DWORD          m_triggerEffectCounter;  // General purpose counter for use by trigger effects
 
     size_t         m_leftTriggerArraySize;
-    uint32_t*        m_pLeftTriggerDurations;
+    uint32_t*      m_pLeftTriggerDurations;
     float*         m_pLeftTriggerLevels;
     size_t         m_rightTriggerArraySize;
-    uint32_t*        m_pRightTriggerDurations;
+    uint32_t*      m_pRightTriggerDurations;
     float*         m_pRightTriggerLevels;
-    uint32_t         m_leftTriggerIndex;
-    uint32_t         m_rightTriggerIndex;
+    uint32_t       m_leftTriggerIndex;
+    uint32_t       m_rightTriggerIndex;
 
     uint64_t  m_frequency;
     uint64_t  m_counter;

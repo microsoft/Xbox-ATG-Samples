@@ -264,11 +264,13 @@ namespace
 
 Sample::Sample() :
     m_numChannels(0),
+    m_bedChannels{},
     m_threadActive(false),
     m_playingSound(false),
     m_availableObjects(0),
     m_usedObjects(0),
     m_fileLoaded(false),
+    m_workThread(nullptr),
     m_ctrlConnected(false)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
@@ -528,6 +530,7 @@ void Sample::Update(DX::StepTimer const&)
             m_playingSound = false;
             WaitForThreadpoolWorkCallbacks(m_workThread, FALSE);
             CloseThreadpoolWork(m_workThread);
+            m_workThread = nullptr;
         }
         m_renderer->m_SpatialAudioStream->Stop();
 
@@ -557,6 +560,7 @@ void Sample::Update(DX::StepTimer const&)
                 m_playingSound = false;
                 WaitForThreadpoolWorkCallbacks(m_workThread, FALSE);
                 CloseThreadpoolWork(m_workThread);
+                m_workThread = nullptr;
                 while (m_pointSounds.size() > 0)
                 {
                     m_pointSounds.pop_back();

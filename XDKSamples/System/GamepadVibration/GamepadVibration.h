@@ -27,7 +27,7 @@ public:
         TRIGGEREFFECTS_FOOTSTEPS
     };
 
-    Sample();
+    Sample() noexcept(false);
 
     // Initialization and management
     void Initialize(IUnknown* window);

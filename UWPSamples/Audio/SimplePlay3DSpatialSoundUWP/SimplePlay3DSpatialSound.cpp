@@ -123,8 +123,9 @@ namespace
 }
 
 Sample::Sample() :
-    m_fileLoaded(false),
     m_threadActive(false),
+    m_fileLoaded(false),
+    m_workThread(nullptr),
     m_gamepadPresent(false)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_UNKNOWN);
@@ -360,24 +361,24 @@ void Sample::Update(DX::StepTimer const& )
 {
     PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
 
-	//Are we resetting the renderer?  This will happen if we get an invalid stream 
-	//  which can happen when render mode changes or device changes
-	if (m_renderer->IsResetting())
-	{
-		//clear out renderer
+    //Are we resetting the renderer?  This will happen if we get an invalid stream 
+    //  which can happen when render mode changes or device changes
+    if (m_renderer->IsResetting())
+    {
+        //clear out renderer
         m_renderer.Reset();
 
-		// Create a new ISAC instance
-		m_renderer = Microsoft::WRL::Make<ISACRenderer>();
+        // Create a new ISAC instance
+        m_renderer = Microsoft::WRL::Make<ISACRenderer>();
 
-		// Initialize Default Audio Device
-		m_renderer->InitializeAudioDeviceAsync();
+        // Initialize Default Audio Device
+        m_renderer->InitializeAudioDeviceAsync();
 
-		//Reset all the Objects that were being used
-		m_emitter.object = nullptr;
-	}
+        //Reset all the Objects that were being used
+        m_emitter.object = nullptr;
+    }
 
-	auto bounds = m_deviceResources->GetOutputSize();
+    auto bounds = m_deviceResources->GetOutputSize();
 
     auto kb = m_keyboard->GetState();
     m_keyboardButtons.Update(kb);
@@ -427,6 +428,7 @@ void Sample::Update(DX::StepTimer const& )
                 m_threadActive = false;
                 WaitForThreadpoolWorkCallbacks(m_workThread, FALSE);
                 CloseThreadpoolWork(m_workThread);
+                m_workThread = nullptr;
             }
             m_renderer->m_SpatialAudioStream->Stop();
 

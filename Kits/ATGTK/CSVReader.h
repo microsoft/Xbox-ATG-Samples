@@ -21,12 +21,11 @@ namespace DX
     public:
         enum class Encoding
         {
-            ANSI,   // File is ANSI (codepage 1252)
             UTF16,  // File is Unicode UTF-16
             UTF8,   // File is Unicode UTF-8
         };
 
-        explicit CSVReader(_In_z_ const wchar_t* fileName, Encoding encoding = Encoding::ANSI, bool ignoreComments = false) :
+        explicit CSVReader(_In_z_ const wchar_t* fileName, Encoding encoding = Encoding::UTF8, bool ignoreComments = false) :
             m_end(nullptr),
             m_currentChar(nullptr),
             m_currentLine(0),
@@ -89,9 +88,7 @@ namespace DX
             else
             {
                 // If we are not UTF16, we have to convert...
-                UINT cp = (encoding == Encoding::UTF8) ? CP_UTF8 : 1252;
-
-                int cch = ::MultiByteToWideChar(cp, 0, reinterpret_cast<LPCSTR>(data.get()), -1, nullptr, 0);
+                int cch = ::MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<LPCSTR>(data.get()), -1, nullptr, 0);
 
                 if (cch <= 0)
                 {
@@ -100,7 +97,7 @@ namespace DX
 
                 m_data.reset(new wchar_t[cch]);
 
-                int result = ::MultiByteToWideChar(cp, 0, reinterpret_cast<LPCSTR>(data.get()), -1, m_data.get(), cch);
+                int result = ::MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<LPCSTR>(data.get()), -1, m_data.get(), cch);
 
                 if (result <= 0)
                 {

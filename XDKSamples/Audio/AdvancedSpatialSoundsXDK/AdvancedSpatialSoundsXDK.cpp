@@ -268,12 +268,14 @@ namespace
 Sample::Sample() :
     m_bThreadActive(false),
     m_bPlayingSound(false),
+    m_bedChannels{},
     m_numChannels(0),
     m_availableObjects(0),
     m_usedObjects(0),
     m_frame(0),
     m_fileLoaded(false),
-    m_curFile(0)
+    m_curFile(0),
+    m_workThread(nullptr)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
 }
@@ -539,6 +541,7 @@ void Sample::Update(DX::StepTimer const&)
                 m_bPlayingSound = false;
                 WaitForThreadpoolWorkCallbacks(m_workThread, FALSE);
                 CloseThreadpoolWork(m_workThread);
+                m_workThread = nullptr;
             }
 
         }
