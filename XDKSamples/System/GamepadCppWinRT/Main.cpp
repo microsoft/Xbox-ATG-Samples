@@ -19,7 +19,7 @@ using namespace winrt::Windows::UI::Core;
 using namespace winrt::Windows::Foundation;
 using namespace DirectX;
 
-class ViewProvider final : public winrt::implements<ViewProvider, IFrameworkView>
+class ViewProvider : public winrt::implements<ViewProvider, IFrameworkView>
 {
 public:
     ViewProvider() :
@@ -117,7 +117,7 @@ private:
     std::unique_ptr<Sample> m_sample;
 };
 
-class ViewProviderFactory final : public winrt::implements<ViewProviderFactory, IFrameworkViewSource>
+class ViewProviderFactory : public winrt::implements<ViewProviderFactory, IFrameworkViewSource>
 {
 public:
     IFrameworkView CreateView()
@@ -131,8 +131,10 @@ int WINAPIV WinMain()
 {
     winrt::init_apartment();
 
+    // Default main thread to CPU 0
     SetThreadAffinityMask(GetCurrentThread(), 0x1);
-    ViewProviderFactory viewProviderFactory;
+
+    auto viewProviderFactory = winrt::make<ViewProviderFactory>();
     CoreApplication::Run(viewProviderFactory);
 
     winrt::uninit_apartment();

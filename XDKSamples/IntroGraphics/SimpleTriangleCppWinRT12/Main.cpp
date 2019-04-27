@@ -21,7 +21,7 @@ using namespace DirectX;
 
 bool g_HDRMode = false;
 
-class ViewProvider final : public winrt::implements<ViewProvider, IFrameworkView>
+class ViewProvider : public winrt::implements<ViewProvider, IFrameworkView>
 {
 public:
     ViewProvider() :
@@ -141,7 +141,7 @@ private:
     std::unique_ptr<Sample> m_sample;
 };
 
-class ViewProviderFactory final : public winrt::implements<ViewProviderFactory, IFrameworkViewSource>
+class ViewProviderFactory : public winrt::implements<ViewProviderFactory, IFrameworkViewSource>
 {
 public:
     IFrameworkView CreateView()
@@ -156,7 +156,10 @@ int WINAPIV WinMain()
 {
     winrt::init_apartment();
 
-    ViewProviderFactory viewProviderFactory;
+    // Default main thread to CPU 0
+    SetThreadAffinityMask(GetCurrentThread(), 0x1);
+
+    auto viewProviderFactory = winrt::make<ViewProviderFactory>();
     CoreApplication::Run(viewProviderFactory);
 
     winrt::uninit_apartment();
