@@ -27,7 +27,7 @@ namespace DX
         wchar_t strExePath[MAX_PATH] = {};
         wchar_t strExeName[MAX_PATH] = {};
         wchar_t* strLastSlash = nullptr;
-        GetModuleFileName(nullptr, strExePath, MAX_PATH);
+        GetModuleFileNameW(nullptr, strExePath, MAX_PATH);
         strExePath[MAX_PATH - 1] = 0;
         strLastSlash = wcsrchr(strExePath, TEXT('\\'));
         if (strLastSlash)
@@ -44,7 +44,7 @@ namespace DX
         }
 
         wcscpy_s(strDestPath, cchDest, strFilename);
-        if (GetFileAttributes(strDestPath) != 0xFFFFFFFF)
+        if (GetFileAttributesW(strDestPath) != 0xFFFFFFFF)
             return;
 
         // Search all parent directories starting at .\ and using strFilename as the leaf name
@@ -56,14 +56,14 @@ namespace DX
         wchar_t strSearch[MAX_PATH] = {};
         wchar_t* strFilePart = nullptr;
 
-        GetFullPathName(strExePath, MAX_PATH, strFullPath, &strFilePart);
+        GetFullPathNameW(strExePath, MAX_PATH, strFullPath, &strFilePart);
         if (!strFilePart)
             throw std::exception("FindMediaFile");
 
         while (strFilePart && *strFilePart != '\0')
         {
             swprintf_s(strFullFileName, MAX_PATH, L"%ls\\%ls", strFullPath, strLeafName);
-            if (GetFileAttributes(strFullFileName) != 0xFFFFFFFF)
+            if (GetFileAttributesW(strFullFileName) != 0xFFFFFFFF)
             {
                 wcscpy_s(strDestPath, cchDest, strFullFileName);
                 bFound = true;
@@ -71,7 +71,7 @@ namespace DX
             }
 
             swprintf_s(strFullFileName, MAX_PATH, L"%ls\\%ls\\%ls", strFullPath, strExeName, strLeafName);
-            if (GetFileAttributes(strFullFileName) != 0xFFFFFFFF)
+            if (GetFileAttributesW(strFullFileName) != 0xFFFFFFFF)
             {
                 wcscpy_s(strDestPath, cchDest, strFullFileName);
                 bFound = true;
@@ -79,7 +79,7 @@ namespace DX
             }
 
             swprintf_s(strSearch, MAX_PATH, L"%ls\\..", strFullPath);
-            GetFullPathName(strSearch, MAX_PATH, strFullPath, &strFilePart);
+            GetFullPathNameW(strSearch, MAX_PATH, strFullPath, &strFilePart);
         }
         if (bFound)
             return;
