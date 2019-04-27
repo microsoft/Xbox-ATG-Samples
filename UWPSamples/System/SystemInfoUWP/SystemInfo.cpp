@@ -1022,7 +1022,9 @@ void Sample::Render()
                 }
 
                 D3D12_FEATURE_DATA_SHADER_MODEL shaderModel = {};
-                #if defined(NTDDI_WIN10_RS5) && (NTDDI_VERSION >= NTDDI_WIN10_RS5)
+                #if defined(NTDDI_WIN10_19H1) && (NTDDI_VERSION >= NTDDI_WIN10_19H1)
+                shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_5;
+                #elif defined(NTDDI_WIN10_RS5) && (NTDDI_VERSION >= NTDDI_WIN10_RS5)
                 shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_4;
                 #elif defined(NTDDI_WIN10_RS4) && (NTDDI_VERSION >= NTDDI_WIN10_RS4)
                 shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_2;
@@ -1057,6 +1059,10 @@ void Sample::Render()
                 #if defined(NTDDI_WIN10_RS5) && (NTDDI_VERSION >= NTDDI_WIN10_RS5)
                 case D3D_SHADER_MODEL_6_3: shaderModelVer = L"6.3"; break;
                 case D3D_SHADER_MODEL_6_4: shaderModelVer = L"6.4"; break;
+                #endif
+
+                #if defined(NTDDI_WIN10_19H1) && (NTDDI_VERSION >= NTDDI_WIN10_19H1)
+                case D3D_SHADER_MODEL_6_5: shaderModelVer = L"6.5"; break;
                 #endif
                 }
 
