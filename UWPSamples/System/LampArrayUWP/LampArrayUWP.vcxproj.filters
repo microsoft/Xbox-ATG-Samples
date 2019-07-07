@@ -41,6 +41,7 @@
     </ClInclude>
     <ClInclude Include="LightingManager.h" />
     <ClInclude Include="SnakeEffect.h" />
+    <ClInclude Include="SimpleBitmapEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -51,6 +52,7 @@
     </ClCompile>
     <ClCompile Include="LightingManager.cpp" />
     <ClCompile Include="SnakeEffect.cpp" />
+    <ClCompile Include="SimpleBitmapEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Logo.png">

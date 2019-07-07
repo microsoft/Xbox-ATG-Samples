@@ -138,6 +138,11 @@ void LightingManager::ClearLampArrays()
         instance->Stop();
     }
 
+    for (SimpleBitmapEffect^ instance : m_bitmapEffects)
+    {
+        instance->Stop();
+    }
+
     for (LampPair instance : m_lampArrays)
     {
         instance.second->Stop();
@@ -420,3 +425,27 @@ void LightingManager::PlaySnakeEffect()
         m_snakeEffects.emplace_back(ref new SnakeEffect({ 0xFF, 0x00, 0x00, 0xFF }, 15, lampArray.first));
     }
 }
+
+void LightingManager::PlaySimpleBitmapEffect()
+{
+
+    auto lock = m_lock.Lock();
+
+    for (LampPair lampArray : m_lampArrays)
+    {
+        for (int i = 0; i < m_bitmapEffects.size(); i++)
+        {
+            if (m_bitmapEffects[i]->ContainsLampArray(lampArray.first))
+            {
+                m_bitmapEffects.erase(m_bitmapEffects.begin() + i);
+
+                // Can only ever be one; so skip the rest (additionally, the indexing will be off))
+                break;
+            }
+        }
+
+        // Creating a SimpleBitmapEffect will also start it.
+        m_bitmapEffects.emplace_back(ref new SimpleBitmapEffect(lampArray.first));
+    }
+}
+

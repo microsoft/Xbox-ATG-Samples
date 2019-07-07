@@ -20,6 +20,7 @@ enum LampPresets
 {
 	WASDRed,
 	WASDBlink,
+	Bitmap,
 	Snake,
 	SolidGreen,
 	CycleColors,
@@ -30,6 +31,7 @@ const wchar_t* g_PresetNames[] =
 {
 	L"WASD Red",
 	L"WASD Blink",
+	L"Bitmap",
 	L"Snake",
 	L"Solid Green",
 	L"Cycle Colors",
@@ -136,6 +138,9 @@ void Sample::UpdateLighting()
 		break;
 	case LampPresets::Snake:
 		m_lightingManager->PlaySnakeEffect();
+		break;
+	case LampPresets::Bitmap:
+		m_lightingManager->PlaySimpleBitmapEffect();
 		break;
 	case LampPresets::WASDBlink:
 		m_lightingManager->BlinkWasdKeys();
