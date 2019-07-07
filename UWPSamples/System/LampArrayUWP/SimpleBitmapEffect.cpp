@@ -108,6 +108,8 @@ void SimpleBitmapEffect::UpdateBitmap(
 					// Bitmap is an array of RGBA8 colors, so color is 4bytes.  Array of this size MUST be passed for UpdateBitmap
 					uint32_t bitmapByteCount = (uint32_t)(effect->SuggestedBitmapSize.Height * effect->SuggestedBitmapSize.Width) * 4;
 
+					// Set 'top' half of bitmap to blue, bottom to yellow
+					// Lamps that are 'in the middle' geometrically will be interpolated by averaging the surrounding colors.
 					for (uint32_t i = 0; i < bitmapByteCount; i += 4)
 					{
 						bool renderBlue = m_flipBitmap ^ (i < bitmapByteCount / 2);
