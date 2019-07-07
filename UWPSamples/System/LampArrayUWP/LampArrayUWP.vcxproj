@@ -225,7 +225,6 @@
       <WarningLevel>Level4</WarningLevel>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FloatingPointModel>Fast</FloatingPointModel>
-      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <FXCompile>
       <ShaderModel>4.0_level_9_3</ShaderModel>
