@@ -291,6 +291,7 @@
     <ClInclude Include="LampArrayUWP.h" />
     <ClInclude Include="LightingManager.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="SimpleBitmapEffect.h" />
     <ClInclude Include="SnakeEffect.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="DeviceResources.h" />
@@ -311,6 +312,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SimpleBitmapEffect.cpp" />
     <ClCompile Include="SnakeEffect.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -39,6 +39,8 @@ public:
 
     void PlaySnakeEffect();
 
+    void PlaySimpleBitmapEffect();
+
 private:
     LightingManager();
 
@@ -76,4 +78,6 @@ private:
     Microsoft::WRL::Wrappers::CriticalSection m_lock;
 
     std::vector<SnakeEffect^> m_snakeEffects;
+
+    std::vector<SimpleBitmapEffect^> m_bitmapEffects;
 };

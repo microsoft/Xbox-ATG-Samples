@@ -46,6 +46,7 @@
 #include "SpriteFont.h"
 #include "SimpleMath.h"
 
+#include "SimpleBitmapEffect.h"
 #include "SnakeEffect.h"
 #include "LightingManager.h"
 
