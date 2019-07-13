@@ -368,6 +368,7 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 <table>
  <tr>
   <td><a href="PCSamples/Raytracing/SimpleRaytracingTriangle_PC12">SimpleTriangle</a></td>
+  <td><a href="PCSamples/Raytracing/SimpleRaytracingInstancing_PC12">SimpleInstancing</a></td>
   <td><a href="PCSamples/Raytracing/RaytracingAO_PC12">Raytracing AO</a></td>
  </tr>
 </table>
