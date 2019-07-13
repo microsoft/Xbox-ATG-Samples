@@ -67,7 +67,7 @@ namespace DX
         static uint64_t SecondsToTicks(double seconds)		{ return static_cast<uint64_t>(seconds * TicksPerSecond); }
 
         // After an intentional timing discontinuity (for instance a blocking IO operation)
-        // call this to avoid having the fixed timestep logic attempt a set of catch-up 
+        // call this to avoid having the fixed timestep logic attempt a set of catch-up
         // Update calls.
 
         void ResetElapsedTime()
@@ -95,7 +95,7 @@ namespace DX
                 throw std::exception( "QueryPerformanceCounter" );
             }
 
-            uint64_t timeDelta = currentTime.QuadPart - m_qpcLastTime.QuadPart;
+            uint64_t timeDelta = static_cast<uint64_t>(currentTime.QuadPart - m_qpcLastTime.QuadPart);
 
             m_qpcLastTime = currentTime;
             m_qpcSecondCounter += timeDelta;
@@ -108,7 +108,7 @@ namespace DX
 
             // Convert QPC units into a canonical tick format. This cannot overflow due to the previous clamp.
             timeDelta *= TicksPerSecond;
-            timeDelta /= m_qpcFrequency.QuadPart;
+            timeDelta /= static_cast<uint64_t>(m_qpcFrequency.QuadPart);
 
             uint32_t lastFrameCount = m_frameCount;
 
@@ -120,7 +120,7 @@ namespace DX
                 // the clock to exactly match the target value. This prevents tiny and irrelevant errors
                 // from accumulating over time. Without this clamping, a game that requested a 60 fps
                 // fixed update, running with vsync enabled on a 59.94 NTSC display, would eventually
-                // accumulate enough tiny errors that it would drop a frame. It is better to just round 
+                // accumulate enough tiny errors that it would drop a frame. It is better to just round
                 // small deviations down to zero to leave things running smoothly.
 
                 if (static_cast<uint64_t>(std::abs(static_cast<int64_t>(timeDelta - m_targetElapsedTicks))) < TicksPerSecond / 4000)
@@ -161,7 +161,7 @@ namespace DX
             {
                 m_framesPerSecond = m_framesThisSecond;
                 m_framesThisSecond = 0;
-                m_qpcSecondCounter %= m_qpcFrequency.QuadPart;
+                m_qpcSecondCounter %= static_cast<uint64_t>(m_qpcFrequency.QuadPart);
             }
         }
 
