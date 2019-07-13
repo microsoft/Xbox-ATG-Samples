@@ -14,6 +14,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{a48f29ea-8acf-47d2-9f43-015bec552f90}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{6aa4dd1f-9947-4ef7-97aa-c5725879b0ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -77,6 +80,17 @@
     <none Include="SimpleLighting.hlsli">
       <Filter>Shaders</Filter>
     </none>
-    <None Include="Readme.docx" />
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleLighting_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleLighting_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleLighting_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
 </Project>

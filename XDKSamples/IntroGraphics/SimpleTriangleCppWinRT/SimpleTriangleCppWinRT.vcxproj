@@ -103,7 +103,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories />
       <ForcedUsingFiles />
       <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
@@ -136,7 +136,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories />
       <ForcedUsingFiles />
       <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
@@ -164,7 +164,7 @@
     </Link>
     <ClCompile>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories />
       <ForcedUsingFiles />
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -230,6 +230,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.docx" />
+    <None Include="SimpleTriangleCppWinRT_Readme_ja-jp.docx" />
+    <None Include="SimpleTriangleCppWinRT_Readme_ko-kr.docx" />
+    <None Include="SimpleTriangleCppWinRT_Readme_zh-cn.docx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

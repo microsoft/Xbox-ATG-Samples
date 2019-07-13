@@ -45,13 +45,13 @@ void SimpleBitmapEffect::Start()
     m_playList->RepetitionMode = LampArrayRepetitionMode::Forever;
 
     // This effect will apply to every Lamp on the device.
-    Platform::Array<int>^ allLampIndexes = ref new Platform::Array<int>(m_lampArray->LampCount);
+    auto allLampIndexes = ref new Platform::Array<int>(m_lampArray->LampCount);
     for (int i = 0; i < m_lampArray->LampCount; i++)
     {
         allLampIndexes[i] = i;
     }
 
-    LampArrayBitmapEffect^ bitmapEffect = ref new LampArrayBitmapEffect(m_lampArray, allLampIndexes);
+    auto bitmapEffect = ref new LampArrayBitmapEffect(m_lampArray, allLampIndexes);
 
     // Update handler is triggered; once the playlist starts the effect, at every UpdateInternal, when duration expires.
     bitmapEffect->BitmapRequested += ref new TypedEventHandler<LampArrayBitmapEffect^, LampArrayBitmapRequestedEventArgs^>(this, &SimpleBitmapEffect::UpdateBitmap);
@@ -118,7 +118,7 @@ void SimpleBitmapEffect::UpdateBitmap(
 
     m_flipBitmap = !m_flipBitmap;
 
-    Platform::Array<unsigned char>^ bitmap = ref new Platform::Array<unsigned char>(bitmapBytes.get(), bitmapByteCount);
+    auto bitmap = ref new Platform::Array<unsigned char>(bitmapBytes.get(), bitmapByteCount);
 
     args->UpdateBitmap(bitmap);
 }

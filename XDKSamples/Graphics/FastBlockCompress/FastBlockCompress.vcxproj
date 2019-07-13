@@ -103,7 +103,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(Console_SdkPackagesRoot);$(Console_SdkWindowsMetadataPath);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>NDEBUG;__WRL_NO_DEFAULT_LIB__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -115,7 +115,7 @@
       <ShaderModel>5.1</ShaderModel>
       <EnableDebuggingInformation>true</EnableDebuggingInformation>
       <AdditionalOptions>/Qstrip_debug /Fd"$(OutDir)%(Filename).pdb" %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>..\..\..\Kits\ATGTK\FullScreenQuad</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\ATGTK\FullScreenQuad</AdditionalIncludeDirectories>
     </FXCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">
@@ -132,7 +132,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(Console_SdkPackagesRoot);$(Console_SdkWindowsMetadataPath);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>NDEBUG;__WRL_NO_DEFAULT_LIB__;PROFILE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -144,7 +144,7 @@
       <ShaderModel>5.1</ShaderModel>
       <EnableDebuggingInformation>true</EnableDebuggingInformation>
       <AdditionalOptions>/Qstrip_debug /Fd"$(OutDir)%(Filename).pdb" %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>..\..\..\Kits\ATGTK\FullScreenQuad</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\ATGTK\FullScreenQuad</AdditionalIncludeDirectories>
     </FXCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'">
@@ -156,7 +156,7 @@
     </Link>
     <ClCompile>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <MinimalRebuild>false</MinimalRebuild>
       <AdditionalUsingDirectories>$(Console_SdkPackagesRoot);$(Console_SdkWindowsMetadataPath);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
@@ -166,7 +166,7 @@
     </ClCompile>
     <FXCompile>
       <ShaderModel>5.1</ShaderModel>
-      <AdditionalIncludeDirectories>..\..\..\Kits\ATGTK\FullScreenQuad</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\ATGTK\FullScreenQuad</AdditionalIncludeDirectories>
     </FXCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -241,6 +241,9 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Durango'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">true</DeploymentContent>
     </None>
+    <None Include="FastBlockCompress_Readme_ja-jp.docx" />
+    <None Include="FastBlockCompress_Readme_ko-kr.docx" />
+    <None Include="FastBlockCompress_Readme_zh-cn.docx" />
     <None Include="Readme.docx" />
     <None Include="Shaders\BlockCompress.hlsli" />
     <None Include="Shaders\RMS.hlsli" />

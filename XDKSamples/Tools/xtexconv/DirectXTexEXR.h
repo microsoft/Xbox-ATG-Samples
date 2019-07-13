@@ -7,7 +7,7 @@
 // Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
-#include "directxtex.h"
+#include "DirectXTex.h"
 
 
 namespace DirectX

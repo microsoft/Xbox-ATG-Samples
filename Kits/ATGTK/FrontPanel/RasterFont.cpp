@@ -301,15 +301,16 @@ unsigned RasterFont::GetLineSpacing() const
 
 RECT RasterFont::MeasureString(const wchar_t *text) const
 {
-    auto& glyphSheet = *m_glyphs.get();
     RECT r = {};
 
-    if (!&glyphSheet)
+    if (!m_glyphs.get())
     {
-        assert(&glyphSheet && "Not initialized");
+        assert(m_glyphs.get());
         return r;
     }
-    
+
+    auto& glyphSheet = *m_glyphs.get();
+   
     unsigned lineSpacing = GetLineSpacing();
 
     glyphSheet.ForEachGlyph(text, lineSpacing, [&](const RasterGlyphSheet::RasterGlyph &glyph, unsigned cellOriginX, unsigned cellOriginY) {
@@ -376,13 +377,15 @@ void RasterFont::DrawStringFmt(const BufferDesc & destBuffer, unsigned x, unsign
 
 void RasterFont::DrawString(const BufferDesc & destBuffer, unsigned x, unsigned y, uint8_t shade, const wchar_t * text) const
 {
-    unsigned lineSpacing = GetLineSpacing();
-    auto& glyphSheet = *m_glyphs.get();
-    if (!&glyphSheet)
+    if (!m_glyphs.get())
     {
-        assert(&glyphSheet && "Not initialized");
+        assert(m_glyphs.get());
         return;
     }
+
+    auto& glyphSheet = *m_glyphs.get();
+
+    unsigned lineSpacing = GetLineSpacing();
 
     RECT r = MeasureString(text);
     int baseline = -r.top;
@@ -429,14 +432,15 @@ void RasterFont::DrawStringFmt(const BufferDesc & destBuffer, unsigned x, unsign
 
 RECT RasterFont::MeasureGlyph(wchar_t wch) const
 {
-    auto& glyphSheet = *m_glyphs.get();
     RECT r = {};
 
-    if (!&glyphSheet)
+    if (!m_glyphs.get())
     {
-        assert(&glyphSheet && "Not initialized");
+        assert(m_glyphs.get());
         return r;
     }
+
+    auto& glyphSheet = *m_glyphs.get();
 
     auto& glyph = *glyphSheet.FindGlyph(wch);
     r.right = glyph.blackBoxWidth;
@@ -447,12 +451,9 @@ RECT RasterFont::MeasureGlyph(wchar_t wch) const
 
 void RasterFont::DrawGlyph(const BufferDesc & destBuffer, unsigned x, unsigned y, wchar_t wch, uint8_t shade) const
 {
-    auto& glyphSheet = *m_glyphs.get();
+    assert(m_glyphs.get());
 
-    if (!&glyphSheet)
-    {
-        assert(&glyphSheet && "Not initialized");
-    }
+    auto& glyphSheet = *m_glyphs.get();
 
     auto& glyph = *glyphSheet.FindGlyph(wch);
 

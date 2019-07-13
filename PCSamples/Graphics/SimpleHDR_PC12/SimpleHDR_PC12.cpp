@@ -837,12 +837,12 @@ void Sample::CreateDeviceDependentResources()
 
         wchar_t strFilePath[MAX_PATH] = {};
 
-        DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Fonts\\Courier_36.spritefont");
+        DX::FindMediaFile(strFilePath, MAX_PATH, L"Courier_36.spritefont");
         auto cpuDescHandleText = m_resourceDescriptorHeap->GetCpuHandle(static_cast<int>(ResourceDescriptors::TextFont));
         auto gpuDescHandleText = m_resourceDescriptorHeap->GetGpuHandle(static_cast<int>(ResourceDescriptors::TextFont));
         m_textFont = std::make_unique<SpriteFont>(device, resourceUpload, strFilePath, cpuDescHandleText, gpuDescHandleText);
 
-        DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Fonts\\XboxOneControllerLegendSmall.spritefont");
+        DX::FindMediaFile(strFilePath, MAX_PATH, L"XboxOneControllerLegendSmall.spritefont");
         auto cpuDescHandleController = m_resourceDescriptorHeap->GetCpuHandle(static_cast<int>(ResourceDescriptors::ControllerFont));
         auto gpuDescHandleController = m_resourceDescriptorHeap->GetGpuHandle(static_cast<int>(ResourceDescriptors::ControllerFont));
         m_controllerFont = std::make_unique<SpriteFont>(device, resourceUpload, strFilePath, cpuDescHandleController, gpuDescHandleController);

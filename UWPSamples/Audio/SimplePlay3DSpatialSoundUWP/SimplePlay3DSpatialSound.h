@@ -12,7 +12,7 @@
 #include "ISACRenderer.h"
 #include "WAVFileReader.h"
 
-class Sample : public DX::IDeviceNotify
+class Sample final : public DX::IDeviceNotify
 {
 public:
 #define MAX_CHANNELS 12 //up to 7.1.4 channels

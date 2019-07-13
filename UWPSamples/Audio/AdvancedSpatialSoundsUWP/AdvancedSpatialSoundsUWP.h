@@ -55,7 +55,7 @@ struct PointSound
     bool    isPlaying;
 };
 
-class Sample : public DX::IDeviceNotify
+class Sample final : public DX::IDeviceNotify
 {
 public:
 	Sample();

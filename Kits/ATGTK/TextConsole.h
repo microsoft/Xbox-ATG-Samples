@@ -44,8 +44,8 @@ namespace DX
 #   error Please #include <d3d11.h> or <d3d12.h>
 #endif
 
-        TextConsole(TextConsole&&) = default;
-        TextConsole& operator= (TextConsole&&) = default;
+        TextConsole(TextConsole&&) = delete;
+        TextConsole& operator= (TextConsole&&) = delete;
 
         TextConsole(TextConsole const&) = delete;
         TextConsole& operator= (TextConsole const&) = delete;
@@ -65,7 +65,7 @@ namespace DX
         void XM_CALLCONV WriteLine(DirectX::FXMVECTOR color, _In_z_ const wchar_t* str);
 
         void Format(_In_z_ _Printf_format_string_ const wchar_t* strFormat, ...);
-        void XM_CALLCONV Format(DirectX::CXMVECTOR color, _In_z_ _Printf_format_string_ const wchar_t* strFormat, ...);
+        void Format(DirectX::CXMVECTOR color, _In_z_ _Printf_format_string_ const wchar_t* strFormat, ...);
 
         void SetWindow(const RECT& layout);
 
@@ -92,7 +92,7 @@ namespace DX
         void SetRotation(DXGI_MODE_ROTATION rotation);
 
     protected:
-        void XM_CALLCONV FormatImpl(DirectX::FXMVECTOR color, _In_z_ _Printf_format_string_ const wchar_t* strFormat, va_list args);
+        void FormatImpl(DirectX::CXMVECTOR color, _In_z_ _Printf_format_string_ const wchar_t* strFormat, va_list args);
         void XM_CALLCONV ProcessString(DirectX::FXMVECTOR color, _In_z_ const wchar_t* str);
         void IncrementLine();
 
@@ -148,8 +148,8 @@ namespace DX
         TextConsoleImage(_In_ ID3D11DeviceContext* context, _In_z_ const wchar_t* fontName, _In_z_ const wchar_t* image);
 #endif
 
-        TextConsoleImage(TextConsoleImage&&) = default;
-        TextConsoleImage& operator= (TextConsoleImage&&) = default;
+        TextConsoleImage(TextConsoleImage&&) = delete;
+        TextConsoleImage& operator= (TextConsoleImage&&) = delete;
 
         TextConsoleImage(TextConsoleImage const&) = delete;
         TextConsoleImage& operator= (TextConsoleImage const&) = delete;

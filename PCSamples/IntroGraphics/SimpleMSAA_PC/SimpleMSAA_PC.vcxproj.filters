@@ -11,6 +11,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>bd8aec42-bdaa-4d8d-a0e0-6a44d7ff27cc</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{f535ddc5-727d-40e5-9a76-a54efbb3269b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -65,6 +68,17 @@
     <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
       <Filter>Assets</Filter>
     </None>
-    <None Include="Readme.docx" />
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleMSAA_PC_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleMSAA_PC_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleMSAA_PC_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -7,12 +7,26 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Readme.docx" />
     <None Include="packages.config" />
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="XTexConv_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="XTexConv_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="XTexConv_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="EXR">
       <UniqueIdentifier>{1135ee12-3af6-47b3-90ed-6f81b9884b1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{5df06e67-581e-47db-91e6-61808b247fa8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

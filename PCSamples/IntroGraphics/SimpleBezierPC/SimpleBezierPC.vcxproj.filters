@@ -14,6 +14,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{48a27c45-f063-4571-b0ea-99489989090b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{4663ca9a-5d59-4655-b77c-ceff84988441}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -97,7 +100,6 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Readme.docx" />
     <None Include="Assets\SimpleBezier.hlsli">
       <Filter>Shaders</Filter>
     </None>
@@ -112,6 +114,18 @@
     </None>
     <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
       <Filter>Assets</Filter>
+    </None>
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleBezierPC_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleBezierPC_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleBezierPC_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
     </None>
   </ItemGroup>
 </Project>

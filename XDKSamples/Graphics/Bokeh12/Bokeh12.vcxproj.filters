@@ -23,6 +23,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{1c008e77-cf28-4eee-b14c-fae924a325b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{95c7b899-95b8-4471-9149-9f11996bdde6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -114,12 +117,23 @@
     <None Include="Shaders\Bokeh.hlsli">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="ReadMe.docx" />
     <None Include="..\..\..\Media\Fonts\SegoeUI_36.spritefont">
       <Filter>Assets\Fonts</Filter>
     </None>
     <None Include="..\..\..\Media\Fonts\XboxOneControllerLegend.spritefont">
       <Filter>Assets\Fonts</Filter>
+    </None>
+    <None Include="ReadMe.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="Bokeh12_ReadMe_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="Bokeh12_ReadMe_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="Bokeh12_ReadMe_zh-cn.docx">
+      <Filter>Documentation</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

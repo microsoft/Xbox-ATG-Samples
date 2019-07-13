@@ -11,6 +11,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>ddfc35eb-45ce-4f4e-871d-b4cf1233d2e6</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{6d5a49aa-fb03-4d62-9982-d700387d7887}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -68,6 +71,17 @@
     </Font>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.docx" />
+    <None Include="ReadMe.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="UserGamepadPairing_ReadMe_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="UserGamepadPairing_ReadMe_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="UserGamepadPairing_ReadMe_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
 </Project>

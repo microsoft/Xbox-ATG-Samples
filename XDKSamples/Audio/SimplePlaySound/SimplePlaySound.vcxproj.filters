@@ -11,6 +11,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>{4aae28c9-8be0-46cf-89eb-e15f0404dafc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{c1c0c314-ed93-4654-8e01-492c067a4fc6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -66,7 +69,18 @@
     <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
       <Filter>Assets</Filter>
     </None>
-    <None Include="Readme.docx" />
+    <None Include="SimplePlaySound_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimplePlaySound_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimplePlaySound_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\..\..\Media\Sounds\71_setup_sweep_xbox.wav">

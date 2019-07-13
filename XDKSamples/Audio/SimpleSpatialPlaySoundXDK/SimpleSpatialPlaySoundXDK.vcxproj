@@ -103,7 +103,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(Console_SdkPackagesRoot);$(Console_SdkWindowsMetadataPath);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>NDEBUG;__WRL_NO_DEFAULT_LIB__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -129,7 +129,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(Console_SdkPackagesRoot);$(Console_SdkWindowsMetadataPath);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>NDEBUG;__WRL_NO_DEFAULT_LIB__;PROFILE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -150,7 +150,7 @@
     </Link>
     <ClCompile>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <MinimalRebuild>false</MinimalRebuild>
       <AdditionalUsingDirectories>$(Console_SdkPackagesRoot);$(Console_SdkWindowsMetadataPath);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
@@ -210,6 +210,9 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">true</DeploymentContent>
     </None>
     <None Include="Readme.docx" />
+    <None Include="SimpleSpatialPlaySoundXDK_Readme_ja-jp.docx" />
+    <None Include="SimpleSpatialPlaySoundXDK_Readme_ko-kr.docx" />
+    <None Include="SimpleSpatialPlaySoundXDK_Readme_zh-cn.docx" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\..\..\Media\Sounds\ChannelIDs714.wav" />

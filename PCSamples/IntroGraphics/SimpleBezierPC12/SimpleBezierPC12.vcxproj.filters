@@ -14,6 +14,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{4a55b265-bf87-466f-beda-f444e6927739}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{4cacb5c8-585e-4a9e-8886-ae5fdafa7071}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -92,7 +95,18 @@
     <None Include="Assets\SimpleBezier.hlsli">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Readme.docx" />
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleBezierPC12_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleBezierPC12_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleBezierPC12_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\BezierDS.hlsl">

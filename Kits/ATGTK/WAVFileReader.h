@@ -82,10 +82,10 @@ namespace DX
                     auto adpcmFmt = reinterpret_cast<const ADPCMWAVEFORMAT*>(wfx);
 
                     uint64_t duration = uint64_t(audioBytes / adpcmFmt->wfx.nBlockAlign) * adpcmFmt->wSamplesPerBlock;
-                    int partial = audioBytes % adpcmFmt->wfx.nBlockAlign;
+                    unsigned int partial = audioBytes % adpcmFmt->wfx.nBlockAlign;
                     if (partial)
                     {
-                        if (partial >= (7 * adpcmFmt->wfx.nChannels))
+                        if (partial >= (7u * adpcmFmt->wfx.nChannels))
                             duration += (partial * 2 / adpcmFmt->wfx.nChannels - 12);
                     }
                     return static_cast<size_t>(duration);

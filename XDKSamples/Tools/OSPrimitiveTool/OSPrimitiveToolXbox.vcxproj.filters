@@ -14,6 +14,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>{f0a8a316-4435-40de-abbd-f96ac33b6b11}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{8eb1d818-ecae-4fa3-9dd5-5fed49d812f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -85,6 +88,17 @@
     <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
       <Filter>Assets</Filter>
     </None>
-    <None Include="Readme.docx" />
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="OSPrimitiveTool_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="OSPrimitiveTool_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="OSPrimitiveTool_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
 </Project>

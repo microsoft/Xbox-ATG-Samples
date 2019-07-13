@@ -11,6 +11,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>072059f1-1d6b-42a9-8d97-6b5318debece</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{9c08ba30-b615-4335-b0a1-1a98429a4765}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -80,6 +83,17 @@
     <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
       <Filter>Assets</Filter>
     </None>
-    <None Include="Readme.docx" />
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimplePlay3DSoundXDK_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimplePlay3DSoundXDK_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimplePlay3DSoundXDK_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
 </Project>

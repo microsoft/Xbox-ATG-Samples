@@ -11,6 +11,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>32806502-7dfc-495a-9d23-216148075229</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{d293daff-4dfc-4d1a-94be-d16c4e65a183}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -68,10 +71,6 @@
     </Manifest>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Readme.docx" />
-    <None Include="Assets\fractal.hlsl">
-      <Filter>Assets</Filter>
-    </None>
     <None Include="..\..\..\Media\Textures\ATGSampleBackground.DDS">
       <Filter>Assets</Filter>
     </None>
@@ -93,5 +92,20 @@
     <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
       <Filter>Assets</Filter>
     </None>
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleComputePC12_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleComputePC12_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleComputePC12_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Assets\fractal.hlsl" />
   </ItemGroup>
 </Project>

@@ -32,6 +32,9 @@
     <Filter Include="ja-JP">
       <UniqueIdentifier>{aec18534-afcc-46dc-be47-1ecfb1a976b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{9f973539-2c8a-400b-b30b-5b60a994f93a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -128,8 +131,18 @@
     <None Include="Assets\Resources\ja-JP.resources">
       <Filter>ja-JP</Filter>
     </None>
-    <None Include="Readme.docx" />
-    <None Include="..\..\..\..\Media\Fonts\SegoeUI_18.spritefont" />
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="NLSAndLocalization_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="NLSAndLocalization_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="NLSAndLocalization_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="de-DE\Resources.resw">
@@ -153,5 +166,8 @@
     <PRIResource Include="ja-JP\Resources.resw">
       <Filter>ja-JP</Filter>
     </PRIResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\..\..\..\Media\Fonts\SegoeUI_18.spritefont" />
   </ItemGroup>
 </Project>

@@ -14,6 +14,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{e5eab003-c272-4f2d-965b-7c7f6d4d9cae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{70f5b603-e72b-4a76-b135-60f512fbf1a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -59,18 +62,25 @@
     </Manifest>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Readme.docx" />
     <None Include="SimpleLighting.hlsli">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="SolidColorPS.hlsl">
-      <Filter>Shaders</Filter>
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
     </None>
-    <None Include="TriangleVS.hlsl">
-      <Filter>Shaders</Filter>
+    <None Include="SimpleLightingPC12_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
     </None>
-    <None Include="LambertPS.hlsl">
-      <Filter>Shaders</Filter>
+    <None Include="SimpleLightingPC12_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
     </None>
+    <None Include="SimpleLightingPC12_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="LambertPS.hlsl" />
+    <FxCompile Include="SolidColorPS.hlsl" />
+    <FxCompile Include="TriangleVS.hlsl" />
   </ItemGroup>
 </Project>

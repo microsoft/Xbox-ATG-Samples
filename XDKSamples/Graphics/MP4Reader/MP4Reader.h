@@ -32,14 +32,14 @@ static const uint32_t MP4R_XA2_MAX_BUFFER_COUNT = 3;
 
 struct AudioBufferContext
 {
-	AudioBufferContext(uint8_t * pData, uint32_t dwAudioBytes)
-		:m_pData(pData)
-		, m_dwAudioBytes(dwAudioBytes)
-	{
-	}
+    AudioBufferContext(uint8_t * pData, uint32_t dwAudioBytes)
+        :m_pData(pData)
+        , m_dwAudioBytes(dwAudioBytes)
+    {
+    }
 
-	uint8_t * m_pData;
-	uint32_t m_dwAudioBytes;
+    uint8_t * m_pData;
+    uint32_t m_dwAudioBytes;
 };
 
 //--------------------------------------------------------------------------------------
@@ -48,50 +48,80 @@ struct AudioBufferContext
 //--------------------------------------------------------------------------------------
 struct PlaySoundStreamVoiceContext : public IXAudio2VoiceCallback
 {
-	virtual void OnVoiceProcessingPassStart(uint32_t) override {}
-	virtual void OnVoiceProcessingPassEnd() override {}
-	virtual void OnStreamEnd() override {}
-	virtual void OnBufferStart(void*)
-	{
-		m_llLastBufferStartTime = GetCurrentTimeInHNS();
-	}
+    virtual void OnVoiceProcessingPassStart(uint32_t) override {}
+    virtual void OnVoiceProcessingPassEnd() override {}
+    virtual void OnStreamEnd() override {}
+    virtual void OnBufferStart(void*)
+    {
+        m_llLastBufferStartTime = GetCurrentTimeInHNS();
+    }
 
-	void OnBufferEnd(void* pBufferContext)
-	{
-		AudioBufferContext * pAudioBufferContext = (AudioBufferContext *)pBufferContext;
-		SetEvent(m_hBufferEndEvent);
-		//
-		// Free up the memory chunk holding the PCM data that was read from disk earlier.
-		// In a game you would probably return this memory to a pool.
-		//
-		if (pBufferContext)
-		{
-			m_qwRenderedBytes += pAudioBufferContext->m_dwAudioBytes;
-			delete[](uint8_t *)pAudioBufferContext->m_pData;
-			delete pAudioBufferContext;
-		}
-		m_llLastBufferStartTime = GetCurrentTimeInHNS();
+    void OnBufferEnd(void* pBufferContext)
+    {
+        auto pAudioBufferContext = reinterpret_cast<AudioBufferContext*>(pBufferContext);
+        SetEvent(m_hBufferEndEvent);
+        //
+        // Free up the memory chunk holding the PCM data that was read from disk earlier.
+        // In a game you would probably return this memory to a pool.
+        //
+        if (pBufferContext)
+        {
+            m_qwRenderedBytes += pAudioBufferContext->m_dwAudioBytes;
+            delete[](uint8_t *)pAudioBufferContext->m_pData;
+            delete pAudioBufferContext;
+        }
+        m_llLastBufferStartTime = GetCurrentTimeInHNS();
 
-	}
+    }
 
-	virtual void OnLoopEnd(void*) override {}
-	virtual void OnVoiceError(void*, HRESULT) override {}
+    virtual void OnLoopEnd(void*) override {}
+    virtual void OnVoiceError(void*, HRESULT) override {}
 
-	HANDLE m_hBufferEndEvent;
+    HANDLE m_hBufferEndEvent;
 
-	PlaySoundStreamVoiceContext()
-		:m_llLastBufferStartTime(INVALID_SAMPLE_TIME)
-		, m_qwRenderedBytes(0)
-	{
-		m_hBufferEndEvent = CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS);
-	}
-	virtual ~PlaySoundStreamVoiceContext()
-	{
-		CloseHandle(m_hBufferEndEvent);
-	}
+    PlaySoundStreamVoiceContext() noexcept(false)
+        : m_llLastBufferStartTime(INVALID_SAMPLE_TIME)
+        , m_qwRenderedBytes(0)
+    {
+        m_hBufferEndEvent = CreateEventEx(nullptr, nullptr, 0, EVENT_MODIFY_STATE | SYNCHRONIZE);
+        if (!m_hBufferEndEvent)
+            throw std::exception("CreateEventEx");
+    }
 
-	uint64_t m_qwRenderedBytes;
-	int64_t m_llLastBufferStartTime;
+    PlaySoundStreamVoiceContext(const PlaySoundStreamVoiceContext& other)
+        : m_llLastBufferStartTime(other.m_llLastBufferStartTime)
+        , m_qwRenderedBytes(other.m_qwRenderedBytes)
+    {
+        auto cur = GetCurrentProcess();
+        (void)DuplicateHandle(cur, other.m_hBufferEndEvent, cur, &m_hBufferEndEvent, 0, FALSE, DUPLICATE_SAME_ACCESS);
+    }
+
+    PlaySoundStreamVoiceContext& operator= (const PlaySoundStreamVoiceContext& other)
+    {
+        if (this != &other) // prevent self-assignment
+        {
+            m_llLastBufferStartTime = other.m_llLastBufferStartTime;
+            m_qwRenderedBytes = other.m_qwRenderedBytes;
+            auto cur = GetCurrentProcess();
+            (void)DuplicateHandle(cur, other.m_hBufferEndEvent, cur, &m_hBufferEndEvent, 0, FALSE, DUPLICATE_SAME_ACCESS);
+        }
+        return *this;
+    }
+
+    PlaySoundStreamVoiceContext(PlaySoundStreamVoiceContext&&) = default;
+    PlaySoundStreamVoiceContext& operator= (PlaySoundStreamVoiceContext&&) = default;
+
+    virtual ~PlaySoundStreamVoiceContext()
+    {
+        if (m_hBufferEndEvent)
+        {
+            CloseHandle(m_hBufferEndEvent);
+            m_hBufferEndEvent = nullptr;
+        }
+    }
+
+    uint64_t m_qwRenderedBytes;
+    int64_t m_llLastBufferStartTime;
 };
 
 #endif
@@ -127,15 +157,15 @@ private:
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();
 
-	void ConfigureSourceReaderOutput(IMFSourceReader* pReader, uint32_t dwStreamIndex);
-	void RenderVideoFrame(IMFSample * pSample);
-	bool RenderAudioFrame(IMFSample * pSample);
-	void ProcessVideo();
-	void ProcessAudio();
-	int64_t GetCurrentRenderTime();
+    void ConfigureSourceReaderOutput(IMFSourceReader* pReader, uint32_t dwStreamIndex);
+    void RenderVideoFrame(IMFSample * pSample);
+    bool RenderAudioFrame(IMFSample * pSample);
+    void ProcessVideo();
+    void ProcessAudio();
+    int64_t GetCurrentRenderTime();
 
-	void Screenshot();
-	bool										m_bTakeScreenshot;
+    void Screenshot();
+    bool										m_bTakeScreenshot;
 
     // Device resources.
     std::unique_ptr<DX::DeviceResources>        m_deviceResources;
@@ -150,56 +180,56 @@ private:
     DirectX::GamePad::ButtonStateTracker        m_gamePadButtons;
 
     // DirectXTK objects.
-	std::unique_ptr<DirectX::SpriteFont>        m_fontOverlay;
-	std::unique_ptr<DirectX::SpriteFont>        m_fontController;
-	std::unique_ptr<DirectX::SpriteBatch>       m_spriteBatch;
+    std::unique_ptr<DirectX::SpriteFont>        m_fontOverlay;
+    std::unique_ptr<DirectX::SpriteFont>        m_fontController;
+    std::unique_ptr<DirectX::SpriteBatch>       m_spriteBatch;
     std::unique_ptr<DirectX::GraphicsMemory>    m_graphicsMemory;
 
-	// object for MF interaction
-	bool										m_videodone;
-	bool										m_audiodone;
+    // object for MF interaction
+    bool										m_videodone;
+    bool										m_audiodone;
 
-	Microsoft::WRL::ComPtr<IMFSample>			m_pOutputVideoSample;
+    Microsoft::WRL::ComPtr<IMFSample>			m_pOutputVideoSample;
 
-	uint32_t									m_numberOfFramesDecoded;
+    uint32_t									m_numberOfFramesDecoded;
 
-	uint32_t									m_videoWidth;
-	uint32_t									m_videoHeight;
+    uint32_t									m_videoWidth;
+    uint32_t									m_videoHeight;
 
-	Microsoft::WRL::ComPtr<IMFSample>			m_pOutputAudioSample;
+    Microsoft::WRL::ComPtr<IMFSample>			m_pOutputAudioSample;
 
 #ifdef USE_WASAPI
 
-	IAudioClient*								m_pAudioClient;
-	IAudioRenderClient*							m_pAudioRenderClient;
-	WAVEFORMATEX*								m_pAudioClientWFX;
+    Microsoft::WRL::ComPtr<IAudioClient>        m_pAudioClient;
+    Microsoft::WRL::ComPtr<IAudioRenderClient>  m_pAudioRenderClient;
+    WAVEFORMATEX*								m_pAudioClientWFX;
 
 #endif  // USE_WASAPI
 
-	uint32_t									m_bufferFrameCount;
-	const WAVEFORMATEX*							m_pAudioReaderOutputWFX;
-	Microsoft::WRL::ComPtr<IMFAudioMediaType>	m_pAudioMediaType;
+    uint32_t									m_bufferFrameCount;
+    const WAVEFORMATEX*							m_pAudioReaderOutputWFX;
+    Microsoft::WRL::ComPtr<IMFAudioMediaType>	m_pAudioMediaType;
 
 
-	Microsoft::WRL::ComPtr<IMFSourceReader>		m_pReader;
-	Microsoft::WRL::ComPtr<IXboxNV12MFSampleRenderer>	m_pVideoRender;
+    Microsoft::WRL::ComPtr<IMFSourceReader>		m_pReader;
+    Microsoft::WRL::ComPtr<IXboxNV12MFSampleRenderer>	m_pVideoRender;
 
 #ifdef USE_XAUDIO2
-	
-	Microsoft::WRL::ComPtr<IXAudio2>			m_pXAudio2;
-	IXAudio2MasteringVoice*						m_pMasteringVoice;
-	IXAudio2SourceVoice*						m_pSourceVoice;
-	PlaySoundStreamVoiceContext					m_VoiceContext;
-	uint32_t									m_dwCurrentPosition;
-	uint32_t									m_dwAudioFramesDecoded;
-	uint32_t									m_dwAudioFramesRendered;
-	XAUDIO2_BUFFER								m_Buffers[MP4R_XA2_MAX_BUFFER_COUNT];
+    
+    Microsoft::WRL::ComPtr<IXAudio2>			m_pXAudio2;
+    IXAudio2MasteringVoice*						m_pMasteringVoice;
+    IXAudio2SourceVoice*						m_pSourceVoice;
+    PlaySoundStreamVoiceContext					m_VoiceContext;
+    uint32_t									m_dwCurrentPosition;
+    uint32_t									m_dwAudioFramesDecoded;
+    uint32_t									m_dwAudioFramesRendered;
+    XAUDIO2_BUFFER								m_Buffers[MP4R_XA2_MAX_BUFFER_COUNT];
 
-	static uint32_t WINAPI	SubmitAudioBufferThread(LPVOID lpParam);
+    static uint32_t WINAPI	SubmitAudioBufferThread(LPVOID lpParam);
 
 #endif  // USE_XAUDIO2
 
-	bool										m_fAudioStarted;
-	int64_t										m_llStartTimeStamp;
+    bool										m_fAudioStarted;
+    int64_t										m_llStartTimeStamp;
 
 };

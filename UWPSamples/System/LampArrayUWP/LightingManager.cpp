@@ -433,7 +433,7 @@ void LightingManager::PlaySimpleBitmapEffect()
 
     for (LampPair lampArray : m_lampArrays)
     {
-        for (int i = 0; i < m_bitmapEffects.size(); i++)
+        for (size_t i = 0; i < m_bitmapEffects.size(); i++)
         {
             if (m_bitmapEffects[i]->ContainsLampArray(lampArray.first))
             {

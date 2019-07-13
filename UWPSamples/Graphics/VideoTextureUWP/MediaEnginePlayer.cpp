@@ -112,7 +112,7 @@ void MediaEnginePlayer::Initialize(ID3D11Device* device, DXGI_FORMAT format)
         D3D11CreateDevice(
         adapter.Get(),
         D3D_DRIVER_TYPE_UNKNOWN,
-        0,
+        nullptr,
         D3D11_CREATE_DEVICE_VIDEO_SUPPORT | D3D11_CREATE_DEVICE_BGRA_SUPPORT,
         &fLevel,
         1,

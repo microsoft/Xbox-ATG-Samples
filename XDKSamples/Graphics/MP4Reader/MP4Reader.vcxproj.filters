@@ -11,6 +11,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>7d6c005e-1a51-4ba4-9d7f-e10d3609cb80</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{b749cea7-882c-49de-9f92-1ffbae1eeeb6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -27,7 +30,6 @@
     <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h">
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
-    <ClInclude Include="PlaySoundStreamVoiceContext.h" />
     <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h">
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
@@ -67,7 +69,18 @@
     <None Include="..\..\..\Media\Fonts\XboxOneControllerSmall.spritefont">
       <Filter>Assets</Filter>
     </None>
-    <None Include="Readme.docx" />
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="MP4Reader_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="MP4Reader_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="MP4Reader_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\..\..\Media\Videos\SampleVideo.mp4">

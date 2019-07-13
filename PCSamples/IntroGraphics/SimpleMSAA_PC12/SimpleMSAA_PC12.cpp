@@ -387,7 +387,7 @@ void Sample::CreateDeviceDependentResources()
     m_states = std::make_unique<CommonStates>(device);
 
     wchar_t strFilePath[MAX_PATH] = {};
-    DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Meshes\\AliasSampleCityBlock\\CityBlockConcrete.sdkmesh");
+    DX::FindMediaFile(strFilePath, MAX_PATH, L"AliasSampleCityBlock\\CityBlockConcrete.sdkmesh");
 
     m_model = Model::CreateFromSDKMESH(strFilePath);
 
@@ -548,13 +548,13 @@ void Sample::CreateWindowSizeDependentResources()
     resourceUpload.Begin();
 
     wchar_t strFilePath[MAX_PATH] = {};
-    DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Fonts\\SegoeUI_18.spritefont");
+    DX::FindMediaFile(strFilePath, MAX_PATH, L"SegoeUI_18.spritefont");
     m_smallFont = std::make_unique<SpriteFont>(device, resourceUpload,
         strFilePath,
         m_resourceDescriptors->GetCpuHandle(Descriptors::UIFont),
         m_resourceDescriptors->GetGpuHandle(Descriptors::UIFont));
 
-    DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Fonts\\XboxOneControllerLegendSmall.spritefont");
+    DX::FindMediaFile(strFilePath, MAX_PATH, L"XboxOneControllerLegendSmall.spritefont");
     m_ctrlFont = std::make_unique<SpriteFont>(device, resourceUpload,
         strFilePath,
         m_resourceDescriptors->GetCpuHandle(Descriptors::CtrlFont),

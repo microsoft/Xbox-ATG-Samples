@@ -103,7 +103,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(Console_SdkPackagesRoot);$(Console_SdkWindowsMetadataPath);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>NDEBUG;__WRL_NO_DEFAULT_LIB__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -131,7 +131,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalUsingDirectories>$(Console_SdkPackagesRoot);$(Console_SdkWindowsMetadataPath);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>NDEBUG;__WRL_NO_DEFAULT_LIB__;PROFILE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -154,7 +154,7 @@
     </Link>
     <ClCompile>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\DirectXTK\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <MinimalRebuild>false</MinimalRebuild>
       <AdditionalUsingDirectories>$(Console_SdkPackagesRoot);$(Console_SdkWindowsMetadataPath);%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
@@ -170,7 +170,6 @@
     <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h" />
     <ClInclude Include="MP4Reader.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="PlaySoundStreamVoiceContext.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h" />
@@ -208,6 +207,9 @@
     <None Include="..\..\..\Media\Fonts\XboxOneControllerSmall.spritefont">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="MP4Reader_Readme_ja-jp.docx" />
+    <None Include="MP4Reader_Readme_ko-kr.docx" />
+    <None Include="MP4Reader_Readme_zh-cn.docx" />
     <None Include="Readme.docx" />
   </ItemGroup>
   <ItemGroup>

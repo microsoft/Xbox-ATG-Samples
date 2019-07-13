@@ -14,6 +14,9 @@
     <Filter Include="Media">
       <UniqueIdentifier>{bd6987b4-f6d4-406d-8215-939cd7b800a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{cf0127e4-2d7e-404b-90b2-eed7a5cbc93c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -72,6 +75,17 @@
     <None Include="..\..\..\Media\Fonts\Courier_16.spritefont">
       <Filter>Media</Filter>
     </None>
-    <None Include="..\Readme.docx" />
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimplePLM_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimplePLM_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimplePLM_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
 </Project>

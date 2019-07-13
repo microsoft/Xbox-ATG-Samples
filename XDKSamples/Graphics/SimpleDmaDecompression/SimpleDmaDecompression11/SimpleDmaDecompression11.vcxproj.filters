@@ -14,6 +14,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{45c43555-e1b0-45e3-b01b-6dd6f35fc78f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{6eab10ad-0814-41f7-a522-6ffd9f7e72b8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -76,7 +79,18 @@
     <None Include="..\Media\Textures\kittens.dds.dcmp">
       <Filter>Assets</Filter>
     </None>
-    <None Include="..\Readme.docx" />
+    <None Include="..\Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="..\SimpleDmaDecompression_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="..\SimpleDmaDecompression_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="..\SimpleDmaDecompression_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\MediaList.txt" />

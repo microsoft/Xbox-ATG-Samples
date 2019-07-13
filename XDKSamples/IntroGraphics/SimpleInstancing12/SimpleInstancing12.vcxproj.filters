@@ -14,6 +14,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{eb377b19-da7a-46eb-93a1-4eb398650615}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{b6e380eb-62c6-467e-b0a1-a668c24ab755}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -80,7 +83,6 @@
     <None Include="SimpleInstancing.hlsli">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Readme.docx" />
     <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
       <Filter>Assets</Filter>
     </None>
@@ -92,6 +94,18 @@
     </None>
     <None Include="..\..\..\Media\Fonts\XboxOneControllerLegend.spritefont">
       <Filter>Assets</Filter>
+    </None>
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleInstancing12_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleInstancing12_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleInstancing12_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
     </None>
   </ItemGroup>
 </Project>

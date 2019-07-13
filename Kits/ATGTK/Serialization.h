@@ -780,7 +780,7 @@ namespace ATG
                 static_cast<const HasVisitActions*>(this)->VisitAction(inst, ctx);
             }
 
-            void ConstVisitAction(const T &inst, ConstVisitorContext &ctx) const
+            void ConstVisitAction(const T &inst, ConstVisitorContext &ctx) const override
             {
                 static_cast<const HasVisitActions*>(this)->ConstVisitAction(inst, ctx);
             }
@@ -899,7 +899,7 @@ namespace ATG
     template<typename ClassType, typename ConstVisitorCallable, typename VisitorCallable>
     void VisitDirect(ClassVisitorActions<ClassType> &actions, ConstVisitorCallable constVisitorCallable, VisitorCallable visitorCallable)
     {
-        actions.AddVisitorAction<VisitDirectActions<ClassType, ConstVisitorCallable, VisitorCallable>>(constVisitorCallable, visitorCallable);
+        actions.template AddVisitorAction<VisitDirectActions<ClassType, ConstVisitorCallable, VisitorCallable>>(constVisitorCallable, visitorCallable);
     }
 
     // Visit a class member
@@ -935,7 +935,7 @@ namespace ATG
     template<typename ClassType, typename MmbrType>
     void VisitMember(ClassVisitorActions<ClassType> &actions, MmbrType ClassType::*mbr)
     {
-        actions.AddVisitorAction<VisitMemberAction<ClassType, MmbrType>>(mbr);
+        actions.template AddVisitorAction<VisitMemberAction<ClassType, MmbrType>>(mbr);
     }
 
     // Visit a collection of elements that is pointed to by a unique_ptr
@@ -989,7 +989,7 @@ namespace ATG
     template<typename ClassType, typename EltType, typename CountType>
     void VisitUniquePointerCollection(ClassVisitorActions<ClassType> &actions, std::unique_ptr<EltType> ClassType::*UPP, CountType ClassType::*count)
     {
-        actions.AddVisitorAction<VisitUniquePointerCollectionAction<ClassType, EltType, CountType>>(UPP, count);
+        actions.template AddVisitorAction<VisitUniquePointerCollectionAction<ClassType, EltType, CountType>>(UPP, count);
     }
 
     // Visit one or zero elements pointed to by a unique_ptr
@@ -1008,12 +1008,12 @@ namespace ATG
         {
         }
 
-        void VisitAction(ClassType &inst, VisitorContext &ctx) const
+        void VisitAction(ClassType &inst, VisitorContext &ctx) const override
         {
             VisitorAdapter(ctx).VisitCollection<ClassType, EltType>(inst, *this);
         }
 
-        void ConstVisitAction(const ClassType &inst, ConstVisitorContext & ctx) const
+        void ConstVisitAction(const ClassType &inst, ConstVisitorContext & ctx) const override
         {
             ConstVisitorAdapter(ctx).VisitCollection<ClassType, EltType>(inst, *this);
         }
@@ -1099,7 +1099,7 @@ namespace ATG
     template<typename ClassType, typename EltType>
     void VisitVectorCollection(ClassVisitorActions<ClassType> &actions, std::vector<EltType> ClassType::*VecP)
     {
-        actions.AddVisitorAction<VisitVectorCollectionAction<ClassType, EltType>>(VecP);
+        actions.template AddVisitorAction<VisitVectorCollectionAction<ClassType, EltType>>(VecP);
     }
 
     // Visit a collection of chars contained in a std::string
@@ -1148,7 +1148,7 @@ namespace ATG
     template<typename ClassType>
     void VisitString(ClassVisitorActions<ClassType> &actions, std::string ClassType::*StrP)
     {
-        actions.AddVisitorAction<VisitStringAction<ClassType>>(StrP);
+        actions.template AddVisitorAction<VisitStringAction<ClassType>>(StrP);
     }
 
     // Visit a collection of elements using functions to get and set the collection elements
@@ -1177,12 +1177,12 @@ namespace ATG
             , m_eltsSetter(eltsSetter)
         {}
 
-        void VisitAction(ClassType &inst, VisitorContext &ctx) const
+        void VisitAction(ClassType &inst, VisitorContext &ctx) const override
         {
             VisitorAdapter(ctx).VisitCollection<ClassType, EltType>(inst, m_eltsSetter);
         }
 
-        void ConstVisitAction(const ClassType &inst, ConstVisitorContext &ctx) const
+        void ConstVisitAction(const ClassType &inst, ConstVisitorContext &ctx) const override
         {
             ConstVisitorAdapter(ctx).VisitCollection<ClassType, EltType>(inst, m_constEltsGetter);
         }
@@ -1237,7 +1237,7 @@ namespace ATG
     template<typename ClassType, typename EltType, typename GetActionType, typename SetActionType>
     void VisitGetterSetter(ClassVisitorActions<ClassType> &actions, GetActionType getter, SetActionType setter)
     {
-        actions.AddVisitorAction<VisitGetterSetterAction<ClassType, EltType, GetActionType, SetActionType>>(getter, setter);
+        actions.template AddVisitorAction<VisitGetterSetterAction<ClassType, EltType, GetActionType, SetActionType>>(getter, setter);
     }
 
     // Template function to create a class visitor for your class
@@ -1326,8 +1326,8 @@ namespace ATG
     {
     public:
         VectorSerializationBuffer(std::vector<uint8_t> &buffer)
-            : m_buffer(buffer)
-            , m_bytesWritten(0)
+            : m_bytesWritten(0)
+            , m_buffer(buffer)
         {
         }
 

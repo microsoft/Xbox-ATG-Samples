@@ -11,6 +11,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>525a5e7a-3604-484d-bd06-4e0b11aed472</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{a38315f0-f189-49fd-a6ef-802f33299e8a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -85,9 +88,20 @@
     <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
       <Filter>Assets</Filter>
     </None>
-    <None Include="Readme.docx" />
     <None Include="..\..\..\Media\Fonts\XboxOneControllerSmall.spritefont">
       <Filter>Assets</Filter>
+    </None>
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleWASAPICaptureXDK_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleWASAPICaptureXDK_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleWASAPICaptureXDK_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
     </None>
   </ItemGroup>
 </Project>

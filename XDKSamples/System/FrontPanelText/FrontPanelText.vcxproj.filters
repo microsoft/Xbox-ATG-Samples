@@ -14,6 +14,9 @@
     <Filter Include="Assets\RasterFonts">
       <UniqueIdentifier>{cef3694d-314b-46ce-8c21-9239c8edbf3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{3b2ea951-ab4b-4d79-8dc1-13155b6262fa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -99,7 +102,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="readme.docx" />
     <None Include="Assets\ArialBlack12.rasterfont">
       <Filter>Assets\RasterFonts</Filter>
     </None>
@@ -198,6 +200,18 @@
     </None>
     <None Include="Assets\Xbox64.rasterfont">
       <Filter>Assets\RasterFonts</Filter>
+    </None>
+    <None Include="readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="FrontPanelText_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="FrontPanelText_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="FrontPanelText_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
     </None>
   </ItemGroup>
 </Project>

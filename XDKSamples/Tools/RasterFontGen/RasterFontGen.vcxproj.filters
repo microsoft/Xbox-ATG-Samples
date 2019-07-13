@@ -4,6 +4,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>{c6391268-837a-4b32-b01f-28a0fcfde7d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{5b969b1b-6d26-434b-ba76-8e6a54372463}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -42,6 +45,17 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="readme.docx" />
+    <None Include="readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="RasterFontGen_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="RasterFontGen_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="RasterFontGen_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
 </Project>

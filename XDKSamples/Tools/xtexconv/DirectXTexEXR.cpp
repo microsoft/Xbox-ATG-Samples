@@ -8,7 +8,7 @@
 //--------------------------------------------------------------------------------------
 
 //Uncomment if you add DirectXTexEXR to your copy of the DirectXTex library
-//#include "DirectXTexp.h"
+//#include "DirectXTexP.h"
 
 #include "DirectXTexEXR.h"
 

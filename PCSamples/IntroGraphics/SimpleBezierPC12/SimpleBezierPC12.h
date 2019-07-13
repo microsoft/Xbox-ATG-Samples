@@ -14,7 +14,7 @@
 
 // A basic sample implementation that creates a D3D12 device and
 // provides a render loop.
-class Sample : public DX::IDeviceNotify
+class Sample final : public DX::IDeviceNotify
 {
 public:
 

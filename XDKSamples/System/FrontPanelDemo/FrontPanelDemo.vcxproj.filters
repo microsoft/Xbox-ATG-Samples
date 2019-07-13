@@ -26,6 +26,9 @@
     <Filter Include="FrontPanelScreens">
       <UniqueIdentifier>{03669fc9-d9b2-4af4-b3aa-06807bc73436}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{9da42440-dc3b-4dcc-b57e-1bb7a16a8afe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -343,9 +346,20 @@
     <None Include="Assets\Symbols32.rasterfont">
       <Filter>Fonts</Filter>
     </None>
-    <None Include="readme.docx" />
     <None Include="genfonts.cmd">
       <Filter>Fonts</Filter>
+    </None>
+    <None Include="readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="FrontPanelDemo_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="FrontPanelDemo_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="FrontPanelDemo_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

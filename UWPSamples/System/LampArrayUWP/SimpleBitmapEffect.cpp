@@ -88,11 +88,10 @@ void SimpleBitmapEffect::UpdateBitmap(
     LampArrayBitmapEffect^ effect,
     LampArrayBitmapRequestedEventArgs^ args)
 {
-	Windows::Graphics::Imaging::SoftwareBitmap^ bitmap = ref new Windows::Graphics::Imaging::SoftwareBitmap(Windows::Graphics::Imaging::BitmapPixelFormat::Rgba8,
-		effect->SuggestedBitmapSize.Width, effect->SuggestedBitmapSize.Height);
-
+	auto bitmap = ref new Windows::Graphics::Imaging::SoftwareBitmap(Windows::Graphics::Imaging::BitmapPixelFormat::Rgba8,
+		static_cast<int>(effect->SuggestedBitmapSize.Width), static_cast<int>(effect->SuggestedBitmapSize.Height));
 	{
-		Windows::Graphics::Imaging::BitmapBuffer^ buffer = bitmap->LockBuffer(Windows::Graphics::Imaging::BitmapBufferAccessMode::Write);
+		auto buffer = bitmap->LockBuffer(Windows::Graphics::Imaging::BitmapBufferAccessMode::Write);
 		{
 			Windows::Foundation::IMemoryBufferReference^ reference = buffer->CreateReference();
 			{

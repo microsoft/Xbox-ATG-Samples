@@ -7,8 +7,6 @@
 // Licensed under the MIT License.
 //-------------------------------------------------------------------------------------
 
-#pragma once
-
 #include "pch.h"
 #include "RenderTexture.h"
 
@@ -30,13 +28,13 @@ using Microsoft::WRL::ComPtr;
 // Direct3D 12
 //======================================================================================
 RenderTexture::RenderTexture(DXGI_FORMAT format) :
-    m_format(format),
-    m_width(0),
-    m_height(0),
     m_state(D3D12_RESOURCE_STATE_COMMON),
     m_srvDescriptor{},
     m_rtvDescriptor{},
-    m_clearColor{}
+    m_clearColor{},
+    m_format(format),
+    m_width(0),
+    m_height(0)
 {
 }
 
@@ -151,6 +149,9 @@ void RenderTexture::TransitionTo(_In_ ID3D12GraphicsCommandList* commandList, D3
 // Direct3D 11
 //======================================================================================
 RenderTexture::RenderTexture(DXGI_FORMAT format) :
+#if defined(_XBOX_ONE) && defined(_TITLE)
+    m_fastSemantics(false),
+#endif
     m_format(format),
     m_width(0),
     m_height(0)
@@ -291,8 +292,8 @@ void RenderTexture::EndScene(_In_ ID3D11DeviceContextX* context)
 void RenderTexture::SetWindow(const RECT& output)
 {
     // Determine the render target size in pixels.
-    size_t width = std::max<size_t>(output.right - output.left, 1);
-    size_t height = std::max<size_t>(output.bottom - output.top, 1);
+    auto width = size_t(std::max<LONG>(output.right - output.left, 1));
+    auto height = size_t(std::max<LONG>(output.bottom - output.top, 1));
 
     SizeResources(width, height);
 }

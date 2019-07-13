@@ -328,7 +328,7 @@ void Sample::CreateDeviceDependentResources()
     txtDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
     wchar_t buff[MAX_PATH];
-    DX::FindMediaFile(buff, MAX_PATH, L"Media\\Textures\\sunset.jpg");
+    DX::FindMediaFile(buff, MAX_PATH, L"sunset.jpg");
     auto image = LoadBGRAImage(buff, txtDesc.Width, txtDesc.Height);
 
     initialData.pSysMem = image.data();

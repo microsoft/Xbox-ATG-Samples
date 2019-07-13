@@ -14,6 +14,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{03b0bf25-c564-4293-94a4-3d194d170694}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{0e583c72-f59d-4d7d-a8d5-7b511c076736}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -93,12 +96,23 @@
     <None Include="Assets\SimpleBezier.hlsli">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Readme.docx" />
     <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
       <Filter>Assets</Filter>
     </None>
     <None Include="..\..\..\Media\Fonts\XboxOneControllerLegend.spritefont">
       <Filter>Assets</Filter>
+    </None>
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleBezier_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleBezier_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleBezier_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

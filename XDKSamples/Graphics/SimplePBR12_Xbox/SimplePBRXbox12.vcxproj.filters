@@ -47,6 +47,9 @@
     <Filter Include="Assets\Fonts">
       <UniqueIdentifier>{7dfae8d3-923a-4fa3-99a0-926e661567d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{31bbd521-6053-4d88-81b4-45e82327c924}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Xbox\DeviceResources.h">
@@ -180,7 +183,6 @@
     <None Include="..\..\..\Media\PBR\XboxOrb\XboxOrb.sdkmesh">
       <Filter>Assets\Models\XboxOrb</Filter>
     </None>
-    <None Include="Readme.docx" />
     <None Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_Common.hlsli">
       <Filter>ATG Tool Kit\PBREffect</Filter>
     </None>
@@ -213,6 +215,18 @@
     </None>
     <None Include="..\..\..\Kits\ATGTK\PBREffect\PixelPacking_Velocity.hlsli">
       <Filter>ATG Tool Kit\PBREffect</Filter>
+    </None>
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimplePBR12_Xbox_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimplePBR12_Xbox_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimplePBR12_Xbox_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

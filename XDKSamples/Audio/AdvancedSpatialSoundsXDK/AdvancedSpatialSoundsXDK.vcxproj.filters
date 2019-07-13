@@ -11,6 +11,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>{e4d804ca-14eb-4f67-8112-df83634be576}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{0dbaddbe-4fda-466f-9fe2-148d5795f3dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -154,9 +157,20 @@
     <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
       <Filter>Assets</Filter>
     </None>
-    <None Include="Readme.docx" />
     <None Include="..\..\..\Media\Fonts\XboxOneControllerSmall.spritefont">
       <Filter>Assets</Filter>
+    </None>
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="AdvancedSpatialSoundsXDK_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="AdvancedSpatialSoundsXDK_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="AdvancedSpatialSoundsXDK_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
     </None>
   </ItemGroup>
 </Project>

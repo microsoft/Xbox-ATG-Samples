@@ -285,7 +285,7 @@ void Sample::CreateDeviceDependentResources()
     }
 
     wchar_t mediabuff[MAX_PATH];
-    DX::FindMediaFile(mediabuff, MAX_PATH, L"Media\\Videos\\SampleVideo.mp4");
+    DX::FindMediaFile(mediabuff, MAX_PATH, L"SampleVideo.mp4");
 
     m_player = std::make_unique<MediaEnginePlayer>();
     m_player->Initialize(m_deviceResources->GetDXGIFactory(), device, DXGI_FORMAT_B8G8R8A8_UNORM);
@@ -305,13 +305,13 @@ void Sample::CreateDeviceDependentResources()
         m_spriteBatch = std::make_unique<SpriteBatch>(device, resourceUpload, pd);
     }
 
-    DX::FindMediaFile(mediabuff, MAX_PATH, L"Media\\Fonts\\SegoeUI_18.spritefont");
+    DX::FindMediaFile(mediabuff, MAX_PATH, L"SegoeUI_18.spritefont");
     m_smallFont = std::make_unique<SpriteFont>(device, resourceUpload,
         mediabuff,
         m_resourceDescriptors->GetCpuHandle(Descriptors::TextFont),
         m_resourceDescriptors->GetGpuHandle(Descriptors::TextFont));
 
-    DX::FindMediaFile(mediabuff, MAX_PATH, L"Media\\Fonts\\XboxOneControllerLegendSmall.spritefont");
+    DX::FindMediaFile(mediabuff, MAX_PATH, L"XboxOneControllerLegendSmall.spritefont");
     m_ctrlFont = std::make_unique<SpriteFont>(device, resourceUpload,
         mediabuff,
         m_resourceDescriptors->GetCpuHandle(Descriptors::ControllerFont),

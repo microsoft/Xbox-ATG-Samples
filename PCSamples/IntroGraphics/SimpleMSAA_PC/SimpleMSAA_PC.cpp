@@ -276,7 +276,7 @@ void Sample::CreateDeviceDependentResources()
     m_fxFactory = std::make_unique<EffectFactory>(device);
 
     wchar_t strFilePath[MAX_PATH] = {};
-    DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Meshes\\AliasSampleCityBlock\\CityBlockConcrete.sdkmesh");
+    DX::FindMediaFile(strFilePath, MAX_PATH, L"AliasSampleCityBlock\\CityBlockConcrete.sdkmesh");
 
     {
         wchar_t drive[_MAX_DRIVE];
@@ -297,10 +297,10 @@ void Sample::CreateDeviceDependentResources()
     m_world = Matrix::Identity;
 
     // Load UI.
-    DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Fonts\\SegoeUI_18.spritefont");
+    DX::FindMediaFile(strFilePath, MAX_PATH, L"SegoeUI_18.spritefont");
     m_smallFont = std::make_unique<SpriteFont>(device, strFilePath);
 
-    DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Fonts\\XboxOneControllerLegendSmall.spritefont");
+    DX::FindMediaFile(strFilePath, MAX_PATH, L"XboxOneControllerLegendSmall.spritefont");
     m_ctrlFont = std::make_unique<SpriteFont>(device, strFilePath);
 
     //

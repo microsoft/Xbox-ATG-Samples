@@ -20,6 +20,9 @@
     <Filter Include="Assets\textures">
       <UniqueIdentifier>{8bff1eac-0bdb-40be-baaf-bf29b7da389b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{1a96e6ce-d18c-49ab-9568-a1ff00b8574c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -224,7 +227,18 @@
     <None Include="Assets\mesh\seafloor.sdkmesh">
       <Filter>Assets\mesh</Filter>
     </None>
-    <None Include="readme.docx" />
+    <None Include="readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="FrontPanelDolphin_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="FrontPanelDolphin_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="FrontPanelDolphin_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="CausticsPS.hlsl">

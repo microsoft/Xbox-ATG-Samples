@@ -20,6 +20,9 @@
     <Filter Include="Assets\Models">
       <UniqueIdentifier>{ff2ff365-4796-4c98-bd83-b56ba0ec2261}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{74fc201d-67ac-46bf-b1b8-177d0085c530}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -102,6 +105,17 @@
     <None Include="..\..\..\Media\Meshes\MicroscopeCity\scanner.sdkmesh">
       <Filter>Assets\Models</Filter>
     </None>
-    <None Include="ReadMe.docx" />
+    <None Include="ReadMe.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleESRAM_ReadMe_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleESRAM_ReadMe_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleESRAM_ReadMe_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
 </Project>

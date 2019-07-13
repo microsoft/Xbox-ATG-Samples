@@ -126,6 +126,9 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Readme.docx" />
+    <None Include="XTexConv_Readme_ja-jp.docx" />
+    <None Include="XTexConv_Readme_ko-kr.docx" />
+    <None Include="XTexConv_Readme_zh-cn.docx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DirectXTexEXR.h" />

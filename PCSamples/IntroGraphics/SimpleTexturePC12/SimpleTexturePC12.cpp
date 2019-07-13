@@ -427,7 +427,7 @@ void Sample::CreateDeviceDependentResources()
         txtDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 
         wchar_t buff[MAX_PATH];
-        DX::FindMediaFile(buff, MAX_PATH, L"Media\\Textures\\sunset.jpg");
+        DX::FindMediaFile(buff, MAX_PATH, L"sunset.jpg");
 
         UINT width, height;
         auto image = LoadBGRAImage(buff, width, height);

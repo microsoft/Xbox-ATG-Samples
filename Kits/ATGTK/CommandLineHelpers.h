@@ -20,7 +20,7 @@ namespace ATG
     template<size_t _SIZE>
     inline bool LookupByName(const wchar_t *name, const SValue(&table)[_SIZE], unsigned &result)
     {
-        for (int i = 0; i < _SIZE; ++i)
+        for (size_t i = 0; i < _SIZE; ++i)
         {
             if (!_wcsicmp(name, table[i].name))
             {
@@ -34,7 +34,7 @@ namespace ATG
     template<size_t _SIZE>
     inline const wchar_t *LookupByValue(unsigned value, const SValue(&table)[_SIZE])
     {
-        for (int i = 0; i < _SIZE; ++i)
+        for (size_t i = 0; i < _SIZE; ++i)
         {
             if (value == table[i].value)
                 return table[i].name;
@@ -63,7 +63,7 @@ namespace ATG
     inline void PrintTable(size_t indent, const SValue(&table)[_SIZE])
     {
         size_t idt = indent;
-        for (int i = 0; i < _SIZE; ++i)
+        for (size_t i = 0; i < _SIZE; ++i)
         {
             size_t cchName = wcslen(table[i].name);
 

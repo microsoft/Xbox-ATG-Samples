@@ -11,6 +11,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>ea61997b-9f47-483e-bc4a-8ae0236dfe1c</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{96936faa-37a3-41df-9c17-865ba57f0999}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -59,9 +62,20 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.docx" />
     <None Include="..\..\..\Media\Fonts\SegoeUI_24.spritefont">
       <Filter>Assets</Filter>
+    </None>
+    <None Include="ReadMe.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="WheelTest_ReadMe_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="WheelTest_ReadMe_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="WheelTest_ReadMe_zh-cn.docx">
+      <Filter>Documentation</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

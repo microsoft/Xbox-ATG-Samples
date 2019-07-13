@@ -14,6 +14,9 @@
     <Filter Include="CPU Tool Kit">
       <UniqueIdentifier>{31ca5c82-336f-4695-9a1f-9428a6ac906b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{485ae72f-6b02-40df-b243-cf9850857501}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -77,6 +80,17 @@
     <None Include="..\..\..\Media\Fonts\XboxOneController.spritefont">
       <Filter>Assets</Filter>
     </None>
-    <None Include="Readme.docx" />
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="AsynchronousIO_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="AsynchronousIO_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="AsynchronousIO_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -23,6 +23,9 @@
     <Filter Include="Standard Sample Files\ATG Tool Kit\FullScreenQuad">
       <UniqueIdentifier>{0fbf4752-a7d3-4b8e-86a9-c715dab31768}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{cad27d5f-3ec7-4f4e-8186-f97465c7150c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StepTimer.h">
@@ -99,7 +102,6 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Readme.docx" />
     <None Include="..\..\..\Media\Fonts\Courier_36.spritefont">
       <Filter>Standard Sample Files\Assets</Filter>
     </None>
@@ -111,6 +113,18 @@
     </None>
     <None Include="..\..\..\Kits\ATGTK\FullScreenQuad\FullScreenQuad.hlsli">
       <Filter>Standard Sample Files\ATG Tool Kit\FullScreenQuad</Filter>
+    </None>
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleHDR12_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleHDR12_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleHDR12_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

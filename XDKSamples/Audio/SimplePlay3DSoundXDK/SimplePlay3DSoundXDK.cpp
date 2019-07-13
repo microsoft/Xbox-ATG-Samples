@@ -166,14 +166,14 @@ void Sample::SetupEnvironment()
     memset(&m_X3DListener, 0, sizeof(X3DAUDIO_LISTENER));
     memset(&m_X3DEmitter, 0, sizeof(X3DAUDIO_EMITTER));
 
-    //Listener is facing the top of the screen
+    //Listener is facing the bottom of the screen
     m_X3DListener.OrientFront.y = -1.0f;
     m_X3DListener.OrientTop.z = 1.0f;
     m_listenerAngle = 0.0f;
 
-    //Emitter is facing the bottom of the screen
+    //Emitter is facing the top of the screen
     m_X3DEmitter.OrientFront.y = 1.0f;
-    m_X3DEmitter.OrientTop.z = 1.0f;
+    m_X3DEmitter.OrientTop.z = -1.0f;
     m_emitterAngle = X3DAUDIO_PI;
 
     //Audio in use is in mono

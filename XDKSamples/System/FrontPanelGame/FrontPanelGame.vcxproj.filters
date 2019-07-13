@@ -11,6 +11,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>{86f8f69d-1925-416e-a173-bc0f81288f3b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{fdbfce04-f095-46f6-865e-baf703217fe8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -107,6 +110,17 @@
     <None Include="Assets\LucidaConsole12.rasterfont">
       <Filter>Assets</Filter>
     </None>
-    <None Include="readme.docx" />
+    <None Include="readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="FrontPanelGame_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="FrontPanelGame_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="FrontPanelGame_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
 </Project>

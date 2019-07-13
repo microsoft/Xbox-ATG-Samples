@@ -11,6 +11,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>d6488a1b-1fc6-4b15-9041-7be877a51d5b</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{8b57029b-0e80-4a55-8560-c5b1d7590d97}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -79,7 +82,18 @@
     <None Include="..\Media\Textures\kittens.dds.dcmp">
       <Filter>Assets</Filter>
     </None>
-    <None Include="..\Readme.docx" />
+    <None Include="..\Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="..\SimpleDmaDecompression_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="..\SimpleDmaDecompression_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="..\SimpleDmaDecompression_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\MediaList.txt" />

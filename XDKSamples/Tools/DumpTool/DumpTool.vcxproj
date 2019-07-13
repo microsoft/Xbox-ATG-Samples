@@ -79,7 +79,7 @@
       <ForcedUsingFiles />
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\Kits\ATGTK\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\ATGTK\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -101,7 +101,7 @@
       <CompileAsWinRT>false</CompileAsWinRT>
       <ForcedUsingFiles />
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\Kits\ATGTK\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\ATGTK\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,6 +127,9 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="DumpTool_Readme_ja-jp.docx" />
+    <None Include="DumpTool_Readme_ko-kr.docx" />
+    <None Include="DumpTool_Readme_zh-cn.docx" />
     <None Include="Readme.docx" />
     <None Include="runCommand.bat" />
   </ItemGroup>

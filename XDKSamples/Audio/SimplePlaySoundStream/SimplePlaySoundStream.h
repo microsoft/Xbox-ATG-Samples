@@ -21,7 +21,7 @@ struct PlaySoundStreamVoiceContext : public IXAudio2VoiceCallback
 	virtual void OnVoiceProcessingPassEnd() override {}
 	virtual void OnStreamEnd() override {}
 	virtual void OnBufferStart(void*) override {}
-	void OnBufferEnd(void* pBufferContext)
+	void OnBufferEnd(void* pBufferContext) override
 	{
 		SetEvent(m_hBufferEndEvent);
 		//

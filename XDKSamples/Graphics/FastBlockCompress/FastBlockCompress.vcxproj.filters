@@ -17,6 +17,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{31d8a8b3-6c46-487c-9ff9-84a5d7a4c7c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{7e955669-9661-4e72-a5a9-90be7c7d6e5c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -139,7 +142,18 @@
     <None Include="Shaders\BlockCompress.hlsli">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Readme.docx" />
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="FastBlockCompress_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="FastBlockCompress_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="FastBlockCompress_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\..\Kits\ATGTK\FullScreenQuad\FullScreenQuadPS.hlsl">

@@ -23,6 +23,9 @@
     <Filter Include="Standard Sample Files\ATG Tool Kit\FullScreenQuad">
       <UniqueIdentifier>{15065ebc-b5e7-454d-a857-0cc0d10931ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{e8e6dbce-e22d-4134-89cf-de116b309279}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -91,7 +94,6 @@
     <None Include="..\..\..\Media\Fonts\Courier_36.spritefont">
       <Filter>Standard Sample Files\Assets</Filter>
     </None>
-    <None Include="Readme.docx" />
     <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
       <Filter>Standard Sample Files\Assets</Filter>
     </None>
@@ -100,6 +102,18 @@
     </None>
     <None Include="..\..\..\Kits\ATGTK\FullScreenQuad\FullScreenQuad.hlsli">
       <Filter>Standard Sample Files\ATG Tool Kit\FullScreenQuad</Filter>
+    </None>
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleHDR_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleHDR_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleHDR_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

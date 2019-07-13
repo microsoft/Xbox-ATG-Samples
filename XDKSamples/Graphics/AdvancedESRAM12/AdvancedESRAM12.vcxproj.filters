@@ -26,6 +26,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{6f2d3624-a8a6-438f-bbe3-9305203cd63d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{d7a447c1-6c6f-45d3-8394-23d12e23b4aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -147,9 +150,20 @@
     <None Include="..\..\..\Media\Meshes\MicroscopeCity\scanner.sdkmesh">
       <Filter>Assets\Models</Filter>
     </None>
-    <None Include="ReadMe.docx" />
     <None Include="PageAllocator.inl">
       <Filter>TransientAllocator</Filter>
+    </None>
+    <None Include="ReadMe.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="AdvancedESRAM12_ReadMe_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="AdvancedESRAM12_ReadMe_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="AdvancedESRAM12_ReadMe_zh-cn.docx">
+      <Filter>Documentation</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

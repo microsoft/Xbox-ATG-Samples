@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27428.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleTriangleCppWinRT_UWP12", "SimpleTriangleCppWinRT_UWP12.vcxproj", "{3F39F353-2E25-4A5B-8300-DD76281A408E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK12", "..\..\..\Kits\DirectXTK12\DirectXTK_Windows10.vcxproj", "{945B8F0E-AE5F-447C-933A-9D069532D3E4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK12", "..\..\..\Kits\DirectXTK12\DirectXTK_Windows10_2017.vcxproj", "{945B8F0E-AE5F-447C-933A-9D069532D3E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

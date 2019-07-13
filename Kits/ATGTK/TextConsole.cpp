@@ -31,7 +31,6 @@ TextConsole::TextConsole()
     Clear();
 }
 
-
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__)
 _Use_decl_annotations_
 TextConsole::TextConsole(
@@ -65,7 +64,6 @@ TextConsole::TextConsole(ID3D11DeviceContext* context, const wchar_t* fontName)
 }
 #endif
 
-
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__)
 void TextConsole::Render(_In_ ID3D12GraphicsCommandList* commandList)
 #else
@@ -81,7 +79,7 @@ void TextConsole::Render()
 
     float x = float(m_layout.left);
     float y = float(m_layout.top);
-    
+
     XMVECTOR foregroundColor = XMLoadFloat4(&m_foregroundColor);
 
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__)
@@ -90,8 +88,8 @@ void TextConsole::Render()
     m_batch->Begin();
 #endif
 
-    unsigned int textLine = unsigned int(m_currentLine + 1) % m_rows;
-    
+    auto textLine = static_cast<unsigned int>(m_currentLine + 1) % m_rows;
+
     for (unsigned int line = 0; line < m_rows; ++line)
     {
         XMFLOAT2 pos(x, y + lineSpacing * float(line));
@@ -102,12 +100,11 @@ void TextConsole::Render()
             m_font->DrawString(m_batch.get(), m_lines[textLine].m_text, pos, XMColorEqual(lineColor, Line::s_defaultColor) ? foregroundColor : lineColor);
         }
 
-        textLine = unsigned int(textLine + 1) % m_rows;
+        textLine = static_cast<unsigned int>(textLine + 1) % m_rows;
     }
 
     m_batch->End();
 }
-
 
 void TextConsole::Clear()
 {
@@ -125,17 +122,15 @@ void TextConsole::Clear()
             m_lines[line].SetColor();
         }
     }
-    
+
     m_currentColumn = m_currentLine = 0;
 }
-
 
 _Use_decl_annotations_
 void TextConsole::Write(const wchar_t* str)
 {
     Write(Line::s_defaultColor, str);
 }
-
 
 _Use_decl_annotations_
 void XM_CALLCONV TextConsole::Write(FXMVECTOR color, const wchar_t* str)
@@ -152,13 +147,11 @@ void XM_CALLCONV TextConsole::Write(FXMVECTOR color, const wchar_t* str)
 #endif
 }
 
-
 _Use_decl_annotations_
 void TextConsole::WriteLine(const wchar_t* str)
 {
     WriteLine(Line::s_defaultColor, str);
 }
-
 
 _Use_decl_annotations_
 void XM_CALLCONV TextConsole::WriteLine(FXMVECTOR color, const wchar_t* str)
@@ -177,7 +170,6 @@ void XM_CALLCONV TextConsole::WriteLine(FXMVECTOR color, const wchar_t* str)
 #endif
 }
 
-
 _Use_decl_annotations_
 void TextConsole::Format(const wchar_t* strFormat, ...)
 {
@@ -189,9 +181,8 @@ void TextConsole::Format(const wchar_t* strFormat, ...)
     va_end(argList);
 }
 
-
 _Use_decl_annotations_
-void XM_CALLCONV TextConsole::Format(CXMVECTOR color, const wchar_t* strFormat, ...)
+void TextConsole::Format(CXMVECTOR color, const wchar_t* strFormat, ...)
 {
     va_list argList;
     va_start(argList, strFormat);
@@ -201,13 +192,12 @@ void XM_CALLCONV TextConsole::Format(CXMVECTOR color, const wchar_t* strFormat, 
     va_end(argList);
 }
 
-
 _Use_decl_annotations_
-void XM_CALLCONV TextConsole::FormatImpl(FXMVECTOR color, const wchar_t* strFormat, va_list args)
+void TextConsole::FormatImpl(CXMVECTOR color, const wchar_t* strFormat, va_list args)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    size_t len = _vscwprintf(strFormat, args) + 1;
+    auto len = size_t(_vscwprintf(strFormat, args) + 1);
 
     if (m_tempBuffer.size() < len)
         m_tempBuffer.resize(len);
@@ -226,7 +216,6 @@ void XM_CALLCONV TextConsole::FormatImpl(FXMVECTOR color, const wchar_t* strForm
 #endif
 }
 
-
 void TextConsole::SetWindow(const RECT& layout)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -238,7 +227,7 @@ void TextConsole::SetWindow(const RECT& layout)
     float lineSpacing = m_font->GetLineSpacing();
     unsigned int rows = std::max<unsigned int>(1, static_cast<unsigned int>(float(layout.bottom - layout.top) / lineSpacing));
 
-    RECT fontLayout = m_font->MeasureDrawBounds(L"X", XMFLOAT2(0,0));
+    RECT fontLayout = m_font->MeasureDrawBounds(L"X", XMFLOAT2(0, 0));
     unsigned int columns = std::max<unsigned int>(1, static_cast<unsigned int>(float(layout.right - layout.left) / float(fontLayout.right - fontLayout.left)));
 
     std::unique_ptr<wchar_t[]> buffer(new wchar_t[(columns + 1) * rows]);
@@ -273,7 +262,6 @@ void TextConsole::SetWindow(const RECT& layout)
     }
 }
 
-
 void TextConsole::ReleaseDevice()
 {
     m_batch.reset();
@@ -282,7 +270,6 @@ void TextConsole::ReleaseDevice()
     m_context.Reset();
 #endif
 }
-
 
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__)
 _Use_decl_annotations_
@@ -303,7 +290,6 @@ void TextConsole::RestoreDevice(
 
     m_font->SetDefaultCharacter(L' ');
 }
-
 
 void TextConsole::SetViewport(const D3D12_VIEWPORT& viewPort)
 {
@@ -327,7 +313,6 @@ void TextConsole::RestoreDevice(ID3D11DeviceContext* context, const wchar_t* fon
     m_font->SetDefaultCharacter(L' ');
 }
 
-
 void TextConsole::SetViewport(const D3D11_VIEWPORT& viewPort)
 {
     if (m_batch)
@@ -337,7 +322,6 @@ void TextConsole::SetViewport(const D3D11_VIEWPORT& viewPort)
 }
 #endif
 
-
 void TextConsole::SetRotation(DXGI_MODE_ROTATION rotation)
 {
     if (m_batch)
@@ -345,7 +329,6 @@ void TextConsole::SetRotation(DXGI_MODE_ROTATION rotation)
         m_batch->SetRotation(rotation);
     }
 }
-
 
 _Use_decl_annotations_
 void TextConsole::ProcessString(FXMVECTOR color, const wchar_t* str)
@@ -396,7 +379,6 @@ void TextConsole::ProcessString(FXMVECTOR color, const wchar_t* str)
     }
 }
 
-
 void TextConsole::IncrementLine()
 {
     if (!m_lines)
@@ -406,7 +388,6 @@ void TextConsole::IncrementLine()
     m_currentColumn = 0;
     memset(m_lines[m_currentLine].m_text, 0, sizeof(wchar_t) * (m_columns + 1));
 }
-
 
 //--------------------------------------------------------------------------------------
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__)
@@ -422,7 +403,6 @@ TextConsoleImage::TextConsoleImage() :
 {
 }
 #endif
-
 
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__)
 _Use_decl_annotations_
@@ -451,7 +431,6 @@ TextConsoleImage::TextConsoleImage(ID3D11DeviceContext* context, const wchar_t* 
 }
 #endif
 
-
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__)
 void TextConsoleImage::Render(_In_ ID3D12GraphicsCommandList* commandList)
 {
@@ -476,24 +455,23 @@ void TextConsoleImage::Render()
 }
 #endif
 
-
 void TextConsoleImage::SetWindow(const RECT& fullscreen, bool useSafeRect)
 {
     m_fullscreen = fullscreen;
 
-    if ( useSafeRect )
+    if (useSafeRect)
     {
         TextConsole::SetWindow(
-            SimpleMath::Viewport::ComputeTitleSafeArea(fullscreen.right - fullscreen.left,
-                                                       fullscreen.bottom - fullscreen.top));
+            SimpleMath::Viewport::ComputeTitleSafeArea(UINT(fullscreen.right - fullscreen.left),
+                UINT(fullscreen.bottom - fullscreen.top)));
     }
     else
     {
         TextConsole::SetWindow(fullscreen);
     }
 
-    UINT width = std::max<UINT>(fullscreen.right - fullscreen.left, 1);
-    UINT height = std::max<UINT>(fullscreen.bottom - fullscreen.top, 1);
+    auto width = UINT(std::max<LONG>(fullscreen.right - fullscreen.left, 1));
+    auto height = UINT(std::max<LONG>(fullscreen.bottom - fullscreen.top, 1));
 
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__)
     D3D12_VIEWPORT vp = { 0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height),
@@ -505,14 +483,12 @@ void TextConsoleImage::SetWindow(const RECT& fullscreen, bool useSafeRect)
 #endif
 }
 
-
 void TextConsoleImage::ReleaseDevice()
 {
     TextConsole::ReleaseDevice();
 
     m_background.Reset();
 }
-
 
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__)
 _Use_decl_annotations_
@@ -549,8 +525,8 @@ void TextConsoleImage::RestoreDevice(
     SRVDesc.Format = desc.Format;
     SRVDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
     SRVDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-    SRVDesc.Texture2D.MipLevels = (!desc.MipLevels) ? -1 : desc.MipLevels;
-    
+    SRVDesc.Texture2D.MipLevels = (!desc.MipLevels) ? UINT(-1) : desc.MipLevels;
+
     device->CreateShaderResourceView(m_background.Get(), &SRVDesc, cpuDescriptorImage);
 
     m_bgGpuDescriptor = gpuDescriptorImage;

@@ -21,6 +21,8 @@
 
 #include <stdexcept>
 
+#pragma warning( disable : 4061 )
+
 using namespace DirectX;
 using namespace SimpleMath;
 
@@ -674,6 +676,9 @@ ATG::Help::Help(const wchar_t* title, const wchar_t* description, const HelpButt
             dpadYOffset[3] = c_fontSize18;
             dpadLabels = true;
             break;
+
+       default:
+            break;
         }
     }
 
@@ -729,6 +734,9 @@ ATG::Help::Help(const wchar_t* title, const wchar_t* description, const HelpButt
 
         case HelpID::DPAD_ALL:
             throw std::exception("Do not use DPAD_ALL in help array");
+            break;
+
+        default:
             break;
         }
     }
@@ -847,7 +855,7 @@ void ATG::Help::ReleaseDevice()
     m_primBatch.reset();
     m_lineEffect.reset();
 
-    for (int i = 0; i < _countof(m_spriteFonts); ++i)
+    for (size_t i = 0; i < _countof(m_spriteFonts); ++i)
     {
         m_spriteFonts[i].reset();
     }
@@ -883,22 +891,22 @@ void ATG::Help::RestoreDevice(ID3D12Device* device, ResourceUploadBatch& uploadB
 
 #if !defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP)
     wchar_t buff[MAX_PATH];
-    DX::FindMediaFile(buff, MAX_PATH, L"Media//Fonts//SegoeUI_18.spritefont");
+    DX::FindMediaFile(buff, MAX_PATH, L"SegoeUI_18.spritefont");
     m_spriteFonts[SEGOE_UI_18PT] = std::make_unique<SpriteFont>(device, uploadBatch, buff, m_descriptorHeap->GetCpuHandle(Descriptors::Segoe18), m_descriptorHeap->GetGpuHandle(Descriptors::Segoe18));
 
-    DX::FindMediaFile(buff, MAX_PATH, L"Media//Fonts//SegoeUI_22.spritefont");
+    DX::FindMediaFile(buff, MAX_PATH, L"SegoeUI_22.spritefont");
     m_spriteFonts[SEGOE_UI_22PT] = std::make_unique<SpriteFont>(device, uploadBatch, buff, m_descriptorHeap->GetCpuHandle(Descriptors::Segoe22), m_descriptorHeap->GetGpuHandle(Descriptors::Segoe22));
 
-    DX::FindMediaFile(buff, MAX_PATH, L"Media//Fonts//SegoeUI_36.spritefont");
+    DX::FindMediaFile(buff, MAX_PATH, L"SegoeUI_36.spritefont");
     m_spriteFonts[SEGOE_UI_36PT] = std::make_unique<SpriteFont>(device, uploadBatch, buff, m_descriptorHeap->GetCpuHandle(Descriptors::Segoe36), m_descriptorHeap->GetGpuHandle(Descriptors::Segoe36));
 
-    DX::FindMediaFile(buff, MAX_PATH, L"Media//Textures//callout_circle.dds");
+    DX::FindMediaFile(buff, MAX_PATH, L"callout_circle.dds");
     DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, buff, 0, D3D12_RESOURCE_FLAG_NONE, loadFlags, m_circleTex.ReleaseAndGetAddressOf()));
 
-    DX::FindMediaFile(buff, MAX_PATH, L"Media//Textures//gamepad.dds");
+    DX::FindMediaFile(buff, MAX_PATH, L"gamepad.dds");
     DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, buff, 0, D3D12_RESOURCE_FLAG_NONE, loadFlags, m_gamepadTex.ReleaseAndGetAddressOf()));
 
-    DX::FindMediaFile(buff, MAX_PATH, L"Media//Textures//ATGSampleBackground.DDS");
+    DX::FindMediaFile(buff, MAX_PATH, L"ATGSampleBackground.DDS");
     DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device, uploadBatch, buff, 0, D3D12_RESOURCE_FLAG_NONE, loadFlags, m_backgroundTex.ReleaseAndGetAddressOf()));
 #else
     m_spriteFonts[SEGOE_UI_18PT] = std::make_unique<SpriteFont>(device, uploadBatch, L"SegoeUI_18.spritefont", m_descriptorHeap->GetCpuHandle(Descriptors::Segoe18), m_descriptorHeap->GetGpuHandle(Descriptors::Segoe18));
@@ -950,22 +958,22 @@ void ATG::Help::RestoreDevice(ID3D11DeviceContext* context)
 
 #if !defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP)
     wchar_t buff[MAX_PATH];
-    DX::FindMediaFile(buff, MAX_PATH, L"Media//Fonts//SegoeUI_18.spritefont");
+    DX::FindMediaFile(buff, MAX_PATH, L"SegoeUI_18.spritefont");
     m_spriteFonts[SEGOE_UI_18PT] = std::make_unique<SpriteFont>(device.Get(), buff);
 
-    DX::FindMediaFile(buff, MAX_PATH, L"Media//Fonts//SegoeUI_22.spritefont");
+    DX::FindMediaFile(buff, MAX_PATH, L"SegoeUI_22.spritefont");
     m_spriteFonts[SEGOE_UI_22PT] = std::make_unique<SpriteFont>(device.Get(), buff);
 
-    DX::FindMediaFile(buff, MAX_PATH, L"Media//Fonts//SegoeUI_36.spritefont");
+    DX::FindMediaFile(buff, MAX_PATH, L"SegoeUI_36.spritefont");
     m_spriteFonts[SEGOE_UI_36PT] = std::make_unique<SpriteFont>(device.Get(), buff);
 
-    DX::FindMediaFile(buff, MAX_PATH, L"Media//Textures//callout_circle.dds");
+    DX::FindMediaFile(buff, MAX_PATH, L"callout_circle.dds");
     DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device.Get(), buff, 0, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, m_linearColors, nullptr, m_circleTex.ReleaseAndGetAddressOf()));
 
-    DX::FindMediaFile(buff, MAX_PATH, L"Media//Textures//gamepad.dds");
+    DX::FindMediaFile(buff, MAX_PATH, L"gamepad.dds");
     DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device.Get(), buff, 0, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, m_linearColors, nullptr, m_gamepadTex.ReleaseAndGetAddressOf()));
 
-    DX::FindMediaFile(buff, MAX_PATH, L"Media//Textures//ATGSampleBackground.DDS");
+    DX::FindMediaFile(buff, MAX_PATH, L"ATGSampleBackground.DDS");
     DX::ThrowIfFailed(CreateDDSTextureFromFileEx(device.Get(), buff, 0, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 0, 0, m_linearColors, nullptr, m_backgroundTex.ReleaseAndGetAddressOf()));
 #else
     m_spriteFonts[SEGOE_UI_18PT] = std::make_unique<SpriteFont>(device.Get(), L"SegoeUI_18.spritefont");

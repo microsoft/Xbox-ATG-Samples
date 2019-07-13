@@ -14,6 +14,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{1366a6c0-1c86-4105-a277-3a20e146cabd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{43645af6-69f2-4c81-a804-daec62a8b40f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -68,15 +71,24 @@
     <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
       <Filter>Assets</Filter>
     </None>
-    <None Include="Readme.docx" />
-    <None Include="PixelShader.hlsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="SimpleInstancing.hlsli">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="VertexShader.hlsl">
-      <Filter>Shaders</Filter>
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
     </None>
+    <None Include="SimpleInstancingPC_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleInstancingPC_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleInstancingPC_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="PixelShader.hlsl" />
+    <FxCompile Include="VertexShader.hlsl" />
   </ItemGroup>
 </Project>

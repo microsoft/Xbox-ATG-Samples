@@ -1,6 +1,8 @@
 //--------------------------------------------------------------------------------------
 // FrontPanelRenderTarget.h
 //
+// Microsoft Xbox One XDK for DirectX 11
+//
 // Advanced Technology Group (ATG)
 // Copyright (C) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------

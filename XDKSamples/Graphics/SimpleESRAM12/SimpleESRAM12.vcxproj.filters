@@ -20,6 +20,9 @@
     <Filter Include="Assets\Fonts">
       <UniqueIdentifier>{bbbd3c4a-9dff-4c7b-839c-cd67c6f7f327}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{9c939c80-a318-44ac-a562-ca92105e1902}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -99,6 +102,17 @@
     <None Include="..\..\..\Media\Meshes\MicroscopeCity\scanner.sdkmesh">
       <Filter>Assets\Models</Filter>
     </None>
-    <None Include="ReadMe.docx" />
+    <None Include="ReadMe.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleESRAM12_ReadMe_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleESRAM12_ReadMe_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleESRAM12_ReadMe_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
 </Project>

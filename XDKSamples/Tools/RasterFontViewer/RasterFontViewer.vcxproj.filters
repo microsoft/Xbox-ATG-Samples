@@ -42,8 +42,22 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>{44506a5a-d3ec-4ca5-be57-6245d14d42b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{c6ed55fa-7638-46bf-80ea-ea99186f4fc8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="readme.docx" />
+    <None Include="readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="RasterFontViewer_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="RasterFontViewer_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="RasterFontViewer_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
 </Project>

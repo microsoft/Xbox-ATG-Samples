@@ -14,6 +14,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{717c28bc-bf40-49f8-8bcd-2d8261e4b538}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{56f5fa7e-7cb5-4bf6-8e24-4dcaad112882}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -66,7 +69,18 @@
     <None Include="SimpleLighting.hlsli">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Readme.docx" />
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleLighting12_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleLighting12_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleLighting12_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="LambertPS.hlsl">

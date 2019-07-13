@@ -11,6 +11,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>c1e09952-1cce-416e-b7c0-2ae2f2bfc95d</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{b0705968-5cf6-4269-984a-2f8adc555c82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -65,10 +68,21 @@
     <ResourceCompile Include="etwproviderGenerated.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.docx" />
     <None Include="etwproviderGeneratedTEMP.BIN" />
     <None Include="etwproviderGeneratedTEMP.BIN.meta" />
     <None Include="etwproviderGenerated_MSG00001.bin" />
     <None Include="etwproviderGenerated_MSG00001.bin.meta" />
+    <None Include="ReadMe.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="CustomEventProvider_ReadMe_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="CustomEventProvider_ReadMe_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="CustomEventProvider_ReadMe_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
 </Project>

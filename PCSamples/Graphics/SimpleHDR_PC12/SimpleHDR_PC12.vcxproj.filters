@@ -23,6 +23,9 @@
     <Filter Include="Standard Sample Files\Shaders">
       <UniqueIdentifier>{1bbd79a6-8678-4783-b09d-353d49403b16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{7112a9ef-3c29-4124-8b93-f072527d3445}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -99,7 +102,18 @@
     <None Include="..\..\..\Kits\ATGTK\FullScreenQuad\FullScreenQuad.hlsli">
       <Filter>Standard Sample Files\ATG Tool Kit\FullScreenQuad</Filter>
     </None>
-    <None Include="Readme.docx" />
+    <None Include="Readme.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleHDR_PC12_Readme_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleHDR_PC12_Readme_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="SimpleHDR_PC12_Readme_zh-cn.docx">
+      <Filter>Documentation</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ColorPS.hlsl">

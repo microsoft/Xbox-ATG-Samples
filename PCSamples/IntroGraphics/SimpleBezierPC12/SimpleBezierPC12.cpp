@@ -465,13 +465,13 @@ void Sample::CreateDeviceDependentResources()
     m_batch = std::make_unique<SpriteBatch>(device, uploadBatch, pd);
 
     wchar_t strFilePath[MAX_PATH] = {};
-    DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Fonts\\SegoeUI_18.spritefont");
+    DX::FindMediaFile(strFilePath, MAX_PATH, L"SegoeUI_18.spritefont");
     m_smallFont = std::make_unique<SpriteFont>(device, uploadBatch,
         strFilePath,
         m_fontDescriptors->GetCpuHandle(Descriptors::Font1),
         m_fontDescriptors->GetGpuHandle(Descriptors::Font1));
 
-    DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Fonts\\XboxOneControllerLegendSmall.spritefont");
+    DX::FindMediaFile(strFilePath, MAX_PATH, L"XboxOneControllerLegendSmall.spritefont");
     m_ctrlFont = std::make_unique<SpriteFont>(device, uploadBatch,
         strFilePath,
         m_fontDescriptors->GetCpuHandle(Descriptors::CtrlFont1),

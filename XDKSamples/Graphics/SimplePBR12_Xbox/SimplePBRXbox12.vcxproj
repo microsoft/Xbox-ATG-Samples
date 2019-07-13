@@ -279,6 +279,9 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'">true</DeploymentContent>
     </None>
     <None Include="Readme.docx" />
+    <None Include="SimplePBR12_Xbox_Readme_ja-jp.docx" />
+    <None Include="SimplePBR12_Xbox_Readme_ko-kr.docx" />
+    <None Include="SimplePBR12_Xbox_Readme_zh-cn.docx" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\..\Kits\ATGTK\PBREffect\PBREffect_PSConstant.hlsl">

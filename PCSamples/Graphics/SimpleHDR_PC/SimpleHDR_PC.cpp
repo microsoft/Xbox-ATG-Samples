@@ -863,10 +863,10 @@ void Sample::CreateDeviceDependentResources()
     m_fullScreenQuad->Initialize(device);
     
     wchar_t strFilePath[MAX_PATH] = {};
-    DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Fonts\\Courier_36.spritefont");
+    DX::FindMediaFile(strFilePath, MAX_PATH, L"Courier_36.spritefont");
     m_font = std::make_unique<SpriteFont>(device, strFilePath);
     
-    DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Fonts\\XboxOneControllerLegendSmall.spritefont");
+    DX::FindMediaFile(strFilePath, MAX_PATH, L"XboxOneControllerLegendSmall.spritefont");
     m_controllerFont = std::make_unique<SpriteFont>(device, strFilePath);
     
     m_spriteBatch = std::make_unique<SpriteBatch>(context);

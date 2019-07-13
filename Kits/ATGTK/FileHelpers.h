@@ -53,7 +53,7 @@ namespace DX
     class auto_delete_file_wic
     {
     public:
-        auto_delete_file_wic(Microsoft::WRL::ComPtr<IWICStream>& hFile, LPCWSTR szFile) : m_handle(hFile), m_filename(szFile) {}
+        auto_delete_file_wic(Microsoft::WRL::ComPtr<IWICStream>& hFile, LPCWSTR szFile) :  m_filename(szFile), m_handle(hFile) {}
 
         auto_delete_file_wic(const auto_delete_file_wic&) = delete;
         auto_delete_file_wic& operator=(const auto_delete_file_wic&) = delete;

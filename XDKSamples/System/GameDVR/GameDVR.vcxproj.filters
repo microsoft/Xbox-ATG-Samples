@@ -11,6 +11,9 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>3e88b19d-f2e0-4a43-8531-0252dc02355d</UniqueIdentifier>
     </Filter>
+    <Filter Include="Documentation">
+      <UniqueIdentifier>{e67163de-d41e-4ca0-b65c-5db7789ac202}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -57,7 +60,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.docx" />
     <None Include="..\..\..\Media\Fonts\SegoeUI_24.spritefont">
       <Filter>Assets</Filter>
     </None>
@@ -66,6 +68,18 @@
     </None>
     <None Include="..\..\..\Media\Fonts\SegoeUI_48.spritefont">
       <Filter>Assets</Filter>
+    </None>
+    <None Include="ReadMe.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="GameDVR_ReadMe_ja-jp.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="GameDVR_ReadMe_ko-kr.docx">
+      <Filter>Documentation</Filter>
+    </None>
+    <None Include="GameDVR_ReadMe_zh-cn.docx">
+      <Filter>Documentation</Filter>
     </None>
   </ItemGroup>
 </Project>

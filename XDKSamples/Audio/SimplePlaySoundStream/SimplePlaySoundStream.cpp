@@ -119,7 +119,7 @@ void Sample::Render()
     }
 
     // Check to see if buffer has finished playing
-    if (!m_DoneSubmitting && m_pSourceVoice)
+    if (!m_DoneSubmitting && m_pSourceVoice && m_NumberOfBuffersProduced > 0)
     {
         XAUDIO2_VOICE_STATE state;
         m_pSourceVoice->GetState(&state, XAUDIO2_VOICE_NOSAMPLESPLAYED);

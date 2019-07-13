@@ -62,10 +62,10 @@ void Sample::Initialize(HWND window, int width, int height)
     m_retryDefault = false;
 
     wchar_t strFilePath[MAX_PATH];
-    DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Sounds\\adpcmdroid.xwb");
+    DX::FindMediaFile(strFilePath, MAX_PATH, L"adpcmdroid.xwb");
     m_waveBank = std::make_unique<WaveBank>(m_audEngine.get(), strFilePath);
 
-    DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Sounds\\MusicMono_adpcm.wav");
+    DX::FindMediaFile(strFilePath, MAX_PATH, L"MusicMono_adpcm.wav");
     m_soundEffect = std::make_unique<SoundEffect>(m_audEngine.get(), strFilePath);
     m_effect1 = m_soundEffect->CreateInstance();
     m_effect2 = m_waveBank->CreateInstance(10);
@@ -364,7 +364,7 @@ void Sample::CreateDeviceDependentResources()
 
     // SDKMESH has to use clockwise winding with right-handed coordinates, so textures are flipped in U
     wchar_t strFilePath[MAX_PATH] = {};
-    DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Meshes\\Tiny\\tiny.sdkmesh");
+    DX::FindMediaFile(strFilePath, MAX_PATH, L"Tiny\\tiny.sdkmesh");
 
     wchar_t txtPath[MAX_PATH] = {};
     {
@@ -452,7 +452,7 @@ void Sample::CreateDeviceDependentResources()
             m_modelEffects = m_model->CreateEffects(psd, alphapsd, m_modelResources->Heap(), m_states->Heap());
         }
 
-        DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Fonts\\SegoeUI_18.spritefont");
+        DX::FindMediaFile(strFilePath, MAX_PATH, L"SegoeUI_18.spritefont");
         m_font = std::make_unique<SpriteFont>(device, resourceUpload,
             strFilePath,
             m_resourceDescriptors->GetCpuHandle(Descriptors::SegoeFont),

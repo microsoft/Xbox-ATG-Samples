@@ -95,7 +95,7 @@ namespace DX
                     throw std::exception("MultiByteToWideChar");
                 }
 
-                m_data.reset(new wchar_t[cch]);
+                m_data.reset(new wchar_t[size_t(cch)]);
 
                 int result = ::MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<LPCSTR>(data.get()), -1, m_data.get(), cch);
 
@@ -105,7 +105,7 @@ namespace DX
                     throw std::exception("MultiByteToWideChar");
                 }
 
-                m_end = &m_data[result - 1];
+                m_end = &m_data[size_t(result - 1)];
             }
 
             // Locate the start of lines
