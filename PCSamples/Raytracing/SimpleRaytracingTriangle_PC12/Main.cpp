@@ -18,9 +18,8 @@ namespace
 };
 
 LPCWSTR g_szAppName = L"SimpleRaytracingTriangle_PC12";
-LPCWSTR g_szClassName = L"SimpleRaytracingTriangleWindowClass";
 
-LRESULT CALLBACK WndProc(HWND, unsigned int, WPARAM, LPARAM);
+LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 // Indicates to hybrid graphics systems to prefer the discrete part by default
 extern "C"
@@ -30,7 +29,7 @@ extern "C"
 }
 
 // Entry point
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
+int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE, _In_ LPWSTR, _In_ int nCmdShow)
 {
     if (!XMVerifyCPUSupport())
         return 1;
@@ -44,18 +43,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
     // Register class and create window
     {
         // Register class
-        WNDCLASSEXW wcex;
+        WNDCLASSEXW wcex = {};
         wcex.cbSize = sizeof(WNDCLASSEXW);
         wcex.style = CS_HREDRAW | CS_VREDRAW;
         wcex.lpfnWndProc = WndProc;
-        wcex.cbClsExtra = 0;
-        wcex.cbWndExtra = 0;
         wcex.hInstance = hInstance;
         wcex.hIcon = LoadIconW(hInstance, L"IDI_ICON");
         wcex.hCursor = LoadCursorW(nullptr, IDC_ARROW);
         wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-        wcex.lpszMenuName = nullptr;
-        wcex.lpszClassName = g_szClassName;
+        wcex.lpszClassName = L"SimpleRaytracingTriangleWindowClass";
         wcex.hIconSm = LoadIconW(wcex.hInstance, L"IDI_ICON");
         if (!RegisterClassExW(&wcex))
             return 1;
@@ -68,7 +64,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 
         AdjustWindowRect(&rc, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU, FALSE);
 
-        HWND hwnd = CreateWindowExW(0, g_szClassName, g_szAppName,
+        HWND hwnd = CreateWindowExW(0, L"SimpleRaytracingTriangleWindowClass", g_szAppName,
             WS_OVERLAPPED | WS_CAPTION | WS_CAPTION | WS_SYSMENU,
             CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance,
             nullptr);
@@ -108,7 +104,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int nCmdShow)
 }
 
 // Windows procedure
-LRESULT CALLBACK WndProc(HWND hWnd, unsigned int message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     PAINTSTRUCT ps;
     HDC hdc;

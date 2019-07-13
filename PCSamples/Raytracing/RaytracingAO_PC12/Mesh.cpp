@@ -9,7 +9,6 @@
 #include "GlobalSharedHlslCompat.h"
 #include "Mesh.h"
 
-using namespace DX;
 using namespace DirectX;
 
 Mesh::Mesh(
@@ -23,25 +22,27 @@ Mesh::Mesh(
     // Check the sample's assumptions are correct.
     for (auto& mesh : m_model->meshes)
     {
-        ThrowIfFalse(
-            mesh->alphaMeshParts.size() == 0,
-            L"Alpha Mesh is not allowed in this sample."
-        );
+        if (mesh->alphaMeshParts.size() > 0)
+        {
+            throw std::exception("Alpha Mesh is not allowed in this sample.");
+        }
 
         for (unsigned int i = 0; i < mesh->opaqueMeshParts.size(); i++)
         {
-            ThrowIfFalse(
-                mesh->opaqueMeshParts[i]->indexFormat == DXGI_FORMAT_R32_UINT,
-                L"Only 32bit unsigned int indices can be used for this sample.");
+            if (mesh->opaqueMeshParts[i]->indexFormat != DXGI_FORMAT_R32_UINT)
+            {
+                throw std::exception("Only 32bit unsigned int indices can be used for this sample.");
+            }
 
-            ThrowIfFalse(
-                mesh->opaqueMeshParts[i]->primitiveType == D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
-                L"Only triangle lists are supported for this sample.");
+            if (mesh->opaqueMeshParts[i]->primitiveType != D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
+            {
+                throw std::exception("Only triangle lists are supported for this sample.");
+            }
 
-            ThrowIfFalse(
-                mesh->opaqueMeshParts[i]->vertexStride == sizeof(Vertex),
-                L"Vertex format does not mach that of the sample."
-            );
+            if (mesh->opaqueMeshParts[i]->vertexStride != sizeof(Vertex))
+            {
+                throw std::exception("Vertex format does not mach that of the sample.");
+            }
 
             // Increase length;
             length++;
@@ -49,10 +50,10 @@ Mesh::Mesh(
     }
 
     // Check if length is too large.
-    ThrowIfFalse(
-        length < Parts::MaxParts,
-        L"The number of parts in the scene exceeds MaxParts."
-    );
+    if (length >= Parts::MaxParts)
+    {
+        throw std::exception("The number of parts in the scene exceeds MaxParts.");
+    }
 
     // Load Textures.
     ResourceUploadBatch resourceUpload(device);
@@ -61,16 +62,10 @@ Mesh::Mesh(
     // Extract filepath and create texture factory.
     std::wstring fileName(pFileName);
     auto lastPos = fileName.find_last_of('\\');
-
-    ThrowIfFalse(
-        lastPos != std::string::npos,
-        (L"Could not find path to file " + fileName).c_str()
-    );
-
     m_textureFactory = m_model->LoadTextures(
         device,
         resourceUpload,
-        fileName.substr(0, lastPos).c_str()
+        (lastPos != std::string::npos) ? fileName.substr(0, lastPos).c_str() : nullptr
     );
     
     // Move buffers out of upload state.
@@ -83,9 +78,7 @@ Mesh::Mesh(
     // Texture factory is only a nullptr if there are no textures.
     if (m_textureFactory)
     {
-        ThrowIfFalse(
-            m_textureFactory->ResourceCount() < Textures::MaxTextures,
-            L"The number of textures in the scene exceeds MaxTextures.");
+        assert(m_textureFactory->ResourceCount() < Textures::MaxTextures);
 
         // Check texture type is 2D.
         for (unsigned int i = 0; i < m_textureFactory->ResourceCount(); i++)
@@ -94,20 +87,20 @@ Mesh::Mesh(
             Microsoft::WRL::ComPtr<ID3D12Resource> resource;
             m_textureFactory->GetResource(i, &resource, &isCubeMap);
 
-            ThrowIfFalse(
-                !isCubeMap,
-                L"Cube maps are not supported for this sample."
-            );
+            if (isCubeMap)
+            {
+                throw std::exception("Cube maps are not supported for this sample.");
+            }
 
-            ThrowIfFalse(
-                resource->GetDesc().Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D,
-                L"Only Texture2D images are supported in assets."
-            );
+            if (resource->GetDesc().Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D)
+            {
+                throw std::exception("Only Texture2D images are supported in assets.");
+            }
 
-            ThrowIfFalse(
-                resource->GetDesc().DepthOrArraySize == 1,
-                L"Only depth and array sizes of one are supported in assets."
-            );
+            if (resource->GetDesc().DepthOrArraySize != 1)
+            {
+                throw std::exception("Only depth and array sizes of one are supported in assets.");
+            }
         }
     }
 }

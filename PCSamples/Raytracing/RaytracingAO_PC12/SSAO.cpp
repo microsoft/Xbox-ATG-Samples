@@ -22,7 +22,6 @@
 #include "CompiledShaders/GBufferGS.hlsl.h"
 #include "CompiledShaders/GBufferPS.hlsl.h"
 
-using namespace DX;
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
@@ -122,7 +121,7 @@ void SSAO::SetupPipelines()
         gBufferPsoDesc.RTVFormats[0] = DXGI_FORMAT_R11G11B10_FLOAT;
         gBufferPsoDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
         gBufferPsoDesc.SampleDesc.Count = 1;
-        ThrowIfFailed(device->CreateGraphicsPipelineState(&gBufferPsoDesc, IID_PPV_ARGS(&m_gBufferResourcePipelineState)));
+        DX::ThrowIfFailed(device->CreateGraphicsPipelineState(&gBufferPsoDesc, IID_PPV_ARGS(&m_gBufferResourcePipelineState)));
     }
 
     // Compute Pipeline.
@@ -202,11 +201,10 @@ void SSAO::CreateResources()
 {
     auto device = m_deviceResources->GetD3DDevice();
     auto renderTarget = m_deviceResources->GetRenderTarget();
-    auto screenWidth =
-        m_deviceResources->GetScreenWidth()
-        * m_screenWidthScale;
-    auto screenHeight =
-        m_deviceResources->GetScreenHeight();
+
+    auto output = m_deviceResources->GetOutputSize();
+    auto screenWidth = static_cast<UINT>(float(output.right - output.left) * m_screenWidthScale);
+    auto screenHeight = static_cast<UINT>(output.bottom - output.top);
 
     D3D12_CLEAR_VALUE clear = {};
     clear.Color[0] = .0f;
@@ -224,7 +222,7 @@ void SSAO::CreateResources()
         AllocateTexture2DArr(
             device,
             &m_gBufferResource,
-            (UINT)screenWidth,
+            screenWidth,
             screenHeight,
             2,
             &clear,
@@ -237,7 +235,7 @@ void SSAO::CreateResources()
         AllocateTexture2DArr(
             device,
             &m_dBufferResource,
-            (UINT)screenWidth,
+            screenWidth,
             screenHeight,
             2,
             &depthClear,
@@ -302,7 +300,7 @@ void SSAO::CreateResources()
         AllocateTexture2DArr(
             device,
             &m_linearDepthResource,
-            (UINT)screenWidth,
+            screenWidth,
             screenHeight,
             1,
             nullptr,
@@ -422,7 +420,7 @@ void SSAO::CreateResources()
         AllocateTexture2DArr(
             device,
             &m_ssaoResources,
-            (UINT)screenWidth,
+            screenWidth,
             screenHeight,
             1,
             nullptr,
@@ -434,7 +432,7 @@ void SSAO::CreateResources()
         AllocateTexture2DArr(
             device,
             &m_outFrameResources,
-            (UINT)screenWidth,
+            screenWidth,
             screenHeight,
             1,
             nullptr,
@@ -718,7 +716,7 @@ void SSAO::BindResources()
     }
 }
 
-void SSAO::Setup(std::shared_ptr<DeviceResources> pDeviceResources)
+void SSAO::Setup(std::shared_ptr<DX::DeviceResources> pDeviceResources)
 {
     // Run super class setup.
     Lighting::Setup(pDeviceResources);
@@ -966,9 +964,9 @@ void SSAO::UpdateBlurAndUpsampleConstant(
     const unsigned int highWidth,
     const unsigned int highHeight)
 {
-    auto screenWidth =
-        m_deviceResources->GetScreenWidth()
-        * m_screenWidthScale;
+    auto output = m_deviceResources->GetOutputSize();
+
+    auto screenWidth = float(output.right - output.left) * m_screenWidthScale;
 
     float blurTolerance = 1.f - powf(10.f, m_blurTolerance) * static_cast<float>(screenWidth) / (float)lowWidth;
     blurTolerance *= blurTolerance;
@@ -1035,7 +1033,7 @@ void SSAO::DispatchBlurAndUpsample(
     }
 }
 
-void SSAO::Run(ComPtr<ID3D12Resource> pSceneConstantResource)
+void SSAO::Run(ID3D12Resource* pSceneConstantResource)
 {
     auto commandList = m_deviceResources->GetCommandList();
     auto renderTarget = m_deviceResources->GetRenderTarget();

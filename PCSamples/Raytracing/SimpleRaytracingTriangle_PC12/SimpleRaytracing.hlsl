@@ -1,18 +1,7 @@
-//*********************************************************
-//
-// Copyright (c) Microsoft. All rights reserved.
-// This code is licensed under the MIT License (MIT).
-// THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
-// IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
-// PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
-//
-//*********************************************************
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
-#ifndef SIMPLERAYTRACING_HLSL
-#define SIMPLERAYTRACING_HLSL
-
-RaytracingAccelerationStructure Scene           : register(t0, space0);
+RaytracingAccelerationStructure Scene           : register(t0);
 RWTexture2D<float4> RenderTarget                : register(u0);
 
 typedef BuiltInTriangleIntersectionAttributes MyAttributes;
@@ -58,5 +47,3 @@ void MissShader(inout RayPayload payload)
 {
     payload.color = float4(0, 0, 0, 1);
 }
-
-#endif // SIMPLERAYTRACING_HLSL

@@ -102,20 +102,22 @@
     <ClInclude Include="UniformSampler.h">
       <Filter>Sampler</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Kits\ATGTK\ReadData.h" />
-    <ClInclude Include="..\..\..\..\Kits\ATGTK\ATGColors.h">
+    <ClInclude Include="..\..\..\Kits\ATGTK\d3dx12.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Kits\ATGTK\ATGColors.h">
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Kits\ATGTK\ControllerFont.h">
+    <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h">
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Kits\ATGTK\ControllerHelp.h">
+    <ClInclude Include="..\..\..\Kits\ATGTK\ControllerHelp.h">
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Kits\ATGTK\d3dx12.h">
+    <ClInclude Include="..\..\..\Kits\ATGTK\FindMedia.h">
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Kits\ATGTK\FindMedia.h">
+    <ClInclude Include="..\..\..\Kits\ATGTK\ReadData.h">
       <Filter>ATG Tool Kit</Filter>
     </ClInclude>
   </ItemGroup>
@@ -124,9 +126,6 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="DeviceResources.cpp">
       <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\Kits\ATGTK\ControllerHelp.cpp">
-      <Filter>ATG Tool Kit</Filter>
     </ClCompile>
     <ClCompile Include="RaytracingAOPC12.cpp" />
     <ClCompile Include="Menus.cpp">
@@ -153,16 +152,16 @@
     <ClCompile Include="UniformSampler.cpp">
       <Filter>Sampler</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="resource.rc" />
+    <ClCompile Include="..\..\..\Kits\ATGTK\ControllerHelp.cpp">
+      <Filter>ATG Tool Kit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="atg.ico">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="..\..\..\..\Media\Meshes\Dragon\Dragon_Normal.dds">
-      <Filter>Assets\Meshes\Dragon</Filter>
+    <Image Include="..\..\..\Media\Meshes\Dragon\Dragon_Normal.dds">
+      <Filter>Assets</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
@@ -171,27 +170,6 @@
     </Manifest>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\Media\Textures\ATGSampleBackground.DDS">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="..\..\..\..\Media\Textures\callout_circle.dds">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="..\..\..\..\Media\Textures\gamepad.dds">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="..\..\..\..\Media\Fonts\SegoeUI_18.spritefont">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="..\..\..\..\Media\Fonts\SegoeUI_22.spritefont">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="..\..\..\..\Media\Fonts\SegoeUI_24.spritefont">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="..\..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
-      <Filter>Assets</Filter>
-    </None>
     <None Include="Readme.docx" />
     <None Include="Assets\SSAORenderCS.hlsli">
       <Filter>Assets\Shaders\SSAO</Filter>
@@ -202,14 +180,35 @@
     <None Include="Assets\GBufferH.hlsl">
       <Filter>Assets\Shaders\SSAO</Filter>
     </None>
-    <None Include="..\..\..\..\Media\Meshes\Dragon\Dragon.sdkmesh">
-      <Filter>Assets\Meshes\Dragon</Filter>
-    </None>
-    <None Include="..\..\..\..\Media\Meshes\Maze\Maze1.sdkmesh">
-      <Filter>Assets\Meshes\Maze</Filter>
-    </None>
     <None Include="Assets\GeneralH.hlsli">
       <Filter>Assets\Shaders\Util</Filter>
+    </None>
+    <None Include="..\..\..\Media\Textures\ATGSampleBackground.DDS">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Media\Textures\callout_circle.dds">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Media\Textures\gamepad.dds">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Media\Meshes\Maze\Maze1.sdkmesh">
+      <Filter>Assets\Meshes\Maze</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_18.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_22.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\SegoeUI_24.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Media\Meshes\Dragon\Dragon.sdkmesh">
+      <Filter>Assets\Meshes\Dragon</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -252,5 +251,10 @@
     <FxCompile Include="Assets\AORaytracing.hlsl">
       <Filter>Assets\Shaders\AO</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc">
+      <Filter>Assets</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

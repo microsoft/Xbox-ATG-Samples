@@ -127,12 +127,13 @@ class SSAO : public Lighting
 public:
     SSAO();
 
-    void Setup(std::shared_ptr<DX::DeviceResources> pDeviceResources);
-    void Run(Microsoft::WRL::ComPtr<ID3D12Resource> pSceneConstantResource);
+    void Setup(std::shared_ptr<DX::DeviceResources> pDeviceResources) override;
+    void Run(ID3D12Resource* pSceneConstantResource) override;
+    void OnSizeChanged() override;
+    void OnOptionUpdate(std::shared_ptr<Menus> pMenu) override;
+    void OnCameraChanged(XMMATRIX& world, XMMATRIX& view, XMMATRIX& projection) override;
+
     void SetMesh(std::shared_ptr<Mesh> pMesh);
-    void OnSizeChanged();
-    void OnOptionUpdate(std::shared_ptr<Menus> pMenu);
-    void OnCameraChanged(XMMATRIX& world, XMMATRIX& view, XMMATRIX& projection);
 
 private:
     void BindResources();

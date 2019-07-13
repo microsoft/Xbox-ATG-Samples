@@ -13,7 +13,6 @@
 #include "SimpleMath.h"
 
 using namespace DirectX;
-using namespace DX;
 
 // Setup descriptor heaps.
 void Menus::CreateDescriptorHeaps()
@@ -55,7 +54,7 @@ void Menus::Setup(std::shared_ptr<DX::DeviceResources> pDeviceResources)
             m_batch = std::make_unique<SpriteBatch>(device, uploadBatch, pd);
 
             wchar_t strFilePath[MAX_PATH] = {};
-            DX::FindMediaFile(strFilePath, MAX_PATH, L"Media\\Fonts\\SegoeUI_18.spritefont");
+            DX::FindMediaFile(strFilePath, MAX_PATH, L"SegoeUI_18.spritefont");
             m_smallFont = std::make_unique<SpriteFont>(
                 device,
                 uploadBatch,
@@ -88,16 +87,17 @@ void Menus::Setup(std::shared_ptr<DX::DeviceResources> pDeviceResources)
 
 void Menus::OnSizeChanged()
 {
-    auto screenWidth = m_deviceResources->GetScreenWidth();
-    auto screenHeight = m_deviceResources->GetScreenHeight();
+    auto output = m_deviceResources->GetOutputSize();
+    float screenWidth = float(output.right - output.left);
+    float screenHeight = float(output.bottom - output.top);
 
     m_batch->SetViewport(m_deviceResources->GetScreenViewport());
 
     m_basicEffect->SetProjection(
         XMMatrixOrthographicOffCenterRH(
             0,
-            float(screenWidth),
-            float(screenHeight),
+            screenWidth,
+            screenHeight,
             0,
             0,
             1)
@@ -107,10 +107,12 @@ void Menus::OnSizeChanged()
 void Menus::DrawMainMenu(bool center)
 {
     auto commandList = m_deviceResources->GetCommandList();
-    auto screenWidth = m_deviceResources->GetScreenWidth();
-    auto screenHeight = m_deviceResources->GetScreenHeight();
-    auto size = m_deviceResources->GetOutputSize();
-    auto safe = SimpleMath::Viewport::ComputeTitleSafeArea(size.right, size.bottom);
+
+    auto output = m_deviceResources->GetOutputSize();
+    float screenWidth = float(output.right - output.left);
+    float screenHeight = float(output.bottom - output.top);
+
+    auto safe = SimpleMath::Viewport::ComputeTitleSafeArea(output.right, output.bottom);
     auto startOffset = XMFLOAT2(0.f, 0.f);
     auto offset = startOffset;
 
@@ -206,8 +208,8 @@ void Menus::DrawMainMenu(bool center)
                     if (center)
                     {
                         startOffset = {
-                            float(screenWidth - wExtent) / 2.f,
-                            float(screenHeight - offset.y) / 2.f
+                            (screenWidth - wExtent) / 2.f,
+                            (screenHeight - offset.y) / 2.f
                         };
                     }
                     else
@@ -256,8 +258,10 @@ void Menus::DrawMainMenu(bool center)
 void Menus::DrawCenterLine()
 {
     auto commandList = m_deviceResources->GetCommandList();
-    auto screenWidth = m_deviceResources->GetScreenWidth();
-    auto screenHeight = m_deviceResources->GetScreenHeight();
+
+    auto output = m_deviceResources->GetOutputSize();
+    float screenWidth = float(output.right - output.left);
+    float screenHeight = float(output.bottom - output.top);
 
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Center Line");
 
@@ -287,8 +291,10 @@ void Menus::DrawCenterLine()
 void Menus::DrawSplitLabels()
 {
     auto commandList = m_deviceResources->GetCommandList();
-    auto screenWidth = m_deviceResources->GetScreenWidth();
-    auto screenHeight = m_deviceResources->GetScreenHeight();
+
+    auto output = m_deviceResources->GetOutputSize();
+    float screenWidth = float(output.right - output.left);
+    float screenHeight = float(output.bottom - output.top);
 
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Split Menu");
 
@@ -361,8 +367,10 @@ void Menus::DrawSplitLabels()
 void Menus::DrawLabel()
 {
     auto commandList = m_deviceResources->GetCommandList();
-    auto screenWidth = m_deviceResources->GetScreenWidth();
-    auto screenHeight = m_deviceResources->GetScreenHeight();
+
+    auto output = m_deviceResources->GetOutputSize();
+    float screenWidth = float(output.right - output.left);
+    float screenHeight = float(output.bottom - output.top);
 
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Label Menu");
 
@@ -375,8 +383,10 @@ void Menus::DrawLabel()
         {
             std::wstring label;
 
-            ThrowIfFalse(
-                m_lightingModel < MenuLightingModel::LightingModelCount);
+            if (m_lightingModel >= MenuLightingModel::LightingModelCount)
+            {
+                throw std::exception("DrawLabel");
+            }
 
             if (m_lightingModel == MenuLightingModel::AO)
                 label = L"AO";
@@ -385,8 +395,8 @@ void Menus::DrawLabel()
 
             auto dim = m_smallFont->MeasureString(label.c_str());
             XMFLOAT2 off = XMFLOAT2(
-                float(screenWidth - XMVectorGetByIndex(dim, 0)) / 2.f,
-                float(screenHeight -XMVectorGetByIndex(dim, 1) - m_border)
+                (screenWidth - XMVectorGetByIndex(dim, 0)) / 2.f,
+                (screenHeight -XMVectorGetByIndex(dim, 1) - m_border)
             );
 
             m_primitiveBatch->DrawQuad(
@@ -415,7 +425,9 @@ void Menus::DrawFrameRate(uint32_t fps)
         return;
 
     auto commandList = m_deviceResources->GetCommandList();
-    auto screenWidth = m_deviceResources->GetScreenWidth();
+
+    auto output = m_deviceResources->GetOutputSize();
+    float screenWidth = float(output.right - output.left);
 
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"Label Menu");
 

@@ -1,58 +1,11 @@
-//*********************************************************
-//
-// Copyright (c) Microsoft. All rights reserved.
-// This code is licensed under the MIT License (MIT).
-// THIS CODE IS PROVIDED *AS IS* WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING ANY
-// IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
-// PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
-//
-//*********************************************************
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 #pragma once
 
-#define SizeOfInUint32(obj) ((sizeof(obj) - 1) / sizeof(UINT32) + 1)
+#include <unordered_map>
 
-// Align a constant buffer.
-inline constexpr unsigned int CalculateRaytracingRecordByteSize(const unsigned int size)
-{
-    return Align(size, D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT);
-}
-
-// Enable experimental features required for compute-based raytracing fallback.
-// This will set active D3D12 devices to DEVICE_REMOVED state.
-// Returns bool whether the call succeeded and the device supports the feature.
-inline bool EnableComputeRaytracingFallback(IDXGIAdapter1* adapter)
-{
-    Microsoft::WRL::ComPtr<ID3D12Device> testDevice;
-    UUID experimentalFeatures[] = { D3D12ExperimentalShaderModels };
-
-    return SUCCEEDED(D3D12EnableExperimentalFeatures(1, experimentalFeatures, nullptr, nullptr))
-        && SUCCEEDED(D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&testDevice)));
-}
-
-inline bool IsDirectXRaytracingSupported(IDXGIAdapter1* adapter)
-{
-    Microsoft::WRL::ComPtr<ID3D12Device> testDevice;
-    D3D12_FEATURE_DATA_D3D12_OPTIONS5 featureSupportData = {};
-
-    return SUCCEEDED(D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&testDevice)))
-        && SUCCEEDED(testDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &featureSupportData, sizeof(featureSupportData)))
-        && featureSupportData.RaytracingTier != D3D12_RAYTRACING_TIER_NOT_SUPPORTED;
-}
-
-
-inline void SerializeAndCreateRaytracingRootSignature(
-    ID3D12RaytracingFallbackDevice* fallbackDevice,
-    D3D12_ROOT_SIGNATURE_DESC& desc,
-    Microsoft::WRL::ComPtr<ID3D12RootSignature>* rootSig)
-{
-    Microsoft::WRL::ComPtr<ID3DBlob> blob;
-    Microsoft::WRL::ComPtr<ID3DBlob> error;
-
-    DX::ThrowIfFailed(fallbackDevice->D3D12SerializeRootSignature(&desc, D3D_ROOT_SIGNATURE_VERSION_1, &blob, &error), error ? static_cast<wchar_t*>(error->GetBufferPointer()) : nullptr);
-    DX::ThrowIfFailed(fallbackDevice->CreateRootSignature(1, blob->GetBufferPointer(), blob->GetBufferSize(), IID_PPV_ARGS(&(*rootSig))));
-}
+#include "DirectXHelpers.h"
 
 // Shader record = {{Shader ID}, {RootArguments}}
 class ShaderRecord
@@ -104,15 +57,30 @@ class ShaderTable
     std::wstring m_name;
     std::vector<ShaderRecord> m_shaderRecords;
 
-    ShaderTable() : closed(FALSE) {}
+    ShaderTable() : closed(false) {}
 public:
     ShaderTable(ID3D12Device* device, unsigned int numShaderRecords, unsigned int shaderRecordSize, LPCWSTR resourceName = nullptr)
-        : m_name(resourceName), closed(FALSE)
+        : m_name(resourceName), closed(false)
     {
-        m_shaderRecordSize = CalculateRaytracingRecordByteSize(shaderRecordSize);
+        m_shaderRecordSize = DirectX::AlignUp(shaderRecordSize, D3D12_RAYTRACING_SHADER_RECORD_BYTE_ALIGNMENT);
         m_shaderRecords.reserve(numShaderRecords);
+
         unsigned int bufferSize = numShaderRecords * m_shaderRecordSize;
-        AllocateUploadBuffer(device, nullptr, bufferSize, &m_bufferResource, resourceName);
+
+        auto uploadHeapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+        auto bufferDesc = CD3DX12_RESOURCE_DESC::Buffer(bufferSize);
+        DX::ThrowIfFailed(device->CreateCommittedResource(
+            &uploadHeapProperties,
+            D3D12_HEAP_FLAG_NONE,
+            &bufferDesc,
+            D3D12_RESOURCE_STATE_GENERIC_READ,
+            nullptr,
+            IID_PPV_ARGS(m_bufferResource.GetAddressOf())));
+
+        if (resourceName)
+        {
+            m_bufferResource->SetName(resourceName);
+        }
 
         // Map the data.
         CD3DX12_RANGE readRange(0, 0); // We do not intend to read from this resource on the CPU.
@@ -121,8 +89,11 @@ public:
 
     void Add(const ShaderRecord& shaderRecord)
     {
-        DX::ThrowIfFalse(!closed, L"Cannot add to a closed ShaderTable.");
-        DX::ThrowIfFalse(m_shaderRecords.size() < m_shaderRecords.capacity());
+        if (closed)
+            throw std::exception("Cannot add to a closed ShaderTable.");
+
+        assert(m_shaderRecords.size() < m_shaderRecords.capacity());
+
         m_shaderRecords.push_back(shaderRecord);
         shaderRecord.CopyTo(m_mappedShaderRecords);
         m_mappedShaderRecords += m_shaderRecordSize;
@@ -130,8 +101,10 @@ public:
 
     void Close()
     {
-        DX::ThrowIfFalse(!closed, L"Cannot close an already closed ShaderTable.");
-        closed = TRUE;
+        if (closed)
+            throw std::exception("Cannot close an already closed ShaderTable.");
+
+        closed = closed;
 
         m_bufferResource->Unmap(0, nullptr);
     }

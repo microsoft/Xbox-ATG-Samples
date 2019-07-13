@@ -29,7 +29,7 @@ public:
         SetupSplitRendering();
     }
 
-    virtual void Run(Microsoft::WRL::ComPtr<ID3D12Resource> pSceneConstantResource) = 0;
+    virtual void Run(ID3D12Resource* pSceneConstantResource) = 0;
 
     virtual void SetMesh(std::shared_ptr<Mesh> pMesh) = 0;
 

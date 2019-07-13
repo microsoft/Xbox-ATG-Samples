@@ -82,8 +82,6 @@ inline void GenerateCameraRay(uint2 index, out float3 origin, out float3 directi
 
     // Invert Y for DirectX-style coordinates.
     screenPos.y = -screenPos.y;
-    //We are not sure why yet, but it is way to small.
-    screenPos *= 20;
 
     // Unproject the pixel coordinate into a ray.
     float4 world = mul(float4(screenPos, 0, 1), g_sceneCB.projectionToWorld);

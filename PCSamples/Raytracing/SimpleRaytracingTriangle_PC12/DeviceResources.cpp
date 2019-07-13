@@ -1,11 +1,11 @@
 ﻿//
 // DeviceResources.cpp - A wrapper for the Direct3D 12 device and swapchain
 //
+// This version has been modified to require DirectX Raytracing support
+//
 
 #include "pch.h"
 #include "DeviceResources.h"
-#include "GeneralHelper.h"
-#include "RayTracingHelper.h"
 
 using namespace DirectX;
 using namespace DX;
@@ -33,22 +33,22 @@ DeviceResources::DeviceResources(
     UINT backBufferCount,
     D3D_FEATURE_LEVEL minFeatureLevel,
     unsigned int flags) noexcept(false) :
-    m_backBufferIndex(0),
-    m_fenceValues{},
-    m_rtvDescriptorSize(0),
-    m_screenViewport{},
-    m_scissorRect{},
-    m_backBufferFormat(backBufferFormat),
-    m_depthBufferFormat(depthBufferFormat),
-    m_backBufferCount(backBufferCount),
-    m_d3dMinFeatureLevel(minFeatureLevel),
-    m_window(nullptr),
-    m_d3dFeatureLevel(D3D_FEATURE_LEVEL_11_0),
-    m_dxgiFactoryFlags(0),
-    m_outputSize{ 0, 0, 1, 1 },
-    m_colorSpace(DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709),
-    m_options(flags),
-    m_deviceNotify(nullptr)
+        m_backBufferIndex(0),
+        m_fenceValues{},
+        m_rtvDescriptorSize(0),
+        m_screenViewport{},
+        m_scissorRect{},
+        m_backBufferFormat(backBufferFormat),
+        m_depthBufferFormat(depthBufferFormat),
+        m_backBufferCount(backBufferCount),
+        m_d3dMinFeatureLevel(minFeatureLevel),
+        m_window(nullptr),
+        m_d3dFeatureLevel(D3D_FEATURE_LEVEL_11_0),
+        m_dxgiFactoryFlags(0),
+        m_outputSize{0, 0, 1, 1},
+        m_colorSpace(DXGI_COLOR_SPACE_RGB_FULL_G22_NONE_P709),
+        m_options(flags),
+        m_deviceNotify(nullptr)
 {
     if (backBufferCount > MAX_BACK_BUFFER_COUNT)
     {
@@ -66,17 +66,6 @@ DeviceResources::~DeviceResources()
 {
     // Ensure that the GPU is no longer referencing resources that are about to be destroyed.
     WaitForGpu();
-}
-
-// Create the fallback device that will manage native support and the compute fallback layer.
-void DeviceResources::CreateRaytracingInterfaces()
-{
-    CreateRaytracingFallbackDeviceFlags createDeviceFlags = CreateRaytracingFallbackDeviceFlags::None;
-    ThrowIfFailed(D3D12CreateRaytracingFallbackDevice(m_d3dDevice.Get(), createDeviceFlags, 0, IID_PPV_ARGS(&m_fallbackDevice)));
-    m_fallbackDevice->QueryRaytracingCommandList(m_commandList.Get(), IID_PPV_ARGS(&m_fallbackCommandList));
-
-    ThrowIfFailed(m_d3dDevice->QueryInterface(IID_PPV_ARGS(&m_dxrDevice)),        L"Couldn't get DirectX Raytracing interface for the device.\n");
-    ThrowIfFailed(m_commandList->QueryInterface(IID_PPV_ARGS(&m_dxrCommandList)), L"Couldn't get DirectX Raytracing interface for the command list.\n");
 }
 
 // Configures the Direct3D device, and stores handles to it and the device context.
@@ -104,6 +93,15 @@ void DeviceResources::CreateDeviceResources()
 
             dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
             dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
+
+            DXGI_INFO_QUEUE_MESSAGE_ID hide[] =
+            {
+                80 /* IDXGISwapChain::GetContainingOutput: The swapchain's adapter does not control the output on which the swapchain's window resides. */,
+            };
+            DXGI_INFO_QUEUE_FILTER filter = {};
+            filter.DenyList.NumIDs = _countof(hide);
+            filter.DenyList.pIDList = hide;
+            dxgiInfoQueue->AddStorageFilterEntries(DXGI_DEBUG_DXGI, &filter);
         }
     }
 #endif
@@ -131,14 +129,35 @@ void DeviceResources::CreateDeviceResources()
         }
     }
 
+    ComPtr<IDXGIAdapter1> adapter;
+    GetAdapter(adapter.GetAddressOf());
+
     // Create the DX12 API device object.
     ThrowIfFailed(D3D12CreateDevice(
-        m_adapter.Get(),
+        adapter.Get(),
         m_d3dMinFeatureLevel,
         IID_PPV_ARGS(m_d3dDevice.ReleaseAndGetAddressOf())
-    ));
+        ));
 
     m_d3dDevice->SetName(L"DeviceResources");
+
+    // Confirm the device supports DXR.
+    D3D12_FEATURE_DATA_D3D12_OPTIONS5 opts = {};
+    if (FAILED(m_d3dDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &opts, sizeof(opts)))
+        || opts.RaytracingTier == D3D12_RAYTRACING_TIER_NOT_SUPPORTED)
+    {
+        OutputDebugStringA("ERROR: No DirectX Raytracing support found.\n");
+        throw std::exception("No DirectX Raytracing support found");
+    }
+
+    // Confirm the device supports Shader Model 6.3 or better.
+    D3D12_FEATURE_DATA_SHADER_MODEL shaderModel = { D3D_SHADER_MODEL_6_3 };
+    if (FAILED(m_d3dDevice->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &shaderModel, sizeof(shaderModel)))
+        || shaderModel.HighestShaderModel < D3D_SHADER_MODEL_6_3)
+    {
+        OutputDebugStringA("ERROR: Requires Shader Model 6.3 or better support.\n");
+        throw std::exception("Requires Shader Model 6.3 or better support");
+    }
 
 #ifndef NDEBUG
     // Configure debug device (if active).
@@ -152,7 +171,8 @@ void DeviceResources::CreateDeviceResources()
         D3D12_MESSAGE_ID hide[] =
         {
             D3D12_MESSAGE_ID_MAP_INVALID_NULLRANGE,
-            D3D12_MESSAGE_ID_UNMAP_INVALID_NULLRANGE
+            D3D12_MESSAGE_ID_UNMAP_INVALID_NULLRANGE,
+            D3D12_MESSAGE_ID_EXECUTECOMMANDLISTS_WRONGSWAPCHAINBUFFERREFERENCE
         };
         D3D12_INFO_QUEUE_FILTER filter = {};
         filter.DenyList.NumIDs = _countof(hide);
@@ -202,6 +222,7 @@ void DeviceResources::CreateDeviceResources()
     ThrowIfFailed(m_d3dDevice->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(m_rtvDescriptorHeap.ReleaseAndGetAddressOf())));
 
     m_rtvDescriptorHeap->SetName(L"DeviceResources");
+
     m_rtvDescriptorSize = m_d3dDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
     if (m_depthBufferFormat != DXGI_FORMAT_UNKNOWN)
@@ -237,7 +258,7 @@ void DeviceResources::CreateDeviceResources()
 
     m_fence->SetName(L"DeviceResources");
 
-    m_fenceEvent.Attach(CreateEvent(nullptr, FALSE, FALSE, nullptr));
+    m_fenceEvent.Attach(CreateEventEx(nullptr, nullptr, 0, EVENT_MODIFY_STATE | SYNCHRONIZE));
     if (!m_fenceEvent.IsValid())
     {
         throw std::exception("CreateEvent");
@@ -263,8 +284,8 @@ void DeviceResources::CreateWindowSizeDependentResources()
     }
 
     // Determine the render target size in pixels.
-    UINT backBufferWidth = std::max<UINT>(m_outputSize.right - m_outputSize.left, 1);
-    UINT backBufferHeight = std::max<UINT>(m_outputSize.bottom - m_outputSize.top, 1);
+    UINT backBufferWidth = std::max<UINT>(static_cast<UINT>(m_outputSize.right - m_outputSize.left), 1u);
+    UINT backBufferHeight = std::max<UINT>(static_cast<UINT>(m_outputSize.bottom - m_outputSize.top), 1u);
     DXGI_FORMAT backBufferFormat = NoSRGB(m_backBufferFormat);
 
     // If the swap chain already exists, resize it, otherwise create one.
@@ -276,8 +297,8 @@ void DeviceResources::CreateWindowSizeDependentResources()
             backBufferWidth,
             backBufferHeight,
             backBufferFormat,
-            (m_options & c_AllowTearing) ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0
-        );
+            (m_options & c_AllowTearing) ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0u
+            );
 
         if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
         {
@@ -289,7 +310,7 @@ void DeviceResources::CreateWindowSizeDependentResources()
             // If the device was removed for any reason, a new device and swap chain will need to be created.
             HandleDeviceLost();
 
-            // Everything is set up now. Do not continue execution of this method. HandleDeviceLost will reenter this method 
+            // Everything is set up now. Do not continue execution of this method. HandleDeviceLost will reenter this method
             // and correctly set up the new device.
             return;
         }
@@ -312,7 +333,7 @@ void DeviceResources::CreateWindowSizeDependentResources()
         swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
         swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
         swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
-        swapChainDesc.Flags = (m_options & c_AllowTearing) ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
+        swapChainDesc.Flags = (m_options & c_AllowTearing) ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0u;
 
         DXGI_SWAP_CHAIN_FULLSCREEN_DESC fsSwapChainDesc = {};
         fsSwapChainDesc.Windowed = TRUE;
@@ -326,7 +347,7 @@ void DeviceResources::CreateWindowSizeDependentResources()
             &fsSwapChainDesc,
             nullptr,
             swapChain.GetAddressOf()
-        ));
+            ));
 
         ThrowIfFailed(swapChain.As(&m_swapChain));
 
@@ -351,7 +372,9 @@ void DeviceResources::CreateWindowSizeDependentResources()
         rtvDesc.Format = m_backBufferFormat;
         rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 
-        CD3DX12_CPU_DESCRIPTOR_HANDLE rtvDescriptor(m_rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(), n, m_rtvDescriptorSize);
+        CD3DX12_CPU_DESCRIPTOR_HANDLE rtvDescriptor(
+            m_rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
+            static_cast<INT>(n), m_rtvDescriptorSize);
         m_d3dDevice->CreateRenderTargetView(m_renderTargets[n].Get(), &rtvDesc, rtvDescriptor);
     }
 
@@ -370,7 +393,7 @@ void DeviceResources::CreateWindowSizeDependentResources()
             backBufferHeight,
             1, // This depth stencil view has only one texture.
             1  // Use a single mipmap level.
-        );
+            );
         depthStencilDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 
         D3D12_CLEAR_VALUE depthOptimizedClearValue = {};
@@ -385,7 +408,7 @@ void DeviceResources::CreateWindowSizeDependentResources()
             D3D12_RESOURCE_STATE_DEPTH_WRITE,
             &depthOptimizedClearValue,
             IID_PPV_ARGS(m_depthStencil.ReleaseAndGetAddressOf())
-        ));
+            ));
 
         m_depthStencil->SetName(L"Depth stencil");
 
@@ -404,8 +427,8 @@ void DeviceResources::CreateWindowSizeDependentResources()
     m_screenViewport.MaxDepth = D3D12_MAX_DEPTH;
 
     m_scissorRect.left = m_scissorRect.top = 0;
-    m_scissorRect.right = backBufferWidth;
-    m_scissorRect.bottom = backBufferHeight;
+    m_scissorRect.right = static_cast<LONG>(backBufferWidth);
+    m_scissorRect.bottom = static_cast<LONG>(backBufferHeight);
 }
 
 // This method is called when the Win32 window is created (or re-created).
@@ -509,7 +532,9 @@ void DeviceResources::Present(D3D12_RESOURCE_STATES beforeState)
         m_commandList->ResourceBarrier(1, &barrier);
     }
 
-    ExecuteCommandList();
+    // Send the command list off to the GPU for processing.
+    ThrowIfFailed(m_commandList->Close());
+    m_commandQueue->ExecuteCommandLists(1, CommandListCast(m_commandList.GetAddressOf()));
 
     HRESULT hr;
     if (m_options & c_AllowTearing)
@@ -548,14 +573,6 @@ void DeviceResources::Present(D3D12_RESOURCE_STATES beforeState)
             ThrowIfFailed(CreateDXGIFactory2(m_dxgiFactoryFlags, IID_PPV_ARGS(m_dxgiFactory.ReleaseAndGetAddressOf())));
         }
     }
-}
-
-// Send the command list off to the GPU for processing.
-void DeviceResources::ExecuteCommandList()
-{
-    ThrowIfFailed(m_commandList->Close());
-    ID3D12CommandList *commandLists[] = { m_commandList.Get() };
-    m_commandQueue->ExecuteCommandLists(_countof(commandLists), commandLists);
 }
 
 // Wait for pending GPU work to complete.
@@ -598,6 +615,73 @@ void DeviceResources::MoveToNextFrame()
 
     // Set the fence value for the next frame.
     m_fenceValues[m_backBufferIndex] = currentFenceValue + 1;
+}
+
+// This method acquires the first available hardware adapter that supports Direct3D 12 and DXR.
+// If no such adapter can be found, throw an exception.
+void DeviceResources::GetAdapter(IDXGIAdapter1** ppAdapter)
+{
+    *ppAdapter = nullptr;
+
+    ComPtr<IDXGIAdapter1> adapter;
+
+    ComPtr<IDXGIFactory6> factory6;
+    HRESULT hr = m_dxgiFactory.As(&factory6);
+    if (SUCCEEDED(hr))
+    {
+        for (UINT adapterIndex = 0;
+            SUCCEEDED(factory6->EnumAdapterByGpuPreference(
+                adapterIndex,
+                DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE,
+                IID_PPV_ARGS(adapter.ReleaseAndGetAddressOf())));
+            adapterIndex++)
+        {
+            DXGI_ADAPTER_DESC1 desc;
+            ThrowIfFailed(adapter->GetDesc1(&desc));
+
+            if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+            {
+                // Don't select the Basic Render Driver adapter.
+                continue;
+            }
+
+            // Check to see if the adapter supports Direct3D 12 & DXR
+            ComPtr<ID3D12Device> device;
+            if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), m_d3dMinFeatureLevel, IID_PPV_ARGS(device.GetAddressOf()))))
+            {
+                D3D12_FEATURE_DATA_D3D12_OPTIONS5 opts = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &opts, sizeof(opts))))
+                {
+                    if (opts.RaytracingTier != D3D12_RAYTRACING_TIER_NOT_SUPPORTED)
+                    {
+#ifdef _DEBUG
+                        wchar_t buff[256] = {};
+                        swprintf_s(buff, L"Direct3D Adapter (%u): VID:%04X, PID:%04X - %ls (DXR Tier %d)\n", adapterIndex, desc.VendorId, desc.DeviceId, desc.Description, static_cast<int>(opts.RaytracingTier));
+                        OutputDebugStringW(buff);
+#endif
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+#ifdef _DEBUG
+        OutputDebugStringA("ERROR: DirectX Raytracing not supported by this version of the OS");
+#endif
+        throw std::exception("DirectX Raytracing not supported by this version of the OS");
+    }
+
+    if (!adapter)
+    {
+#ifdef _DEBUG
+        OutputDebugStringA("ERROR: No Direct3D 12 device found that supports DirectX Raytracing");
+#endif
+        throw std::exception("No Direct3D 12 device found that supports DirectX Raytracing");
+    }
+
+    *ppAdapter = adapter.Detach();
 }
 
 // Sets the color space for the swap chain in order to handle HDR output.
@@ -650,110 +734,10 @@ void DeviceResources::UpdateColorSpace()
 
     m_colorSpace = colorSpace;
 
-    ComPtr<IDXGISwapChain3> swapChain3;
-    if (SUCCEEDED(m_swapChain.As(&swapChain3)))
+    UINT colorSpaceSupport = 0;
+    if (SUCCEEDED(m_swapChain->CheckColorSpaceSupport(colorSpace, &colorSpaceSupport))
+        && (colorSpaceSupport & DXGI_SWAP_CHAIN_COLOR_SPACE_SUPPORT_FLAG_PRESENT))
     {
-        UINT colorSpaceSupport = 0;
-        if (SUCCEEDED(swapChain3->CheckColorSpaceSupport(colorSpace, &colorSpaceSupport))
-            && (colorSpaceSupport & DXGI_SWAP_CHAIN_COLOR_SPACE_SUPPORT_FLAG_PRESENT))
-        {
-            ThrowIfFailed(swapChain3->SetColorSpace1(colorSpace));
-        }
+        ThrowIfFailed(m_swapChain->SetColorSpace1(colorSpace));
     }
-}
-
-// Configures DXGI Factory and retrieve an adapter.
-void DeviceResources::InitializeDXGIAdapter()
-{
-    bool debugDXGI = false;
-
-#if defined(_DEBUG)
-    // Enable the debug layer (requires the Graphics Tools "optional feature").
-    // NOTE: Enabling the debug layer after device creation will invalidate the active device.
-    {
-        ComPtr<ID3D12Debug> debugController;
-        if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
-        {
-            debugController->EnableDebugLayer();
-        }
-        else
-        {
-            OutputDebugStringA("WARNING: Direct3D Debug Device is not available\n");
-        }
-
-        ComPtr<IDXGIInfoQueue> dxgiInfoQueue;
-        if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiInfoQueue))))
-        {
-            debugDXGI = true;
-
-            ThrowIfFailed(CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(&m_dxgiFactory)));
-
-            dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
-            dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
-        }
-    }
-#endif
-
-    if (!debugDXGI)
-    {
-        ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&m_dxgiFactory)));
-    }
-
-    // Determines whether tearing support is available for fullscreen borderless windows.
-    if (m_options & (c_AllowTearing ))
-    {
-        BOOL allowTearing = FALSE;
-
-        ComPtr<IDXGIFactory5> factory5;
-        HRESULT hr = m_dxgiFactory.As(&factory5);
-        if (SUCCEEDED(hr))
-        {
-            hr = factory5->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(allowTearing));
-        }
-
-        if (FAILED(hr) || !allowTearing)
-        {
-            OutputDebugStringA("WARNING: Variable refresh rate displays are not supported.\n");
-            m_options &= ~c_AllowTearing;
-        }
-    }
-
-    InitializeAdapter(&m_adapter);
-}
-
-
-void DeviceResources::InitializeAdapter(IDXGIAdapter1** ppAdapter)
-{
-    *ppAdapter = nullptr;
-
-    ComPtr<IDXGIAdapter1> adapter;
-    for (UINT adapterID = 0; DXGI_ERROR_NOT_FOUND != m_dxgiFactory->EnumAdapters1(adapterID, &adapter); ++adapterID)
-    {
-        DXGI_ADAPTER_DESC1 desc;
-        ThrowIfFailed(adapter->GetDesc1(&desc));
-
-        if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
-        {
-            // Don't select the Basic Render Driver adapter.
-            continue;
-        }
-
-        // Check to see if the adapter supports Direct3D 12, but don't create the actual device yet.
-        if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), m_d3dMinFeatureLevel, _uuidof(ID3D12Device), nullptr)))
-        {
-#ifdef _DEBUG
-            wchar_t buff[256] = {};
-            swprintf_s(buff, L"Direct3D Adapter (%u): VID:%04X, PID:%04X - %ls\n", adapterID, desc.VendorId, desc.DeviceId, desc.Description);
-            OutputDebugStringW(buff);
-#endif
-            break;
-        }
-    }
-
-    if (!adapter)
-    {
-        ThrowIfFalse(false, L"Sample requires non warp adapter for both Native DXR or Fallback");
-    }
-
-    *ppAdapter = adapter.Detach();
 }

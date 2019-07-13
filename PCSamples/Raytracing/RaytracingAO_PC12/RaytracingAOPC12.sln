@@ -7,8 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RaytracingAO_PC12", "Raytra
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK12", "..\..\..\Kits\DirectXTK12\DirectXTK_Desktop_2017_Win10.vcxproj", "{3E0E8608-CD9B-4C76-AF33-29CA38F2C9F0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FallbackLayer", "..\..\..\Kits\D3D12RaytracingFallback\src\FallbackLayer.vcxproj", "{4BE280A6-1066-41CA-ACDD-6BB7E532508B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -23,10 +21,6 @@ Global
 		{3E0E8608-CD9B-4C76-AF33-29CA38F2C9F0}.Debug|x64.Build.0 = Debug|x64
 		{3E0E8608-CD9B-4C76-AF33-29CA38F2C9F0}.Release|x64.ActiveCfg = Release|x64
 		{3E0E8608-CD9B-4C76-AF33-29CA38F2C9F0}.Release|x64.Build.0 = Release|x64
-		{4BE280A6-1066-41CA-ACDD-6BB7E532508B}.Debug|x64.ActiveCfg = Debug|x64
-		{4BE280A6-1066-41CA-ACDD-6BB7E532508B}.Debug|x64.Build.0 = Debug|x64
-		{4BE280A6-1066-41CA-ACDD-6BB7E532508B}.Release|x64.ActiveCfg = Release|x64
-		{4BE280A6-1066-41CA-ACDD-6BB7E532508B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

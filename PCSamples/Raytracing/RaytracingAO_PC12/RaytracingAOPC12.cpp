@@ -14,12 +14,26 @@
 
 extern void ExitSample();
 
-using namespace DX;
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
 
-Sample::Sample() noexcept(false)
+namespace
+{
+    const float c_camStep = .1f;
+    const float c_initialRadius = -20.f;
+
+    const wchar_t* s_assetList[2] = {
+        L"Media\\Meshes\\Dragon\\Dragon.sdkmesh",
+        L"Media\\Meshes\\Maze\\Maze1.sdkmesh",
+    };
+}
+
+Sample::Sample() noexcept(false) :
+    m_meshIndex(0),
+    m_isSplit(true),
+    m_isSplitMode(false),
+    m_radius(c_initialRadius)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);
@@ -31,9 +45,6 @@ Sample::~Sample()
     {
         m_deviceResources->WaitForGpu();
     }
-
-    // Force cleanup.
-    OnDeviceLost();
 }
 
 // Initialize the Direct3D resources required to run.
@@ -43,21 +54,11 @@ void Sample::Initialize(HWND window, int width, int height)
 
     m_keyboard = std::make_unique<Keyboard>();
 
-    m_mouse = std::make_unique<Mouse>();
-    m_mouse->SetWindow(window);
-
     m_menus = std::make_unique<Menus>();
 
     m_deviceResources->SetWindow(window, width, height);
-    m_deviceResources->InitializeDXGIAdapter();
-
-    if (!CheckRaytracingSupported(m_deviceResources->GetDXRAdapter()))
-    {
-        ThrowIfFalse(false,L"This demo requires DXR support\n");
-    }
 
     m_deviceResources->CreateDeviceResources();
-    m_deviceResources->CreateRaytracingInterfaces();
     CreateDeviceDependentResources();
 
     m_deviceResources->CreateWindowSizeDependentResources();
@@ -68,19 +69,21 @@ void Sample::Initialize(HWND window, int width, int height)
 void Sample::UpdateCameraMatrices()
 {
     auto frameIndex = m_deviceResources->GetCurrentFrameIndex();
-    auto screenWidth = m_deviceResources->GetScreenWidth() * (m_isSplit ? .5f : 1.f);
-    auto screenHeight = m_deviceResources->GetScreenHeight();
+    auto output = m_deviceResources->GetOutputSize();
+
+    auto screenWidth = float(output.right - output.left) * (m_isSplit ? .5f : 1.f);
+    auto screenHeight = float(output.bottom - output.top);
 
     float fovAngleY = 45.0f;
     XMVECTOR updatedEye = { 0, 0, m_radius, 1 };
 
-    XMMATRIX view = XMMatrixLookAtLH(updatedEye, m_at, m_up);
-    float aspectRatio = static_cast<float>(screenWidth) / static_cast<float>(screenHeight);
+    XMMATRIX view = XMMatrixLookAtLH(updatedEye, g_XMIdentityR3, g_XMIdentityR1);
+    float aspectRatio = screenWidth / screenHeight;
     XMMATRIX proj = XMMatrixPerspectiveFovLH(XMConvertToRadians(fovAngleY), aspectRatio, NEAR_PLANE, FAR_PLANE);
     XMMATRIX viewProj = view * proj;
 
     m_sceneCB[frameIndex].cameraPosition = updatedEye;
-    m_sceneCB[frameIndex].projectionToWorld = XMMatrixInverse(nullptr, viewProj);
+    m_sceneCB[frameIndex].projectionToWorld = XMMatrixTranspose(XMMatrixInverse(nullptr, viewProj));
 
     m_sceneCB[frameIndex].worldView = XMMatrixTranspose(view);
     m_sceneCB[frameIndex].worldViewProjection = XMMatrixTranspose(viewProj);
@@ -130,17 +133,15 @@ void Sample::InitializeScene()
 {
     auto frameIndex     = m_deviceResources->GetCurrentFrameIndex();
     auto frameCount     = m_deviceResources->GetBackBufferCount();
-    auto screenWidth    = m_deviceResources->GetScreenWidth() * (m_isSplit ? .5 : 1.f);
-    auto screenHeight   = m_deviceResources->GetScreenHeight();
+
+    auto output = m_deviceResources->GetOutputSize();
+    float screenWidth    = float(output.right - output.left) * (m_isSplit ? .5f : 1.f);
+    float screenHeight   = float(output.bottom - output.top);
 
     // Setup camera.
     {
         // Allocate for the frame size.
         m_sceneCB.resize(frameCount);
-
-        // Initialize the view and projection inverse matrices.
-        m_at = { 0.0f, 0.0f, 0.0f, 1.0f };
-        m_up = { 0.0f, 1.0f, 0.0f, 0.0f };
 
         UpdateCameraMatrices();
     }
@@ -148,8 +149,8 @@ void Sample::InitializeScene()
     // Setup noise tile.
     {
         m_sceneCB[frameIndex].noiseTile = {
-            float(screenWidth) / float(NOISE_W),
-            float(screenHeight) / float(NOISE_W),
+            screenWidth / float(NOISE_W),
+            screenHeight / float(NOISE_W),
             0,
             0
         };
@@ -221,12 +222,10 @@ void Sample::Update(DX::StepTimer const& timer)
     auto device = m_deviceResources->GetD3DDevice();
     auto commandQueue = m_deviceResources->GetCommandQueue();
     auto frameIndex = m_deviceResources->GetCurrentFrameIndex();
-    auto screenWidth =
-        m_deviceResources->GetScreenWidth()
-        * (m_isSplit ? .5 : 1.f);
-    auto screenHeight =
-        m_deviceResources->GetScreenHeight()
-        * (m_isSplit ? .5 : 1.f);
+
+    auto output = m_deviceResources->GetOutputSize();
+    float screenWidth = float(output.right - output.left) * (m_isSplit ? .5f : 1.f);
+    float screenHeight = float(output.bottom - output.top) * (m_isSplit ? .5f : 1.f);
 
     PIXBeginEvent(PIX_COLOR_DEFAULT, L"Update");
 
@@ -254,11 +253,11 @@ void Sample::Update(DX::StepTimer const& timer)
     }
     else if (kb.A)
     {
-        m_radius += m_camStep;
+        m_radius += c_camStep;
     }
     else if (kb.D)
     {
-        m_radius -= m_camStep;
+        m_radius -= c_camStep;
     }
     else if (m_keyboardButtons.IsKeyPressed(Keyboard::Space))
     {
@@ -309,13 +308,11 @@ void Sample::Update(DX::StepTimer const& timer)
         m_deviceResources->WaitForGpu();
     }
 
-    auto mouse = m_mouse->GetState();
-
     // Update world.
     {
         m_sceneCB[frameIndex].noiseTile = {
-            float(screenWidth) / float(NOISE_W),
-            float(screenHeight) / float(NOISE_W),
+            screenWidth / float(NOISE_W),
+            screenHeight / float(NOISE_W),
             0,
             0
         };
@@ -366,16 +363,16 @@ void Sample::Render()
     // Apply lighting model.
     if (m_isSplit)
     {
-        m_ao->Run(m_mappedSceneConstantResource[frameIndex]);
-        m_ssao->Run(m_mappedSceneConstantResource[frameIndex]);
+        m_ao->Run(m_mappedSceneConstantResource[frameIndex].Get());
+        m_ssao->Run(m_mappedSceneConstantResource[frameIndex].Get());
     }
     else if (m_menus->m_lightingModel == MenuLightingModel::AO)
     {
-        m_ao->Run(m_mappedSceneConstantResource[frameIndex]);
+        m_ao->Run(m_mappedSceneConstantResource[frameIndex].Get());
     }
     else if (m_menus->m_lightingModel == MenuLightingModel::SSAO)
     {
-        m_ssao->Run(m_mappedSceneConstantResource[frameIndex]);
+        m_ssao->Run(m_mappedSceneConstantResource[frameIndex].Get());
     }
 
     // Draw HUD.
@@ -470,13 +467,13 @@ void Sample::CreateDeviceDependentResources()
     {
         std::vector<wchar_t> buff(MAX_PATH);
 
-        for (auto& el : m_assetList)
+        for (auto& el : s_assetList)
         {
             DX::FindMediaFile(buff.data(), MAX_PATH, el);
             m_meshFiles.emplace_back(std::string(buff.begin(), buff.end()));
         }
 
-        ThrowIfFalse(0 < m_meshFiles.size(), L"No available assets.");
+        assert(0 < m_meshFiles.size());
 
         m_meshIndex = 0;
         m_mesh = std::make_shared<Mesh>(
@@ -548,28 +545,4 @@ void Sample::OnDeviceRestored()
 
     CreateWindowSizeDependentResources();
 }
-
-bool Sample::CheckRaytracingSupported(IDXGIAdapter1* adapter)
-{
-    m_deviceResources->m_isDxrNativelySupported = IsDirectXRaytracingSupported(adapter);
-    if (!m_deviceResources->m_isDxrNativelySupported)
-    {
-        OutputDebugString(L"Warning: DirectX Raytracing is not natively supported by your GPU and driver.\n\n");
-    }
-    else
-    {
-        // Fallback Layer uses an experimental feature and needs to be enabled before creating a D3D12 device.
-        bool isFallbackSupported = EnableComputeRaytracingFallback(adapter);
-
-        if (!isFallbackSupported)
-        {
-            OutputDebugString(
-                L"Warning: Could not enable Compute Raytracing Fallback (D3D12EnableExperimentalFeatures() failed).\n" \
-                L"         Possible reasons: your OS is not in developer mode.\n\n");
-            return false;
-        }
-    }
-    return true;
-}
-
 #pragma endregion

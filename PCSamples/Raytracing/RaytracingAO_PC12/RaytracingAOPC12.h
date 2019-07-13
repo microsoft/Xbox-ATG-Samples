@@ -37,12 +37,9 @@ namespace LocalRootSignatureParams {
     };
 }
 
-#pragma warning (push)
-#pragma warning (disable:4324)
-
 // A basic sample implementation that creates a D3D12 device and
 // provides a render loop.
-class Sample : public DX::IDeviceNotify
+class Sample final : public DX::IDeviceNotify
 {
 public:
 
@@ -88,14 +85,9 @@ private:
     // Input devices
     std::unique_ptr<DirectX::GamePad>                          m_gamePad;
     std::unique_ptr<DirectX::Keyboard>                         m_keyboard;
-    std::unique_ptr<DirectX::Mouse>                            m_mouse;
 
     DirectX::GamePad::ButtonStateTracker                       m_gamePadButtons;
     DirectX::Keyboard::KeyboardStateTracker                    m_keyboardButtons;
-
-
-    /////////////////////////////////////////////////////////////////////////////////
-    // START SAMPLE SPECIFIC
 
     void UpdateCameraMatrices();
     void InitializeScene();
@@ -111,49 +103,27 @@ private:
         SceneConstantBuffer constants;
         uint8_t alignmentPadding[CalculateConstantBufferByteSize(sizeof(SceneConstantBuffer))];
     };
-    std::vector<AlignedSceneConstantBuffer*>                   m_mappedSceneConstantData;
-    std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>        m_mappedSceneConstantResource;
+    std::vector<AlignedSceneConstantBuffer*>                    m_mappedSceneConstantData;
+    std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>>         m_mappedSceneConstantResource;
 
     // Unmapped versions of bound data so we are not constantly copying small packets to the GPU
     std::vector<SceneConstantBuffer>                            m_sceneCB;
 
     // Lighting model
-    std::unique_ptr<Lighting>                                  m_ssao, m_ao;
+    std::unique_ptr<Lighting>                                   m_ssao, m_ao;
 
     // Mesh
-    std::vector<std::string>                                   m_meshFiles;
-    std::shared_ptr<Mesh>                                      m_mesh;
-    unsigned int m_meshIndex;
+    std::vector<std::string>                                    m_meshFiles;
+    std::shared_ptr<Mesh>                                       m_mesh;
+    unsigned int                                                m_meshIndex;
 
     // Menus
-    std::shared_ptr<Menus>                                     m_menus;
+    std::shared_ptr<Menus>                                      m_menus;
 
     // Split
-    bool                                                       m_isSplit;
-    bool                                                       m_isSplitMode;
+    bool                                                        m_isSplit;
+    bool                                                        m_isSplitMode;
 
     // Camera
-    const float                                                m_camStep = .1f;
-    float                                                      m_radius = -20.f;
-    XMVECTOR                                                   m_at;
-    XMVECTOR                                                   m_up;
-
-    // Assets
-    const wchar_t* m_assetList[2] = {
-        L"Media\\Meshes\\Dragon\\Dragon.sdkmesh",
-        L"Media\\Meshes\\Maze\\Maze1.sdkmesh",
-    };
-
-#pragma warning (pop)
-       
-    // END SAMPLE SPECIFIC
-    /////////////////////////////////////////////////////////////////////////////////
-
-    /////////////////////////////////////////////////////////////////////////////////
-    // START RAYTRACING 
-
-    bool CheckRaytracingSupported(IDXGIAdapter1* adapter);
-
-    // END RAYTRACING 
-    /////////////////////////////////////////////////////////////////////////////////
+    float                                                       m_radius;
 };

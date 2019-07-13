@@ -14,7 +14,7 @@
     <RootNamespace>RaytracingAOPC12</RootNamespace>
     <ProjectGuid>{237251BF-9496-4F10-A4D5-1E7F0FE1EC6D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
     <ProjectName>RaytracingAO_PC12</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -60,7 +60,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\Kits\D3D12RaytracingFallback\Include;.\Assets;..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);.\Assets;..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <SuppressStartupBanner>false</SuppressStartupBanner>
     </ClCompile>
@@ -78,19 +78,6 @@
       <ObjectFileOutput />
       <EntryPointName />
     </FXCompile>
-    <PreLinkEvent>
-      <Command>cd "$(ProjectDir)..\..\..\Kits\D3D12RaytracingFallback\tools\x64\"</Command>
-    </PreLinkEvent>
-    <PostBuildEvent>
-      <Command>cd "$(ProjectDir)..\..\..\Kits\D3D12RaytracingFallback\tools\x64\"
-        PostbuildCopy.bat "$(ProjectDir)\$(Platform)\$(Configuration)\"</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Sideload required DXR binaries.</Message>
-    </PostBuildEvent>
-    <PreBuildEvent>
-      <Command>cd "$(ProjectDir)..\..\..\Kits\D3D12RaytracingFallback\tools\x64\"</Command>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -101,7 +88,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\..\..\Kits\D3D12RaytracingFallback\Include;.\Assets;..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);.\Assets;..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
     </ClCompile>
     <Link>
@@ -118,19 +105,6 @@
       <ObjectFileOutput />
       <EntryPointName />
     </FXCompile>
-    <PreLinkEvent>
-      <Command>cd "$(ProjectDir)..\..\..\Kits\D3D12RaytracingFallback\tools\x64\"</Command>
-    </PreLinkEvent>
-    <PostBuildEvent>
-      <Command>cd "$(ProjectDir)..\..\..\Kits\D3D12RaytracingFallback\tools\x64\"
-        PostbuildCopy.bat "$(ProjectDir)\$(Platform)\$(Configuration)\"</Command>
-    </PostBuildEvent>
-    <PostBuildEvent>
-      <Message>Sideload required DXR binaries.</Message>
-    </PostBuildEvent>
-    <PreBuildEvent>
-      <Command>cd "$(ProjectDir)..\..\..\Kits\D3D12RaytracingFallback\tools\x64\"</Command>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\Kits\ATGTK\ControllerFont.h" />
@@ -192,9 +166,6 @@
     <Manifest Include="settings.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Kits\D3D12RaytracingFallback\src\FallbackLayer.vcxproj">
-      <Project>{4be280a6-1066-41ca-acdd-6bb7e532508b}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Kits\DirectXTK12\DirectXTK_Desktop_2017_Win10.vcxproj">
       <Project>{3e0e8608-cd9b-4c76-af33-29ca38f2c9f0}</Project>
     </ProjectReference>

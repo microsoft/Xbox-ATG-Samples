@@ -15,7 +15,7 @@
     <ProjectGuid>{FFA6323F-11E5-433B-826B-430B5F384CF4}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>SimpleRaytracingTrianglePC12</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -52,17 +52,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\..\Kits\D3D12RaytracingFallback\Include;.\Assets;..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir);.\Assets;..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;runtimeobject.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
     </Link>
-    <PostBuildEvent>
-      <Command>cd "$(ProjectDir)..\..\..\Kits\D3D12RaytracingFallback\tools\x64\"
-PostbuildCopy.bat "$(ProjectDir)\$(Platform)\$(Configuration)\"</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -72,23 +67,15 @@ PostbuildCopy.bat "$(ProjectDir)\$(Platform)\$(Configuration)\"</Command>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\..\Kits\D3D12RaytracingFallback\Include;.\Assets;..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir);.\Assets;..\..\..\Kits\DirectXTK12\Inc;..\..\..\Kits\ATGTK;$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>d3d12.lib;dxgi.lib;dxguid.lib;runtimeobject.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>cd "$(ProjectDir)..\..\..\Kits\D3D12RaytracingFallback\tools\x64\"
-PostbuildCopy.bat "$(ProjectDir)\$(Platform)\$(Configuration)\"</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Kits\D3D12RaytracingFallback\src\FallbackLayer.vcxproj">
-      <Project>{4be280a6-1066-41ca-acdd-6bb7e532508b}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\Kits\DirectXTK12\DirectXTK_Desktop_2017_Win10.vcxproj">
       <Project>{3e0e8608-cd9b-4c76-af33-29ca38f2c9f0}</Project>
     </ProjectReference>
@@ -100,9 +87,8 @@ PostbuildCopy.bat "$(ProjectDir)\$(Platform)\$(Configuration)\"</Command>
     <ClCompile Include="SimpleRaytracingTriangle_PC12.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Kits\ATGTK\d3dx12.h" />
     <ClInclude Include="DeviceResources.h" />
-    <ClInclude Include="GeneralHelper.h" />
-    <ClInclude Include="HlslCompat.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RayTracingHelper.h" />
     <ClInclude Include="SimpleRaytracingTriangle_PC12.h" />

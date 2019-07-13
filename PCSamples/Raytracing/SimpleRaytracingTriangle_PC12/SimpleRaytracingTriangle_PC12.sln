@@ -7,26 +7,28 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleRaytracingTriangle_PC
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXTK12", "..\..\..\Kits\DirectXTK12\DirectXTK_Desktop_2017_Win10.vcxproj", "{3E0E8608-CD9B-4C76-AF33-29CA38F2C9F0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FallbackLayer", "..\..\..\Kits\D3D12RaytracingFallback\src\FallbackLayer.vcxproj", "{4BE280A6-1066-41CA-ACDD-6BB7E532508B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FFA6323F-11E5-433B-826B-430B5F384CF4}.Debug|x64.ActiveCfg = Debug|x64
 		{FFA6323F-11E5-433B-826B-430B5F384CF4}.Debug|x64.Build.0 = Debug|x64
+		{FFA6323F-11E5-433B-826B-430B5F384CF4}.Debug|x86.ActiveCfg = Debug|x64
 		{FFA6323F-11E5-433B-826B-430B5F384CF4}.Release|x64.ActiveCfg = Release|x64
 		{FFA6323F-11E5-433B-826B-430B5F384CF4}.Release|x64.Build.0 = Release|x64
+		{FFA6323F-11E5-433B-826B-430B5F384CF4}.Release|x86.ActiveCfg = Release|x64
 		{3E0E8608-CD9B-4C76-AF33-29CA38F2C9F0}.Debug|x64.ActiveCfg = Debug|x64
 		{3E0E8608-CD9B-4C76-AF33-29CA38F2C9F0}.Debug|x64.Build.0 = Debug|x64
+		{3E0E8608-CD9B-4C76-AF33-29CA38F2C9F0}.Debug|x86.ActiveCfg = Debug|Win32
+		{3E0E8608-CD9B-4C76-AF33-29CA38F2C9F0}.Debug|x86.Build.0 = Debug|Win32
 		{3E0E8608-CD9B-4C76-AF33-29CA38F2C9F0}.Release|x64.ActiveCfg = Release|x64
 		{3E0E8608-CD9B-4C76-AF33-29CA38F2C9F0}.Release|x64.Build.0 = Release|x64
-		{4BE280A6-1066-41CA-ACDD-6BB7E532508B}.Debug|x64.ActiveCfg = Debug|x64
-		{4BE280A6-1066-41CA-ACDD-6BB7E532508B}.Debug|x64.Build.0 = Debug|x64
-		{4BE280A6-1066-41CA-ACDD-6BB7E532508B}.Release|x64.ActiveCfg = Release|x64
-		{4BE280A6-1066-41CA-ACDD-6BB7E532508B}.Release|x64.Build.0 = Release|x64
+		{3E0E8608-CD9B-4C76-AF33-29CA38F2C9F0}.Release|x86.ActiveCfg = Release|Win32
+		{3E0E8608-CD9B-4C76-AF33-29CA38F2C9F0}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

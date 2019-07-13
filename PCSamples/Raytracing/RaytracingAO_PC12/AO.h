@@ -88,26 +88,26 @@ namespace AOLocalRootSig
 class AO : public Lighting
 {
 public:
-    void Setup(std::shared_ptr<DX::DeviceResources> pDeviceResources);
+    void Setup(std::shared_ptr<DX::DeviceResources> pDeviceResources) override;
 
-    void Run(Microsoft::WRL::ComPtr<ID3D12Resource> pSceneConstantResource);
+    void Run(ID3D12Resource* pSceneConstantResource) override;
 
-    void SetMesh(std::shared_ptr<Mesh> pMesh);
+    void SetMesh(std::shared_ptr<Mesh> pMesh) override;
 
-    void OnSizeChanged();
+    void OnSizeChanged() override;
 
-    void OnOptionUpdate(std::shared_ptr<Menus> pMenu);
+    void OnOptionUpdate(std::shared_ptr<Menus> pMenu) override;
 
 private:
     void CreateRootSignatures();
-    void CreateLocalRootSignatureSubobjects(CD3D12_STATE_OBJECT_DESC* raytracingPipeline);
+    void CreateLocalRootSignatureSubobjects(CD3DX12_STATE_OBJECT_DESC* raytracingPipeline);
     void CreateRaytracingPipelineStateObject();
     void CreateDescriptorHeaps();
     void BuildAccelerationStructures();
     void CreateConstantBuffers();
     void BuildShaderTables();
     void CreateRaytracingOutputResource();
-    void RunAORaytracing(Microsoft::WRL::ComPtr<ID3D12Resource> pSceneConstantResource);
+    void RunAORaytracing(ID3D12Resource* pSceneConstantResource);
     void CopyRaytracingOutputToBackbuffer();
 
     // Pipeline
@@ -116,13 +116,11 @@ private:
 #ifdef USE_NON_NULL_LOCAL_ROOT_SIG
     Microsoft::WRL::ComPtr<ID3D12RootSignature> m_raytracingLocalRootSignatureEmpty;
 #endif
-    //Microsoft::WRL::ComPtr<ID3D12RaytracingFallbackStateObject> m_fallbackStateObject;
-    //Microsoft::WRL::ComPtr<ID3D12StateObjectPrototype>          m_dxrStateObject;
+    Microsoft::WRL::ComPtr<ID3D12StateObject>   m_dxrStateObject;
 
     // Acceleration structure
     Microsoft::WRL::ComPtr<ID3D12Resource> m_bottomLevelAccelerationStructure;
     Microsoft::WRL::ComPtr<ID3D12Resource> m_topLevelAccelerationStructure;
-    WRAPPED_GPU_POINTER m_fallbackTopLevelAccelerationStructurePointer;
 
     // Constant Buffers.
     union AlignedAOConstantBuffer

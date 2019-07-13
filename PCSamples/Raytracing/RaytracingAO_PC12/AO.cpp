@@ -14,7 +14,6 @@
 #include "StratifiedSampler.h"
 #include "RayTracingHelper.h"
 
-using namespace DX;
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
@@ -38,8 +37,7 @@ const wchar_t* AO::c_missShaderNames[] =
 // Setup the root signatures for the shaders.
 void AO::CreateRootSignatures()
 {
-    ID3D12RaytracingFallbackDevice*  fallbackDevice = m_deviceResources->GetRaytracingFallbackDevice();
-    auto dxrDevice = m_deviceResources->GetD3DRayTracingDevice();
+    auto device = m_deviceResources->GetD3DDevice();
 
     // Global Root Signature
     // This is a root signature that is shared across all raytracing shaders invoked during a DispatchRays() call.
@@ -58,17 +56,11 @@ void AO::CreateRootSignatures()
 
         CD3DX12_ROOT_SIGNATURE_DESC globalRootSignatureDesc(_countof(rootParameters), rootParameters);
 
-        if (!m_deviceResources->m_isDxrNativelySupported)
-        {
-            SerializeAndCreateRaytracingRootSignature(fallbackDevice, globalRootSignatureDesc, &m_raytracingGlobalRootSignature);
-        }
-        else // DirectX Raytracing
         {
             ComPtr<ID3DBlob> blob;
             ComPtr<ID3DBlob> error;
-
-            ThrowIfFailed(D3D12SerializeRootSignature(&globalRootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &blob, &error), error ? static_cast<wchar_t*>(error->GetBufferPointer()) : nullptr);
-            ThrowIfFailed(dxrDevice->CreateRootSignature(1, blob->GetBufferPointer(), blob->GetBufferSize(), IID_PPV_ARGS(&(m_raytracingGlobalRootSignature))));
+            DX::ThrowIfFailed(D3D12SerializeRootSignature(&globalRootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &blob, &error));
+            DX::ThrowIfFailed(device->CreateRootSignature(1, blob->GetBufferPointer(), blob->GetBufferSize(), IID_PPV_ARGS(&(m_raytracingGlobalRootSignature))));
         }
     }
 
@@ -87,17 +79,12 @@ void AO::CreateRootSignatures()
         CD3DX12_ROOT_SIGNATURE_DESC localRootSignatureDesc(_countof(rootParameters), rootParameters);
         localRootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_LOCAL_ROOT_SIGNATURE;
 
-        if (!m_deviceResources->m_isDxrNativelySupported)
-        {
-            SerializeAndCreateRaytracingRootSignature(fallbackDevice, localRootSignatureDesc, &m_raytracingLocalRootSignature);
-        }
-        else
         {
             ComPtr<ID3DBlob> blob;
             ComPtr<ID3DBlob> error;
 
-            ThrowIfFailed(D3D12SerializeRootSignature(&localRootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &blob, &error), error ? static_cast<wchar_t*>(error->GetBufferPointer()) : nullptr);
-            ThrowIfFailed(dxrDevice->CreateRootSignature(1, blob->GetBufferPointer(), blob->GetBufferSize(), IID_PPV_ARGS(&(m_raytracingLocalRootSignature))));
+            DX::ThrowIfFailed(D3D12SerializeRootSignature(&localRootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &blob, &error));
+            DX::ThrowIfFailed(device->CreateRootSignature(1, blob->GetBufferPointer(), blob->GetBufferSize(), IID_PPV_ARGS(&(m_raytracingLocalRootSignature))));
         }
     }
 #ifdef USE_NON_NULL_LOCAL_ROOT_SIG
@@ -106,17 +93,12 @@ void AO::CreateRootSignatures()
         CD3DX12_ROOT_SIGNATURE_DESC localRootSignatureDesc(D3D12_DEFAULT);
         localRootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_LOCAL_ROOT_SIGNATURE;
         
-        if (!m_deviceResources->m_isDxrNativelySupported)
-        {
-            SerializeAndCreateRaytracingRootSignature(fallbackDevice, localRootSignatureDesc, &m_raytracingLocalRootSignatureEmpty);
-        }
-        else
         {
             ComPtr<ID3DBlob> blob;
             ComPtr<ID3DBlob> error;
 
-            ThrowIfFailed(D3D12SerializeRootSignature(&localRootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &blob, &error), error ? static_cast<wchar_t*>(error->GetBufferPointer()) : nullptr);
-            ThrowIfFailed(dxrDevice->CreateRootSignature(1, blob->GetBufferPointer(), blob->GetBufferSize(), IID_PPV_ARGS(&(m_raytracingLocalRootSignatureEmpty))));
+            DX::ThrowIfFailed(D3D12SerializeRootSignature(&localRootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &blob, &error));
+            DX::ThrowIfFailed(device->CreateRootSignature(1, blob->GetBufferPointer(), blob->GetBufferSize(), IID_PPV_ARGS(&(m_raytracingLocalRootSignatureEmpty))));
         }
     }
 #endif
@@ -124,25 +106,25 @@ void AO::CreateRootSignatures()
 
 // Local root signature and shader association
 // This is a root signature that enables a shader to have unique arguments that come from shader tables.
-void AO::CreateLocalRootSignatureSubobjects(CD3D12_STATE_OBJECT_DESC* raytracingPipeline)
+void AO::CreateLocalRootSignatureSubobjects(CD3DX12_STATE_OBJECT_DESC* raytracingPipeline)
 {
     // Local root signature to be used in a ray gen shader.
     {
-        auto localRootSignature = raytracingPipeline->CreateSubobject<CD3D12_LOCAL_ROOT_SIGNATURE_SUBOBJECT>();
+        auto localRootSignature = raytracingPipeline->CreateSubobject<CD3DX12_LOCAL_ROOT_SIGNATURE_SUBOBJECT>();
         localRootSignature->SetRootSignature(m_raytracingLocalRootSignature.Get());
 
         // Shader association
-        auto rootSignatureAssociation = raytracingPipeline->CreateSubobject<CD3D12_SUBOBJECT_TO_EXPORTS_ASSOCIATION_SUBOBJECT>();
+        auto rootSignatureAssociation = raytracingPipeline->CreateSubobject<CD3DX12_SUBOBJECT_TO_EXPORTS_ASSOCIATION_SUBOBJECT>();
         rootSignatureAssociation->SetSubobjectToAssociate(*localRootSignature);
         rootSignatureAssociation->AddExports(c_hitGroupNames);
     }
 #ifdef USE_NON_NULL_LOCAL_ROOT_SIG
     // Empty local root signature to be used in a miss shader and a hit group.
     {
-        auto localRootSignature = raytracingPipeline->CreateSubobject<CD3D12_LOCAL_ROOT_SIGNATURE_SUBOBJECT>();
+        auto localRootSignature = raytracingPipeline->CreateSubobject<CD3DX12_LOCAL_ROOT_SIGNATURE_SUBOBJECT>();
         localRootSignature->SetRootSignature(m_raytracingLocalRootSignatureEmpty.Get());
         // Shader association
-        auto rootSignatureAssociation = raytracingPipeline->CreateSubobject<CD3D12_SUBOBJECT_TO_EXPORTS_ASSOCIATION_SUBOBJECT>();
+        auto rootSignatureAssociation = raytracingPipeline->CreateSubobject<CD3DX12_SUBOBJECT_TO_EXPORTS_ASSOCIATION_SUBOBJECT>();
         rootSignatureAssociation->SetSubobjectToAssociate(*localRootSignature);
         rootSignatureAssociation->AddExport(c_raygenShaderName);
         rootSignatureAssociation->AddExports(c_missShaderNames);
@@ -155,8 +137,7 @@ void AO::CreateLocalRootSignatureSubobjects(CD3D12_STATE_OBJECT_DESC* raytracing
 // with all configuration options resolved, such as local signatures and other state.
 void AO::CreateRaytracingPipelineStateObject()
 {
-    ID3D12RaytracingFallbackDevice* fallbackDevice = m_deviceResources->GetRaytracingFallbackDevice();
-    ID3D12Device5* dxrDevice = m_deviceResources->GetD3DRayTracingDevice();
+    auto device = m_deviceResources->GetD3DDevice();
 
     // Create 8 subobjects that combine into a RTPSO:
     // Subobjects need to be associated with DXIL exports (i.e. shaders) either by way of default or explicit associations.
@@ -169,12 +150,12 @@ void AO::CreateRaytracingPipelineStateObject()
     // 2 - Local root signature and association
     // 1 - Global root signature
     // 1 - Pipeline config
-    CD3D12_STATE_OBJECT_DESC raytracingPipeline{ D3D12_STATE_OBJECT_TYPE_RAYTRACING_PIPELINE };
+    CD3DX12_STATE_OBJECT_DESC raytracingPipeline{ D3D12_STATE_OBJECT_TYPE_RAYTRACING_PIPELINE };
 
     // DXIL library
     // This contains the shaders and their entrypoints for the state object.
     // Since shaders are not considered a subobject, they need to be passed in via DXIL library subobjects.
-    auto lib = raytracingPipeline.CreateSubobject<CD3D12_DXIL_LIBRARY_SUBOBJECT>();
+    auto lib = raytracingPipeline.CreateSubobject<CD3DX12_DXIL_LIBRARY_SUBOBJECT>();
     D3D12_SHADER_BYTECODE libdxil = CD3DX12_SHADER_BYTECODE((void *)g_pAORaytracing, sizeof(g_pAORaytracing));
     lib->SetDXILLibrary(&libdxil);
 
@@ -192,14 +173,14 @@ void AO::CreateRaytracingPipelineStateObject()
     // In this sample, we only use triangle geometry with a closest hit shader, so others are not set.
     for (unsigned int i = 0; i < TraceRayParameters::HitGroup::Count; i++)
     {
-        auto hitGroup = raytracingPipeline.CreateSubobject<CD3D12_HIT_GROUP_SUBOBJECT>();
+        auto hitGroup = raytracingPipeline.CreateSubobject<CD3DX12_HIT_GROUP_SUBOBJECT>();
         hitGroup->SetClosestHitShaderImport(c_closestHitShaderNames[i]);
         hitGroup->SetHitGroupExport(c_hitGroupNames[i]);
     }
 
     // Shader config
     // Defines the maximum sizes in bytes for the ray payload and attribute structure.
-    auto shaderConfig = raytracingPipeline.CreateSubobject<CD3D12_RAYTRACING_SHADER_CONFIG_SUBOBJECT>();
+    auto shaderConfig = raytracingPipeline.CreateSubobject<CD3DX12_RAYTRACING_SHADER_CONFIG_SUBOBJECT>();
     unsigned int payloadSize = sizeof(XMFLOAT4);    // float4 pixelColor
     unsigned int attributeSize = sizeof(XMFLOAT2);  // float2 barycentrics
     shaderConfig->Config(payloadSize, attributeSize);
@@ -211,12 +192,12 @@ void AO::CreateRaytracingPipelineStateObject()
     // Global root signature
     // This is a root signature that is shared across all raytracing shaders invoked during a DispatchRays() call.
 
-    auto globalRootSignature = raytracingPipeline.CreateSubobject<CD3D12_GLOBAL_ROOT_SIGNATURE_SUBOBJECT>();
+    auto globalRootSignature = raytracingPipeline.CreateSubobject<CD3DX12_GLOBAL_ROOT_SIGNATURE_SUBOBJECT>();
     globalRootSignature->SetRootSignature(m_raytracingGlobalRootSignature.Get());
 
     // Pipeline config
     // Defines the maximum TraceRay() recursion depth.
-    auto pipelineConfig = raytracingPipeline.CreateSubobject<CD3D12_RAYTRACING_PIPELINE_CONFIG_SUBOBJECT>();
+    auto pipelineConfig = raytracingPipeline.CreateSubobject<CD3DX12_RAYTRACING_PIPELINE_CONFIG_SUBOBJECT>();
     // PERFOMANCE TIP: Set max recursion depth as low as needed 
     // as drivers may apply optimization strategies for low recursion depths.
     unsigned int maxRecursionDepth = 2; // ~ primary rays and first bounce AO rays. 
@@ -225,14 +206,8 @@ void AO::CreateRaytracingPipelineStateObject()
 #if _DEBUG
     PrintStateObjectDesc(raytracingPipeline);
 #endif
-    if (!m_deviceResources->m_isDxrNativelySupported)
-    {
-        ThrowIfFailed(fallbackDevice->CreateStateObject(raytracingPipeline, IID_PPV_ARGS(&m_deviceResources->m_fallbackStateObject)), L"Couldn't create DirectX Raytracing state object.\n");
-    }
-    else
-    {
-        ThrowIfFailed(dxrDevice->CreateStateObject(raytracingPipeline, IID_PPV_ARGS(&m_deviceResources->m_dxrStateObject)), L"Couldn't create DirectX Raytracing state object.\n");
-    }
+
+    DX::ThrowIfFailed(device->CreateStateObject(raytracingPipeline, IID_PPV_ARGS(&m_dxrStateObject)));
 }
 
 // Setup descriptor heaps.
@@ -280,12 +255,8 @@ void AO::CreateDescriptorHeaps()
 void AO::BuildAccelerationStructures()
 {
     auto device = m_deviceResources->GetD3DDevice();
-    auto dxrDevice = m_deviceResources->GetD3DRayTracingDevice();
     auto commandList = m_deviceResources->GetCommandList();
-    auto dxrCommandList = m_deviceResources->GetRaytracingCommandList();
     auto commandAllocator = m_deviceResources->GetCommandAllocator();
-    ID3D12RaytracingFallbackDevice* fallbackDevice = m_deviceResources->GetRaytracingFallbackDevice();
-    ID3D12RaytracingFallbackCommandList* raytracingfallbackCommandList = m_deviceResources->GetRaytracingFallbackCommandList();
 
     // Reset the command list for the acceleration structure construction.
     commandList->Reset(commandAllocator, nullptr);
@@ -332,15 +303,10 @@ void AO::BuildAccelerationStructures()
     bottomLevelInputs.pGeometryDescs = geometryDescArr.data();
 
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_PREBUILD_INFO bottomLevelPrebuildInfo = {};
-    if (!m_deviceResources->m_isDxrNativelySupported)
     {
-        fallbackDevice->GetRaytracingAccelerationStructurePrebuildInfo(&bottomLevelInputs, &bottomLevelPrebuildInfo);
+        device->GetRaytracingAccelerationStructurePrebuildInfo(&bottomLevelInputs, &bottomLevelPrebuildInfo);
     }
-    else // DirectX Raytracing
-    {
-        dxrDevice->GetRaytracingAccelerationStructurePrebuildInfo(&bottomLevelInputs, &bottomLevelPrebuildInfo);
-    }
-    ThrowIfFalse(bottomLevelPrebuildInfo.ResultDataMaxSizeInBytes > 0);
+    assert(bottomLevelPrebuildInfo.ResultDataMaxSizeInBytes > 0);
 
 
     D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC topLevelBuildDesc = bottomLevelBuildDesc;
@@ -352,16 +318,10 @@ void AO::BuildAccelerationStructures()
     topLevelInputs.Type = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL;
 
     D3D12_RAYTRACING_ACCELERATION_STRUCTURE_PREBUILD_INFO topLevelPrebuildInfo = {};
-    if (!m_deviceResources->m_isDxrNativelySupported)
     {
-        fallbackDevice->GetRaytracingAccelerationStructurePrebuildInfo(&topLevelInputs, &topLevelPrebuildInfo);
+        device->GetRaytracingAccelerationStructurePrebuildInfo(&topLevelInputs, &topLevelPrebuildInfo);
     }
-    else // DirectX Raytracing
-    {
-        dxrDevice->GetRaytracingAccelerationStructurePrebuildInfo(&topLevelInputs, &topLevelPrebuildInfo);
-    }
-
-    ThrowIfFalse(topLevelPrebuildInfo.ResultDataMaxSizeInBytes > 0);
+    assert(topLevelPrebuildInfo.ResultDataMaxSizeInBytes > 0);
 
 
     // Allocate buffer to be used during acceleration structure construction.
@@ -381,21 +341,8 @@ void AO::BuildAccelerationStructures()
     // and must have resource flag D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS. The ALLOW_UNORDERED_ACCESS requirement simply acknowledges both: 
     //  - the system will be doing this type of access in its implementation of acceleration structure builds behind the scenes.
     //  - from the app point of view, synchronization of writes/reads to acceleration structures is accomplished using UAV barriers.
-    {
-        D3D12_RESOURCE_STATES initialResourceState;
-
-        if (!m_deviceResources->m_isDxrNativelySupported)
-        {
-            initialResourceState = fallbackDevice->GetAccelerationStructureResourceState();
-        }
-        else
-        {
-            initialResourceState = D3D12_RESOURCE_STATE_RAYTRACING_ACCELERATION_STRUCTURE;
-        }
-
-        AllocateUAVBuffer(device, bottomLevelPrebuildInfo.ResultDataMaxSizeInBytes, &m_bottomLevelAccelerationStructure, initialResourceState, L"BottomLevelAccelerationStructure");
-        AllocateUAVBuffer(device, topLevelPrebuildInfo.ResultDataMaxSizeInBytes, &m_topLevelAccelerationStructure, initialResourceState, L"TopLevelAccelerationStructure");
-    }
+    AllocateUAVBuffer(device, bottomLevelPrebuildInfo.ResultDataMaxSizeInBytes, &m_bottomLevelAccelerationStructure, D3D12_RESOURCE_STATE_RAYTRACING_ACCELERATION_STRUCTURE, L"BottomLevelAccelerationStructure");
+    AllocateUAVBuffer(device, topLevelPrebuildInfo.ResultDataMaxSizeInBytes, &m_topLevelAccelerationStructure, D3D12_RESOURCE_STATE_RAYTRACING_ACCELERATION_STRUCTURE, L"TopLevelAccelerationStructure");
 
     // Note on Emulated GPU pointers (AKA Wrapped pointers) requirement in Fallback Layer:
     // The primary point of divergence between the DXR API and the compute-based Fallback layer is the handling of GPU pointers. 
@@ -411,25 +358,6 @@ void AO::BuildAccelerationStructures()
     // Create an instance desc for the bottom-level acceleration structure.
     ComPtr<ID3D12Resource> instanceDescs;
 
-    if (!m_deviceResources->m_isDxrNativelySupported)
-    {
-        D3D12_RAYTRACING_FALLBACK_INSTANCE_DESC instanceDesc = {};
-        instanceDesc.Transform[0][0] = instanceDesc.Transform[1][1] = instanceDesc.Transform[2][2] = 1;
-        instanceDesc.InstanceMask = 1;
-
-        unsigned int numBufferElements = static_cast<unsigned int>(bottomLevelPrebuildInfo.ResultDataMaxSizeInBytes) / sizeof(uint32_t);
-        instanceDesc.AccelerationStructure =
-            CreateFallbackWrappedPointer(
-                device,
-                fallbackDevice,
-                m_bottomLevelAccelerationStructure.Get(),
-                m_csuDescriptors->GetFirstCpuHandle(),
-                AOCSUDesc::SRVBottomLevelAccel,
-                numBufferElements,
-                unsigned int(m_csuDescriptors->Increment()));
-        AllocateUploadBuffer(device, &instanceDesc, sizeof(instanceDesc), &instanceDescs, L"InstanceDescs");
-    }
-    else
     {
         D3D12_RAYTRACING_INSTANCE_DESC instanceDesc = {};
         instanceDesc.Transform[0][0] = instanceDesc.Transform[1][1] = instanceDesc.Transform[2][2] = 1;
@@ -437,21 +365,6 @@ void AO::BuildAccelerationStructures()
         instanceDesc.AccelerationStructure = m_bottomLevelAccelerationStructure->GetGPUVirtualAddress();
 
         AllocateUploadBuffer(device, &instanceDesc, sizeof(instanceDesc), &instanceDescs, L"InstanceDescs");
-    }
-
-    // Create a wrapped pointer to the acceleration structure.
-    if (!m_deviceResources->m_isDxrNativelySupported)
-    {
-        unsigned int numBufferElements = static_cast<unsigned int>(topLevelPrebuildInfo.ResultDataMaxSizeInBytes) / sizeof(uint32_t);
-        m_fallbackTopLevelAccelerationStructurePointer =
-            CreateFallbackWrappedPointer(
-                device,
-                fallbackDevice,
-                m_topLevelAccelerationStructure.Get(),
-                m_csuDescriptors->GetFirstCpuHandle(),
-                AOCSUDesc::SRVTopLevelAccel,
-                numBufferElements,
-                unsigned int(m_csuDescriptors->Increment()));
     }
 
     // Bottom Level Acceleration Structure desc
@@ -464,32 +377,20 @@ void AO::BuildAccelerationStructures()
     topLevelBuildDesc.ScratchAccelerationStructureData = { scratchResource->GetGPUVirtualAddress() };
 
     // Build the acceleration structure.
-    if (!m_deviceResources->m_isDxrNativelySupported)
-    {
-        // Set the descriptor heaps to be used during acceleration structure build for the Fallback Layer.
-        ID3D12DescriptorHeap *pDescriptorHeaps[] = { m_csuDescriptors->Heap() };
-        raytracingfallbackCommandList->SetDescriptorHeaps(_countof(pDescriptorHeaps), pDescriptorHeaps);
-
-        CD3DX12_RESOURCE_BARRIER bottomBarrier = CD3DX12_RESOURCE_BARRIER::UAV(m_bottomLevelAccelerationStructure.Get());
-
-        raytracingfallbackCommandList->BuildRaytracingAccelerationStructure(&bottomLevelBuildDesc, 0, nullptr);
-        commandList->ResourceBarrier(1, &bottomBarrier);
-        raytracingfallbackCommandList->BuildRaytracingAccelerationStructure(&topLevelBuildDesc, 0, nullptr);
-    }
-    else
     {
         CD3DX12_RESOURCE_BARRIER bottomBarrier = CD3DX12_RESOURCE_BARRIER::UAV(m_bottomLevelAccelerationStructure.Get());
 
-        dxrCommandList->BuildRaytracingAccelerationStructure(&bottomLevelBuildDesc, 0, nullptr);
+        commandList->BuildRaytracingAccelerationStructure(&bottomLevelBuildDesc, 0, nullptr);
         commandList->ResourceBarrier(1, &bottomBarrier);
-        dxrCommandList->BuildRaytracingAccelerationStructure(&topLevelBuildDesc, 0, nullptr);
+        commandList->BuildRaytracingAccelerationStructure(&topLevelBuildDesc, 0, nullptr);
     }
 
     // End commandlist.
     PIXEndEvent(commandList);
 
     // Kick off acceleration structure construction.
-    m_deviceResources->ExecuteCommandList();
+    DX::ThrowIfFailed(commandList->Close());
+    m_deviceResources->GetCommandQueue()->ExecuteCommandLists(1, CommandListCast(&commandList));
 
     // Wait for GPU to finish as the locally created temporary GPU resources will get released once we go out of scope.
     m_deviceResources->WaitForGpu();
@@ -531,7 +432,6 @@ void AO::CreateConstantBuffers()
 void AO::BuildShaderTables()
 {
     auto device = m_deviceResources->GetD3DDevice();
-    ID3D12RaytracingFallbackDevice* fallbackDevice = m_deviceResources->GetRaytracingFallbackDevice();
 
     void* rayGenShaderIdentifier;
     void* missShaderIdentifiers[TraceRayParameters::MissShader::Count];
@@ -539,22 +439,9 @@ void AO::BuildShaderTables()
 
     unsigned int shaderIdentifierSize;
     // Record shader information.
-    if (!m_deviceResources->m_isDxrNativelySupported)
     {
-        rayGenShaderIdentifier = m_deviceResources->m_fallbackStateObject->GetShaderIdentifier(c_raygenShaderName);
-
-        for (unsigned int i = 0; i < TraceRayParameters::MissShader::Count; i++)
-            missShaderIdentifiers[i] = m_deviceResources->m_fallbackStateObject->GetShaderIdentifier(c_missShaderNames[i]);
-
-        for (unsigned int i = 0; i < TraceRayParameters::HitGroup::Count; i++)
-            hitGroupShaderIdentifiers[i] = m_deviceResources->m_fallbackStateObject->GetShaderIdentifier(c_hitGroupNames[i]);
-
-        shaderIdentifierSize = fallbackDevice->GetShaderIdentifierSize();
-    }
-    else
-    {
-        ComPtr<ID3D12StateObjectPropertiesPrototype> stateObjectProperties;
-        ThrowIfFailed(m_deviceResources->m_dxrStateObject.As(&stateObjectProperties));
+        ComPtr<ID3D12StateObjectProperties> stateObjectProperties;
+        DX::ThrowIfFailed(m_dxrStateObject.As(&stateObjectProperties));
 
         rayGenShaderIdentifier = stateObjectProperties->GetShaderIdentifier(c_raygenShaderName);
 
@@ -657,14 +544,16 @@ void AO::CreateRaytracingOutputResource()
 {
     auto device = m_deviceResources->GetD3DDevice();
     auto backbufferFormat = m_deviceResources->GetBackBufferFormat();
-    auto screenWidth = m_deviceResources->GetScreenWidth() * m_screenWidthScale;
-    auto screenHeight = m_deviceResources->GetScreenHeight();
+
+    auto output = m_deviceResources->GetOutputSize();
+    auto screenWidth = static_cast<UINT>(float(output.right - output.left) * m_screenWidthScale);
+    auto screenHeight = static_cast<UINT>(output.bottom - output.top);
 
     // Create the output resource. The dimensions and format should match the swap-chain.
     auto uavDesc = CD3DX12_RESOURCE_DESC::Tex2D(backbufferFormat, (UINT64)screenWidth, screenHeight, 1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
 
     auto defaultHeapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-    ThrowIfFailed(device->CreateCommittedResource(&defaultHeapProperties, D3D12_HEAP_FLAG_NONE, &uavDesc, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, nullptr, IID_PPV_ARGS(&m_raytracingOutput)));
+    DX::ThrowIfFailed(device->CreateCommittedResource(&defaultHeapProperties, D3D12_HEAP_FLAG_NONE, &uavDesc, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, nullptr, IID_PPV_ARGS(&m_raytracingOutput)));
 
     // Create the UAV resource
     {
@@ -685,11 +574,9 @@ void AO::CreateRaytracingOutputResource()
 }
 
 // AO algorithm.
-void AO::RunAORaytracing(ComPtr<ID3D12Resource> pSceneConstantResource)
+void AO::RunAORaytracing(ID3D12Resource* pSceneConstantResource)
 {
-    ID3D12GraphicsCommandList* commandList = m_deviceResources->GetCommandList();
-    ID3D12GraphicsCommandList5* dxrCommandList = m_deviceResources->GetRaytracingCommandList();
-    ID3D12RaytracingFallbackCommandList* raytracingfallbackCommandList = m_deviceResources->GetRaytracingFallbackCommandList();
+    auto commandList = m_deviceResources->GetCommandList();
 
     PIXBeginEvent(commandList, PIX_COLOR_DEFAULT, L"AORaytracing");
 
@@ -720,15 +607,7 @@ void AO::RunAORaytracing(ComPtr<ID3D12Resource> pSceneConstantResource)
                 commandList->SetComputeRootConstantBufferView(AOGlobalRootSig::GlobalAOOptionsConstSlot, cbGpuAddress);
 
                 ID3D12DescriptorHeap* ppHeaps[] = { m_csuDescriptors->Heap(), m_samplerDescriptors->Heap() };
-
-                if (!m_deviceResources->m_isDxrNativelySupported)
-                {
-                    raytracingfallbackCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
-                }
-                else
-                {
-                    commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
-                }
+                commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
             }
 
             commandList->SetComputeRootDescriptorTable(AOGlobalRootSig::GlobalOutputViewSlot, m_csuDescriptors->GetGpuHandle(AOCSUDesc::UAVRaytracingOut));
@@ -737,14 +616,7 @@ void AO::RunAORaytracing(ComPtr<ID3D12Resource> pSceneConstantResource)
 
         // Bind the heaps, acceleration structure and dispatch rays.
         {
-            if (!m_deviceResources->m_isDxrNativelySupported)
-            {
-                raytracingfallbackCommandList->SetTopLevelAccelerationStructure(AOGlobalRootSig::GlobalAccelStructSlot, m_fallbackTopLevelAccelerationStructurePointer);
-            }
-            else
-            {
-                commandList->SetComputeRootShaderResourceView(AOGlobalRootSig::GlobalAccelStructSlot, m_topLevelAccelerationStructure->GetGPUVirtualAddress());
-            }
+            commandList->SetComputeRootShaderResourceView(AOGlobalRootSig::GlobalAccelStructSlot, m_topLevelAccelerationStructure->GetGPUVirtualAddress());
 
             // Dispatch rays.
             {
@@ -762,15 +634,8 @@ void AO::RunAORaytracing(ComPtr<ID3D12Resource> pSceneConstantResource)
                 dispatchDesc.Height                                 = std::max<long>(m_deviceResources->GetOutputSize().bottom - m_deviceResources->GetOutputSize().top, 1);
                 dispatchDesc.Depth = 1;
 
-                if (!m_deviceResources->m_isDxrNativelySupported)
-                {
-                    raytracingfallbackCommandList->DispatchRays(&dispatchDesc);
-                }
-                else
-                {
-                    dxrCommandList->SetPipelineState1(m_deviceResources->m_dxrStateObject.Get());
-                    dxrCommandList->DispatchRays(&dispatchDesc);
-                }
+                commandList->SetPipelineState1(m_dxrStateObject.Get());
+                commandList->DispatchRays(&dispatchDesc);
             }
         }
     }
@@ -843,7 +708,7 @@ void AO::CopyRaytracingOutputToBackbuffer()
 }
 
 // Setup AO for the scene.
-void AO::Setup(std::shared_ptr<DeviceResources> pDeviceResources)
+void AO::Setup(std::shared_ptr<DX::DeviceResources> pDeviceResources)
 {
     // Run super class setup.
     Lighting::Setup(pDeviceResources);
@@ -865,7 +730,7 @@ void AO::Setup(std::shared_ptr<DeviceResources> pDeviceResources)
 }
 
 // Run AO.
-void AO::Run(ComPtr<ID3D12Resource> pSceneConstantResource)
+void AO::Run(ID3D12Resource* pSceneConstantResource)
 {
     // No reason to clear the backbuffer since the raytracing output will be copied to it.
     RunAORaytracing(pSceneConstantResource);
