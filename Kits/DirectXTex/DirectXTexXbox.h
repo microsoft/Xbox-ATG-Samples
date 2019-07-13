@@ -13,7 +13,7 @@
 #error This tool is only supported for x64 native
 #endif
 
-#include "directxtex.h"
+#include "DirectXTex.h"
 
 #include <xg.h>
 

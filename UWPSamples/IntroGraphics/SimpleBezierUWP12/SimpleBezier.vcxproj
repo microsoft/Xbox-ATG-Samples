@@ -290,7 +290,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Kits\DirectXTK12\DirectXTK_Windows10.vcxproj">
+    <ProjectReference Include="..\..\..\Kits\DirectXTK12\DirectXTK_Windows10_2017.vcxproj">
       <Project>{945b8f0e-ae5f-447c-933a-9d069532d3e4}</Project>
     </ProjectReference>
   </ItemGroup>

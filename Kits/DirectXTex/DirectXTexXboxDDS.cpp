@@ -10,7 +10,7 @@
 #include "DirectXTexP.h"
 #include "DirectXTexXbox.h"
 
-#include "dds.h"
+#include "DDS.h"
 #include "xdk.h"
 
 using namespace DirectX;
@@ -126,9 +126,9 @@ namespace
             return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
         }
 
-        static_assert(TEX_MISC_TEXTURECUBE == DDS_RESOURCE_MISC_TEXTURECUBE, "DDS header mismatch");
+        static_assert(static_cast<int>(TEX_MISC_TEXTURECUBE) == static_cast<int>(DDS_RESOURCE_MISC_TEXTURECUBE), "DDS header mismatch");
 
-        metadata.miscFlags = xboxext->miscFlag & ~TEX_MISC_TEXTURECUBE;
+        metadata.miscFlags = xboxext->miscFlag & ~static_cast<uint32_t>(TEX_MISC_TEXTURECUBE);
 
         switch (xboxext->resourceDimension)
         {
@@ -177,13 +177,13 @@ namespace
             return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
         }
 
-        static_assert(TEX_MISC2_ALPHA_MODE_MASK == DDS_MISC_FLAGS2_ALPHA_MODE_MASK, "DDS header mismatch");
+        static_assert(static_cast<int>(TEX_MISC2_ALPHA_MODE_MASK) == static_cast<int>(DDS_MISC_FLAGS2_ALPHA_MODE_MASK), "DDS header mismatch");
 
-        static_assert(TEX_ALPHA_MODE_UNKNOWN == DDS_ALPHA_MODE_UNKNOWN, "DDS header mismatch");
-        static_assert(TEX_ALPHA_MODE_STRAIGHT == DDS_ALPHA_MODE_STRAIGHT, "DDS header mismatch");
-        static_assert(TEX_ALPHA_MODE_PREMULTIPLIED == DDS_ALPHA_MODE_PREMULTIPLIED, "DDS header mismatch");
-        static_assert(TEX_ALPHA_MODE_OPAQUE == DDS_ALPHA_MODE_OPAQUE, "DDS header mismatch");
-        static_assert(TEX_ALPHA_MODE_CUSTOM == DDS_ALPHA_MODE_CUSTOM, "DDS header mismatch");
+        static_assert(static_cast<int>(TEX_ALPHA_MODE_UNKNOWN) == static_cast<int>(DDS_ALPHA_MODE_UNKNOWN), "DDS header mismatch");
+        static_assert(static_cast<int>(TEX_ALPHA_MODE_STRAIGHT) == static_cast<int>(DDS_ALPHA_MODE_STRAIGHT), "DDS header mismatch");
+        static_assert(static_cast<int>(TEX_ALPHA_MODE_PREMULTIPLIED) == static_cast<int>(DDS_ALPHA_MODE_PREMULTIPLIED), "DDS header mismatch");
+        static_assert(static_cast<int>(TEX_ALPHA_MODE_OPAQUE) == static_cast<int>(DDS_ALPHA_MODE_OPAQUE), "DDS header mismatch");
+        static_assert(static_cast<int>(TEX_ALPHA_MODE_CUSTOM) == static_cast<int>(DDS_ALPHA_MODE_CUSTOM), "DDS header mismatch");
 
         metadata.miscFlags2 = xboxext->miscFlags2;
 
@@ -311,8 +311,8 @@ namespace
         if (metadata.arraySize > UINT32_MAX)
             return E_INVALIDARG;
 
-        static_assert(TEX_MISC_TEXTURECUBE == DDS_RESOURCE_MISC_TEXTURECUBE, "DDS header mismatch");
-        xboxext->miscFlag = metadata.miscFlags & ~TEX_MISC_TEXTURECUBE;
+        static_assert(static_cast<int>(TEX_MISC_TEXTURECUBE) == static_cast<int>(DDS_RESOURCE_MISC_TEXTURECUBE), "DDS header mismatch");
+        xboxext->miscFlag = metadata.miscFlags & ~static_cast<uint32_t>(TEX_MISC_TEXTURECUBE);
 
         if (metadata.miscFlags & TEX_MISC_TEXTURECUBE)
         {
@@ -325,17 +325,17 @@ namespace
             xboxext->arraySize = static_cast<UINT>(metadata.arraySize);
         }
 
-        static_assert(TEX_MISC2_ALPHA_MODE_MASK == DDS_MISC_FLAGS2_ALPHA_MODE_MASK, "DDS header mismatch");
+        static_assert(static_cast<int>(TEX_MISC2_ALPHA_MODE_MASK) == static_cast<int>(DDS_MISC_FLAGS2_ALPHA_MODE_MASK), "DDS header mismatch");
 
-        static_assert(TEX_ALPHA_MODE_UNKNOWN == DDS_ALPHA_MODE_UNKNOWN, "DDS header mismatch");
-        static_assert(TEX_ALPHA_MODE_STRAIGHT == DDS_ALPHA_MODE_STRAIGHT, "DDS header mismatch");
-        static_assert(TEX_ALPHA_MODE_PREMULTIPLIED == DDS_ALPHA_MODE_PREMULTIPLIED, "DDS header mismatch");
-        static_assert(TEX_ALPHA_MODE_OPAQUE == DDS_ALPHA_MODE_OPAQUE, "DDS header mismatch");
-        static_assert(TEX_ALPHA_MODE_CUSTOM == DDS_ALPHA_MODE_CUSTOM, "DDS header mismatch");
+        static_assert(static_cast<int>(TEX_ALPHA_MODE_UNKNOWN) == static_cast<int>(DDS_ALPHA_MODE_UNKNOWN), "DDS header mismatch");
+        static_assert(static_cast<int>(TEX_ALPHA_MODE_STRAIGHT) == static_cast<int>(DDS_ALPHA_MODE_STRAIGHT), "DDS header mismatch");
+        static_assert(static_cast<int>(TEX_ALPHA_MODE_PREMULTIPLIED) == static_cast<int>(DDS_ALPHA_MODE_PREMULTIPLIED), "DDS header mismatch");
+        static_assert(static_cast<int>(TEX_ALPHA_MODE_OPAQUE) == static_cast<int>(DDS_ALPHA_MODE_OPAQUE), "DDS header mismatch");
+        static_assert(static_cast<int>(TEX_ALPHA_MODE_CUSTOM) == static_cast<int>(DDS_ALPHA_MODE_CUSTOM), "DDS header mismatch");
 
         xboxext->miscFlags2 = metadata.miscFlags2;
 
-        xboxext->tileMode = xbox.GetTileMode();
+        xboxext->tileMode = static_cast<uint32_t>(xbox.GetTileMode());
         xboxext->baseAlignment = xbox.GetAlignment();
         xboxext->dataSize = xbox.GetSize();
         xboxext->xdkVer = _XDK_VER;
@@ -391,10 +391,10 @@ HRESULT Xbox::GetMetadataFromDDSFile(
     isXbox = false;
 
 #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
-    ScopedHandle hFile(safe_handle(CreateFile2(szFile, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, 0)));
+    ScopedHandle hFile(safe_handle(CreateFile2(szFile, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, nullptr)));
 #else
-    ScopedHandle hFile(safe_handle(CreateFileW(szFile, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING,
-        FILE_FLAG_SEQUENTIAL_SCAN, 0)));
+    ScopedHandle hFile(safe_handle(CreateFileW(szFile, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
+        FILE_FLAG_SEQUENTIAL_SCAN, nullptr)));
 #endif
     if (!hFile)
     {
@@ -424,7 +424,7 @@ HRESULT Xbox::GetMetadataFromDDSFile(
     uint8_t header[XBOX_HEADER_SIZE];
 
     DWORD bytesRead = 0;
-    if (!ReadFile(hFile.get(), header, XBOX_HEADER_SIZE, &bytesRead, 0))
+    if (!ReadFile(hFile.get(), header, XBOX_HEADER_SIZE, &bytesRead, nullptr))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
@@ -496,7 +496,7 @@ HRESULT Xbox::LoadFromDDSMemory(
     if (FAILED(hr))
         return hr;
 
-    assert(xbox.GetPointer() != 0);
+    assert(xbox.GetPointer() != nullptr);
 
     memcpy(xbox.GetPointer(), reinterpret_cast<const uint8_t*>(pSource) + XBOX_HEADER_SIZE, dataSize);
 
@@ -522,10 +522,10 @@ HRESULT Xbox::LoadFromDDSFile(
     xbox.Release();
 
 #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
-    ScopedHandle hFile(safe_handle(CreateFile2(szFile, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, 0)));
+    ScopedHandle hFile(safe_handle(CreateFile2(szFile, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, nullptr)));
 #else
-    ScopedHandle hFile(safe_handle(CreateFileW(szFile, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING,
-        FILE_FLAG_SEQUENTIAL_SCAN, 0)));
+    ScopedHandle hFile(safe_handle(CreateFileW(szFile, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
+        FILE_FLAG_SEQUENTIAL_SCAN, nullptr)));
 #endif
 
     if (!hFile)
@@ -556,7 +556,7 @@ HRESULT Xbox::LoadFromDDSFile(
     uint8_t header[XBOX_HEADER_SIZE];
 
     DWORD bytesRead = 0;
-    if (!ReadFile(hFile.get(), header, XBOX_HEADER_SIZE, &bytesRead, 0))
+    if (!ReadFile(hFile.get(), header, XBOX_HEADER_SIZE, &bytesRead, nullptr))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
@@ -593,9 +593,9 @@ HRESULT Xbox::LoadFromDDSFile(
     if (FAILED(hr))
         return hr;
 
-    assert(xbox.GetPointer() != 0);
+    assert(xbox.GetPointer() != nullptr);
 
-    if (!ReadFile(hFile.get(), xbox.GetPointer(), dataSize, &bytesRead, 0))
+    if (!ReadFile(hFile.get(), xbox.GetPointer(), dataSize, &bytesRead, nullptr))
     {
         xbox.Release();
         return HRESULT_FROM_WIN32(GetLastError());
@@ -673,9 +673,9 @@ HRESULT Xbox::SaveToDDSFile(const XboxImage& xbox, const wchar_t* szFile)
 
     // Create file and write header
 #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
-    ScopedHandle hFile(safe_handle(CreateFile2(szFile, GENERIC_WRITE, 0, CREATE_ALWAYS, 0)));
+    ScopedHandle hFile(safe_handle(CreateFile2(szFile, GENERIC_WRITE, 0, CREATE_ALWAYS, nullptr)));
 #else
-    ScopedHandle hFile(safe_handle(CreateFileW(szFile, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, 0, 0)));
+    ScopedHandle hFile(safe_handle(CreateFileW(szFile, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, 0, nullptr)));
 #endif
     if (!hFile)
     {
@@ -683,7 +683,7 @@ HRESULT Xbox::SaveToDDSFile(const XboxImage& xbox, const wchar_t* szFile)
     }
 
     DWORD bytesWritten;
-    if (!WriteFile(hFile.get(), header, static_cast<DWORD>(XBOX_HEADER_SIZE), &bytesWritten, 0))
+    if (!WriteFile(hFile.get(), header, static_cast<DWORD>(XBOX_HEADER_SIZE), &bytesWritten, nullptr))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }
@@ -694,7 +694,7 @@ HRESULT Xbox::SaveToDDSFile(const XboxImage& xbox, const wchar_t* szFile)
     }
 
     // Write tiled data
-    if (!WriteFile(hFile.get(), xbox.GetPointer(), static_cast<DWORD>(xbox.GetSize()), &bytesWritten, 0))
+    if (!WriteFile(hFile.get(), xbox.GetPointer(), static_cast<DWORD>(xbox.GetSize()), &bytesWritten, nullptr))
     {
         return HRESULT_FROM_WIN32(GetLastError());
     }

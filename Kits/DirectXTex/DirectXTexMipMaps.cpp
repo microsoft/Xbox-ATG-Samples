@@ -9,7 +9,7 @@
 // http://go.microsoft.com/fwlink/?LinkId=248926
 //-------------------------------------------------------------------------------------
 
-#include "DirectXTexp.h"
+#include "DirectXTexP.h"
 
 #include "filters.h"
 
@@ -348,6 +348,14 @@ namespace
 
 namespace DirectX
 {
+    bool _CalculateMipLevels(_In_ size_t width, _In_ size_t height, _Inout_ size_t& mipLevels);
+    bool _CalculateMipLevels3D(_In_ size_t width, _In_ size_t height, _In_ size_t depth, _Inout_ size_t& mipLevels);
+        // Also used by Compress
+
+    HRESULT _ResizeSeparateColorAndAlpha(_In_ IWICImagingFactory* pWIC, _In_ bool iswic2, _In_ IWICBitmap* original,
+        _In_ size_t newWidth, _In_ size_t newHeight, _In_ DWORD filter, _Inout_ const Image* img);
+        // Also used by Resize
+
     bool _CalculateMipLevels(_In_ size_t width, _In_ size_t height, _Inout_ size_t& mipLevels)
     {
         if (mipLevels > 1)
@@ -387,14 +395,15 @@ namespace DirectX
     }
 
     //--- Resizing color and alpha channels separately using WIC ---
+    _Use_decl_annotations_
     HRESULT _ResizeSeparateColorAndAlpha(
-        _In_ IWICImagingFactory* pWIC,
-        _In_ bool iswic2,
-        _In_ IWICBitmap* original,
-        _In_ size_t newWidth,
-        _In_ size_t newHeight,
-        _In_ DWORD filter,
-        _Inout_ const Image* img)
+        IWICImagingFactory* pWIC,
+        bool iswic2,
+        IWICBitmap* original,
+        size_t newWidth,
+        size_t newHeight,
+        DWORD filter,
+        const Image* img)
     {
         if (!pWIC || !original || !img)
             return E_POINTER;
@@ -1035,7 +1044,7 @@ namespace
                 {
                     size_t x2 = x << 1;
 
-                    AVERAGE4(target[x], urow0[x2], urow1[x2], urow2[x2], urow3[x2]);
+                    AVERAGE4(target[x], urow0[x2], urow1[x2], urow2[x2], urow3[x2])
                 }
 
                 if (!_StoreScanlineLinear(pDest, dest->rowPitch, dest->format, target, nwidth, filter))
@@ -1147,7 +1156,7 @@ namespace
                 {
                     auto& toX = lfX[x];
 
-                    BILINEAR_INTERPOLATE(target[x], toX, toY, row0, row1);
+                    BILINEAR_INTERPOLATE(target[x], toX, toY, row0, row1)
                 }
 
                 if (!_StoreScanlineLinear(pDest, dest->rowPitch, dest->format, target, nwidth, filter))
@@ -1327,12 +1336,12 @@ namespace
 
                     XMVECTOR C0, C1, C2, C3;
 
-                    CUBIC_INTERPOLATE(C0, toX.x, row0[toX.u0], row0[toX.u1], row0[toX.u2], row0[toX.u3]);
-                    CUBIC_INTERPOLATE(C1, toX.x, row1[toX.u0], row1[toX.u1], row1[toX.u2], row1[toX.u3]);
-                    CUBIC_INTERPOLATE(C2, toX.x, row2[toX.u0], row2[toX.u1], row2[toX.u2], row2[toX.u3]);
-                    CUBIC_INTERPOLATE(C3, toX.x, row3[toX.u0], row3[toX.u1], row3[toX.u2], row3[toX.u3]);
+                    CUBIC_INTERPOLATE(C0, toX.x, row0[toX.u0], row0[toX.u1], row0[toX.u2], row0[toX.u3])
+                    CUBIC_INTERPOLATE(C1, toX.x, row1[toX.u0], row1[toX.u1], row1[toX.u2], row1[toX.u3])
+                    CUBIC_INTERPOLATE(C2, toX.x, row2[toX.u0], row2[toX.u1], row2[toX.u2], row2[toX.u3])
+                    CUBIC_INTERPOLATE(C3, toX.x, row3[toX.u0], row3[toX.u1], row3[toX.u2], row3[toX.u3])
 
-                    CUBIC_INTERPOLATE(target[x], toY.x, C0, C1, C2, C3);
+                    CUBIC_INTERPOLATE(target[x], toY.x, C0, C1, C2, C3)
                 }
 
                 if (!_StoreScanlineLinear(pDest, dest->rowPitch, dest->format, target, nwidth, filter))
@@ -1873,7 +1882,7 @@ namespace
                             size_t x2 = x << 1;
 
                             AVERAGE8(target[x], urow0[x2], urow1[x2], urow2[x2], urow3[x2],
-                                vrow0[x2], vrow1[x2], vrow2[x2], vrow3[x2]);
+                                vrow0[x2], vrow1[x2], vrow2[x2], vrow3[x2])
                         }
 
                         if (!_StoreScanlineLinear(pDest, dest->rowPitch, dest->format, target, nwidth, filter))
@@ -1916,7 +1925,7 @@ namespace
                     {
                         size_t x2 = x << 1;
 
-                        AVERAGE4(target[x], urow0[x2], urow1[x2], urow2[x2], urow3[x2]);
+                        AVERAGE4(target[x], urow0[x2], urow1[x2], urow2[x2], urow3[x2])
                     }
 
                     if (!_StoreScanlineLinear(pDest, dest->rowPitch, dest->format, target, nwidth, filter))
@@ -2049,7 +2058,7 @@ namespace
                         {
                             auto& toX = lfX[x];
 
-                            TRILINEAR_INTERPOLATE(target[x], toX, toY, toZ, urow0, urow1, vrow0, vrow1);
+                            TRILINEAR_INTERPOLATE(target[x], toX, toY, toZ, urow0, urow1, vrow0, vrow1)
                         }
 
                         if (!_StoreScanlineLinear(pDest, dest->rowPitch, dest->format, target, nwidth, filter))
@@ -2109,7 +2118,7 @@ namespace
                     {
                         auto& toX = lfX[x];
 
-                        BILINEAR_INTERPOLATE(target[x], toX, toY, urow0, urow1);
+                        BILINEAR_INTERPOLATE(target[x], toX, toY, urow0, urow1)
                     }
 
                     if (!_StoreScanlineLinear(pDest, dest->rowPitch, dest->format, target, nwidth, filter))
@@ -2351,15 +2360,15 @@ namespace
                             for (size_t j = 0; j < 4; ++j)
                             {
                                 XMVECTOR C0, C1, C2, C3;
-                                CUBIC_INTERPOLATE(C0, toX.x, urow[j][toX.u0], urow[j][toX.u1], urow[j][toX.u2], urow[j][toX.u3]);
-                                CUBIC_INTERPOLATE(C1, toX.x, vrow[j][toX.u0], vrow[j][toX.u1], vrow[j][toX.u2], vrow[j][toX.u3]);
-                                CUBIC_INTERPOLATE(C2, toX.x, srow[j][toX.u0], srow[j][toX.u1], srow[j][toX.u2], srow[j][toX.u3]);
-                                CUBIC_INTERPOLATE(C3, toX.x, trow[j][toX.u0], trow[j][toX.u1], trow[j][toX.u2], trow[j][toX.u3]);
+                                CUBIC_INTERPOLATE(C0, toX.x, urow[j][toX.u0], urow[j][toX.u1], urow[j][toX.u2], urow[j][toX.u3])
+                                CUBIC_INTERPOLATE(C1, toX.x, vrow[j][toX.u0], vrow[j][toX.u1], vrow[j][toX.u2], vrow[j][toX.u3])
+                                CUBIC_INTERPOLATE(C2, toX.x, srow[j][toX.u0], srow[j][toX.u1], srow[j][toX.u2], srow[j][toX.u3])
+                                CUBIC_INTERPOLATE(C3, toX.x, trow[j][toX.u0], trow[j][toX.u1], trow[j][toX.u2], trow[j][toX.u3])
 
-                                CUBIC_INTERPOLATE(D[j], toY.x, C0, C1, C2, C3);
+                                CUBIC_INTERPOLATE(D[j], toY.x, C0, C1, C2, C3)
                             }
 
-                            CUBIC_INTERPOLATE(target[x], toZ.x, D[0], D[1], D[2], D[3]);
+                            CUBIC_INTERPOLATE(target[x], toZ.x, D[0], D[1], D[2], D[3])
                         }
 
                         if (!_StoreScanlineLinear(pDest, dest->rowPitch, dest->format, target, nwidth, filter))
@@ -2483,12 +2492,12 @@ namespace
                         auto& toX = cfX[x];
 
                         XMVECTOR C0, C1, C2, C3;
-                        CUBIC_INTERPOLATE(C0, toX.x, urow[0][toX.u0], urow[0][toX.u1], urow[0][toX.u2], urow[0][toX.u3]);
-                        CUBIC_INTERPOLATE(C1, toX.x, vrow[0][toX.u0], vrow[0][toX.u1], vrow[0][toX.u2], vrow[0][toX.u3]);
-                        CUBIC_INTERPOLATE(C2, toX.x, srow[0][toX.u0], srow[0][toX.u1], srow[0][toX.u2], srow[0][toX.u3]);
-                        CUBIC_INTERPOLATE(C3, toX.x, trow[0][toX.u0], trow[0][toX.u1], trow[0][toX.u2], trow[0][toX.u3]);
+                        CUBIC_INTERPOLATE(C0, toX.x, urow[0][toX.u0], urow[0][toX.u1], urow[0][toX.u2], urow[0][toX.u3])
+                        CUBIC_INTERPOLATE(C1, toX.x, vrow[0][toX.u0], vrow[0][toX.u1], vrow[0][toX.u2], vrow[0][toX.u3])
+                        CUBIC_INTERPOLATE(C2, toX.x, srow[0][toX.u0], srow[0][toX.u1], srow[0][toX.u2], srow[0][toX.u3])
+                        CUBIC_INTERPOLATE(C3, toX.x, trow[0][toX.u0], trow[0][toX.u1], trow[0][toX.u2], trow[0][toX.u3])
 
-                        CUBIC_INTERPOLATE(target[x], toY.x, C0, C1, C2, C3);
+                        CUBIC_INTERPOLATE(target[x], toY.x, C0, C1, C2, C3)
                     }
 
                     if (!_StoreScanlineLinear(pDest, dest->rowPitch, dest->format, target, nwidth, filter))

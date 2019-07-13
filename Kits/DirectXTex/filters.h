@@ -78,12 +78,12 @@ inline void _CreateLinearFilter(_In_ size_t source, _In_ size_t dest, _In_ bool 
 
         if (isrcA < 0)
         {
-            isrcA = (wrap) ? (source - 1) : 0;
+            isrcA = (wrap) ? (ptrdiff_t(source) - 1) : 0;
         }
 
         if (size_t(isrcB) >= source)
         {
-            isrcB = (wrap) ? 0 : (source - 1);
+            isrcB = (wrap) ? 0 : (ptrdiff_t(source) - 1);
         }
 
         float weight = 1.0f + float(isrcB) - srcB;
@@ -99,7 +99,7 @@ inline void _CreateLinearFilter(_In_ size_t source, _In_ size_t dest, _In_ bool 
 
 #define BILINEAR_INTERPOLATE( res, x, y, r0, r1 ) \
     res = XMVectorAdd(XMVectorScale(XMVectorAdd(XMVectorScale((r0)[ x.u0 ], x.weight0), XMVectorScale((r0)[ x.u1 ], x.weight1)), y.weight0), \
-                      XMVectorScale(XMVectorAdd(XMVectorScale((r1)[ x.u0 ], x.weight0), XMVectorScale((r1)[ x.u1 ], x.weight1)), y.weight1) )
+                      XMVectorScale(XMVectorAdd(XMVectorScale((r1)[ x.u0 ], x.weight0), XMVectorScale((r1)[ x.u1 ], x.weight1)), y.weight1) );
 
 #define TRILINEAR_INTERPOLATE( res, x, y, z, r0, r1, r2, r3 ) \
 {\
@@ -171,10 +171,10 @@ inline void _CreateCubicFilter(_In_ size_t source, _In_ size_t dest, _In_ bool w
     {
         float srcB = (float(u) + 0.5f) * scale - 0.5f;
 
-        ptrdiff_t isrcB = bounduvw(ptrdiff_t(srcB), source - 1, wrap, mirror);
-        ptrdiff_t isrcA = bounduvw(isrcB - 1, source - 1, wrap, mirror);
-        ptrdiff_t isrcC = bounduvw(isrcB + 1, source - 1, wrap, mirror);
-        ptrdiff_t isrcD = bounduvw(isrcB + 2, source - 1, wrap, mirror);
+        ptrdiff_t isrcB = bounduvw(ptrdiff_t(srcB), ptrdiff_t(source) - 1, wrap, mirror);
+        ptrdiff_t isrcA = bounduvw(isrcB - 1, ptrdiff_t(source) - 1, wrap, mirror);
+        ptrdiff_t isrcC = bounduvw(isrcB + 1, ptrdiff_t(source) - 1, wrap, mirror);
+        ptrdiff_t isrcD = bounduvw(isrcB + 2, ptrdiff_t(source) - 1, wrap, mirror);
 
         auto& entry = cf[u];
         entry.u0 = size_t(isrcA);
@@ -295,7 +295,7 @@ namespace TriangleFilter
         }
 
         assert(pFilter != nullptr);
-        _Analysis_assume_(pFilter != 0);
+        _Analysis_assume_(pFilter != nullptr);
 
         // Filter setup
         size_t sizeInBytes = TF_FILTER_SIZE;

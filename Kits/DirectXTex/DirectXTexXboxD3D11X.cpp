@@ -8,7 +8,7 @@
 // Licensed under the MIT License.
 //-------------------------------------------------------------------------------------
 
-#include "directxtexp.h"
+#include "DirectXTexP.h"
 #include "DirectXTexXbox.h"
 
 #if !defined(_XBOX_ONE) || !defined(_TITLE)
@@ -81,7 +81,7 @@ HRESULT Xbox::CreateTexture(
 
         ID3D11Texture1D* tex = nullptr;
         hr = d3dDevice->CreatePlacementTexture1D(&desc, xbox.GetTileMode(), 0, *grfxMemory, &tex);
-        if (SUCCEEDED(hr) && tex != 0)
+        if (SUCCEEDED(hr) && tex)
         {
             *ppResource = tex;
         }
@@ -103,7 +103,7 @@ HRESULT Xbox::CreateTexture(
 
         ID3D11Texture2D* tex = nullptr;
         hr = d3dDevice->CreatePlacementTexture2D(&desc, xbox.GetTileMode(), 0, *grfxMemory, &tex);
-        if (SUCCEEDED(hr) && tex != 0)
+        if (SUCCEEDED(hr) && tex)
         {
             *ppResource = tex;
         }
@@ -123,7 +123,7 @@ HRESULT Xbox::CreateTexture(
 
         ID3D11Texture3D* tex = nullptr;
         hr = d3dDevice->CreatePlacementTexture3D(&desc, xbox.GetTileMode(), 0, *grfxMemory, &tex);
-        if (SUCCEEDED(hr) && tex != 0)
+        if (SUCCEEDED(hr) && tex)
         {
             *ppResource = tex;
         }
@@ -224,7 +224,7 @@ HRESULT Xbox::CreateShaderResourceView(
         break;
 
     default:
-        assert(grfxMemory != 0);
+        assert(grfxMemory != nullptr);
         XMemFree(grfxMemory, c_XMemAllocAttributes);
         *grfxMemory = nullptr;
         return E_FAIL;

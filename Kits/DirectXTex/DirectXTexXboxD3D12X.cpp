@@ -8,7 +8,7 @@
 // Licensed under the MIT License.
 //-------------------------------------------------------------------------------------
 
-#include "directxtexp.h"
+#include "DirectXTexP.h"
 #include "DirectXTexXbox.h"
 
 #if !defined(_XBOX_ONE) || !defined(_TITLE)

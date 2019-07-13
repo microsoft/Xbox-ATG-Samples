@@ -123,7 +123,7 @@
     </ClCompile>
     <FXCompile>
       <ShaderModel>4.0</ShaderModel>
-      <AdditionalIncludeDirectories>..\..\..\Kits\ATGTK\HDR\;..\..\..\Kits\ATGTK\FullScreenQuad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\ATGTK\HDR\;..\..\..\Kits\ATGTK\FullScreenQuad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </FXCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -143,7 +143,7 @@
     </ClCompile>
     <FXCompile>
       <ShaderModel>4.0</ShaderModel>
-      <AdditionalIncludeDirectories>..\..\..\Kits\ATGTK\HDR\;..\..\..\Kits\ATGTK\FullScreenQuad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\ATGTK\HDR\;..\..\..\Kits\ATGTK\FullScreenQuad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </FXCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -164,7 +164,7 @@
     </ClCompile>
     <FXCompile>
       <ShaderModel>4.0</ShaderModel>
-      <AdditionalIncludeDirectories>..\..\..\Kits\ATGTK\HDR\;..\..\..\Kits\ATGTK\FullScreenQuad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\ATGTK\HDR\;..\..\..\Kits\ATGTK\FullScreenQuad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </FXCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -185,7 +185,7 @@
     </ClCompile>
     <FXCompile>
       <ShaderModel>4.0</ShaderModel>
-      <AdditionalIncludeDirectories>..\..\..\Kits\ATGTK\HDR\;..\..\..\Kits\ATGTK\FullScreenQuad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\ATGTK\HDR\;..\..\..\Kits\ATGTK\FullScreenQuad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </FXCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -205,7 +205,7 @@
     </ClCompile>
     <FXCompile>
       <ShaderModel>4.0</ShaderModel>
-      <AdditionalIncludeDirectories>..\..\..\Kits\ATGTK\HDR\;..\..\..\Kits\ATGTK\FullScreenQuad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\ATGTK\HDR\;..\..\..\Kits\ATGTK\FullScreenQuad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </FXCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -225,7 +225,7 @@
     </ClCompile>
     <FXCompile>
       <ShaderModel>4.0</ShaderModel>
-      <AdditionalIncludeDirectories>..\..\..\Kits\ATGTK\HDR\;..\..\..\Kits\ATGTK\FullScreenQuad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\..\..\Kits\ATGTK\HDR\;..\..\..\Kits\ATGTK\FullScreenQuad;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </FXCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -304,7 +304,7 @@
     <None Include="Readme.docx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Kits\DirectXTK\DirectXTK_Windows10.vcxproj">
+    <ProjectReference Include="..\..\..\Kits\DirectXTK\DirectXTK_Windows10_2017.vcxproj">
       <Project>{f4776924-619c-42c7-88b2-82c947ccc9e7}</Project>
     </ProjectReference>
   </ItemGroup>

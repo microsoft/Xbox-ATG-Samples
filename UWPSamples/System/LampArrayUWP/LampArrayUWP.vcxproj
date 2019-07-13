@@ -367,7 +367,7 @@
     <None Include="Readme.docx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Kits\DirectXTK\DirectXTK_Windows10.vcxproj">
+    <ProjectReference Include="..\..\..\Kits\DirectXTK\DirectXTK_Windows10_2017.vcxproj">
       <Project>{f4776924-619c-42c7-88b2-82c947ccc9e7}</Project>
     </ProjectReference>
   </ItemGroup>
