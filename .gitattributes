@@ -16,6 +16,7 @@
 *.sln eol=crlf
 
 # Explicitly declare resource files as binary
+*.docx binary
 *.pdb binary
 *.dds binary
 *.sdkmesh binary
