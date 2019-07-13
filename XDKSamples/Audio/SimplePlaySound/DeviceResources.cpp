@@ -46,7 +46,7 @@ void DeviceResources::CreateDeviceResources()
     ThrowIfFailed(D3D11CreateDevice(
         nullptr,
         D3D_DRIVER_TYPE_HARDWARE,
-        0,
+        nullptr,
         creationFlags,
         featureLevels,
         _countof(featureLevels),

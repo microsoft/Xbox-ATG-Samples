@@ -21,7 +21,7 @@ namespace
         HRESULT hr = D3D11CreateDevice(
             nullptr,
             D3D_DRIVER_TYPE_NULL,       // There is no need to create a real hardware device.
-            0,
+            nullptr,
             D3D11_CREATE_DEVICE_DEBUG,  // Check for the SDK layers.
             nullptr,                    // Any feature level will do.
             0,
@@ -199,7 +199,7 @@ void DeviceResources::CreateDeviceResources()
         hr = D3D11CreateDevice(
             adapter.Get(),
             D3D_DRIVER_TYPE_UNKNOWN,
-            0,
+            nullptr,
             creationFlags,              // Set debug and Direct2D compatibility flags.
             s_featureLevels,
             featLevelCount,
@@ -223,7 +223,7 @@ void DeviceResources::CreateDeviceResources()
         hr = D3D11CreateDevice(
             nullptr,
             D3D_DRIVER_TYPE_WARP, // Create a WARP device instead of a hardware device.
-            0,
+            nullptr,
             creationFlags,
             s_featureLevels,
             featLevelCount,
@@ -299,7 +299,7 @@ void DeviceResources::CreateWindowSizeDependentResources()
             backBufferWidth,
             backBufferHeight,
             backBufferFormat,
-            (m_options & c_AllowTearing) ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0
+            (m_options & c_AllowTearing) ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0u
             );
 
         if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
@@ -335,7 +335,7 @@ void DeviceResources::CreateWindowSizeDependentResources()
         swapChainDesc.Scaling = DXGI_SCALING_ASPECT_RATIO_STRETCH;
         swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
         swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_IGNORE;
-        swapChainDesc.Flags = (m_options & c_AllowTearing) ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0;
+        swapChainDesc.Flags = (m_options & c_AllowTearing) ? DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : 0u;
 
         // Create a swap chain for the window.
         ComPtr<IDXGISwapChain1> swapChain;
