@@ -19,6 +19,7 @@
 *.VC.db
 .vs
 ARM
+ARM64
 "Generated Files"
 Bin
 ipch
