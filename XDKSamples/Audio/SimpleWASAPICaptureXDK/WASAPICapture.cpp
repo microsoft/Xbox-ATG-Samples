@@ -90,12 +90,12 @@ HRESULT WASAPICapture::Activate(UINT id, bool bUseLoopback, CBuffer* capBuffer)
 
     m_DeviceStateChanged->SetState( DeviceState::DeviceStateActivated, S_OK, false );
 
-    ComPtr<IMMDeviceEnumerator> pEnumerator = NULL;
+    ComPtr<IMMDeviceEnumerator> pEnumerator = nullptr;
     ComPtr<IMMDeviceCollection> deviceCollectionInterface;
-    ComPtr<IMMDevice> pDevice = NULL;
+    ComPtr<IMMDevice> pDevice = nullptr;
 
     hr = CoCreateInstance(
-        __uuidof(MMDeviceEnumerator), NULL,
+        __uuidof(MMDeviceEnumerator), nullptr,
         CLSCTX_ALL, __uuidof(IMMDeviceEnumerator),
         (void**)&pEnumerator);
     if (FAILED( hr ))
@@ -121,7 +121,7 @@ HRESULT WASAPICapture::Activate(UINT id, bool bUseLoopback, CBuffer* capBuffer)
 
     hr = pDevice->Activate(
         __uuidof(IAudioClient2), CLSCTX_ALL,
-            NULL, (void**)&m_AudioClient);
+            nullptr, (void**)&m_AudioClient);
     if (FAILED( hr ))
     {
         SetDeviceStateError( hr );
@@ -182,7 +182,7 @@ HRESULT WASAPICapture::Activate(UINT id, bool bUseLoopback, CBuffer* capBuffer)
 	}
 
     HANDLE hAudioSampleThread = CreateThread( nullptr, 0, AudioSampleThreadProc, this, 0, nullptr );
-    if ( NULL == hAudioSampleThread )
+    if ( nullptr == hAudioSampleThread )
     {
         hr = HRESULT_FROM_WIN32( GetLastError() );
         if ( FAILED( hr ) )
@@ -368,7 +368,7 @@ HRESULT WASAPICapture::SetCaptureDevice(UINT id)
 {
     HRESULT hr = S_OK;
     UINT iDeviceCount = 0;
-    ComPtr<IMMDeviceEnumerator> pEnumerator = NULL;
+    ComPtr<IMMDeviceEnumerator> pEnumerator = nullptr;
     ComPtr<IMMDeviceCollection> deviceCollectionInterface;
 
     if(id == m_CaptureDeviceId)
@@ -377,7 +377,7 @@ HRESULT WASAPICapture::SetCaptureDevice(UINT id)
     }
 
     hr = CoCreateInstance(
-        __uuidof(MMDeviceEnumerator), NULL,
+        __uuidof(MMDeviceEnumerator), nullptr,
         CLSCTX_ALL, __uuidof(IMMDeviceEnumerator),
         (void**)&pEnumerator);
 
@@ -443,11 +443,11 @@ HRESULT WASAPICapture::OnAudioSampleRequested()
     // Prevent multiple concurrent submissions of samples
     EnterCriticalSection( &m_CritSec );
         
-    hr = m_AudioCaptureClient->GetBuffer(&captureData, &numFramesAvailable, &flags, NULL, NULL);
+    hr = m_AudioCaptureClient->GetBuffer(&captureData, &numFramesAvailable, &flags, nullptr, nullptr);
     if(SUCCEEDED( hr ))
     {
         //Write to WAV file
-        m_pWaveFile->WriteSample(captureData, numFramesAvailable * m_MixFormat->nBlockAlign * m_MixFormat->nChannels, NULL);
+        m_pWaveFile->WriteSample(captureData, numFramesAvailable * m_MixFormat->nBlockAlign * m_MixFormat->nChannels, nullptr);
                 
         if(m_UseLoopback)
         {

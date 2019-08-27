@@ -13,15 +13,15 @@
 //
 //  CWaveFileWriter()
 //
-CWaveFileWriter::CWaveFileWriter()
+CWaveFileWriter::CWaveFileWriter() :
+    m_hFile(nullptr),
+    m_pwfxFormat(nullptr),
+    m_dwFormatSize(0),
+    m_pvWaveHeader(nullptr),
+    m_dwWaveHeaderSize(0),
+    m_dwWritten(0),
+    m_dwLoopSegmentSize(0)
 {
-    m_hFile = NULL;
-    m_pwfxFormat = NULL;
-    m_dwFormatSize = 0;
-    m_pvWaveHeader = NULL;
-    m_dwWaveHeaderSize = 0;
-    m_dwLoopSegmentSize = 0;
-    m_dwWritten = 0;
 }
 
 
@@ -46,7 +46,7 @@ HRESULT	CWaveFileWriter::Open(LPCWSTR pFileName, LPCWAVEFORMATEX pwfxFormat)
                 GENERIC_WRITE,
                 FILE_SHARE_WRITE,
                 CREATE_ALWAYS,
-                NULL);
+                nullptr);
 
     if(m_hFile == INVALID_HANDLE_VALUE)
     {
@@ -69,7 +69,7 @@ HRESULT	CWaveFileWriter::Open(LPCWSTR pFileName, LPCWAVEFORMATEX pwfxFormat)
     // Allocate the wave header
     if(SUCCEEDED(hr))
     {
-        m_dwWaveHeaderSize = GetWaveHeader(m_pwfxFormat, 0, 0, NULL, 0);
+        m_dwWaveHeaderSize = GetWaveHeader(m_pwfxFormat, 0, 0, nullptr, 0);
         m_pvWaveHeader = new BYTE[m_dwWaveHeaderSize];
         hr = HRFROMP(m_pvWaveHeader);
     }
@@ -111,7 +111,7 @@ HRESULT	CWaveFileWriter::Commit()
     if(bResult) 
     {
         //Write header
-        bResult = WriteFile(m_hFile, m_pvWaveHeader, m_dwWaveHeaderSize, NULL, NULL);
+        bResult = WriteFile(m_hFile, m_pvWaveHeader, m_dwWaveHeaderSize, nullptr, nullptr);
     }
 
     if(bResult)
@@ -142,7 +142,7 @@ HRESULT	CWaveFileWriter::Close()
     if(m_hFile)
     {
         CloseHandle(m_hFile);
-        m_hFile = NULL;
+        m_hFile = nullptr;
     }
 
     // Free memory and reset the object
@@ -165,7 +165,7 @@ HRESULT	CWaveFileWriter::WriteSample(LPVOID pvBuffer, DWORD dwBufferSize, LPDWOR
 {
     BOOL bResult;
 
-    bResult = WriteFile(m_hFile, pvBuffer, dwBufferSize, pdwWritten, NULL);
+    bResult = WriteFile(m_hFile, pvBuffer, dwBufferSize, pdwWritten, nullptr);
 
     if(bResult)
     {
@@ -239,7 +239,7 @@ HRESULT	CWaveFileWriter::CreateWaveHeader(LPCWAVEFORMATEX pwfxFormat, DWORD dwLo
 {
     HRESULT hr;
 
-    *pdwBufferSize = GetWaveHeader(pwfxFormat, dwLoopSegmentSize, dwDataSegmentSize, NULL, 0);
+    *pdwBufferSize = GetWaveHeader(pwfxFormat, dwLoopSegmentSize, dwDataSegmentSize, nullptr, 0);
     *ppvBuffer = new BYTE[*pdwBufferSize];
 
     hr = HRFROMP(*ppvBuffer);

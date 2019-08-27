@@ -55,7 +55,7 @@ public:
         }
         else
         {
-            *ppvInterface = NULL;
+            *ppvInterface = nullptr;
             return E_NOINTERFACE;
         }
         return S_OK;

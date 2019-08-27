@@ -36,8 +36,8 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
     int retVal = GetUserDefaultLocaleName(m_localeName, ARRAYSIZE(m_localeName));
     if (retVal == 0)
         throw std::exception("Failed to get locale in CreateDeviceDependenciesResources");
-    swprintf_s(m_imagePrepend, _countof(m_imagePrepend), L"Assets\\Images\\%s\\", m_localeName);
-    swprintf_s(m_resFileName, _countof(m_resFileName), L"Assets\\Resources\\%s.resources", m_localeName);
+    swprintf_s(m_imagePrepend, _countof(m_imagePrepend), L"Assets\\Images\\%ls\\", m_localeName);
+    swprintf_s(m_resFileName, _countof(m_resFileName), L"Assets\\Resources\\%ls.resources", m_localeName);
 
     m_deviceResources->CreateDeviceResources();  	
     CreateDeviceDependentResources();
@@ -59,7 +59,7 @@ void Sample::InitializeLocalization()
     // Get Package Details using the Package Id
     Windows::ApplicationModel::Package^ package = Windows::ApplicationModel::Package::Current;
     Windows::ApplicationModel::PackageId^ packageId = package->Id;
-    m_textConsole->Format(L"The Package Full Name is: %s\n", packageId->FullName->Data());
+    m_textConsole->Format(L"The Package Full Name is: %ls\n", packageId->FullName->Data());
 
     // Get the locale name for the system using GetUserDefaultLocaleName(). This will return the locale selected through the 
     // Settings app only if that locale has been added to the Resources section of the application's package manifest.
@@ -69,7 +69,7 @@ void Sample::InitializeLocalization()
     int retVal = GetUserDefaultLocaleName(userLocaleName, ARRAYSIZE(userLocaleName));
     if (FunctionSucceeded(retVal, L"GetUserDefaultLocaleName"))
     {
-        swprintf_s(message, L"GetUserDefaultLocaleName succeeded: %s\n", userLocaleName);
+        swprintf_s(message, L"GetUserDefaultLocaleName succeeded: %ls\n", userLocaleName);
         OutputDebugString(message);
         m_textConsole->Write(message);
     }
@@ -93,14 +93,14 @@ void Sample::InitializeLocalization()
         throw std::exception("LocaleNameToLCID failed!");
     }
     
-    // The GetUserGeoID() API can be used to get the actual country the kit is in. 
-    // It gives you the country selected through the Settings app
+    // The GetUserGeoID() API can be used to get the actual country/region the kit is in. 
+    // It gives you the country/region selected through the Settings app
     long geoID = GetUserGeoID(GEOCLASS_NATION);
     wchar_t geoData[LOCALE_NAME_MAX_LENGTH];
     retVal = GetGeoInfoW(geoID, GEO_LATITUDE, geoData, ARRAYSIZE(geoData), primary);
     if (FunctionSucceeded(retVal, L"GetGeoInfoW"))
     {
-        swprintf_s(message, L"Lattitude query succeeded: %s\n", geoData);
+        swprintf_s(message, L"Lattitude query succeeded: %ls\n", geoData);
         OutputDebugString(message);
         m_textConsole->Write(message);
     }
@@ -112,7 +112,7 @@ void Sample::InitializeLocalization()
     retVal = GetGeoInfoW(geoID, GEO_LONGITUDE, geoData, ARRAYSIZE(geoData), primary);
     if (FunctionSucceeded(retVal, L"GetGeoInfoW"))
     {
-        swprintf_s(message, L"Longitude query succeeded: %s\n", geoData);
+        swprintf_s(message, L"Longitude query succeeded: %ls\n", geoData);
         OutputDebugString(message);
         m_textConsole->Write(message);
     }
@@ -124,7 +124,7 @@ void Sample::InitializeLocalization()
     retVal = GetGeoInfoW(geoID, GEO_NATION, geoData, ARRAYSIZE(geoData), primary);
     if (FunctionSucceeded(retVal, L"GetGeoInfoW"))
     {
-        swprintf_s(message, L"Nation query succeeded: %s\n", geoData);
+        swprintf_s(message, L"Nation query succeeded: %ls\n", geoData);
         OutputDebugString(message);
         m_textConsole->Write(message);
     }
@@ -137,7 +137,7 @@ void Sample::InitializeLocalization()
     retVal = GetGeoInfoW(geoID, GEO_ISO2, iso2, ARRAYSIZE(iso2), primary);
     if (FunctionSucceeded(retVal, L"GetGeoInfoW"))
     {
-        swprintf_s(message, L"Iso2 query succeeded: %s\n", iso2);
+        swprintf_s(message, L"Iso2 query succeeded: %ls\n", iso2);
         OutputDebugString(message);
         m_textConsole->Write(message);
     }
@@ -150,7 +150,7 @@ void Sample::InitializeLocalization()
     retVal = GetGeoInfoW(geoID, GEO_ISO3, iso3, ARRAYSIZE(iso3), primary);
     if (FunctionSucceeded(retVal, L"GetGeoInfoW"))
     {
-        swprintf_s(message, L"Iso3 query succeeded: %s\n", iso3);
+        swprintf_s(message, L"Iso3 query succeeded: %ls\n", iso3);
         OutputDebugString(message);
         m_textConsole->Write(message);
     }
@@ -159,25 +159,25 @@ void Sample::InitializeLocalization()
         throw std::exception("GetGeoInfoW failed on GEO_ISO3!");
     }
 
-    // The country values returned from GetUserDefaultLocaleName() and GetUserGeoID() can be compared
-    // to determine if the country selected by the user is supported by the app or not
+    // The country/region values returned from GetUserDefaultLocaleName() and GetUserGeoID() can be compared
+    // to determine if the country/region selected by the user is supported by the app or not
     std::wstring localeNameStr(userLocaleName);
     std::wstring::size_type pos = localeNameStr.find(L'-');
     localeNameStr = localeNameStr.substr(pos + 1);
     if (_wcsicmp(localeNameStr.c_str(), iso2) == 0 || _wcsicmp(localeNameStr.c_str(), iso3) == 0)
     {
-        m_textConsole->Format(L"Selected locale in manifest. Country: %s\n", iso2);
+        m_textConsole->Format(L"Selected locale in manifest. Country/region: %ls\n", iso2);
     }
     else
     {
-        m_textConsole->Format(L"The selected locale (Country: %s) is NOT present in the manifest, so the fallback locale (Country: %s) is selected for localization\n", iso2, localeNameStr.c_str());
+        m_textConsole->Format(L"The selected locale (Country/region: %s) is NOT present in the manifest, so the fallback locale (Country: %ls) is selected for localization\n", iso2, localeNameStr.c_str());
 }
 
     wchar_t lcpData[LOCALE_NAME_MAX_LENGTH];
     retVal = GetLocaleInfoEx(LOCALE_NAME_USER_DEFAULT, LOCALE_SISO639LANGNAME, lcpData, ARRAYSIZE(lcpData));
     if (FunctionSucceeded(retVal, L"GetLocaleInfoEx"))
     {
-        m_textConsole->Format(L"GetLocaleInfoEx() - LOCALE_SISO639LANGNAME: %s\n", lcpData);
+        m_textConsole->Format(L"GetLocaleInfoEx() - LOCALE_SISO639LANGNAME: %ls\n", lcpData);
     }
     else
     {
@@ -187,7 +187,7 @@ void Sample::InitializeLocalization()
     retVal = GetLocaleInfoEx(LOCALE_NAME_USER_DEFAULT, LOCALE_IDEFAULTLANGUAGE, lcpData, ARRAYSIZE(lcpData));
     if (FunctionSucceeded(retVal, L"GetLocaleInfoEx"))
     {
-        m_textConsole->Format(L"GetLocaleInfoEx() - LOCALE_IDEFAULTLANGUAGE: %s\n", lcpData);
+        m_textConsole->Format(L"GetLocaleInfoEx() - LOCALE_IDEFAULTLANGUAGE: %ls\n", lcpData);
     }
     else
     {
@@ -389,7 +389,7 @@ bool Sample::FunctionSucceeded(int returned, const wchar_t* function)
     {
         unsigned long error = GetLastError();
         wchar_t message[1024] = { L'\0' };
-        swprintf_s(message, L"%s failed with error: %u\n", function, error);
+        swprintf_s(message, L"%ls failed with error: %u\n", function, error);
         OutputDebugString(message);
         return false;
     }

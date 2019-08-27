@@ -154,7 +154,6 @@ private:
 	std::unique_ptr<DirectX::GraphicsMemory>    m_graphicsMemory;
 
 	bool	m_fileLoaded;
-	int		m_curFile;
 
 	//worker thread for spatial system
 	PTP_WORK m_workThread;

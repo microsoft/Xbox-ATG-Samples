@@ -116,7 +116,7 @@ void ToneSampleGenerator::GenerateSineSamples(unsigned char *Buffer, size_t Buff
 {
     double sampleIncrement = (Frequency * (M_PI*2)) / (double)SamplesPerSecond;
     T *dataBuffer = reinterpret_cast<T *>(Buffer);
-    double theta = (InitialTheta != NULL ? *InitialTheta : 0);
+    double theta = (InitialTheta != nullptr ? *InitialTheta : 0);
 
     for (size_t i = 0 ; i < BufferLength / sizeof(T) ; i += ChannelCount)
     {
@@ -128,7 +128,7 @@ void ToneSampleGenerator::GenerateSineSamples(unsigned char *Buffer, size_t Buff
         theta += sampleIncrement;
     }
 
-    if (InitialTheta != NULL)
+    if (InitialTheta != nullptr)
     {
         *InitialTheta = theta;
     }

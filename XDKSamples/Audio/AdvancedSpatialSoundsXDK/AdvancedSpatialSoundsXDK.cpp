@@ -274,7 +274,6 @@ Sample::Sample() :
     m_usedObjects(0),
     m_frame(0),
     m_fileLoaded(false),
-    m_curFile(0),
     m_workThread(nullptr)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();

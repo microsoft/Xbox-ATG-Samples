@@ -21,8 +21,8 @@ public:
     WaveSampleGenerator();
     ~WaveSampleGenerator();
 
-    Platform::Boolean IsEOF(){ return (m_SampleQueue == nullptr); };
-    UINT32 GetBufferLength(){ return ( m_SampleQueue != nullptr ? m_SampleQueue->BufferSize : 0 ); };
+    Platform::Boolean IsEOF() const { return (m_SampleQueue == nullptr); }
+    UINT32 GetBufferLength() const { return ( m_SampleQueue != nullptr ? m_SampleQueue->BufferSize : 0 ); }
     void Flush();
 
     HRESULT GenerateSampleBuffer( BYTE* pWaveData, DWORD waveSize, WAVEFORMATEXTENSIBLE* pSourceWfx, UINT32 framesPerPeriod, WAVEFORMATEX *pWfx );
