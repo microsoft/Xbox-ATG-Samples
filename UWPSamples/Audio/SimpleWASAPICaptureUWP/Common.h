@@ -17,7 +17,7 @@
 static const GUID AUDIOSESSIONGUID =
 { 0xb3954ae8, 0xc3c3, 0x4094,{ 0x82, 0x1c, 0xc7, 0xbd, 0xf4, 0xab, 0x15, 0x8a } };
 
-// release and zero out a possible NULL pointer. note this will
+// release and zero out a possible nullptr pointer. note this will
 // do the release on a temp copy to avoid reentrancy issues that can result from
 // callbacks durring the release
 template <class T> void SafeRelease( __deref_inout_opt T **ppT )
@@ -70,7 +70,7 @@ public: \
             AddRef(); \
             return S_OK; \
         } \
-        *ppvObject = NULL; \
+        *ppvObject = nullptr; \
         return E_NOINTERFACE; \
     } \
     STDMETHOD( GetParameters )( \

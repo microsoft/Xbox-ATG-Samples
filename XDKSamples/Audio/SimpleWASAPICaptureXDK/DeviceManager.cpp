@@ -23,7 +23,7 @@ DeviceManager::DeviceManager() :
 {
     ComPtr<IMMDeviceCollection>   deviceCollectionInterface;
 
-    CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&m_deviceEnum);
+    CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&m_deviceEnum);
 
     if (!InitializeCriticalSectionEx( &m_CritSec, 0, 0 ))
     {

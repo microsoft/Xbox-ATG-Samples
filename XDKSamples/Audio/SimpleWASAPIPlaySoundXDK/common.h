@@ -12,7 +12,7 @@
 #include <mmreg.h>
 #include <mfapi.h>
 
-// release and zero out a possible NULL pointer. note this will
+// release and zero out a possible nullptr pointer. note this will
 // do the release on a temp copy to avoid reentrancy issues that can result from
 // callbacks durring the release
 template <class T> void SafeRelease( __deref_inout_opt T **ppT )
@@ -61,7 +61,7 @@ public: \
             AddRef(); \
             return S_OK; \
         } \
-        *ppvObject = NULL; \
+        *ppvObject = nullptr; \
         return E_NOINTERFACE; \
     } \
     STDMETHOD( GetParameters )( \

@@ -190,7 +190,7 @@ void WASAPIManager::InitializeCaptureDevice()
 
         //Register the device manager
         Microsoft::WRL::ComPtr<IMMDeviceEnumerator> deviceEnum;
-        CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&deviceEnum);
+        CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_ALL, __uuidof(IMMDeviceEnumerator), (void**)&deviceEnum);
         deviceEnum->RegisterEndpointNotificationCallback(&m_deviceManager);
     }
 

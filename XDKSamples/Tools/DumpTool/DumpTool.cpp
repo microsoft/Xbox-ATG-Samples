@@ -381,7 +381,7 @@ int wmain(int argc, wchar_t **argv)
         {
             arg++;
 
-            // This voodoo will separate the option from the corresponding value:
+            // This code will separate the option from the corresponding value:
             wchar_t *value = nullptr;
             for (value = arg; *value && (':' != *value); ++value);
             if (*value) *value++ = 0;

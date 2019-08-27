@@ -202,7 +202,7 @@ HRESULT WASAPIRenderer::ActivateCompleted( IActivateAudioInterfaceAsyncOperation
         }
 
         HANDLE hAudioSampleThread = CreateThread( nullptr, 0, AudioSampleThreadProc, this, 0, nullptr );
-        if ( NULL == hAudioSampleThread )
+        if ( nullptr == hAudioSampleThread )
         {
             hr = HRESULT_FROM_WIN32( GetLastError() );
             if ( FAILED( hr ) )

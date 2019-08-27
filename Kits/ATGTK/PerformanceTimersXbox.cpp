@@ -393,9 +393,12 @@ void GPUCommandListTimer<t_CommandList>::Frame::Stop(_In_ t_CommandList* command
 }
 
 // Force compilation of these template instantiations
-template class GPUCommandListTimer<ID3D12GraphicsCommandList>;
-template class GPUCommandListTimer<ID3D12XboxDmaCommandList>;
-template class GPUCommandListTimer<ID3D12GraphicsCommandList>;
+namespace DX
+{
+    template class GPUCommandListTimer<ID3D12GraphicsCommandList>;
+    template class GPUCommandListTimer<ID3D12XboxDmaCommandList>;
+    template class GPUCommandListTimer<ID3D12GraphicsCommandList>;
+}
 
 
 //======================================================================================
@@ -606,9 +609,12 @@ void GPUContextTimer<t_Context>::Frame::Stop(_In_ t_Context* context, uint32_t t
 }
 
 // Force compilation of these template instantiations
-template class GPUContextTimer<ID3D11DeviceContextX>;
-template class GPUContextTimer<ID3D11DmaEngineContextX>;
-template class GPUContextTimer<ID3D11ComputeContextX>;
+namespace DX
+{
+    template class GPUContextTimer<ID3D11DeviceContextX>;
+    template class GPUContextTimer<ID3D11DmaEngineContextX>;
+    template class GPUContextTimer<ID3D11ComputeContextX>;
+}
 
 #else
 #error Must include d3d11*.h or d3d12*.h in pch.h
