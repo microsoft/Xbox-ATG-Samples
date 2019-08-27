@@ -399,3 +399,7 @@ For more information about Microsoft's privacy policies in general, see the [Mic
 # Code of Conduct
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+# Other Samples
+
+For more ATG samples, see [DirectML-Samples](https://github.com/microsoft/DirectML-Samples), [PlayFab-Samples](https://github.com/PlayFab/PlayFab-Samples), and [Xbox-LIVE-Samples](https://github.com/microsoft/xbox-live-samples).
