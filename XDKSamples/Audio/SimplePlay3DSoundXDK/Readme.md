@@ -5,8 +5,10 @@ languages:
 products:
 - xbox
 extendedZipContent:
-- ../../../Kits
-- ../../../Media
+- path: ../../../Kits
+- target: /
+- path: ../../../Media
+- target: /
 ---
 # SimplePlay3DSoundXDK
 For more information see this [Word document](Readme.docx).

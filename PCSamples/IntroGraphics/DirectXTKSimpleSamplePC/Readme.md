@@ -5,8 +5,10 @@ languages:
 products:
 - windows
 extendedZipContent:
-- ../../../Kits
-- ../../../Media
+- path: ../../../Kits
+- target: /
+- path: ../../../Media
+- target: /
 ---
 # DirectXTKSimpleSamplePC
 For more information see this [Word document](Readme.docx).

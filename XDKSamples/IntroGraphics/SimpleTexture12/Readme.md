@@ -5,8 +5,10 @@ languages:
 products:
 - xbox
 extendedZipContent:
-- ../../../Kits
-- ../../../Media
+- path: ../../../Kits
+- target: /
+- path: ../../../Media
+- target: /
 ---
 # SimpleTexture12
 For more information see this [Word document](Readme.docx).

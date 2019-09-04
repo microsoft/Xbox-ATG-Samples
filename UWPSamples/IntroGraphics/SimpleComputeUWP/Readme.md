@@ -5,8 +5,10 @@ languages:
 products:
 - windows-uwp
 extendedZipContent:
-- ../../../Kits
-- ../../../Media
+- path: ../../../Kits
+- target: /
+- path: ../../../Media
+- target: /
 ---
 # SimpleComputeUWP
 For more information see this [Word document](Readme.docx).

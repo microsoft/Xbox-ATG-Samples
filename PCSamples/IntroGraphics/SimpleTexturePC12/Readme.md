@@ -5,8 +5,10 @@ languages:
 products:
 - windows
 extendedZipContent:
-- ../../../Kits
-- ../../../Media
+- path: ../../../Kits
+- target: /
+- path: ../../../Media
+- target: /
 ---
 # SimpleTexturePC12
 For more information see this [Word document](Readme.docx).
