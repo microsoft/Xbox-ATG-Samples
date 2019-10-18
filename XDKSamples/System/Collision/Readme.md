@@ -6,9 +6,10 @@ products:
 - xbox
 extendedZipContent:
 - path: Kits
-- target: /
+  target: /
 - path: Media
-- target: /
+  target: /
+description: "This sample demonstrates DirectXMath’s collision types for simple bounding volume tests in an Xbox One XDK app."
 ---
 
 # Collision
