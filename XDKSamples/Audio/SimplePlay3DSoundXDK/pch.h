@@ -1,4 +1,4 @@
-﻿//--------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 // pch.h
 //
 // Header for standard system include files.
@@ -28,6 +28,7 @@
 #include <exception>
 #include <memory>
 #include <stdexcept>
+#include <string>
 
 #include <stdio.h>
 #include <pix.h>
