@@ -350,7 +350,8 @@ HRESULT DirectX::SaveWICTextureToFile(
     REFGUID guidContainerFormat,
     const wchar_t* fileName,
     const GUID* targetFormat,
-    std::function<void(IPropertyBag2*)> setCustomProps)
+    std::function<void(IPropertyBag2*)> setCustomProps,
+    bool forceSRGB)
 {
     if (!fileName)
         return E_INVALIDARG;
@@ -363,7 +364,7 @@ HRESULT DirectX::SaveWICTextureToFile(
 
     // Determine source format's WIC equivalent
     WICPixelFormatGUID pfGuid;
-    bool sRGB = false;
+    bool sRGB = forceSRGB;
     switch (desc.Format)
     {
         case DXGI_FORMAT_R32G32B32A32_FLOAT:            pfGuid = GUID_WICPixelFormat128bppRGBAFloat; break;
@@ -610,8 +611,8 @@ HRESULT DirectX::SaveWICTextureToFile(
         // Conversion required to write
         ComPtr<IWICBitmap> source;
         hr = pWIC->CreateBitmapFromMemory(desc.Width, desc.Height, pfGuid,
-                                          mapped.RowPitch, mapped.RowPitch * desc.Height,
-                                          static_cast<BYTE*>(mapped.pData), source.GetAddressOf());
+            mapped.RowPitch, mapped.RowPitch * desc.Height,
+            static_cast<BYTE*>(mapped.pData), source.GetAddressOf());
         if (FAILED(hr))
         {
             pContext->Unmap(pStaging.Get(), 0);

@@ -120,8 +120,8 @@ namespace DX
                 throw std::exception("GetLogicalProcessorInformation");
             }
 
-            int count = length / sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);
-            for (int i = 0; i < count; ++i)
+            size_t count = length / sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);
+            for (size_t i = 0; i < count; ++i)
             {
                 if (procInfo[i].Relationship == RelationProcessorCore)
                 {

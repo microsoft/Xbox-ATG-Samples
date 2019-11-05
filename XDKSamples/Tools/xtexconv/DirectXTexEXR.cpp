@@ -265,14 +265,18 @@ HRESULT DirectX::GetMetadataFromEXRFile(const wchar_t* szFile, TexMetadata& meta
 #endif
         hr = exc.hr();
     }
+#ifdef _DEBUG
     catch (const std::exception& exc)
     {
-        exc;
-#ifdef _DEBUG
         OutputDebugStringA(exc.what());
-#endif
         hr = E_FAIL;
     }
+#else
+    catch (const std::exception&)
+    {
+        hr = E_FAIL;
+    }
+#endif
     catch (...)
     {
         hr = E_UNEXPECTED;
@@ -355,14 +359,18 @@ HRESULT DirectX::LoadFromEXRFile(const wchar_t* szFile, TexMetadata* metadata, S
 #endif
         hr = exc.hr();
     }
+#ifdef _DEBUG
     catch (const std::exception& exc)
     {
-        exc;
-#ifdef _DEBUG
         OutputDebugStringA(exc.what());
-#endif
         hr = E_FAIL;
     }
+#else
+    catch (const std::exception&)
+    {
+        hr = E_FAIL;
+    }
+#endif
     catch (...)
     {
         hr = E_UNEXPECTED;
@@ -500,14 +508,18 @@ HRESULT DirectX::SaveToEXRFile(const Image& image, const wchar_t* szFile)
 #endif
         hr = exc.hr();
     }
+#ifdef _DEBUG
     catch (const std::exception& exc)
     {
-        exc;
-#ifdef _DEBUG
         OutputDebugStringA(exc.what());
-#endif
         hr = E_FAIL;
     }
+#else
+    catch (const std::exception&)
+    {
+        hr = E_FAIL;
+    }
+#endif
     catch (...)
     {
         hr = E_UNEXPECTED;
