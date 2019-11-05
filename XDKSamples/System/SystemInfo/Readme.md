@@ -5,12 +5,17 @@ languages:
 products:
 - xbox
 extendedZipContent:
-- path: ../../../Kits
-- target: /
-- path: ../../../Media
-- target: /
+- path: Kits
+  target: /
+- path: Media
+  target: /
+description: "This sample demonstrates a number of Xbox One APIs for querying system information and hardware capabilities."
 ---
+
 # SystemInfo
-For more information see this [Word document](Readme.docx).
-# Privacy Statement
-For more information about Microsoft’s privacy policies in general, see the [Microsoft Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement/).
+
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/SystemInfo/Readme.docx).
+
+## Privacy Statement
+
+For more information about Microsoft's privacy policies in general, see the [Microsoft Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement/).

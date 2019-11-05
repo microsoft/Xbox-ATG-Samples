@@ -5,12 +5,17 @@ languages:
 products:
 - windows
 extendedZipContent:
-- path: ../../../Kits
-- target: /
-- path: ../../../Media
-- target: /
+- path: Kits
+  target: /
+- path: Media
+  target: /
+description: "This sample implements an MSAA render target and depth/stencil buffer for a 3D scene using DirectX 12."
 ---
+
 # SimpleMSAA_PC12
-For more information see this [Word document](Readme.docx).
-# Privacy Statement
-For more information about Microsoft’s privacy policies in general, see the [Microsoft Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement/).
+
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/PCSamples/IntroGraphics/SimpleMSAA_PC12/Readme.docx).
+
+## Privacy Statement
+
+For more information about Microsoft's privacy policies in general, see the [Microsoft Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement/).
