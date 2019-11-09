@@ -239,7 +239,7 @@ void Sample::Render()
             LARGE_INTEGER li;
             li.QuadPart = _wtoi64(versionInfo->DeviceFamilyVersion->Data());
 
-            wchar_t buff[16] = {};
+            wchar_t buff[128] = {};
             swprintf_s(buff, L"%u.%u.%u.%u", HIWORD(li.HighPart), LOWORD(li.HighPart), HIWORD(li.LowPart), LOWORD(li.LowPart));
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
 

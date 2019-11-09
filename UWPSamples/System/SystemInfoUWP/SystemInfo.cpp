@@ -329,7 +329,7 @@ void Sample::Render()
             LARGE_INTEGER li;
             li.QuadPart = _wtoi64(versionInfo->DeviceFamilyVersion->Data());
 
-            wchar_t buff[16] = {};
+            wchar_t buff[128] = {};
             swprintf_s(buff, L"%u.%u.%u.%u", HIWORD(li.HighPart), LOWORD(li.HighPart), HIWORD(li.LowPart), LOWORD(li.LowPart));
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
         }
@@ -1066,7 +1066,7 @@ void Sample::Render()
                 #endif
                 }
 
-                wchar_t buff[64] = {};
+                wchar_t buff[128] = {};
                 swprintf_s(buff, L"%ls / %ls", shaderModelVer, rootSigVer);
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Shader Model / Root Signature", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
@@ -1316,7 +1316,7 @@ void Sample::Render()
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"HeapSerializationTier", left, y, m_scale);
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), serialTier, right, y, m_scale);
 
-                    wchar_t buff[64] = {};
+                    wchar_t buff[128] = {};
                     swprintf_s(buff, L"%u", d3d12serial.NodeIndex);
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Serialization NodeIndex", left, y, m_scale);
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
