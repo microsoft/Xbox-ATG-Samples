@@ -4,12 +4,13 @@ languages:
 - cpp
 products:
 - windows
+- xbox
 extendedZipContent:
 - path: Kits
   target: /
 - path: Media
   target: /
-description: "This sample switches a UHD TV into HDR mode and renders an HDR scene with values higher than 1.0f, which will be displayed as brighter than white on a UHD TV using DirectX 11 on Windows 10."
+description: "Switch a UHD TV into HDR mode and render a HDR scene with values higher than 1.0f, which will be displayed as brighter than white on a UHD TV."
 ---
 
 # SimpleHDR_PC
