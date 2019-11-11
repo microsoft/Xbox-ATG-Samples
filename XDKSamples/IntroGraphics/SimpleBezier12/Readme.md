@@ -16,6 +16,6 @@ description: "This sample demonstrates how to create hull and domain shaders to 
 
 For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/IntroGraphics/SimpleBezier12/Readme.docx).
 
-## Privacy Statement
+## Privacy statement
 
 For more information about Microsoft's privacy policies in general, see the [Microsoft Privacy Statement](https://privacy.microsoft.com/privacystatement/).

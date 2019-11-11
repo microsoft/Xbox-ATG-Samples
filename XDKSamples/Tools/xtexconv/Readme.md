@@ -16,6 +16,6 @@ description: "This sample is a PC side command-line tool which extends the stand
 
 For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Tools/xtexconv/Readme.docx).
 
-## Privacy Statement
+## Privacy statement
 
 For more information about Microsoft's privacy policies in general, see the [Microsoft Privacy Statement](https://privacy.microsoft.com/privacystatement/).
