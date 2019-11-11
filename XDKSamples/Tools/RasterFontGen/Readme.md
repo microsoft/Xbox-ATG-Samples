@@ -9,7 +9,7 @@ extendedZipContent:
   target: /
 - path: Media
   target: /
-description: "RasterFontGen is a tool for creating "rasterized" TrueType fonts for the FrontPanel samples."
+description: "RasterFontGen is a tool for creating 'rasterized' TrueType fonts for the FrontPanel samples."
 ---
 
 # RasterFontGen
