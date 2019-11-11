@@ -394,7 +394,7 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 
 When compiling and running a sample, the file name of the sample executable will be sent to Microsoft to help track sample usage. To opt-out of this data collection, you can remove the block of code in ``Main.cpp`` labeled _Sample Usage Telemetry_.
 
-For more information about Microsoft's privacy policies in general, see the [Microsoft Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement/).
+For more information about Microsoft's privacy policies in general, see the [Microsoft Privacy Statement](https://privacy.microsoft.com/privacystatement/).
 
 # Code of Conduct
 
