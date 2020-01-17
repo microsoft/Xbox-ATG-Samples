@@ -139,7 +139,7 @@ HRESULT ISACRenderer::ActivateCompleted( IActivateAudioInterfaceAsyncOperation *
 			goto exit;
 		}
 
-		// Start streaming / rendering  
+		// Start streaming / rendering  
 		hr = m_SpatialAudioStream->Start();
 		if (FAILED(hr))
 		{

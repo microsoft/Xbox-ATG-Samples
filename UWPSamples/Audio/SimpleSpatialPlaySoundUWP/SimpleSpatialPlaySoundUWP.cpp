@@ -64,7 +64,7 @@ namespace
 
                 // Begin the process of sending object data and metadata 
                 // Get the number of active object that can be used to send object-data 
-                // Get the number of frame count that each buffer be filled with  
+                // Get the number of frame count that each buffer be filled with  
                 hr = Sink->m_Renderer->m_SpatialAudioStream->BeginUpdatingAudioObjects(
                     &availableObjectCount,
                     &frameCount);

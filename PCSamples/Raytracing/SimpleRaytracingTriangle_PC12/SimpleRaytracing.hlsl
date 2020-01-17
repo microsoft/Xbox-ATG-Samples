@@ -1,5 +1,5 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 RaytracingAccelerationStructure Scene           : register(t0);
 RWTexture2D<float4> RenderTarget                : register(u0);

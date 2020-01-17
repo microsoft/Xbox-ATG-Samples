@@ -12,7 +12,7 @@
 //  2) SDR swapchain has to use DXGI_FORMAT_B8G8R8A8_UNORM_SRGB
 // See DeviceResources.cpp for swapchain creation and presentation
 //
-// Refer to the white paper “HDR on Xbox One”
+// Refer to the white paper "HDR on Xbox One"
 //
 // Up to now, games were outputting and SDR signal using Rec.709 color primaries and Rec.709
 // gamma curve. One new feature of UHD displays is a wider color gamut (WCG). To use this
@@ -28,13 +28,13 @@
 // For displaying the HDR signal, a shader is used to rotate the Rec.709 color primaries to
 // Rec.2020 color primaries, and then apply the ST.2084 curve to output 10bit values which
 // the HDR display can correctly display. The whiteness and brightness of the output on an
-// HDR display will be determined by the selected nits value for defining “paper white”.
-// SDR specs define “paper white” as 80nits, but this is for a cinema with a dark environment.
+// HDR display will be determined by the selected nits value for defining "paper white".
+// SDR specs define "paper white" as 80nits, but this is for a cinema with a dark environment.
 // Consumers today are used to much brighter whites, e.g. ~550 nits for a smartphone(so that it
 // can be viewed in sunlight), 200-300 nits for a PC monitor, 120-150 nits for an SDR TV, etc.
-// The nits for “paper white” can be adjusted in the sample using the DPad up/down. Displaying
+// The nits for "paper white" can be adjusted in the sample using the DPad up/down. Displaying
 // bright values next to white can be deceiving to the eye, so you can use the A button to
-// toggle if you only want to see the “paper white” block.
+// toggle if you only want to see the "paper white" block.
 //
 // The sample has two modes:
 //  1) Render blocks with specific values in the scene
