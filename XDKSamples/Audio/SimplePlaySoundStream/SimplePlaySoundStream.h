@@ -17,32 +17,42 @@
 //--------------------------------------------------------------------------------------
 struct PlaySoundStreamVoiceContext : public IXAudio2VoiceCallback
 {
-	virtual void OnVoiceProcessingPassStart(UINT32) override {}
-	virtual void OnVoiceProcessingPassEnd() override {}
-	virtual void OnStreamEnd() override {}
-	virtual void OnBufferStart(void*) override {}
-	void OnBufferEnd(void* pBufferContext) override
-	{
-		SetEvent(m_hBufferEndEvent);
-		//
-		// Free up the memory chunk holding the PCM data that was read from disk earlier.
-		// In a game you would probably return this memory to a pool.
-		//
-		free(pBufferContext);
-	}
-	virtual void OnLoopEnd(void*) override {}
-	virtual void OnVoiceError(void*, HRESULT) override {}
+    STDMETHOD_(void, OnVoiceProcessingPassStart) (UINT32) override {}
+    STDMETHOD_(void, OnVoiceProcessingPassEnd)() override {}
+    STDMETHOD_(void, OnStreamEnd)() override {}
+    STDMETHOD_(void, OnBufferStart)(void*) override {}
 
-	HANDLE m_hBufferEndEvent;
+    STDMETHOD_(void, OnBufferEnd)(void* pBufferContext) override
+    {
+        SetEvent(m_hBufferEndEvent);
+        //
+        // Free up the memory chunk holding the PCM data that was read from disk earlier.
+        // In a game you would probably return this memory to a pool.
+        //
+        free(pBufferContext);
+    }
 
-	PlaySoundStreamVoiceContext()
-	{
-		m_hBufferEndEvent = CreateEventEx(NULL, NULL, 0, EVENT_ALL_ACCESS);
-	}
-	virtual ~PlaySoundStreamVoiceContext()
-	{
-		CloseHandle(m_hBufferEndEvent);
-	}
+    STDMETHOD_(void, OnLoopEnd)(void*) override {}
+    STDMETHOD_(void, OnVoiceError)(void*, HRESULT) override {}
+
+    HANDLE m_hBufferEndEvent;
+
+    PlaySoundStreamVoiceContext() noexcept(false) : m_hBufferEndEvent(nullptr)
+    {
+        m_hBufferEndEvent = CreateEventEx(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
+        if (!m_hBufferEndEvent)
+        {
+            throw std::exception("CreateEvent");
+        }
+    }
+    virtual ~PlaySoundStreamVoiceContext()
+    {
+        if (m_hBufferEndEvent)
+        {
+            CloseHandle(m_hBufferEndEvent);
+            m_hBufferEndEvent = nullptr;
+        }
+    }
 };
 
 // A basic sample implementation that creates a D3D11 device and
