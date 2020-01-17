@@ -34,7 +34,7 @@ namespace DirectX
             _In_ ID3D12Resource* resource,
             _In_ void* memory, 
             _In_ size_t offset,
-            _In_ size_t size);
+            _In_ size_t size) noexcept;
 
         GraphicsResource(GraphicsResource&& other) noexcept;
         GraphicsResource&& operator= (GraphicsResource&&) noexcept;
@@ -44,17 +44,17 @@ namespace DirectX
 
         ~GraphicsResource();
 
-        D3D12_GPU_VIRTUAL_ADDRESS GpuAddress() const { return mGpuAddress; }
-        ID3D12Resource* Resource() const { return mResource; }
-        void* Memory() const { return mMemory; }
-        size_t ResourceOffset() const { return mBufferOffset; }
-        size_t Size() const { return mSize; }
+        D3D12_GPU_VIRTUAL_ADDRESS GpuAddress() const noexcept { return mGpuAddress; }
+        ID3D12Resource* Resource() const noexcept { return mResource; }
+        void* Memory() const noexcept { return mMemory; }
+        size_t ResourceOffset() const noexcept { return mBufferOffset; }
+        size_t Size() const noexcept { return mSize; }
         
-        explicit operator bool () const { return mResource != nullptr; }
+        explicit operator bool () const noexcept { return mResource != nullptr; }
 
         // Clear the pointer. Using operator -> will produce bad results.
-        void __cdecl Reset();
-        void __cdecl Reset(GraphicsResource&&);
+        void __cdecl Reset() noexcept;
+        void __cdecl Reset(GraphicsResource&&) noexcept;
 
     private:
         LinearAllocatorPage*        mPage;
@@ -76,35 +76,47 @@ namespace DirectX
         SharedGraphicsResource(GraphicsResource&&);
         SharedGraphicsResource&& operator= (GraphicsResource&&);
 
-        SharedGraphicsResource(const SharedGraphicsResource&);
-        SharedGraphicsResource& operator= (const SharedGraphicsResource&);
+        SharedGraphicsResource(const SharedGraphicsResource&) noexcept;
+        SharedGraphicsResource& operator= (const SharedGraphicsResource&) noexcept;
 
         SharedGraphicsResource(const GraphicsResource&) = delete;
         SharedGraphicsResource& operator= (const GraphicsResource&) = delete;
 
         ~SharedGraphicsResource();
 
-        D3D12_GPU_VIRTUAL_ADDRESS GpuAddress() const { return mSharedResource->GpuAddress(); }
-        ID3D12Resource* Resource() const { return mSharedResource->Resource(); }
-        void* Memory() const { return mSharedResource->Memory(); }
-        size_t ResourceOffset() const { return mSharedResource->ResourceOffset(); }
-        size_t Size() const { return mSharedResource->Size(); }
+        D3D12_GPU_VIRTUAL_ADDRESS GpuAddress() const noexcept { return mSharedResource->GpuAddress(); }
+        ID3D12Resource* Resource() const noexcept { return mSharedResource->Resource(); }
+        void* Memory() const noexcept { return mSharedResource->Memory(); }
+        size_t ResourceOffset() const noexcept { return mSharedResource->ResourceOffset(); }
+        size_t Size() const noexcept { return mSharedResource->Size(); }
         
-        explicit operator bool () const { return mSharedResource != nullptr; }
+        explicit operator bool () const noexcept { return mSharedResource != nullptr; }
 
-        bool operator == (const SharedGraphicsResource& other) const { return mSharedResource.get() == other.mSharedResource.get(); }
-        bool operator != (const SharedGraphicsResource& other) const { return mSharedResource.get() != other.mSharedResource.get(); }
+        bool operator == (const SharedGraphicsResource& other) const noexcept { return mSharedResource.get() == other.mSharedResource.get(); }
+        bool operator != (const SharedGraphicsResource& other) const noexcept { return mSharedResource.get() != other.mSharedResource.get(); }
 
         // Clear the pointer. Using operator -> will produce bad results.
-        void __cdecl Reset();
+        void __cdecl Reset() noexcept;
         void __cdecl Reset(GraphicsResource&&);
-        void __cdecl Reset(SharedGraphicsResource&&);
-        void __cdecl Reset(const SharedGraphicsResource& resource);
+        void __cdecl Reset(SharedGraphicsResource&&) noexcept;
+        void __cdecl Reset(const SharedGraphicsResource& resource) noexcept;
         
     private:
         std::shared_ptr<GraphicsResource> mSharedResource;
     };
 
+    //----------------------------------------------------------------------------------
+    struct GraphicsMemoryStatistics
+    {
+        size_t committedMemory;     // Bytes of memory currently committed/in-flight
+        size_t totalMemory;         // Total bytes of memory used by the allocators
+        size_t totalPages;          // Total page count
+        size_t peakCommitedMemory;  // Peak commited memory value since last reset
+        size_t peakTotalMemory;     // Peak total bytes
+        size_t peakTotalPages;      // Peak total page count
+    };
+
+    //----------------------------------------------------------------------------------
     class GraphicsMemory
     {
     public:
@@ -146,6 +158,10 @@ namespace DirectX
         // It is not recommended that you call this unless absolutely necessary (e.g. your
         // memory budget changes at run-time, or perhaps you're changing levels in your game.)
         void __cdecl GarbageCollect();
+
+        // Memory statistics
+        GraphicsMemoryStatistics __cdecl GetStatistics();
+        void __cdecl ResetStatistics();
 
         // Singleton
         // Should only use nullptr for single GPU scenarios; mGPU requires a specific device

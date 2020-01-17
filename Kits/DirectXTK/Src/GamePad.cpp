@@ -21,7 +21,7 @@ namespace
 {
     const float c_XboxOneThumbDeadZone = .24f;  // Recommended Xbox One controller deadzone
 
-    float ApplyLinearDeadZone(float value, float maxValue, float deadZoneSize)
+    float ApplyLinearDeadZone(float value, float maxValue, float deadZoneSize) noexcept
     {
         if (value < -deadZoneSize)
         {
@@ -44,8 +44,14 @@ namespace
         return std::max(-1.f, std::min(scaledValue, 1.f));
     }
 
-    void ApplyStickDeadZone(float x, float y, GamePad::DeadZone deadZoneMode, float maxValue, float deadZoneSize,
-                            _Out_ float& resultX, _Out_ float& resultY)
+    void ApplyStickDeadZone(
+        float x,
+        float y,
+        GamePad::DeadZone deadZoneMode,
+        float maxValue,
+        float deadZoneSize,
+        _Out_ float& resultX,
+        _Out_ float& resultY) noexcept
     {
         switch (deadZoneMode)
         {
@@ -293,7 +299,7 @@ public:
         caps = {};
     }
 
-    bool SetVibration(int player, float leftMotor, float rightMotor, float leftTrigger, float rightTrigger)
+    bool SetVibration(int player, float leftMotor, float rightMotor, float leftTrigger, float rightTrigger) noexcept
     {
         using namespace ABI::Windows::Gaming::Input;
 
@@ -319,7 +325,7 @@ public:
         return false;
     }
 
-    void Suspend()
+    void Suspend() noexcept
     {
         for (size_t j = 0; j < MAX_PLAYER_COUNT; ++j)
         {
@@ -327,7 +333,7 @@ public:
         }
     }
 
-    void Resume()
+    void Resume() noexcept
     {
         // Make sure we rescan gamepads
         SetEvent(mChanged.get());
@@ -764,7 +770,7 @@ public:
         memset(&caps, 0, sizeof(Capabilities));
     }
 
-    bool SetVibration(int player, float leftMotor, float rightMotor, float leftTrigger, float rightTrigger)
+    bool SetVibration(int player, float leftMotor, float rightMotor, float leftTrigger, float rightTrigger) noexcept
     {
         using namespace ABI::Windows::Xbox::Input;
 
@@ -799,7 +805,7 @@ public:
         return false;
     }
 
-    void Suspend()
+    void Suspend() noexcept
     {
         for (size_t j = 0; j < MAX_PLAYER_COUNT; ++j)
         {
@@ -807,7 +813,7 @@ public:
         }
     }
 
-    void Resume()
+    void Resume() noexcept
     {
         // Make sure we rescan gamepads
         SetEvent(mChanged.get());
@@ -1084,7 +1090,7 @@ public:
         memset(&caps, 0, sizeof(Capabilities));
     }
 
-    bool SetVibration(int player, float leftMotor, float rightMotor, float leftTrigger, float rightTrigger)
+    bool SetVibration(int player, float leftMotor, float rightMotor, float leftTrigger, float rightTrigger) noexcept
     {
         if (player == -1)
             player = GetMostRecent();
@@ -1128,7 +1134,7 @@ public:
         }
     }
 
-    void Suspend()
+    void Suspend() noexcept
     {
     #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
         XInputEnable(FALSE);
@@ -1151,7 +1157,7 @@ public:
     #endif
     }
 
-    void Resume()
+    void Resume() noexcept
     {
     #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
         XInputEnable(TRUE);
@@ -1305,26 +1311,26 @@ GamePad::Capabilities GamePad::GetCapabilities(int player)
 }
 
 
-bool GamePad::SetVibration(int player, float leftMotor, float rightMotor, float leftTrigger, float rightTrigger)
+bool GamePad::SetVibration(int player, float leftMotor, float rightMotor, float leftTrigger, float rightTrigger) noexcept
 {
     return pImpl->SetVibration(player, leftMotor, rightMotor, leftTrigger, rightTrigger);
 }
 
 
-void GamePad::Suspend()
+void GamePad::Suspend() noexcept
 {
     pImpl->Suspend();
 }
 
 
-void GamePad::Resume()
+void GamePad::Resume() noexcept
 {
     pImpl->Resume();
 }
 
 
 #if (_WIN32_WINNT >= _WIN32_WINNT_WIN10) || defined(_XBOX_ONE)
-void GamePad::RegisterEvents(HANDLE ctrlChanged, HANDLE userChanged)
+void GamePad::RegisterEvents(HANDLE ctrlChanged, HANDLE userChanged) noexcept
 {
     pImpl->mCtrlChanged = (!ctrlChanged) ? INVALID_HANDLE_VALUE : ctrlChanged;
     pImpl->mUserChanged = (!userChanged) ? INVALID_HANDLE_VALUE : userChanged;
@@ -1348,7 +1354,7 @@ GamePad& GamePad::Get()
 
 #define UPDATE_BUTTON_STATE(field) field = static_cast<ButtonState>( ( !!state.buttons.field ) | ( ( !!state.buttons.field ^ !!lastState.buttons.field ) << 1 ) );
 
-void GamePad::ButtonStateTracker::Update(const GamePad::State& state)
+void GamePad::ButtonStateTracker::Update(const GamePad::State& state) noexcept
 {
     UPDATE_BUTTON_STATE(a)
 

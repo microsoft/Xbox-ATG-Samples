@@ -184,16 +184,16 @@ namespace
 //--------------------------------------------------------------------------------------
 namespace DirectX
 {
-    bool _IsWIC2();
-    IWICImagingFactory* _GetWIC();
+    bool _IsWIC2() noexcept;
+    IWICImagingFactory* _GetWIC() noexcept;
         // Also used by ScreenGrab
 
-    bool _IsWIC2()
+    bool _IsWIC2() noexcept
     {
         return g_WIC2;
     }
 
-    IWICImagingFactory* _GetWIC()
+    IWICImagingFactory* _GetWIC() noexcept
     {
         static INIT_ONCE s_initOnce = INIT_ONCE_STATIC_INIT;
 
@@ -213,7 +213,7 @@ namespace DirectX
 namespace
 {
     //---------------------------------------------------------------------------------
-    DXGI_FORMAT _WICToDXGI(const GUID& guid)
+    DXGI_FORMAT _WICToDXGI(const GUID& guid) noexcept
     {
         for (size_t i = 0; i < _countof(g_WICFormats); ++i)
         {
@@ -233,7 +233,7 @@ namespace
     }
 
     //---------------------------------------------------------------------------------
-    size_t _WICBitsPerPixel(REFGUID targetGuid)
+    size_t _WICBitsPerPixel(REFGUID targetGuid) noexcept
     {
         auto pWIC = _GetWIC();
         if (!pWIC)
@@ -277,7 +277,7 @@ namespace
         _In_ unsigned int miscFlags,
         _In_ unsigned int loadFlags,
         _Outptr_opt_ ID3D11Resource** texture,
-        _Outptr_opt_ ID3D11ShaderResourceView** textureView)
+        _Outptr_opt_ ID3D11ShaderResourceView** textureView) noexcept
     {
         UINT width, height;
         HRESULT hr = frame->GetSize(&width, &height);
@@ -610,7 +610,7 @@ namespace
         }
 
         // Create texture
-        D3D11_TEXTURE2D_DESC desc;
+        D3D11_TEXTURE2D_DESC desc = {};
         desc.Width = twidth;
         desc.Height = theight;
         desc.MipLevels = (autogen) ? 0u : 1u;
@@ -701,7 +701,7 @@ namespace
     void SetDebugTextureInfo(
         _In_z_ const wchar_t* fileName,
         _In_opt_ ID3D11Resource** texture,
-        _In_opt_ ID3D11ShaderResourceView** textureView)
+        _In_opt_ ID3D11ShaderResourceView** textureView) noexcept
     {
 #if !defined(NO_D3D11_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
         if (texture || textureView)
@@ -781,7 +781,7 @@ HRESULT DirectX::CreateWICTextureFromMemory(
     size_t wicDataSize,
     ID3D11Resource** texture,
     ID3D11ShaderResourceView** textureView,
-    size_t maxsize)
+    size_t maxsize) noexcept
 {
     return CreateWICTextureFromMemoryEx(d3dDevice,
         wicData, wicDataSize,
@@ -805,7 +805,7 @@ _Use_decl_annotations_
         size_t wicDataSize,
         ID3D11Resource** texture,
         ID3D11ShaderResourceView** textureView,
-        size_t maxsize)
+        size_t maxsize) noexcept
 {
     return CreateWICTextureFromMemoryEx(d3dDevice, d3dContext,
         wicData, wicDataSize,
@@ -827,7 +827,7 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx(
     unsigned int miscFlags,
     unsigned int loadFlags,
     ID3D11Resource** texture,
-    ID3D11ShaderResourceView** textureView)
+    ID3D11ShaderResourceView** textureView) noexcept
 {
     if (texture)
     {
@@ -922,7 +922,7 @@ _Use_decl_annotations_
         unsigned int miscFlags,
         unsigned int loadFlags,
         ID3D11Resource** texture,
-        ID3D11ShaderResourceView** textureView)
+        ID3D11ShaderResourceView** textureView) noexcept
 {
     if (texture)
     {
@@ -1006,7 +1006,7 @@ HRESULT DirectX::CreateWICTextureFromFile(
     const wchar_t* fileName,
     ID3D11Resource** texture,
     ID3D11ShaderResourceView** textureView,
-    size_t maxsize)
+    size_t maxsize) noexcept
 {
     return CreateWICTextureFromFileEx(d3dDevice,
         fileName,
@@ -1029,7 +1029,7 @@ _Use_decl_annotations_
         const wchar_t* fileName,
         ID3D11Resource** texture,
         ID3D11ShaderResourceView** textureView,
-        size_t maxsize)
+        size_t maxsize) noexcept
 {
     return CreateWICTextureFromFileEx(d3dDevice, d3dContext,
         fileName,
@@ -1050,7 +1050,7 @@ HRESULT DirectX::CreateWICTextureFromFileEx(
     unsigned int miscFlags,
     unsigned int loadFlags,
     ID3D11Resource** texture,
-    ID3D11ShaderResourceView** textureView)
+    ID3D11ShaderResourceView** textureView) noexcept
 {
     if (texture)
     {
@@ -1126,7 +1126,7 @@ _Use_decl_annotations_
         unsigned int miscFlags,
         unsigned int loadFlags,
         ID3D11Resource** texture,
-        ID3D11ShaderResourceView** textureView)
+        ID3D11ShaderResourceView** textureView) noexcept
 {
     if (texture)
     {

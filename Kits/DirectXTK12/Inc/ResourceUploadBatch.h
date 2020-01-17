@@ -13,6 +13,7 @@
 #include <d3d12_x.h>
 #else
 #include <d3d12.h>
+#include <dxgiformat.h>
 #endif
 
 #include <future>
@@ -27,7 +28,7 @@ namespace DirectX
     class ResourceUploadBatch
     {
     public:
-        explicit ResourceUploadBatch(_In_ ID3D12Device* device);
+        explicit ResourceUploadBatch(_In_ ID3D12Device* device) noexcept(false);
         ResourceUploadBatch(ResourceUploadBatch&& moveFrom) noexcept;
         ResourceUploadBatch& operator= (ResourceUploadBatch&& moveFrom) noexcept;
 
@@ -69,7 +70,7 @@ namespace DirectX
             _In_ ID3D12CommandQueue* commandQueue);
 
         // Validates if the given DXGI format is supported for autogen mipmaps
-        bool __cdecl IsSupportedForGenerateMips(DXGI_FORMAT format);
+        bool __cdecl IsSupportedForGenerateMips(DXGI_FORMAT format) noexcept;
 
     private:
         // Private implementation.

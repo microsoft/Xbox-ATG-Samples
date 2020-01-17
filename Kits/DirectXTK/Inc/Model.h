@@ -13,6 +13,7 @@
 #include <d3d11_x.h>
 #else
 #include <d3d11_1.h>
+#include <dxgiformat.h>
 #endif
 
 #include <DirectXMath.h>
@@ -116,7 +117,7 @@ namespace DirectX
                               bool wireframe = false, _In_opt_ std::function<void __cdecl()> setCustomState = nullptr) const;
 
        // Notify model that effects, parts list, or mesh list has changed
-        void __cdecl Modified() { mEffectCache.clear(); }
+        void __cdecl Modified() noexcept { mEffectCache.clear(); }
 
         // Update all effects used by the model
         void __cdecl UpdateEffects(_In_ std::function<void __cdecl(IEffect*)> setEffect);

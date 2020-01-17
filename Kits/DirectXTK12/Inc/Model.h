@@ -13,6 +13,7 @@
 #include <d3d12_x.h>
 #else
 #include <d3d12.h>
+#include <dxgiformat.h>
 #endif
 
 #include <DirectXMath.h>
@@ -27,6 +28,8 @@
 #include <vector>
 #include <assert.h>
 #include <stdint.h>
+
+#include <wrl/client.h>
 
 #include "GraphicsMemory.h"
 #include "Effects.h"
@@ -43,7 +46,7 @@ namespace DirectX
     class ModelMeshPart
     {
     public:
-        ModelMeshPart(uint32_t partIndex);
+        ModelMeshPart(uint32_t partIndex) noexcept;
         virtual ~ModelMeshPart();
 
         uint32_t                                                partIndex;      // Unique index assigned per-part in a model; used to index effects.
