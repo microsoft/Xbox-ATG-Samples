@@ -261,53 +261,99 @@ void Sample::DrawWheel(XMFLOAT2 startPosition)
     }
 }
 
-UINavigationController^ Sample::GetFirstNavController()
+void Sample::UpdateNavController()
 {
-    UINavigationController^ navController = nullptr;
+    UINavigationController ^ mostRecentNav = nullptr;
 
     if (m_navCollection->Size > 0)
     {
-        navController = m_navCollection->GetAt(0);
+        mostRecentNav = m_navCollection->GetAt(0);
     }
 
-    return navController;
+    if (m_currentNav != mostRecentNav)
+    {
+        m_currentNav = mostRecentNav;
+    }
 }
 
-ArcadeStick^ Sample::GetFirstArcadeStick()
+void Sample::UpdateArcadeStick()
 {
-    ArcadeStick^ stick = nullptr;
+    ArcadeStick^ mostRecentStick = nullptr;
 
     if (m_stickCollection->Size > 0)
     {
-        stick = m_stickCollection->GetAt(0);
+        mostRecentStick = m_stickCollection->GetAt(0);
     }
 
-    return stick;
+    if (m_currentStick != mostRecentStick)
+    {
+        m_currentStick = mostRecentStick;
+    }
 }
 
-RacingWheel^ Sample::GetFirstWheel()
+void Sample::UpdateFlightStick()
 {
-    RacingWheel^ wheel = nullptr;
+    FlightStick^ mostRecentFlightStick = nullptr;
+
+    if (m_flightStickCollection->Size > 0)
+    {
+        mostRecentFlightStick = m_flightStickCollection->GetAt(0);
+    }
+
+    if (m_currentFlightStick != mostRecentFlightStick)
+    {
+        m_currentFlightStick = mostRecentFlightStick;
+    }
+}
+
+void Sample::UpdateWheel()
+{
+    RacingWheel^ mostRecentWheel = nullptr;
 
     if (m_wheelCollection->Size > 0)
     {
-        wheel = m_wheelCollection->GetAt(0);
+        mostRecentWheel = m_wheelCollection->GetAt(0);
     }
 
-    return wheel;
+    if (m_currentWheel != mostRecentWheel)
+    {
+        m_currentWheel = mostRecentWheel;
+    }
+
+    if (m_currentWheel != nullptr && m_currentWheel->WheelMotor != nullptr)
+    {
+        m_effect = ref new ForceFeedback::ConstantForceEffect();
+        TimeSpan time;
+        time.Duration = 10000;
+        Numerics::float3 vector;
+        vector.x = 1.f;
+        vector.y = 0.f;
+        vector.z = 0.f;
+        m_effect->SetParameters(vector, time);
+
+        IAsyncOperation<ForceFeedback::ForceFeedbackLoadEffectResult>^ request = m_currentWheel->WheelMotor->LoadEffectAsync(m_effect);
+
+        auto loadEffectTask = Concurrency::create_task(request);
+        loadEffectTask.then([this](ForceFeedback::ForceFeedbackLoadEffectResult result)
+        {
+            if (result == ForceFeedback::ForceFeedbackLoadEffectResult::Succeeded)
+            {
+                m_effectLoaded = true;
+            }
+            else
+            {
+                m_effectLoaded = false;
+            }
+        }).wait();
+    }
+
+    if (m_effectLoaded)
+    {
+        m_effect->Start();
+    }
 }
 
-FlightStick^ Sample::GetFirstFlightStick()
-{
-	FlightStick^ stick = nullptr;
 
-	if (m_flightStickCollection->Size > 0)
-	{
-		stick = m_flightStickCollection->GetAt(0);
-	}
-
-	return stick;
-}
 
 Sample::Sample()
 {
@@ -373,7 +419,7 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
 	UINavigationController::UINavigationControllerAdded += ref new EventHandler<UINavigationController^ >([=](Platform::Object^, UINavigationController^ args)
     {
         m_navCollection->Append(args);
-        m_currentNavNeedsRefresh = true;
+        UpdateNavController();
     });
 
     UINavigationController::UINavigationControllerRemoved += ref new EventHandler<UINavigationController^ >([=](Platform::Object^, UINavigationController^ args)
@@ -382,14 +428,14 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
         if (m_navCollection->IndexOf(args, &index))
         {
             m_navCollection->RemoveAt(index);
-            m_currentNavNeedsRefresh = true;
+            UpdateNavController();
         }
     });
 
     ArcadeStick::ArcadeStickAdded += ref new EventHandler<ArcadeStick^ >([=](Platform::Object^, ArcadeStick^ args)
     {
         m_stickCollection->Append(args);
-        m_currentStickNeedsRefresh = true;
+        UpdateArcadeStick();
     });
 
     ArcadeStick::ArcadeStickRemoved += ref new EventHandler<ArcadeStick^ >([=](Platform::Object^, ArcadeStick^ args)
@@ -398,14 +444,14 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
         if (m_stickCollection->IndexOf(args, &index))
         {
             m_stickCollection->RemoveAt(index);
-            m_currentStickNeedsRefresh = true;
+            UpdateArcadeStick();
         }
     });
 
     RacingWheel::RacingWheelAdded += ref new EventHandler<RacingWheel^ >([=](Platform::Object^, RacingWheel^ args)
     {
         m_wheelCollection->Append(args);
-        m_currentWheelNeedsRefresh = true;
+        UpdateWheel();
     });
 
     RacingWheel::RacingWheelRemoved += ref new EventHandler<RacingWheel^ >([=](Platform::Object^, RacingWheel^ args)
@@ -414,14 +460,14 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
         if (m_wheelCollection->IndexOf(args, &index))
         {
             m_wheelCollection->RemoveAt(index);
-            m_currentWheelNeedsRefresh = true;
+            UpdateWheel();
         }
     });
 
 	FlightStick::FlightStickAdded += ref new EventHandler<FlightStick^ >([=](Platform::Object^, FlightStick^ args)
 	{
 		m_flightStickCollection->Append(args);
-		m_currentFlightStickNeedsRefresh = true;
+		UpdateFlightStick();
 	});
 
 	FlightStick::FlightStickRemoved += ref new EventHandler<FlightStick^ >([=](Platform::Object^, FlightStick^ args)
@@ -430,42 +476,10 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
 		if (m_flightStickCollection->IndexOf(args, &index))
 		{
 			m_flightStickCollection->RemoveAt(index);
-			m_currentFlightStickNeedsRefresh = true;
+            UpdateFlightStick();
 		}
 	});
 	
-	m_currentNav = GetFirstNavController();
-    m_currentStick = GetFirstArcadeStick();
-    m_currentWheel = GetFirstWheel();
-	m_currentFlightStick = GetFirstFlightStick();
-	m_currentNavNeedsRefresh = false;
-    m_currentWheelNeedsRefresh = false;
-    m_currentStickNeedsRefresh = false;
-	m_currentFlightStickNeedsRefresh = false;
-
-    if (m_currentWheel != nullptr && m_currentWheel->WheelMotor != nullptr)
-    {
-        IAsyncOperation<ForceFeedback::ForceFeedbackLoadEffectResult>^ request = m_currentWheel->WheelMotor->LoadEffectAsync(m_effect);
-
-        auto loadEffectTask = Concurrency::create_task(request);
-        loadEffectTask.then([this](ForceFeedback::ForceFeedbackLoadEffectResult result)
-        {
-            if (result == ForceFeedback::ForceFeedbackLoadEffectResult::Succeeded)
-            {
-                m_effectLoaded = true;
-            }
-            else
-            {
-                m_effectLoaded = false;
-            }
-        }).wait();
-    }
-
-    if (m_effectLoaded)
-    {
-        m_effect->Start();
-    }
-
     // UWP on Xbox One triggers a back request whenever the B button is pressed
     // which can result in the app being suspended if unhandled
     using namespace Windows::UI::Core;
@@ -497,16 +511,6 @@ void Sample::Update(DX::StepTimer const& )
 
     bool toggleFFB = false;
 
-    if (m_currentNavNeedsRefresh)
-    {
-        auto mostRecentNav = GetFirstNavController();
-        if (m_currentNav != mostRecentNav)
-        {
-            m_currentNav = mostRecentNav;
-        }
-        m_currentNavNeedsRefresh = false;
-    }
-
     if (m_currentNav == nullptr)
     {
         m_connected = false;
@@ -516,61 +520,6 @@ void Sample::Update(DX::StepTimer const& )
     }
 
     m_connected = true;
-
-    if (m_currentWheelNeedsRefresh)
-    {
-        auto mostRecentWheel = GetFirstWheel();
-        if (m_currentWheel != mostRecentWheel)
-        {
-            m_currentWheel = mostRecentWheel;
-        }
-        m_currentWheelNeedsRefresh = false;
-
-
-        if (m_currentWheel != nullptr && m_currentWheel->WheelMotor != nullptr)
-        {
-            IAsyncOperation<ForceFeedback::ForceFeedbackLoadEffectResult>^ request = m_currentWheel->WheelMotor->LoadEffectAsync(m_effect);
-
-            auto loadEffectTask = Concurrency::create_task(request);
-            loadEffectTask.then([this](ForceFeedback::ForceFeedbackLoadEffectResult result)
-            {
-                if (result == ForceFeedback::ForceFeedbackLoadEffectResult::Succeeded)
-                {
-                    m_effectLoaded = true;
-                }
-                else
-                {
-                    m_effectLoaded = false;
-                }
-            }).wait();
-        }
-
-        if (m_effectLoaded)
-        {
-            m_effect->Start();
-        }
-    }
-
-    if (m_currentStickNeedsRefresh)
-    {
-        auto mostRecentStick = GetFirstArcadeStick();
-        if (m_currentStick != mostRecentStick)
-        {
-            m_currentStick = mostRecentStick;
-        }
-        m_currentStickNeedsRefresh = false;
-    }
-
-	if (m_currentFlightStickNeedsRefresh)
-	{
-		auto mostRecentFlightStick = GetFirstFlightStick();
-		if (m_currentFlightStick != mostRecentFlightStick)
-		{
-			m_currentFlightStick = mostRecentFlightStick;
-		}
-		m_currentFlightStickNeedsRefresh = false;
-	}
-	
 	m_navReading = m_currentNav->GetCurrentReading();
 
     if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::View) == RequiredUINavigationButtons::View)
@@ -599,6 +548,7 @@ void Sample::Update(DX::StepTimer const& )
         }
         else if ((m_navReading.RequiredButtons & RequiredUINavigationButtons::Accept) == RequiredUINavigationButtons::Accept)
         {
+            m_selectPressed = true;
             toggleFFB = true;
         }
     }

@@ -54,10 +54,10 @@ private:
 	void DrawFlightStick(DirectX::XMFLOAT2 startPosition);
 	void DrawWheel(DirectX::XMFLOAT2 startPosition);
 
-    Windows::Gaming::Input::UINavigationController^ GetFirstNavController();
-    Windows::Gaming::Input::ArcadeStick^ GetFirstArcadeStick();
-    Windows::Gaming::Input::RacingWheel^ GetFirstWheel();
-	Windows::Gaming::Input::FlightStick^ GetFirstFlightStick();
+    void UpdateNavController();
+    void UpdateArcadeStick();
+    void UpdateWheel();
+    void UpdateFlightStick();
 
     void Update(DX::StepTimer const& timer);
     void Render();
@@ -91,11 +91,6 @@ private:
 	Platform::Collections::Vector<Windows::Gaming::Input::FlightStick^>^ m_flightStickCollection;
 
     bool                                                m_effectLoaded;
-    bool                                                m_currentNavNeedsRefresh;
-    bool                                                m_currentWheelNeedsRefresh;
-    bool                                                m_currentStickNeedsRefresh;
-	bool                                                m_currentFlightStickNeedsRefresh;
-
     Modes                   m_currentMode;
     bool                    m_selectPressed;
     bool                    m_connected;
