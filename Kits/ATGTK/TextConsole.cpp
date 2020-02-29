@@ -230,10 +230,10 @@ void TextConsole::SetWindow(const RECT& layout)
     RECT fontLayout = m_font->MeasureDrawBounds(L"X", XMFLOAT2(0, 0));
     unsigned int columns = std::max<unsigned int>(1, static_cast<unsigned int>(float(layout.right - layout.left) / float(fontLayout.right - fontLayout.left)));
 
-    std::unique_ptr<wchar_t[]> buffer(new wchar_t[(columns + 1) * rows]);
+    auto buffer = std::make_unique<wchar_t[]>((columns + 1) * rows);
     memset(buffer.get(), 0, sizeof(wchar_t) * (columns + 1) * rows);
 
-    std::unique_ptr<Line[]> lines(new Line[rows]);
+    auto lines = std::make_unique<Line[]>(rows);
     for (unsigned int line = 0; line < rows; ++line)
     {
         lines[line].m_text = buffer.get() + (columns + 1) * line;

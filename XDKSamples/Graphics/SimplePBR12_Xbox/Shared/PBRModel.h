@@ -64,7 +64,7 @@ namespace ATG
             swprintf_s(fullTexturePath[RMA], L"%s\\%s_RMA.dds",          m_modelBasePath.c_str(),  m_modelName.c_str());
          
             // PBR Model
-            m_model = Model::CreateFromSDKMESH(m_modelFullPath.c_str());
+            m_model = Model::CreateFromSDKMESH(device, m_modelFullPath.c_str());
 
             // Optimize model for rendering
             m_model->LoadStaticBuffers(device, resourceUpload);

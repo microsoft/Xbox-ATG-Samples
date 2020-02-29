@@ -334,7 +334,7 @@ void Sample::CreateDeviceDependentResources()
 
     m_states = std::make_unique<CommonStates>(device);
 
-    m_model = Model::CreateFromSDKMESH(L"CityBlockConcrete.sdkmesh");
+    m_model = Model::CreateFromSDKMESH(device, L"CityBlockConcrete.sdkmesh");
 
     ResourceUploadBatch resourceUpload(device);
     resourceUpload.Begin();

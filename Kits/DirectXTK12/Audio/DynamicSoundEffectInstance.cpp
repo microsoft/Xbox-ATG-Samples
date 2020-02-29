@@ -121,6 +121,10 @@ public:
         mBase.GatherStatistics(stats);
     }
 
+    virtual void __cdecl OnDestroyParent() noexcept override
+    {
+    }
+
     SoundEffectInstanceBase                             mBase;
 
 private:
@@ -187,10 +191,10 @@ void DynamicSoundEffectInstance::Impl::SubmitBuffer(const uint8_t* pAudioData, u
     if (FAILED(hr))
     {
     #ifdef _DEBUG
-        DebugTrace("ERROR: DynamicSoundEffectInstance failed (%08X) when submitting buffer:\n", hr);
+        DebugTrace("ERROR: DynamicSoundEffectInstance failed (%08X) when submitting buffer:\n", static_cast<unsigned int>(hr));
 
-        DebugTrace("\tFormat Tag %u, %u channels, %u-bit, %u Hz, %zu bytes [%u offset)\n", mWaveFormat.wFormatTag,
-                   mWaveFormat.nChannels, mWaveFormat.wBitsPerSample, mWaveFormat.nSamplesPerSec, audioBytes, offset);
+        DebugTrace("\tFormat Tag %u, %u channels, %u-bit, %u Hz, %zu bytes [%u offset)\n",
+            mWaveFormat.wFormatTag, mWaveFormat.nChannels, mWaveFormat.wBitsPerSample, mWaveFormat.nSamplesPerSec, audioBytes, offset);
     #endif
         throw std::exception("SubmitSourceBuffer");
     }

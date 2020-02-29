@@ -180,8 +180,6 @@
     <None Include="Shaders\Compiled\BC7Encode_TryMode456CS.pdb">
       <Filter>Source Files\Shaders\Symbols</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt" />
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

@@ -891,7 +891,7 @@ void Sample::CreateDeviceDependentResources()
     m_models.resize(_countof(s_modelPaths));
     for (int i = 0; i < m_models.size(); ++i)
     {
-        m_models[i] = Model::CreateFromSDKMESH(s_modelPaths[i]);
+        m_models[i] = Model::CreateFromSDKMESH(device, s_modelPaths[i]);
     }
 
     ResourceUploadBatch resourceUpload(device);

@@ -25,7 +25,8 @@ namespace
         _In_reads_(nimages) const Image** result,
         size_t nimages,
         size_t bpp,
-        size_t w)
+        size_t w,
+        bool packed)
     {
         auto& mip = layout.Plane[0].MipLayout[level];
 
@@ -48,6 +49,8 @@ namespace
             for (size_t x = 0; x < w; ++x)
             {
                 size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, 0, item, 0);
+                if (offset == size_t(-1))
+                    return E_FAIL;
 
                 const uint8_t* src = sptr + offset - mip.OffsetBytes;
 
@@ -56,6 +59,9 @@ namespace
 
                 memcpy(dptr, src, bpp);
                 dptr += bpp;
+
+                if (packed)
+                    ++x;
             }
         }
 
@@ -72,7 +78,8 @@ namespace
         size_t nimages,
         size_t bpp,
         size_t w,
-        size_t h)
+        size_t h,
+        bool packed)
     {
         auto& mip = layout.Plane[0].MipLayout[level];
 
@@ -99,6 +106,8 @@ namespace
                 for (size_t x = 0; x < w; ++x)
                 {
                     size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, item, 0);
+                    if (offset == size_t(-1))
+                        return E_FAIL;
 
                     const uint8_t* src = sptr + offset - mip.OffsetBytes;
 
@@ -107,6 +116,9 @@ namespace
 
                     memcpy(tptr, src, bpp);
                     tptr += bpp;
+
+                    if (packed)
+                        ++x;
                 }
 
                 dptr += img->rowPitch;
@@ -126,7 +138,8 @@ namespace
         const Image& result,
         size_t bpp,
         size_t w,
-        size_t h)
+        size_t h,
+        bool packed)
     {
         auto& mip = layout.Plane[0].MipLayout[level];
 
@@ -146,6 +159,8 @@ namespace
                 for (size_t x = 0; x < w; ++x)
                 {
                     size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, z, 0);
+                    if (offset == size_t(-1))
+                        return E_FAIL;
 
                     const uint8_t* src = sptr + offset - mip.OffsetBytes;
 
@@ -154,6 +169,9 @@ namespace
 
                     memcpy(tptr, src, bpp);
                     tptr += bpp;
+
+                    if (packed)
+                        ++x;
                 }
 
                 rptr += result.rowPitch;
@@ -190,16 +208,26 @@ namespace
 
         assert(!IsCompressed(format));
 
-        if (IsTypeless(format))
+        if (IsPacked(format))
+        {
+            size_t bpp = (BitsPerPixel(format) + 7) / 8;
+            //assert(bpp == layout.Plane[0].BytesPerElement);
+
+            size_t w = result[0]->width;
+            assert(((w + 1) / 2) == layout.Plane[0].MipLayout[level].WidthElements);
+
+            return DetileByElement1D(xbox, level, computer, layout, result, nimages, bpp, w, true);
+        }
+        else if (IsTypeless(format))
         {
             //--- Typeless is done with per-element copy ----------------------------------
             size_t bpp = (BitsPerPixel(format) + 7) / 8;
-            size_t w = result[0]->width;
-
             assert(bpp == layout.Plane[0].BytesPerElement);
+
+            size_t w = result[0]->width;
             assert(w == layout.Plane[0].MipLayout[level].WidthElements);
 
-            return DetileByElement1D(xbox, level, computer, layout, result, nimages, bpp, w);
+            return DetileByElement1D(xbox, level, computer, layout, result, nimages, bpp, w, false);
         }
         else
         {
@@ -240,6 +268,9 @@ namespace
                 for (size_t x = 0; x < img->width; ++x)
                 {
                     size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, 0, item, 0);
+                    if (offset == size_t(-1))
+                        return E_FAIL;
+
                     assert(offset >= mip.OffsetBytes);
                     assert(offset < mip.OffsetBytes + mip.SizeBytes);
 
@@ -300,21 +331,32 @@ namespace
             assert(nbh == layout.Plane[0].MipLayout[level].HeightElements);
             assert(bpb == layout.Plane[0].BytesPerElement);
 
-            return DetileByElement2D(xbox, level, computer, layout, result, nimages, bpb, nbw, nbh);
+            return DetileByElement2D(xbox, level, computer, layout, result, nimages, bpb, nbw, nbh, false);
+        }
+        else if (IsPacked(format))
+        {
+            size_t bpp = (BitsPerPixel(format) + 7) / 8;
+            //assert(bpp == layout.Plane[0].BytesPerElement);
+
+            size_t w = result[0]->width;
+            size_t h = result[0]->height;
+            assert(((w + 1) / 2) == layout.Plane[0].MipLayout[level].WidthElements);
+            assert(h == layout.Plane[0].MipLayout[level].HeightElements);
+
+            return DetileByElement2D(xbox, level, computer, layout, result, nimages, bpp, w, h, true);
         }
         else if (IsTypeless(format))
         {
             //--- Typeless is done with per-element copy ----------------------------------
             size_t bpp = (BitsPerPixel(format) + 7) / 8;
+            assert(bpp == layout.Plane[0].BytesPerElement);
 
             size_t w = result[0]->width;
             size_t h = result[0]->height;
-
-            assert(bpp == layout.Plane[0].BytesPerElement);
             assert(w == layout.Plane[0].MipLayout[level].WidthElements);
             assert(h == layout.Plane[0].MipLayout[level].HeightElements);
 
-            return DetileByElement2D(xbox, level, computer, layout, result, nimages, bpp, w, h);
+            return DetileByElement2D(xbox, level, computer, layout, result, nimages, bpp, w, h, false);
         }
         else
         {
@@ -360,6 +402,9 @@ namespace
                     for (size_t x = 0; x < img->width; ++x)
                     {
                         size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, item, 0);
+                        if (offset == size_t(-1))
+                            return E_FAIL;
+
                         assert(offset >= mip.OffsetBytes);
                         assert(offset < mip.OffsetBytes + mip.SizeBytes);
 
@@ -416,18 +461,28 @@ namespace
             assert(nbh == layout.Plane[0].MipLayout[level].HeightElements);
             assert(bpb == layout.Plane[0].BytesPerElement);
 
-            return DetileByElement3D(xbox, level, slices, computer, layout, result, bpb, nbw, nbh);
+            return DetileByElement3D(xbox, level, slices, computer, layout, result, bpb, nbw, nbh, false);
+        }
+        else if (IsPacked(result.format))
+        {
+            size_t bpp = (BitsPerPixel(result.format) + 7) / 8;
+            //assert(bpp == layout.Plane[0].BytesPerElement);
+
+            assert(((result.width + 1) / 2) == layout.Plane[0].MipLayout[level].WidthElements);
+            assert(result.height == layout.Plane[0].MipLayout[level].HeightElements);
+
+            return DetileByElement3D(xbox, level, slices, computer, layout, result, bpp, result.width, result.height, true);
         }
         else if (IsTypeless(result.format))
         {
             //--- Typeless is done with per-element copy ----------------------------------
             size_t bpp = (BitsPerPixel(result.format) + 7) / 8;
-
             assert(bpp == layout.Plane[0].BytesPerElement);
+
             assert(result.width == layout.Plane[0].MipLayout[level].WidthElements);
             assert(result.height == layout.Plane[0].MipLayout[level].HeightElements);
 
-            return DetileByElement3D(xbox, level, slices, computer, layout, result, bpp, result.width, result.height);
+            return DetileByElement3D(xbox, level, slices, computer, layout, result, bpp, result.width, result.height, false);
         }
         else
         {
@@ -488,6 +543,9 @@ namespace
                     for (size_t x = 0; x < result.width; ++x)
                     {
                         size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, z, 0);
+                        if (offset == size_t(-1))
+                            return E_FAIL;
+
                         assert(offset >= mip.OffsetBytes);
                         assert(offset < mip.OffsetBytes + mip.SizeBytes);
 
