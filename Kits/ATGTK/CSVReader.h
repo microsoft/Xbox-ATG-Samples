@@ -65,7 +65,7 @@ namespace DX
                 throw std::exception("CSV too large");
             }
 
-            std::unique_ptr<uint8_t[]> data(new uint8_t[fileInfo.EndOfFile.LowPart + 2]);
+            auto data = std::make_unique<uint8_t[]>(fileInfo.EndOfFile.LowPart + 2);
 
             DWORD out;
             if (!ReadFile(hFile.get(), data.get(), fileInfo.EndOfFile.LowPart, &out, nullptr)

@@ -283,10 +283,10 @@ void Sample::CreateDeviceDependentResources()
     m_states = std::make_unique<CommonStates>(device);
     m_fxFactory = std::make_unique<EffectFactory>(device);
 
-    m_modelFPS = Model::CreateFromSDKMESH( device, L"FPSRoom.sdkmesh", *m_fxFactory, true );
+    m_modelFPS = Model::CreateFromSDKMESH( device, L"FPSRoom.sdkmesh", *m_fxFactory, ModelLoader_CounterClockwise );
 
     // Note that this model uses 32-bit index buffers so it can't be used w/ Feature Level 9.1
-    m_modelRTS = Model::CreateFromSDKMESH(device, L"3DRTSMap.sdkmesh", *m_fxFactory, true );
+    m_modelRTS = Model::CreateFromSDKMESH(device, L"3DRTSMap.sdkmesh", *m_fxFactory, ModelLoader_CounterClockwise  );
 
     DX::ThrowIfFailed( 
         CreateWICTextureFromFile(device, L"Assets//background_flat.png",

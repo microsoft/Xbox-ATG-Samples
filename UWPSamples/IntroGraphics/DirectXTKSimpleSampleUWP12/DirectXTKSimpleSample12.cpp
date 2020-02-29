@@ -355,7 +355,7 @@ void Sample::CreateDeviceDependentResources()
     m_shape = GeometricPrimitive::CreateTeapot(4.f, 8);
 
     // SDKMESH has to use clockwise winding with right-handed coordinates, so textures are flipped in U
-    m_model = Model::CreateFromSDKMESH(L"tiny.sdkmesh");
+    m_model = Model::CreateFromSDKMESH(device, L"tiny.sdkmesh");
 
     {
         ResourceUploadBatch resourceUpload(device);

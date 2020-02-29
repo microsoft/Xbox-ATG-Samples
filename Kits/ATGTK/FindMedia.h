@@ -30,11 +30,7 @@ namespace DX
         if (GetFileAttributesW(strDestPath) != 0xFFFFFFFF)
             return;
 
-        // Get the exe name, and exe path
-        wchar_t strExePath[MAX_PATH] = {};
-        GetModuleFileNameW(nullptr, strExePath, MAX_PATH);
-        strExePath[MAX_PATH - 1] = 0;
-
+        // Search CWD with folder names
         static const wchar_t* s_defSearchFolders[] =
         {
             L"Assets",
@@ -53,18 +49,31 @@ namespace DX
         if (!searchFolders)
             searchFolders = s_defSearchFolders;
 
+        wchar_t strFullFileName[MAX_PATH] = {};
+        for (const wchar_t* const * searchFolder = searchFolders; *searchFolder != 0; ++searchFolder)
+        {
+            swprintf_s(strFullFileName, MAX_PATH, L"%ls\\%ls", *searchFolder, strFilename);
+            if (GetFileAttributesW(strFullFileName) != 0xFFFFFFFF)
+            {
+                wcscpy_s(strDestPath, size_t(cchDest), strFullFileName);
+                return;
+            }
+        }
+
+        // Get the exe name, and exe path
+        wchar_t strExePath[MAX_PATH] = {};
+        GetModuleFileNameW(nullptr, strExePath, MAX_PATH);
+        strExePath[MAX_PATH - 1] = 0;
+
         // Search all parent directories starting at .\ and using strFilename as the leaf name
         wchar_t strLeafName[MAX_PATH] = {};
         wcscpy_s(strLeafName, MAX_PATH, strFilename);
 
         wchar_t strFullPath[MAX_PATH] = {};
-        wchar_t strFullFileName[MAX_PATH] = {};
         wchar_t strSearch[MAX_PATH] = {};
         wchar_t* strFilePart = nullptr;
 
         GetFullPathNameW(strExePath, MAX_PATH, strFullPath, &strFilePart);
-        if (!strFilePart)
-            throw std::exception("FindMediaFile");
 
         while (strFilePart && *strFilePart != '\0')
         {

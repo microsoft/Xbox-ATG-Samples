@@ -74,7 +74,7 @@ namespace
                     sampler);
             
             // Model
-            m_model = Model::CreateFromSDKMESH(L"XboxOrb.sdkmesh");
+            m_model = Model::CreateFromSDKMESH(device, L"XboxOrb.sdkmesh");
 
             // Optimize model for rendering
             m_model->LoadStaticBuffers(device, upload);

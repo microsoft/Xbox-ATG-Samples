@@ -44,8 +44,8 @@ public:
     ComPtr<ID3D11Device> mDevice;
 
 private:
-    typedef std::map< std::wstring, std::shared_ptr<IEffect> > EffectCache;
-    typedef std::map< std::wstring, ComPtr<ID3D11ShaderResourceView> > TextureCache;
+    using EffectCache = std::map< std::wstring, std::shared_ptr<IEffect> >;
+    using TextureCache = std::map< std::wstring, ComPtr<ID3D11ShaderResourceView> >;
 
     EffectCache  mEffectCache;
     TextureCache mTextureCache;
@@ -170,7 +170,8 @@ void PBREffectFactory::Impl::CreateTexture(const wchar_t* name, ID3D11DeviceCont
                 mForceSRGB, nullptr, textureView);
             if (FAILED(hr))
             {
-                DebugTrace("ERROR: CreateDDSTextureFromFile failed (%08X) for '%ls'\n", hr, fullName);
+                DebugTrace("ERROR: CreateDDSTextureFromFile failed (%08X) for '%ls'\n",
+                    static_cast<unsigned int>(hr), fullName);
                 throw std::exception("CreateDDSTextureFromFile");
             }
         }
@@ -184,7 +185,8 @@ void PBREffectFactory::Impl::CreateTexture(const wchar_t* name, ID3D11DeviceCont
                 mForceSRGB ? WIC_LOADER_FORCE_SRGB : WIC_LOADER_DEFAULT, nullptr, textureView);
             if (FAILED(hr))
             {
-                DebugTrace("ERROR: CreateWICTextureFromFile failed (%08X) for '%ls'\n", hr, fullName);
+                DebugTrace("ERROR: CreateWICTextureFromFile failed (%08X) for '%ls'\n",
+                    static_cast<unsigned int>(hr), fullName);
                 throw std::exception("CreateWICTextureFromFile");
             }
         }
@@ -197,7 +199,8 @@ void PBREffectFactory::Impl::CreateTexture(const wchar_t* name, ID3D11DeviceCont
                 mForceSRGB ? WIC_LOADER_FORCE_SRGB : WIC_LOADER_DEFAULT, nullptr, textureView);
             if (FAILED(hr))
             {
-                DebugTrace("ERROR: CreateWICTextureFromFile failed (%08X) for '%ls'\n", hr, fullName);
+                DebugTrace("ERROR: CreateWICTextureFromFile failed (%08X) for '%ls'\n",
+                    static_cast<unsigned int>(hr), fullName);
                 throw std::exception("CreateWICTextureFromFile");
             }
         }

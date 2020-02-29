@@ -778,6 +778,21 @@ namespace DirectX
         _In_ D3D12_RESOURCE_STATES afterState = D3D12_RESOURCE_STATE_RENDER_TARGET) noexcept;
 #endif
 
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wcovered-switch-default"
+#pragma clang diagnostic ignored "-Wswitch-enum"
+#endif
+
+#pragma warning(push)
+#pragma warning(disable : 4619 4616 4061)
+
 #include "DirectXTex.inl"
+
+#pragma warning(pop)
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 } // namespace

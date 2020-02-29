@@ -27,7 +27,8 @@ namespace
         _In_ const XG_RESOURCE_LAYOUT& layout,
         const XboxImage& xbox,
         size_t bpp,
-        size_t w)
+        size_t w,
+        bool packed)
     {
         auto& mip = layout.Plane[0].MipLayout[level];
 
@@ -51,6 +52,9 @@ namespace
             for (size_t x = 0; x < w; ++x)
             {
                 size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, 0, item, 0);
+                if (offset == size_t(-1))
+                    return E_FAIL;
+
                 assert(offset >= mip.OffsetBytes);
                 assert(offset < mip.OffsetBytes + mip.SizeBytes);
 
@@ -61,6 +65,9 @@ namespace
 
                 memcpy(dest, sptr, bpp);
                 sptr += bpp;
+
+                if (packed)
+                    ++x;
             }
         }
 
@@ -77,7 +84,8 @@ namespace
         const XboxImage& xbox,
         size_t bpp,
         size_t w,
-        size_t h)
+        size_t h,
+        bool packed)
     {
         auto& mip = layout.Plane[0].MipLayout[level];
 
@@ -104,6 +112,9 @@ namespace
                 for (size_t x = 0; x < w; ++x)
                 {
                     size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, item, 0);
+                    if (offset == size_t(-1))
+                        return E_FAIL;
+
                     assert(offset >= mip.OffsetBytes);
                     assert(offset < mip.OffsetBytes + mip.SizeBytes);
 
@@ -114,6 +125,9 @@ namespace
 
                     memcpy(dest, tptr, bpp);
                     tptr += bpp;
+
+                    if (packed)
+                        ++x;
                 }
 
                 sptr += img->rowPitch;
@@ -133,7 +147,8 @@ namespace
         const XboxImage& xbox,
         size_t bpp,
         size_t w,
-        size_t h)
+        size_t h,
+        bool packed)
     {
         auto& mip = layout.Plane[0].MipLayout[level];
 
@@ -152,6 +167,9 @@ namespace
                 for (size_t x = 0; x < w; ++x)
                 {
                     size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, z, 0);
+                    if (offset == size_t(-1))
+                        return E_FAIL;
+
                     assert(offset >= mip.OffsetBytes);
                     assert(offset < mip.OffsetBytes + mip.SizeBytes);
 
@@ -162,6 +180,9 @@ namespace
 
                     memcpy(dest, tptr, bpp);
                     tptr += bpp;
+
+                    if (packed)
+                        ++x;
                 }
 
                 rptr += image.rowPitch;
@@ -175,25 +196,55 @@ namespace
 
     //----------------------------------------------------------------------------------
 #ifdef VERBOSE
+    void DebugPrintDesc(const XG_TEXTURE1D_DESC& desc)
+    {
+        wchar_t buff[2048] = {};
+        swprintf_s(buff, L"XG_TEXTURE1D_DESC = { %u, %u, %u, %u, %u, %u, %u, %u, %u, %u }\n",
+            desc.Width, desc.MipLevels, desc.ArraySize, desc.Format, desc.Usage, desc.BindFlags, desc.CPUAccessFlags, desc.MiscFlags,
+            desc.TileMode,
+            desc.Pitch);
+        OutputDebugStringW(buff);
+    }
+
+    void DebugPrintDesc(const XG_TEXTURE2D_DESC& desc)
+    {
+        wchar_t buff[2048] = {};
+        swprintf_s(buff, L"XG_TEXTURE2D_DESC = { %u, %u, %u, %u, %u, { %u, %u }, %u, %u, %u, %u, %u, %u }\n",
+            desc.Width, desc.Height, desc.MipLevels, desc.ArraySize, desc.Format, desc.SampleDesc.Count, desc.SampleDesc.Quality, desc.Usage, desc.BindFlags, desc.CPUAccessFlags, desc.MiscFlags,
+            desc.TileMode,
+            desc.Pitch);
+        OutputDebugStringW(buff);
+    }
+
+    void DebugPrintDesc(const XG_TEXTURE3D_DESC& desc)
+    {
+        wchar_t buff[2048] = {};
+        swprintf_s(buff, L"XG_TEXTURE3D_DESC = { %u, %u, %u, %u, %u, %u, %u, %u, %u, %u, %u }\n",
+            desc.Width, desc.Height, desc.Depth, desc.MipLevels, desc.Format, desc.Usage, desc.BindFlags, desc.CPUAccessFlags, desc.MiscFlags,
+            desc.TileMode,
+            desc.Pitch);
+        OutputDebugStringW(buff);
+    }
+
     void DebugPrintLayout(const XG_RESOURCE_LAYOUT& layout)
     {
-        wchar_t buff[2048];
+        wchar_t buff[2048] = {};
 
-        swprintf_s(buff, L"Layout %u planes, %uD, %u mips, %I64u size, %I64u alignment\n", layout.Planes, layout.Dimension - 1, layout.MipLevels, layout.SizeBytes, layout.BaseAlignmentBytes);
+        swprintf_s(buff, L"Layout %u planes, %uD, %u mips, %llu size, %llu alignment\n", layout.Planes, layout.Dimension - 1, layout.MipLevels, layout.SizeBytes, layout.BaseAlignmentBytes);
         OutputDebugStringW(buff);
 
         for (size_t p = 0; p < layout.Planes; ++p)
         {
             auto& plane = layout.Plane[p];
 
-            swprintf_s(buff, L"Plane %Iu: %u bpe, %I64u size, %I64u offset, %I64u alignment\n", p, plane.BytesPerElement, plane.SizeBytes, plane.BaseOffsetBytes, plane.BaseAlignmentBytes);
+            swprintf_s(buff, L"Plane %zu: %u bpe, %llu size, %llu offset, %llu alignment\n", p, plane.BytesPerElement, plane.SizeBytes, plane.BaseOffsetBytes, plane.BaseAlignmentBytes);
             OutputDebugStringW(buff);
 
             for (size_t level = 0; level < layout.MipLevels; ++level)
             {
                 auto& mip = plane.MipLayout[level];
 
-                swprintf_s(buff, L"\tLevel %Iu: %I64u size, %I64u slice2D, %I64u offset, %u alignment\n", level, mip.SizeBytes, mip.Slice2DSizeBytes, mip.OffsetBytes, mip.AlignmentBytes);
+                swprintf_s(buff, L"\tLevel %zu: %llu size, %llu slice2D, %llu offset, %u alignment\n", level, mip.SizeBytes, mip.Slice2DSizeBytes, mip.OffsetBytes, mip.AlignmentBytes);
                 OutputDebugStringW(buff);
 
                 swprintf_s(buff, L"\t\t%u x %u x %u (padded %u x %u x %u)\n", mip.WidthElements, mip.HeightElements, mip.DepthOrArraySize,
@@ -235,16 +286,26 @@ namespace
 
         assert(!IsCompressed(format));
 
-        if (IsTypeless(format))
+        if (IsPacked(format))
+        {
+            size_t bpp = (BitsPerPixel(format) + 7) / 8;
+            //assert(bpp == layout.Plane[0].BytesPerElement);
+
+            size_t w = images[0]->width;
+            assert(((w + 1) / 2) == layout.Plane[0].MipLayout[level].WidthElements);
+
+            return TileByElement1D(images, nimages, level, computer, layout, xbox, bpp, w, true);
+        }
+        else if (IsTypeless(format))
         {
             //--- Typeless is done with per-element copy ----------------------------------
             size_t bpp = (BitsPerPixel(format) + 7) / 8;
-            size_t w = images[0]->width;
-
             assert(bpp == layout.Plane[0].BytesPerElement);
+
+            size_t w = images[0]->width;
             assert(w == layout.Plane[0].MipLayout[level].WidthElements);
 
-            return TileByElement1D(images, nimages, level, computer, layout, xbox, bpp, w);
+            return TileByElement1D(images, nimages, level, computer, layout, xbox, bpp, w, false);
         }
         else
         {
@@ -284,6 +345,9 @@ namespace
                 for (size_t x = 0; x < img->width; ++x)
                 {
                     size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, 0, item, 0);
+                    if (offset == size_t(-1))
+                        return E_FAIL;
+
                     assert(offset >= mip.OffsetBytes);
                     assert(offset < mip.OffsetBytes + mip.SizeBytes);
 
@@ -343,21 +407,32 @@ namespace
             assert(nbh == layout.Plane[0].MipLayout[level].HeightElements);
             assert(bpb == layout.Plane[0].BytesPerElement);
 
-            return TileByElement2D(images, nimages, level, computer, layout, xbox, bpb, nbw, nbh);
+            return TileByElement2D(images, nimages, level, computer, layout, xbox, bpb, nbw, nbh, false);
+        }
+        else if (IsPacked(format))
+        {
+            size_t bpp = (BitsPerPixel(format) + 7) / 8;
+            //assert(bpp == layout.Plane[0].BytesPerElement);
+
+            size_t w = images[0]->width;
+            size_t h = images[0]->height;
+            assert(((w + 1) / 2) == layout.Plane[0].MipLayout[level].WidthElements);
+            assert(h == layout.Plane[0].MipLayout[level].HeightElements);
+
+            return TileByElement2D(images, nimages, level, computer, layout, xbox, bpp, w, h, true);
         }
         else if (IsTypeless(format))
         {
             //--- Typeless is done with per-element copy ----------------------------------
             size_t bpp = (BitsPerPixel(format) + 7) / 8;
+            assert(bpp == layout.Plane[0].BytesPerElement);
 
             size_t w = images[0]->width;
             size_t h = images[0]->height;
-
-            assert(bpp == layout.Plane[0].BytesPerElement);
             assert(w == layout.Plane[0].MipLayout[level].WidthElements);
             assert(h == layout.Plane[0].MipLayout[level].HeightElements);
 
-            return TileByElement2D(images, nimages, level, computer, layout, xbox, bpp, w, h);
+            return TileByElement2D(images, nimages, level, computer, layout, xbox, bpp, w, h, false);
         }
         else
         {
@@ -403,6 +478,9 @@ namespace
                     for (size_t x = 0; x < img->width; ++x)
                     {
                         size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, item, 0);
+                        if (offset == size_t(-1))
+                            return E_FAIL;
+
                         assert(offset >= mip.OffsetBytes);
                         assert(offset < mip.OffsetBytes + mip.SizeBytes);
 
@@ -460,18 +538,28 @@ namespace
             assert(nbh == layout.Plane[0].MipLayout[level].HeightElements);
             assert(bpb == layout.Plane[0].BytesPerElement);
 
-            return TileByElement3D(image, level, slices, computer, layout, xbox, bpb, nbw, nbh);
+            return TileByElement3D(image, level, slices, computer, layout, xbox, bpb, nbw, nbh, false);
+        }
+        else if (IsPacked(image.format))
+        {
+            size_t bpp = (BitsPerPixel(image.format) + 7) / 8;
+            //assert(bpp == layout.Plane[0].BytesPerElement);
+
+            assert(((image.width + 1) / 2) == layout.Plane[0].MipLayout[level].WidthElements);
+            assert(image.height == layout.Plane[0].MipLayout[level].HeightElements);
+
+            return TileByElement3D(image, level, slices, computer, layout, xbox, bpp, image.width, image.height, true);
         }
         else if (IsTypeless(image.format))
         {
             //--- Typeless is done with per-element copy ----------------------------------
             size_t bpp = (BitsPerPixel(image.format) + 7) / 8;
-
             assert(bpp == layout.Plane[0].BytesPerElement);
+
             assert(image.width == layout.Plane[0].MipLayout[level].WidthElements);
             assert(image.height == layout.Plane[0].MipLayout[level].HeightElements);
 
-            return TileByElement3D(image, level, slices, computer, layout, xbox, bpp, image.width, image.height);
+            return TileByElement3D(image, level, slices, computer, layout, xbox, bpp, image.width, image.height, false);
         }
         else
         {
@@ -510,6 +598,9 @@ namespace
                     for (size_t x = 0; x < image.width; ++x)
                     {
                         size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, z, 0);
+                        if (offset == size_t(-1))
+                            return E_FAIL;
+
                         assert(offset >= mip.OffsetBytes);
                         assert(offset < mip.OffsetBytes + mip.SizeBytes);
 
@@ -693,6 +784,10 @@ HRESULT Xbox::Tile(
         desc.MiscFlags = (metadata.IsCubemap()) ? XG_RESOURCE_MISC_TEXTURECUBE : 0;
         desc.TileMode = mode;
 
+#ifdef VERBOSE
+        DebugPrintDesc(desc);
+#endif
+
         ComPtr<XGTextureAddressComputer> computer;
         HRESULT hr = XGCreateTexture1DComputer(&desc, computer.GetAddressOf());
         if (FAILED(hr))
@@ -769,6 +864,10 @@ HRESULT Xbox::Tile(
         desc.MiscFlags = (metadata.miscFlags & TEX_MISC_TEXTURECUBE) ? XG_RESOURCE_MISC_TEXTURECUBE : 0;
         desc.TileMode = mode;
 
+#ifdef VERBOSE
+        DebugPrintDesc(desc);
+#endif
+
         ComPtr<XGTextureAddressComputer> computer;
         HRESULT hr = XGCreateTexture2DComputer(&desc, computer.GetAddressOf());
         if (FAILED(hr))
@@ -842,6 +941,10 @@ HRESULT Xbox::Tile(
         desc.Usage = XG_USAGE_DEFAULT;
         desc.BindFlags = XG_BIND_SHADER_RESOURCE;
         desc.TileMode = mode;
+
+#ifdef VERBOSE
+        DebugPrintDesc(desc);
+#endif
 
         ComPtr<XGTextureAddressComputer> computer;
         HRESULT hr = XGCreateTexture3DComputer(&desc, computer.GetAddressOf());

@@ -211,6 +211,7 @@
     <ClCompile Include="DirectXTexWIC.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="README.md" />
     <None Include="Shaders\BC6HEncode.hlsl">
       <FileType>Document</FileType>
     </None>
@@ -234,9 +235,6 @@
     <None Include="Shaders\Compiled\BC7Encode_TryMode456CS.inc" />
     <None Include="Shaders\Compiled\BC7Encode_TryMode456CS.pdb" />
     <None Include="Shaders\CompileShaders.cmd" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

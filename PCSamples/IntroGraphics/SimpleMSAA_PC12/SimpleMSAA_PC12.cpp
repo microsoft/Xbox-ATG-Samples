@@ -389,7 +389,7 @@ void Sample::CreateDeviceDependentResources()
     wchar_t strFilePath[MAX_PATH] = {};
     DX::FindMediaFile(strFilePath, MAX_PATH, L"AliasSampleCityBlock\\CityBlockConcrete.sdkmesh");
 
-    m_model = Model::CreateFromSDKMESH(strFilePath);
+    m_model = Model::CreateFromSDKMESH(device, strFilePath);
 
     ResourceUploadBatch resourceUpload(device);
     resourceUpload.Begin();

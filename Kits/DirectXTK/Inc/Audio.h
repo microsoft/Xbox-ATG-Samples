@@ -25,13 +25,24 @@
 #define XAUDIO2_HELPER_FUNCTIONS
 #endif
 
-#if (_WIN32_WINNT >= 0x0602 /*_WIN32_WINNT_WIN8*/)
+#if defined(USING_XAUDIO2_REDIST) || (_WIN32_WINNT >= 0x0A00 /*_WIN32_WINNT_WIN10*/) || defined(_XBOX_ONE)
+#define USING_XAUDIO2_9
+#elif (_WIN32_WINNT >= 0x0602 /*_WIN32_WINNT_WIN8*/)
+#define USING_XAUDIO2_8
+#else
+#define USING_XAUDIO2_7_DIRECTX
+#endif
+
+#if defined(USING_XAUDIO2_8) || defined(USING_XAUDIO2_9)
 #include <xaudio2.h>
 #include <xaudio2fx.h>
 #include <x3daudio.h>
 #include <xapofx.h>
+
+#ifndef USING_XAUDIO2_REDIST
 #pragma comment(lib,"xaudio2.lib")
-#else
+#endif
+#else // USING_XAUDIO2_7_DIRECTX
 // Using XAudio 2.7 requires the DirectX SDK
 #include <C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\comdecl.h>
 #include <C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\xaudio2.h>
@@ -109,6 +120,9 @@ namespace DirectX
 
         virtual void __cdecl GatherStatistics(AudioStatistics& stats) const = 0;
             // Contribute to statistics request
+
+        virtual void __cdecl OnDestroyParent() noexcept = 0;
+            // Optional notification used by some objects
 
     protected:
         IVoiceNotify() = default;
@@ -192,7 +206,9 @@ namespace DirectX
     {
     public:
         explicit AudioEngine(
-            AUDIO_ENGINE_FLAGS flags = AudioEngine_Default, _In_opt_ const WAVEFORMATEX* wfx = nullptr, _In_opt_z_ const wchar_t* deviceId = nullptr,
+            AUDIO_ENGINE_FLAGS flags = AudioEngine_Default,
+            _In_opt_ const WAVEFORMATEX* wfx = nullptr,
+            _In_opt_z_ const wchar_t* deviceId = nullptr,
             AUDIO_STREAM_CATEGORY category = AudioCategory_GameEffects) noexcept(false);
 
         AudioEngine(AudioEngine&& moveFrom) noexcept;
@@ -256,7 +272,8 @@ namespace DirectX
             // Releases any currently unused voices
 
         // Internal-use functions
-        void __cdecl AllocateVoice(_In_ const WAVEFORMATEX* wfx, SOUND_EFFECT_INSTANCE_FLAGS flags, bool oneshot, _Outptr_result_maybenull_ IXAudio2SourceVoice** voice);
+        void __cdecl AllocateVoice(_In_ const WAVEFORMATEX* wfx,
+            SOUND_EFFECT_INSTANCE_FLAGS flags, bool oneshot, _Outptr_result_maybenull_ IXAudio2SourceVoice** voice);
 
         void __cdecl DestroyVoice(_In_ IXAudio2SourceVoice* voice);
             // Should only be called for instance voices, not one-shots
@@ -307,8 +324,10 @@ namespace DirectX
         void __cdecl Play(_In_z_ const char* name);
         void __cdecl Play(_In_z_ const char* name, float volume, float pitch, float pan);
 
-        std::unique_ptr<SoundEffectInstance> __cdecl CreateInstance(unsigned int index, SOUND_EFFECT_INSTANCE_FLAGS flags = SoundEffectInstance_Default);
-        std::unique_ptr<SoundEffectInstance> __cdecl CreateInstance(_In_z_ const char* name, SOUND_EFFECT_INSTANCE_FLAGS flags = SoundEffectInstance_Default);
+        std::unique_ptr<SoundEffectInstance> __cdecl CreateInstance(unsigned int index,
+            SOUND_EFFECT_INSTANCE_FLAGS flags = SoundEffectInstance_Default);
+        std::unique_ptr<SoundEffectInstance> __cdecl CreateInstance(_In_z_ const char* name,
+            SOUND_EFFECT_INSTANCE_FLAGS flags = SoundEffectInstance_Default);
 
         bool __cdecl IsPrepared() const noexcept;
         bool __cdecl IsInUse() const noexcept;
@@ -327,22 +346,19 @@ namespace DirectX
 
         int __cdecl Find(_In_z_ const char* name) const;
 
-#if defined(_XBOX_ONE) || (_WIN32_WINNT < _WIN32_WINNT_WIN8) || (_WIN32_WINNT >= 0x0A00 /*_WIN32_WINNT_WIN10*/ )
+#if defined(USING_XAUDIO2_7_DIRECTX) || defined(USING_XAUDIO2_9)
         bool __cdecl FillSubmitBuffer(unsigned int index, _Out_ XAUDIO2_BUFFER& buffer, _Out_ XAUDIO2_BUFFER_WMA& wmaBuffer) const;
 #else
         void __cdecl FillSubmitBuffer(unsigned int index, _Out_ XAUDIO2_BUFFER& buffer) const;
 #endif
+
+        void __cdecl UnregisterInstance(_In_ IVoiceNotify* instance);
 
     private:
         // Private implementation.
         class Impl;
 
         std::unique_ptr<Impl> pImpl;
-
-        // Private interface
-        void __cdecl UnregisterInstance(_In_ SoundEffectInstance* instance);
-
-        friend class SoundEffectInstance;
     };
 
 
@@ -359,7 +375,7 @@ namespace DirectX
             _In_ const WAVEFORMATEX* wfx, _In_reads_bytes_(audioBytes) const uint8_t* startAudio, size_t audioBytes,
             uint32_t loopStart, uint32_t loopLength);
 
-#if defined(_XBOX_ONE) || (_WIN32_WINNT < _WIN32_WINNT_WIN8) || (_WIN32_WINNT >= 0x0A00 /*_WIN32_WINNT_WIN10*/)
+#if defined(USING_XAUDIO2_7_DIRECTX) || defined(USING_XAUDIO2_9)
 
         SoundEffect(_In_ AudioEngine* engine, _Inout_ std::unique_ptr<uint8_t[]>& wavData,
             _In_ const WAVEFORMATEX* wfx, _In_reads_bytes_(audioBytes) const uint8_t* startAudio, size_t audioBytes,
@@ -393,22 +409,19 @@ namespace DirectX
 
         const WAVEFORMATEX* __cdecl GetFormat() const noexcept;
 
-#if defined(_XBOX_ONE) || (_WIN32_WINNT < _WIN32_WINNT_WIN8) || (_WIN32_WINNT >= 0x0A00 /*_WIN32_WINNT_WIN10*/)
+#if defined(USING_XAUDIO2_7_DIRECTX) || defined(USING_XAUDIO2_9)
         bool __cdecl FillSubmitBuffer(_Out_ XAUDIO2_BUFFER& buffer, _Out_ XAUDIO2_BUFFER_WMA& wmaBuffer) const;
 #else
         void __cdecl FillSubmitBuffer(_Out_ XAUDIO2_BUFFER& buffer) const;
 #endif
+
+        void __cdecl UnregisterInstance(_In_ IVoiceNotify* instance);
 
     private:
         // Private implementation.
         class Impl;
 
         std::unique_ptr<Impl> pImpl;
-
-        // Private interface
-        void __cdecl UnregisterInstance(_In_ SoundEffectInstance* instance);
-
-        friend class SoundEffectInstance;
     };
 
 
@@ -616,8 +629,7 @@ namespace DirectX
 
         SoundState __cdecl GetState() noexcept;
 
-        // Notifications.
-        void __cdecl OnDestroyParent() noexcept;
+        IVoiceNotify* __cdecl GetVoiceNotify() const noexcept;
 
     private:
         // Private implementation.

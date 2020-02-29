@@ -103,6 +103,13 @@ public:
         mBase.GatherStatistics(stats);
     }
 
+    virtual void __cdecl OnDestroyParent() noexcept override
+    {
+        mBase.OnDestroy();
+        mWaveBank = nullptr;
+        mEffect = nullptr;
+    }
+
     SoundEffectInstanceBase         mBase;
     SoundEffect*                    mEffect;
     WaveBank*                       mWaveBank;
@@ -132,12 +139,12 @@ void SoundEffectInstance::Impl::Play(bool loop)
         return;
 
     // Submit audio data for STOPPED -> PLAYING state transition
-    XAUDIO2_BUFFER buffer;
+    XAUDIO2_BUFFER buffer = {};
 
-#if defined(_XBOX_ONE) || (_WIN32_WINNT < _WIN32_WINNT_WIN8) || (_WIN32_WINNT >= _WIN32_WINNT_WIN10)
+#if defined(USING_XAUDIO2_7_DIRECTX) || defined(USING_XAUDIO2_9)
 
     bool iswma = false;
-    XAUDIO2_BUFFER_WMA wmaBuffer;
+    XAUDIO2_BUFFER_WMA wmaBuffer = {};
     if (mWaveBank)
     {
         iswma = mWaveBank->FillSubmitBuffer(mIndex, buffer, wmaBuffer);
@@ -148,7 +155,7 @@ void SoundEffectInstance::Impl::Play(bool loop)
         iswma = mEffect->FillSubmitBuffer(buffer, wmaBuffer);
     }
 
-#else
+#else // !xWMA
 
     if (mWaveBank)
     {
@@ -176,7 +183,7 @@ void SoundEffectInstance::Impl::Play(bool loop)
     buffer.pContext = nullptr;
 
     HRESULT hr;
-#if defined(_XBOX_ONE) || (_WIN32_WINNT < _WIN32_WINNT_WIN8) || (_WIN32_WINNT >= _WIN32_WINNT_WIN10)
+#if defined(USING_XAUDIO2_7_DIRECTX) || defined(USING_XAUDIO2_9)
     if (iswma)
     {
         hr = mBase.voice->SubmitSourceBuffer(&buffer, &wmaBuffer);
@@ -190,7 +197,7 @@ void SoundEffectInstance::Impl::Play(bool loop)
     if (FAILED(hr))
     {
     #ifdef _DEBUG
-        DebugTrace("ERROR: SoundEffectInstance failed (%08X) when submitting buffer:\n", hr);
+        DebugTrace("ERROR: SoundEffectInstance failed (%08X) when submitting buffer:\n", static_cast<unsigned int>(hr));
 
         char buff[64] = {};
         auto wfx = (mWaveBank) ? mWaveBank->GetFormat(mIndex, reinterpret_cast<WAVEFORMATEX*>(buff), sizeof(buff))
@@ -198,8 +205,8 @@ void SoundEffectInstance::Impl::Play(bool loop)
 
         size_t length = (mWaveBank) ? mWaveBank->GetSampleSizeInBytes(mIndex) : mEffect->GetSampleSizeInBytes();
 
-        DebugTrace("\tFormat Tag %u, %u channels, %u-bit, %u Hz, %zu bytes\n", wfx->wFormatTag,
-                   wfx->nChannels, wfx->wBitsPerSample, wfx->nSamplesPerSec, length);
+        DebugTrace("\tFormat Tag %u, %u channels, %u-bit, %u Hz, %zu bytes\n",
+            wfx->wFormatTag, wfx->nChannels, wfx->wBitsPerSample, wfx->nSamplesPerSec, length);
     #endif
         mBase.Stop(true, mLooped);
         throw std::exception("SubmitSourceBuffer");
@@ -247,13 +254,13 @@ SoundEffectInstance::~SoundEffectInstance()
     {
         if (pImpl->mWaveBank)
         {
-            pImpl->mWaveBank->UnregisterInstance(this);
+            pImpl->mWaveBank->UnregisterInstance(pImpl.get());
             pImpl->mWaveBank = nullptr;
         }
 
         if (pImpl->mEffect)
         {
-            pImpl->mEffect->UnregisterInstance(this);
+            pImpl->mEffect->UnregisterInstance(pImpl.get());
             pImpl->mEffect = nullptr;
         }
     }
@@ -322,10 +329,7 @@ SoundState SoundEffectInstance::GetState() noexcept
 }
 
 
-// Notifications.
-void SoundEffectInstance::OnDestroyParent() noexcept
+IVoiceNotify* SoundEffectInstance::GetVoiceNotify() const noexcept
 {
-    pImpl->mBase.OnDestroy();
-    pImpl->mWaveBank = nullptr;
-    pImpl->mEffect = nullptr;
+    return pImpl.get();
 }

@@ -378,7 +378,7 @@ void Sample::CreateDeviceDependentResources()
             throw std::exception("_wmakepath_s");
     }
 
-    m_model = Model::CreateFromSDKMESH(strFilePath);
+    m_model = Model::CreateFromSDKMESH(device, strFilePath);
 
     {
         ResourceUploadBatch resourceUpload(device);

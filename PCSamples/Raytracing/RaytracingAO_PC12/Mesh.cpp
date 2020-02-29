@@ -17,7 +17,7 @@ Mesh::Mesh(
     const wchar_t* pFileName)
 {
     // Load sdk mesh into memory.
-    m_model = Model::CreateFromSDKMESH(pFileName, device);
+    m_model = Model::CreateFromSDKMESH(device, pFileName);
 
     // Check the sample's assumptions are correct.
     for (auto& mesh : m_model->meshes)

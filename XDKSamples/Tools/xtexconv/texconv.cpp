@@ -36,6 +36,8 @@
 
 #include <wincodec.h>
 
+#pragma warning(disable : 4619 4616 26812)
+
 #include "DirectXTex.h"
 #include "DirectXTexXbox.h"
 
@@ -98,6 +100,7 @@ enum OPTIONS
     OPT_NOGPU,
     OPT_FEATURE_LEVEL,
     OPT_FIT_POWEROF2,
+    OPT_ALPHA_THRESHOLD,
     OPT_ALPHA_WEIGHT,
     OPT_NORMAL_MAP,
     OPT_NORMAL_MAP_AMPLITUDE,
@@ -189,6 +192,7 @@ const SValue g_pOptions[] =
     { L"nogpu",         OPT_NOGPU },
     { L"fl",            OPT_FEATURE_LEVEL },
     { L"pow2",          OPT_FIT_POWEROF2 },
+    { L"at",            OPT_ALPHA_THRESHOLD },
     { L"aw",            OPT_ALPHA_WEIGHT },
     { L"nmap",          OPT_NORMAL_MAP },
     { L"nmapamp",       OPT_NORMAL_MAP_AMPLITUDE },
@@ -467,11 +471,11 @@ namespace
 
     struct handle_closer { void operator()(HANDLE h) { assert(h != INVALID_HANDLE_VALUE); if (h) CloseHandle(h); } };
 
-    typedef std::unique_ptr<void, handle_closer> ScopedHandle;
+    using ScopedHandle = std::unique_ptr<void, handle_closer>;
 
     struct find_closer { void operator()(HANDLE h) { assert(h != INVALID_HANDLE_VALUE); if (h) FindClose(h); } };
 
-    typedef std::unique_ptr<void, find_closer> ScopedFindHandle;
+    using ScopedFindHandle = std::unique_ptr<void, find_closer>;
 
     inline static bool ispow2(size_t x)
     {
@@ -588,7 +592,7 @@ namespace
         {
             if (static_cast<DXGI_FORMAT>(pFormat->dwValue) == Format)
             {
-                wprintf(pFormat->pName);
+                wprintf(L"%ls", pFormat->pName);
                 return;
             }
         }
@@ -597,7 +601,7 @@ namespace
         {
             if (static_cast<DXGI_FORMAT>(pFormat->dwValue) == Format)
             {
-                wprintf(pFormat->pName);
+                wprintf(L"%ls", pFormat->pName);
                 return;
             }
         }
@@ -624,17 +628,17 @@ namespace
         switch (info.dimension)
         {
         case TEX_DIMENSION_TEXTURE1D:
-            wprintf((info.arraySize > 1) ? L" 1DArray" : L" 1D");
+            wprintf(L"%ls", (info.arraySize > 1) ? L" 1DArray" : L" 1D");
             break;
 
         case TEX_DIMENSION_TEXTURE2D:
             if (info.IsCubemap())
             {
-                wprintf((info.arraySize > 6) ? L" CubeArray" : L" Cube");
+                wprintf(L"%ls", (info.arraySize > 6) ? L" CubeArray" : L" Cube");
             }
             else
             {
-                wprintf((info.arraySize > 1) ? L" 2DArray" : L" 2D");
+                wprintf(L"%ls", (info.arraySize > 1) ? L" 2DArray" : L" 2D");
             }
             break;
 
@@ -752,6 +756,9 @@ namespace
         wprintf(L"   -wrap, -mirror      texture addressing mode (wrap, mirror, or clamp)\n");
         wprintf(L"   -pmalpha            convert final texture to use premultiplied alpha\n");
         wprintf(L"   -alpha              convert premultiplied alpha to straight alpha\n");
+        wprintf(
+            L"   -at <threshold>     Alpha threshold used for BC1, RGBA5551, and WIC\n"
+            L"                       (defaults to 0.5)\n");
         wprintf(L"\n   -fl <feature-level> Set maximum feature level target (defaults to 11.0)\n");
         wprintf(L"   -pow2               resize to fit a power-of-2, respecting aspect ratio\n");
         wprintf(
@@ -1149,6 +1156,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
     DWORD FileType = CODEC_DDS;
     DWORD maxSize = 16384;
     int adapter = -1;
+    float alphaThreshold = TEX_THRESHOLD_DEFAULT;
     float alphaWeight = 1.f;
     DWORD dwNormalMap = 0;
     float nmapAmplitude = 1.f;
@@ -1212,6 +1220,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             case OPT_FILETYPE:
             case OPT_GPU:
             case OPT_FEATURE_LEVEL:
+            case OPT_ALPHA_THRESHOLD:
             case OPT_ALPHA_WEIGHT:
             case OPT_NORMAL_MAP:
             case OPT_NORMAL_MAP_AMPLITUDE:
@@ -1492,6 +1501,22 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                 }
                 break;
 
+            case OPT_ALPHA_THRESHOLD:
+                if (swscanf_s(pValue, L"%f", &alphaThreshold) != 1)
+                {
+                    wprintf(L"Invalid value specified with -at (%ls)\n", pValue);
+                    wprintf(L"\n");
+                    PrintUsage();
+                    return 1;
+                }
+                else if (alphaThreshold < 0.f)
+                {
+                    wprintf(L"-at (%ls) parameter must be positive\n", pValue);
+                    wprintf(L"\n");
+                    return 1;
+                }
+                break;
+
             case OPT_ALPHA_WEIGHT:
                 if (swscanf_s(pValue, L"%f", &alphaWeight) != 1)
                 {
@@ -1549,7 +1574,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                 break;
 
             case OPT_COLORKEY:
-                if (swscanf_s(pValue, L"%x", &colorKey) != 1)
+                if (swscanf_s(pValue, L"%lx", &colorKey) != 1)
                 {
                     printf("Invalid value specified with -c (%ls)\n", pValue);
                     printf("\n");
@@ -2204,7 +2229,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                 }
 
                 hr = Convert(image->GetImages(), image->GetImageCount(), image->GetMetadata(), DXGI_FORMAT_R16G16B16A16_FLOAT,
-                    dwFilter | dwFilterOpts | dwSRGB | dwConvert, TEX_THRESHOLD_DEFAULT, *timage);
+                    dwFilter | dwFilterOpts | dwSRGB | dwConvert, alphaThreshold, *timage);
                 if (FAILED(hr))
                 {
                     wprintf(L" FAILED [convert] (%x)\n", static_cast<unsigned int>(hr));
@@ -2515,7 +2540,22 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             DXGI_FORMAT nmfmt = tformat;
             if (IsCompressed(tformat))
             {
-                nmfmt = (dwNormalMap & CNMAP_COMPUTE_OCCLUSION) ? DXGI_FORMAT_R32G32B32A32_FLOAT : DXGI_FORMAT_R32G32B32_FLOAT;
+                switch (tformat)
+                {
+                case DXGI_FORMAT_BC4_SNORM:
+                case DXGI_FORMAT_BC5_SNORM:
+                    nmfmt = DXGI_FORMAT_R8G8B8A8_SNORM;
+                    break;
+
+                case DXGI_FORMAT_BC6H_SF16:
+                case DXGI_FORMAT_BC6H_UF16:
+                    nmfmt = DXGI_FORMAT_R32G32B32_FLOAT;
+                    break;
+
+                default:
+                    nmfmt = DXGI_FORMAT_R8G8B8A8_UNORM;
+                    break;
+                }
             }
 
             hr = ComputeNormalMap(image->GetImages(), image->GetImageCount(), image->GetMetadata(), dwNormalMap, nmapAmplitude, nmfmt, *timage);
@@ -2551,7 +2591,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             }
 
             hr = Convert(image->GetImages(), image->GetImageCount(), image->GetMetadata(), tformat,
-                dwFilter | dwFilterOpts | dwSRGB | dwConvert, TEX_THRESHOLD_DEFAULT, *timage);
+                dwFilter | dwFilterOpts | dwSRGB | dwConvert, alphaThreshold, *timage);
             if (FAILED(hr))
             {
                 wprintf(L" FAILED [convert] (%x)\n", static_cast<unsigned int>(hr));
@@ -3020,7 +3060,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                 }
                 else
                 {
-                    hr = Compress(img, nimg, info, tformat, cflags | dwSRGB, TEX_THRESHOLD_DEFAULT, *timage);
+                    hr = Compress(img, nimg, info, tformat, cflags | dwSRGB, alphaThreshold, *timage);
                 }
                 if (FAILED(hr))
                 {
@@ -3230,7 +3270,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
 
     if (sizewarn)
     {
-        wprintf(L"\nWARNING: Target size exceeds maximum size for feature level (%u)\n", maxSize);
+        wprintf(L"\nWARNING: Target size exceeds maximum size for feature level (%lu)\n", maxSize);
     }
 
     if (nonpow2warn && maxSize <= 4096)
