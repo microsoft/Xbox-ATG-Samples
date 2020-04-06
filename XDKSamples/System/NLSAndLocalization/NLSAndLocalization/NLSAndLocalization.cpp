@@ -165,7 +165,7 @@ void Sample::InitializeLocalization()
     }
     else
     {
-        m_textConsole->Format(L"The selected locale (Country/region: %ls) is NOT present in the manifest, so the fallback locale (Country: %s) is selected for localization\n", iso2, localeNameStr.c_str());
+        m_textConsole->Format(L"The selected locale (Country/region: %ls) is NOT present in the manifest, so the fallback locale (Country/region: %ls) is selected for localization\n", iso2, localeNameStr.c_str());
     }
 
     wchar_t lcpData[LOCALE_NAME_MAX_LENGTH];
