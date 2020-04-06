@@ -115,6 +115,8 @@ void Sample::Update(DX::StepTimer const&)
     }
 
     if (m_keyboardButtons.IsKeyPressed(Keyboard::Right)
+        || m_keyboardButtons.IsKeyPressed(Keyboard::Enter)
+        || m_keyboardButtons.IsKeyPressed(Keyboard::Space)
         || m_gamePadButtons.a == GamePad::ButtonStateTracker::PRESSED
         || m_gamePadButtons.dpadRight == GamePad::ButtonStateTracker::PRESSED)
     {
@@ -124,6 +126,7 @@ void Sample::Update(DX::StepTimer const&)
     }
 
     if (m_keyboardButtons.IsKeyPressed(Keyboard::Left)
+        || m_keyboardButtons.IsKeyPressed(Keyboard::Back)
         || m_gamePadButtons.b == GamePad::ButtonStateTracker::PRESSED
         || m_gamePadButtons.dpadLeft == GamePad::ButtonStateTracker::PRESSED)
     {
@@ -395,7 +398,7 @@ void Sample::Render()
                 GetGamingDeviceModelInformation(&info);
 
                 wchar_t buff[128] = {};
-                swprintf_s(buff, L"%08X", info.vendorId);
+                swprintf_s(buff, L"%08X", static_cast<unsigned int>(info.vendorId));
 
                 switch (info.vendorId)
                 {
@@ -405,7 +408,7 @@ void Sample::Render()
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"VendorId", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
 
-                swprintf_s(buff, L"%08X", info.deviceId);
+                swprintf_s(buff, L"%08X", static_cast<unsigned int>(info.deviceId));
 
                 if (info.vendorId == GAMING_DEVICE_VENDOR_ID_MICROSOFT)
                 {
@@ -445,6 +448,7 @@ void Sample::Render()
             bool isuniversal5 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5, 0);
             bool isuniversal6 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 6, 0);
             bool isuniversal7 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7, 0);
+            bool isuniversal8 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 8, 0);
             bool isphone = ApiInformation::IsApiContractPresent("Windows.Phone.PhoneContract", 1, 0);
             bool isstore2 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 2, 0);
             bool isstore3 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 3, 0);
@@ -468,6 +472,7 @@ void Sample::Render()
             if (isuniversal5) { wcscat_s(contracts, L", 5.0"); }
             if (isuniversal6) { wcscat_s(contracts, L", 6.0"); }
             if (isuniversal7) { wcscat_s(contracts, L", 7.0"); }
+            if (isuniversal8) { wcscat_s(contracts, L", 8.0"); }
 
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UniversalApiContract", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), contracts, right, y, m_scale);
@@ -663,7 +668,8 @@ void Sample::Render()
             y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"DXGI_OUTPUT_DESC", mid, y, ATG::Colors::OffWhite, m_scale);
 
             ComPtr<IDXGIOutput> output;
-            if (SUCCEEDED(m_deviceResources->GetSwapChain()->GetContainingOutput(output.GetAddressOf())))
+            HRESULT hr = m_deviceResources->GetSwapChain()->GetContainingOutput(output.GetAddressOf());
+            if (SUCCEEDED(hr))
             {
                 DXGI_OUTPUT_DESC outputDesc = {};
                 DX::ThrowIfFailed(output->GetDesc(&outputDesc));
@@ -743,6 +749,14 @@ void Sample::Render()
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
                 }
             }
+            else
+            {
+                wchar_t buff[128] = {};
+                swprintf_s(buff, L"GetContainingOutput failed with %08X", static_cast<unsigned int>(hr));
+                y += DrawStringCenter(m_batch.get(), m_smallFont.get(), buff, mid, y, ATG::Colors::Orange, m_scale);
+            }
+
+            y += m_smallFont->GetLineSpacing() * m_scale;
 
             ComPtr<IDXGIDevice3> dxgiDevice;
             if (SUCCEEDED(m_deviceResources->GetD3DDevice()->QueryInterface(IID_PPV_ARGS(dxgiDevice.GetAddressOf()))))
@@ -756,7 +770,18 @@ void Sample::Render()
                         BOOL allowTearing = FALSE;
                         if (SUCCEEDED(dxgiFactory->CheckFeatureSupport(DXGI_FEATURE_PRESENT_ALLOW_TEARING, &allowTearing, sizeof(BOOL))))
                         {
-                            y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"DXGI 1.5", mid, y, ATG::Colors::OffWhite, m_scale);
+                            const wchar_t* dxgiver = L"DXGI 1.5";
+                            #if defined(NTDDI_WIN10_RS4) && (NTDDI_VERSION >= NTDDI_WIN10_RS4)
+                            {
+                                ComPtr<IDXGIFactory6> dxgiFactory6;
+                                if (SUCCEEDED(dxgiFactory.As(&dxgiFactory6)))
+                                {
+                                    dxgiver = L"DXGI 1.6";
+                                }
+                            }
+                            #endif
+
+                            y += DrawStringCenter(m_batch.get(), m_smallFont.get(), dxgiver, mid, y, ATG::Colors::OffWhite, m_scale);
 
                             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Allow Tearing", left, y, m_scale);
                             y += DrawStringRight(m_batch.get(), m_smallFont.get(), allowTearing ? L"true" : L"false", right, y, m_scale);
@@ -1134,6 +1159,10 @@ void Sample::Render()
                     case D3D12_CROSS_NODE_SHARING_TIER_1_EMULATED: crossTier = L"Tier 1 (emulated)"; break;
                     case D3D12_CROSS_NODE_SHARING_TIER_1: crossTier = L"Tier 1"; break;
                     case D3D12_CROSS_NODE_SHARING_TIER_2: crossTier = L"Tier 2"; break;
+
+                    #if defined(NTDDI_WIN10_RS4) && (NTDDI_VERSION >= NTDDI_WIN10_RS4)
+                    case D3D12_CROSS_NODE_SHARING_TIER_3: crossTier = L"Tier 3"; break;
+                    #endif
                     }
 
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"CrossNodeSharingTier", left, y, m_scale);
@@ -1281,11 +1310,15 @@ void Sample::Render()
             }
             else
             {
+                bool found = false;
+
                 // Optional Direct3D 12 features for Windows 10 April 2018 Update
                 #if defined(NTDDI_WIN10_RS4) && (NTDDI_VERSION >= NTDDI_WIN10_RS4)
                 D3D12_FEATURE_DATA_D3D12_OPTIONS4 d3d12opts4 = {};
                 if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS4, &d3d12opts4, sizeof(d3d12opts4))))
                 {
+                    found = true;
+
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"MSAA64KBAlignedTextureSupported", left, y, m_scale);
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts4.MSAA64KBAlignedTextureSupported ? L"true" : L"false", right, y, m_scale);
 
@@ -1306,6 +1339,8 @@ void Sample::Render()
                 D3D12_FEATURE_DATA_SERIALIZATION d3d12serial = {};
                 if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_SERIALIZATION, &d3d12serial, sizeof(d3d12serial))))
                 {
+                    found = true;
+
                     const wchar_t* serialTier = L"Unknown";
                     switch (d3d12serial.HeapSerializationTier)
                     {
@@ -1325,6 +1360,8 @@ void Sample::Render()
                 D3D12_FEATURE_DATA_CROSS_NODE d3d12xnode = {};
                 if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_CROSS_NODE, &d3d12xnode, sizeof(d3d12xnode))))
                 {
+                    found = true;
+
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Cross node AtomicShaderInstructions", left, y, m_scale);
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12xnode.AtomicShaderInstructions ? L"true" : L"false", right, y, m_scale);
 
@@ -1348,6 +1385,8 @@ void Sample::Render()
                 D3D12_FEATURE_DATA_D3D12_OPTIONS5 d3d12opts5 = {};
                 if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &d3d12opts5, sizeof(d3d12opts5))))
                 {
+                    found = true;
+
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"SRVOnlyTiledResourceTier3", left, y, m_scale);
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts5.SRVOnlyTiledResourceTier3 ? L"true" : L"false", right, y, m_scale);
 
@@ -1373,6 +1412,67 @@ void Sample::Render()
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), rtTier, right, y, m_scale);
                 }
                 #endif
+
+                if (!found)
+                {
+                    y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"Requires Windows 10 April 2018 Update or later", mid, y, ATG::Colors::Orange, m_scale);
+                }
+            }
+        }
+        break;
+
+    case InfoPage::DIRECT3D12_OPT3:
+        {
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 12 Optional Features (continued)", mid, y, ATG::Colors::LightGrey, m_scale);
+
+            auto device = m_deviceResources->GetD3DDevice12();
+
+            if (!device)
+            {
+                y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"Not supported", mid, y, ATG::Colors::Orange, m_scale);
+            }
+            else
+            {
+                bool found = false;
+
+                // Optional Direct3D 12 features for Windows 10 May 2019 Update
+                #if defined(NTDDI_WIN10_19H1) && (NTDDI_VERSION >= NTDDI_WIN10_19H1)
+                D3D12_FEATURE_DATA_D3D12_OPTIONS6 d3d12opts6 = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS6, &d3d12opts6, sizeof(d3d12opts6))))
+                {
+                    found = true;
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"AdditionalShadingRatesSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts6.AdditionalShadingRatesSupported ? L"true" : L"false", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"PerPrimitiveShadingRateSupportedWithViewportIndexing", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts6.PerPrimitiveShadingRateSupportedWithViewportIndexing ? L"true" : L"false", right, y, m_scale);
+
+                    const wchar_t* vrsTier = L"Unknown";
+                    switch (d3d12opts6.VariableShadingRateTier)
+                    {
+                    case D3D12_VARIABLE_SHADING_RATE_TIER_NOT_SUPPORTED: vrsTier = L"Not Supported"; break;
+                    case D3D12_VARIABLE_SHADING_RATE_TIER_1: vrsTier = L"Tier 1"; break;
+                    case D3D12_VARIABLE_SHADING_RATE_TIER_2: vrsTier = L"Tier 2"; break;
+                    }
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"VariableShadingRateTier", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), vrsTier, right, y, m_scale);
+
+                    wchar_t buff[128] = {};
+                    swprintf_s(buff, L"%u", d3d12opts6.ShadingRateImageTileSize);
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"ShadingRateImageTileSize", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"BackgroundProcessingSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts6.BackgroundProcessingSupported ? L"true" : L"false", right, y, m_scale);
+                }
+                #endif
+
+                if (!found)
+                {
+                    y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"Requires Windows 10 May 2019 Update or later", mid, y, ATG::Colors::Orange, m_scale);
+                }
             }
         }
         break;
