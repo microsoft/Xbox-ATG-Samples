@@ -194,6 +194,7 @@ void Sample::Render()
             {
             case PROCESSOR_ARCHITECTURE_AMD64:  arch = L"AMD64"; break;
             case PROCESSOR_ARCHITECTURE_ARM:    arch = L"ARM"; break;
+            case PROCESSOR_ARCHITECTURE_ARM64:  arch = L"ARM64"; break;
             case PROCESSOR_ARCHITECTURE_INTEL:  arch = L"INTEL"; break;
             }
 
