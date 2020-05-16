@@ -9,7 +9,7 @@
 #include "SimpleDmaDecompression11.h"
 
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 

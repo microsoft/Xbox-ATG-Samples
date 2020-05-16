@@ -19,7 +19,14 @@ class Sample//NEED MOUSE : public DirectX::IDeviceNotify
 {
 public:
 
-    Sample();
+    Sample() noexcept(false);
+    ~Sample() = default;
+
+    Sample(Sample&&) = default;
+    Sample& operator= (Sample&&) = default;
+
+    Sample(Sample const&) = delete;
+    Sample& operator= (Sample const&) = delete;
 
     enum MouseMode {ABSOLUTE_MOUSE, RELATIVE_MOUSE, CLIPCURSOR_MOUSE};
 

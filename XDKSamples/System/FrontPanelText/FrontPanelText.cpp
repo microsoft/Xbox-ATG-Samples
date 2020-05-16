@@ -45,7 +45,7 @@ namespace
     }
 } // ANONYMOUS namespace
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using namespace ATG;
@@ -53,7 +53,7 @@ using ButtonState = FrontPanelInput::ButtonStateTracker::ButtonState;
 using Microsoft::WRL::ComPtr;
 
 
-Sample::Sample()
+Sample::Sample() noexcept(false)
     : m_frame(0)
     , m_currentEntry(0)
     , m_dirty(true)

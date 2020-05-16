@@ -11,7 +11,7 @@
 #include "ATGColors.h"
 #include "ReadData.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using namespace ATG;
@@ -82,7 +82,7 @@ namespace
     };
 }
 
-Sample::Sample()
+Sample::Sample() noexcept(false)
     : m_frame(0),
     m_currentCausticTextureView(0)
 {

@@ -23,7 +23,7 @@
 #include "../UWP/SimplePBRUWP12.h" // get sample definition
 #endif
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;

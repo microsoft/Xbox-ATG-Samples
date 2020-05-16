@@ -13,7 +13,7 @@
 #include "ControllerFont.h"
 #include "CallStack.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;

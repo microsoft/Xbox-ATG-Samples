@@ -9,7 +9,7 @@
 #include "PreemptiveExtendedExecution.h"
 #include <ppltasks.h>
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using namespace Windows::ApplicationModel;

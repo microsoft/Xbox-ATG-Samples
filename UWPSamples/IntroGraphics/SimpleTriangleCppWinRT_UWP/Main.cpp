@@ -404,7 +404,7 @@ int WINAPI wWinMain(
 
 
 // Exit helper
-void ExitSample()
+void ExitSample() noexcept
 {
     winrt::Windows::ApplicationModel::Core::CoreApplication::Exit();
 }

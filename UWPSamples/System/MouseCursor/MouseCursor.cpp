@@ -10,7 +10,7 @@
 #include "pch.h"
 #include "MouseCursor.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;

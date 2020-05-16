@@ -54,7 +54,7 @@
 
 #include <ppltasks.h>
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DX;
 using namespace DirectX;

@@ -12,7 +12,7 @@
 #include "ATGColors.h"
 #include <Windows.Gaming.Input.h>
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using namespace Windows::Gaming::Input;
@@ -355,7 +355,7 @@ void Sample::UpdateWheel()
 
 
 
-Sample::Sample()
+Sample::Sample() noexcept(false)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>();
     m_deviceResources->RegisterDeviceNotify(this);

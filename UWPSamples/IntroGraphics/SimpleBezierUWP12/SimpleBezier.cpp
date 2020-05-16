@@ -12,7 +12,7 @@
 #include "ControllerFont.h"
 #include "ReadData.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 
@@ -137,7 +137,7 @@ namespace
 }
 #pragma endregion
 
-Sample::Sample()
+Sample::Sample() noexcept(false)
     : m_subdivs(c_defaultSubdivs)
     , m_drawWires(c_defaultWireframeRendering)
     , m_partitionMode(PartitionMode::PartitionInteger)

@@ -44,9 +44,9 @@ DeviceResources::DeviceResources(
         m_options(flags),
         m_gameDVRFormat((flags & c_EnableHDR) ? backBufferFormat : DXGI_FORMAT_UNKNOWN)
 {
-    if (backBufferCount > MAX_BACK_BUFFER_COUNT)
+    if (backBufferCount < 2 || backBufferCount > MAX_BACK_BUFFER_COUNT)
     {
-        throw std::out_of_range("backBufferCount too large");
+        throw std::out_of_range("invalid backBufferCount");
     }
 }
 

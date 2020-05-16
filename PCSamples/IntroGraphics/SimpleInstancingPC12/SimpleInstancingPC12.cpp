@@ -13,7 +13,7 @@
 #include "FindMedia.h"
 #include "ReadData.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using namespace DirectX::PackedVector;

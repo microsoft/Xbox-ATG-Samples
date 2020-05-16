@@ -8,7 +8,7 @@
 #include "pch.h"
 #include "Bokeh.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using namespace ATG;
@@ -103,7 +103,7 @@ namespace
 #pragma endregion
 
 #pragma region Construction
-Sample::Sample()
+Sample::Sample() noexcept(false)
     : m_displayWidth(0)
     , m_displayHeight(0)
     , m_frame(0)

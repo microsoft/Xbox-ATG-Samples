@@ -27,9 +27,9 @@ DeviceResources::DeviceResources(DXGI_FORMAT gameDVRFormat, DXGI_FORMAT depthBuf
     m_options(flags),
     m_gameDVRFormat(gameDVRFormat)
 {
-    if (backBufferCount > MAX_BACK_BUFFER_COUNT)
+    if (backBufferCount < 2 || backBufferCount > MAX_BACK_BUFFER_COUNT)
     {
-        throw std::out_of_range("backBufferCount too large");
+        throw std::out_of_range("invalid backBufferCount");
     }
 }
 

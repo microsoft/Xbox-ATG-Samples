@@ -13,7 +13,7 @@
 
 using namespace DirectX;
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using Microsoft::WRL::ComPtr;
 using namespace Windows::Devices::Enumeration;
