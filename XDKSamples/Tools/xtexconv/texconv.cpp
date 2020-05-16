@@ -73,6 +73,7 @@ enum OPTIONS
     OPT_PREFIX,
     OPT_SUFFIX,
     OPT_OUTPUTDIR,
+    OPT_TOLOWER,
     OPT_OVERWRITE,
     OPT_FILETYPE,
     OPT_HFLIP,
@@ -80,6 +81,7 @@ enum OPTIONS
     OPT_DDS_DWORD_ALIGN,
     OPT_DDS_BAD_DXTN_TAILS,
     OPT_USE_DX10,
+    OPT_USE_DX9,
     OPT_TGA20,
     OPT_WIC_QUALITY,
     OPT_WIC_LOSSLESS,
@@ -104,10 +106,7 @@ enum OPTIONS
     OPT_ALPHA_WEIGHT,
     OPT_NORMAL_MAP,
     OPT_NORMAL_MAP_AMPLITUDE,
-    OPT_COMPRESS_UNIFORM,
-    OPT_COMPRESS_MAX,
-    OPT_COMPRESS_QUICK,
-    OPT_COMPRESS_DITHER,
+    OPT_BC_COMPRESS,
     OPT_COLORKEY,
     OPT_TONEMAP,
     OPT_X2_BIAS,
@@ -164,6 +163,7 @@ const SValue g_pOptions[] =
     { L"px",            OPT_PREFIX },
     { L"sx",            OPT_SUFFIX },
     { L"o",             OPT_OUTPUTDIR },
+    { L"l",             OPT_TOLOWER },
     { L"y",             OPT_OVERWRITE },
     { L"ft",            OPT_FILETYPE },
     { L"hflip",         OPT_HFLIP },
@@ -171,6 +171,7 @@ const SValue g_pOptions[] =
     { L"dword",         OPT_DDS_DWORD_ALIGN },
     { L"badtails",      OPT_DDS_BAD_DXTN_TAILS },
     { L"dx10",          OPT_USE_DX10 },
+    { L"dx9",           OPT_USE_DX9 },
     { L"tga20",         OPT_TGA20 },
     { L"wicq",          OPT_WIC_QUALITY },
     { L"wiclossless",   OPT_WIC_LOSSLESS },
@@ -196,10 +197,7 @@ const SValue g_pOptions[] =
     { L"aw",            OPT_ALPHA_WEIGHT },
     { L"nmap",          OPT_NORMAL_MAP },
     { L"nmapamp",       OPT_NORMAL_MAP_AMPLITUDE },
-    { L"bcuniform",     OPT_COMPRESS_UNIFORM },
-    { L"bcmax",         OPT_COMPRESS_MAX },
-    { L"bcquick",       OPT_COMPRESS_QUICK },
-    { L"bcdither",      OPT_COMPRESS_DITHER },
+    { L"bc",            OPT_BC_COMPRESS },
     { L"c",             OPT_COLORKEY },
     { L"tonemap",       OPT_TONEMAP },
     { L"x2bias",        OPT_X2_BIAS },
@@ -745,6 +743,7 @@ namespace
         wprintf(L"\n   -px <string>        name prefix\n");
         wprintf(L"   -sx <string>        name suffix\n");
         wprintf(L"   -o <directory>      output directory\n");
+        wprintf(L"   -l                  force output filename to lower case\n");
         wprintf(L"   -y                  overwrite existing output file (if any)\n");
         wprintf(L"   -ft <filetype>      output file type\n");
         wprintf(L"\n   -hflip              horizonal flip of source image\n");
@@ -774,6 +773,7 @@ namespace
         wprintf(L"   -xlum               expand legacy L8, L16, and A8P8 formats\n");
         wprintf(L"\n                       (DDS output only)\n");
         wprintf(L"   -dx10               Force use of 'DX10' extended header\n");
+        wprintf(L"   -dx9                Force use of legacy DX9 header\n");
         wprintf(L"   -xbox               Tile and use 'XBOX' variant of DDS\n");
         wprintf(L"   -xgmode <mode>      Tile using provided memory layout mode\n");
         wprintf(L"\n                       (TGA output only)\n");
@@ -789,10 +789,10 @@ namespace
 #endif
         wprintf(L"   -gpu <adapter>      Select GPU for DirectCompute-based codecs (0 is default)\n");
         wprintf(L"   -nogpu              Do not use DirectCompute-based codecs\n");
-        wprintf(L"   -bcuniform          Use uniform rather than perceptual weighting for BC1-3\n");
-        wprintf(L"   -bcdither           Use dithering for BC1-3\n");
-        wprintf(L"   -bcmax              Use exhaustive compression (BC7 only)\n");
-        wprintf(L"   -bcquick            Use quick compression (BC7 only)\n");
+        wprintf(
+            L"\n   -bc <options>       Sets options for BC compression\n"
+            L"                       options must be one or more of\n"
+            L"                          d, u, q, x\n");
         wprintf(
             L"   -aw <weight>        BC7 GPU compressor weighting for alpha error metric\n"
             L"                       (defaults to 1.0)\n");
@@ -947,7 +947,7 @@ namespace
             float bestScore = FLT_MAX;
             for (size_t y = maxsize; y > 0; y >>= 1)
             {
-                float score = fabs((float(x) / float(y)) - origAR);
+                float score = fabsf((float(x) / float(y)) - origAR);
                 if (score < bestScore)
                 {
                     bestScore = score;
@@ -964,7 +964,7 @@ namespace
             float bestScore = FLT_MAX;
             for (size_t x = maxsize; x > 0; x >>= 1)
             {
-                float score = fabs((float(x) / float(y)) - origAR);
+                float score = fabsf((float(x) / float(y)) - origAR);
                 if (score < bestScore)
                 {
                     bestScore = score;
@@ -1225,6 +1225,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             case OPT_NORMAL_MAP:
             case OPT_NORMAL_MAP_AMPLITUDE:
             case OPT_WIC_QUALITY:
+            case OPT_BC_COMPRESS:
             case OPT_COLORKEY:
             case OPT_FILELIST:
             case OPT_ROTATE_COLOR:
@@ -1533,33 +1534,50 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                 }
                 break;
 
-            case OPT_COMPRESS_UNIFORM:
-                dwCompress |= TEX_COMPRESS_UNIFORM;
-                break;
+            case OPT_BC_COMPRESS:
+            {
+                dwCompress = TEX_COMPRESS_DEFAULT;
 
-            case OPT_COMPRESS_MAX:
-                if (dwCompress & TEX_COMPRESS_BC7_QUICK)
+                bool found = false;
+                if (wcschr(pValue, L'u'))
                 {
-                    wprintf(L"Can't use -bcmax and -bcquick at same time\n\n");
+                    dwCompress |= TEX_COMPRESS_UNIFORM;
+                    found = true;
+                }
+
+                if (wcschr(pValue, L'd'))
+                {
+                    dwCompress |= TEX_COMPRESS_DITHER;
+                    found = true;
+                }
+
+                if (wcschr(pValue, L'q'))
+                {
+                    dwCompress |= TEX_COMPRESS_BC7_QUICK;
+                    found = true;
+                }
+
+                if (wcschr(pValue, L'x'))
+                {
+                    dwCompress |= TEX_COMPRESS_BC7_USE_3SUBSETS;
+                    found = true;
+                }
+
+                if ((dwCompress & (TEX_COMPRESS_BC7_QUICK | TEX_COMPRESS_BC7_USE_3SUBSETS)) == (TEX_COMPRESS_BC7_QUICK | TEX_COMPRESS_BC7_USE_3SUBSETS))
+                {
+                    wprintf(L"Can't use -bc x (max) and -bc q (quick) at same time\n\n");
                     PrintUsage();
                     return 1;
                 }
-                dwCompress |= TEX_COMPRESS_BC7_USE_3SUBSETS;
-                break;
 
-            case OPT_COMPRESS_QUICK:
-                if (dwCompress & TEX_COMPRESS_BC7_USE_3SUBSETS)
+                if (!found)
                 {
-                    wprintf(L"Can't use -bcmax and -bcquick at same time\n\n");
+                    wprintf(L"Invalid value specified for -bc (%ls), missing d, u, q, or x\n\n", pValue);
                     PrintUsage();
                     return 1;
                 }
-                dwCompress |= TEX_COMPRESS_BC7_QUICK;
-                break;
-
-            case OPT_COMPRESS_DITHER:
-                dwCompress |= TEX_COMPRESS_DITHER;
-                break;
+            }
+            break;
 
             case OPT_WIC_QUALITY:
                 if (swscanf_s(pValue, L"%f", &wicQuality) != 1
@@ -1586,6 +1604,24 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
 
             case OPT_X2_BIAS:
                 dwConvert |= TEX_FILTER_FLOAT_X2BIAS;
+                break;
+
+            case OPT_USE_DX10:
+                if (dwOptions & (DWORD64(1) << OPT_USE_DX9))
+                {
+                    wprintf(L"Can't use -dx9 and -dx10 at same time\n\n");
+                    PrintUsage();
+                    return 1;
+                }
+                break;
+
+            case OPT_USE_DX9:
+                if (dwOptions & (DWORD64(1) << OPT_USE_DX10))
+                {
+                    wprintf(L"Can't use -dx9 and -dx10 at same time\n\n");
+                    PrintUsage();
+                    return 1;
+                }
                 break;
 
             case OPT_FILELIST:
@@ -3141,6 +3177,11 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
 
             wcscat_s(pConv->szDest, MAX_PATH, szSuffix);
 
+            if (dwOptions & (DWORD64(1) << OPT_TOLOWER))
+            {
+                (void)_wcslwr_s(pConv->szDest);
+            }
+
             // Write texture
             wprintf(L"writing %ls", pConv->szDest);
             fflush(stdout);
@@ -3169,9 +3210,17 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                 }
                 else
                 {
-                    hr = SaveToDDSFile(img, nimg, info,
-                        (dwOptions & (DWORD64(1) << OPT_USE_DX10)) ? (DDS_FLAGS_FORCE_DX10_EXT | DDS_FLAGS_FORCE_DX10_EXT_MISC2) : DDS_FLAGS_NONE,
-                        pConv->szDest);
+                    DWORD ddsFlags = DDS_FLAGS_NONE;
+                    if (dwOptions & (DWORD64(1) << OPT_USE_DX10))
+                    {
+                        ddsFlags |= DDS_FLAGS_FORCE_DX10_EXT | DDS_FLAGS_FORCE_DX10_EXT_MISC2;
+                    }
+                    else if (dwOptions & (DWORD64(1) << OPT_USE_DX9))
+                    {
+                        ddsFlags |= DDS_FLAGS_FORCE_DX9_LEGACY;
+                    }
+
+                    hr = SaveToDDSFile(img, nimg, info, ddsFlags, pConv->szDest);
                 }
                 break;
 
