@@ -24,12 +24,12 @@ using Microsoft::WRL::ComPtr;
 
 namespace
 {
-    const int c_MaxSamples = 16;
+    constexpr int c_MaxSamples = 16;
 
-    const int Dirty_ConstantBuffer  = 0x01;
-    const int Dirty_Parameters      = 0x02;
+    constexpr int Dirty_ConstantBuffer  = 0x01;
+    constexpr int Dirty_Parameters      = 0x02;
 
-    const int RootSignatureCount = 2;
+    constexpr int RootSignatureCount = 2;
 
     // Constant buffer layout. Must match the shader!
     __declspec(align(16)) struct PostProcessConstants
@@ -440,7 +440,7 @@ void BasicPostProcess::Impl::GaussianBlur5x5(float multiplier)
             // create a kernel which approximates a 5x5 kernel using only 13
             // sample points instead of 25; this is necessary since 2.0 shaders
             // only support 16 texture grabs.
-            if (fabs(float(x)) + fabs(float(y)) > 2.0f)
+            if (fabsf(float(x)) + fabsf(float(y)) > 2.0f)
                 continue;
 
             // Get the unscaled Gaussian intensity for this offset

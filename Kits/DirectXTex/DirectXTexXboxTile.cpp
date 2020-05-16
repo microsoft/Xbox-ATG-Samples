@@ -289,7 +289,8 @@ namespace
         if (IsPacked(format))
         {
             size_t bpp = (BitsPerPixel(format) + 7) / 8;
-            //assert(bpp == layout.Plane[0].BytesPerElement);
+
+            // XG incorrectly returns 2 instead of 4 here for layout.Plane[0].BytesPerElement
 
             size_t w = images[0]->width;
             assert(((w + 1) / 2) == layout.Plane[0].MipLayout[level].WidthElements);
@@ -412,7 +413,8 @@ namespace
         else if (IsPacked(format))
         {
             size_t bpp = (BitsPerPixel(format) + 7) / 8;
-            //assert(bpp == layout.Plane[0].BytesPerElement);
+
+            // XG incorrectly returns 2 instead of 4 here for layout.Plane[0].BytesPerElement
 
             size_t w = images[0]->width;
             size_t h = images[0]->height;
@@ -543,7 +545,8 @@ namespace
         else if (IsPacked(image.format))
         {
             size_t bpp = (BitsPerPixel(image.format) + 7) / 8;
-            //assert(bpp == layout.Plane[0].BytesPerElement);
+
+            // XG incorrectly returns 2 instead of 4 here for layout.Plane[0].BytesPerElement
 
             assert(((image.width + 1) / 2) == layout.Plane[0].MipLayout[level].WidthElements);
             assert(image.height == layout.Plane[0].MipLayout[level].HeightElements);
@@ -656,7 +659,7 @@ _Use_decl_annotations_
 HRESULT Xbox::Tile(
     const DirectX::Image& srcImage,
     XboxImage& xbox,
-    XG_TILE_MODE mode)
+    XboxTileMode mode)
 {
     if (!srcImage.pixels
         || srcImage.width > D3D11_REQ_TEXTURE2D_U_OR_V_DIMENSION
@@ -671,7 +674,7 @@ HRESULT Xbox::Tile(
         return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
     }
 
-    if (mode == XG_TILE_MODE_INVALID)
+    if (mode == c_XboxTileModeInvalid)
     {
         // If no specific tile mode is given, assume the optimal default
         mode = XGComputeOptimalTileMode(XG_RESOURCE_DIMENSION_TEXTURE2D, static_cast<XG_FORMAT>(srcImage.format),
@@ -728,7 +731,7 @@ HRESULT Xbox::Tile(
     size_t nimages,
     const DirectX::TexMetadata& metadata,
     XboxImage& xbox,
-    XG_TILE_MODE mode)
+    XboxTileMode mode)
 {
     if (!srcImages
         || !nimages
@@ -759,7 +762,7 @@ HRESULT Xbox::Tile(
         break;
     }
 
-    if (mode == XG_TILE_MODE_INVALID)
+    if (mode == c_XboxTileModeInvalid)
     {
         // If no specific tile mode is given, assume the optimal default
         mode = XGComputeOptimalTileMode(static_cast<XG_RESOURCE_DIMENSION>(metadata.dimension), static_cast<XG_FORMAT>(metadata.format),
@@ -999,4 +1002,3 @@ HRESULT Xbox::Tile(
 
     return S_OK;
 }
-

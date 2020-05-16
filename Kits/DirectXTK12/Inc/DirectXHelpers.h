@@ -25,6 +25,8 @@
 
 #include <wrl/client.h>
 
+#pragma comment(lib,"dxguid.lib")
+
 #ifndef IID_GRAPHICS_PPV_ARGS
 #define IID_GRAPHICS_PPV_ARGS(x) IID_PPV_ARGS(x)
 #endif
@@ -193,6 +195,12 @@ namespace DirectX
             // Set barriers
             mCommandList->ResourceBarrier(static_cast<UINT>(mBarriers.size()), mBarriers.data());
         }
+
+        ScopedBarrier(ScopedBarrier&&) = default;
+        ScopedBarrier& operator= (ScopedBarrier&&) = default;
+
+        ScopedBarrier(ScopedBarrier const&) = delete;
+        ScopedBarrier& operator= (ScopedBarrier const&) = delete;
 
         ~ScopedBarrier()
         {

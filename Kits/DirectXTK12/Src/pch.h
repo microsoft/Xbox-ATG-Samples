@@ -67,6 +67,7 @@
 #pragma clang diagnostic ignored "-Wswitch-enum"
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #pragma clang diagnostic ignored "-Wunused-const-variable"
+#pragma clang diagnostic ignored "-Wunused-member-function"
 #endif
 
 #ifndef WIN32_LEAN_AND_MEAN
@@ -133,6 +134,8 @@
 #include <algorithm>
 #include <atomic>
 #include <array>
+#include <cstddef>
+#include <cstdint>
 #include <exception>
 #include <initializer_list>
 #include <iterator>
@@ -141,6 +144,7 @@
 #include <memory>
 #include <mutex>
 #include <set>
+#include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -157,8 +161,6 @@
 #pragma warning(pop)
 
 #include <malloc.h>
-#include <stddef.h>
-#include <stdint.h>
 
 #pragma warning(push)
 #pragma warning(disable : 4467 5038 5204)

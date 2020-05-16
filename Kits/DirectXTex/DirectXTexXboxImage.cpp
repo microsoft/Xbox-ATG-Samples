@@ -155,7 +155,7 @@ XboxImage& XboxImage::operator= (XboxImage&& moveFrom) noexcept
 
         moveFrom.dataSize = 0;
         moveFrom.baseAlignment = 0;
-        moveFrom.tilemode = XG_TILE_MODE_INVALID;
+        moveFrom.tilemode = c_XboxTileModeInvalid;
         moveFrom.memory = nullptr;
     }
     return *this;
@@ -265,9 +265,9 @@ HRESULT XboxImage::Initialize(const XG_TEXTURE3D_DESC& desc, const XG_RESOURCE_L
 
 
 _Use_decl_annotations_
-HRESULT XboxImage::Initialize(const DirectX::TexMetadata& mdata, XG_TILE_MODE tm, uint32_t size, uint32_t alignment)
+HRESULT XboxImage::Initialize(const DirectX::TexMetadata& mdata, XboxTileMode tm, uint32_t size, uint32_t alignment)
 {
-    if (!size || !alignment || tm == XG_TILE_MODE_INVALID)
+    if (!size || !alignment || tm == c_XboxTileModeInvalid)
         return E_INVALIDARG;
 
     Release();

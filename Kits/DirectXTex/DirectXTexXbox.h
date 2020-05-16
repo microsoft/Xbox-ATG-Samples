@@ -23,17 +23,21 @@
 #include <d3d11_1.h>
 #endif
 
-#define DIRECTX_TEX_XBOX_VERSION 101
+#define DIRECTX_TEX_XBOX_VERSION 102
 
 namespace Xbox
 {
+    using XboxTileMode = XG_TILE_MODE;
+    constexpr XboxTileMode c_XboxTileModeInvalid = XG_TILE_MODE_INVALID;
+    const XboxTileMode c_XboxTileModeLinear = XG_TILE_MODE_LINEAR;
+
     class XboxImage
     {
     public:
         XboxImage() noexcept
-            : dataSize(0), baseAlignment(0), tilemode(XG_TILE_MODE_INVALID), metadata{}, memory(nullptr) {}
+            : dataSize(0), baseAlignment(0), tilemode(c_XboxTileModeInvalid), metadata{}, memory(nullptr) {}
         XboxImage(XboxImage&& moveFrom) noexcept
-            : dataSize(0), baseAlignment(0), tilemode(XG_TILE_MODE_INVALID), metadata{}, memory(nullptr) { *this = std::move(moveFrom); }
+            : dataSize(0), baseAlignment(0), tilemode(c_XboxTileModeInvalid), metadata{}, memory(nullptr) { *this = std::move(moveFrom); }
         ~XboxImage() { Release(); }
 
         XboxImage& __cdecl operator= (XboxImage&& moveFrom) noexcept;
@@ -44,12 +48,12 @@ namespace Xbox
         HRESULT Initialize(_In_ const XG_TEXTURE1D_DESC& desc, _In_ const XG_RESOURCE_LAYOUT& layout, _In_ uint32_t miscFlags2 = 0);
         HRESULT Initialize(_In_ const XG_TEXTURE2D_DESC& desc, _In_ const XG_RESOURCE_LAYOUT& layout, _In_ uint32_t miscFlags2 = 0);
         HRESULT Initialize(_In_ const XG_TEXTURE3D_DESC& desc, _In_ const XG_RESOURCE_LAYOUT& layout, _In_ uint32_t miscFlags2 = 0);
-        HRESULT Initialize(_In_ const DirectX::TexMetadata& mdata, _In_ XG_TILE_MODE tm, _In_ uint32_t size, _In_ uint32_t alignment);
+        HRESULT Initialize(_In_ const DirectX::TexMetadata& mdata, _In_ XboxTileMode tm, _In_ uint32_t size, _In_ uint32_t alignment);
 
         void Release();
 
         const DirectX::TexMetadata& GetMetadata() const { return metadata; }
-        XG_TILE_MODE GetTileMode() const { return tilemode; }
+        XboxTileMode GetTileMode() const { return tilemode; }
 
         uint32_t GetSize() const { return dataSize; }
         uint32_t GetAlignment() const { return baseAlignment; }
@@ -58,7 +62,7 @@ namespace Xbox
     private:
         uint32_t                dataSize;
         uint32_t                baseAlignment;
-        XG_TILE_MODE            tilemode;
+        XboxTileMode            tilemode;
         DirectX::TexMetadata    metadata;
         uint8_t*                memory;
     };
@@ -85,10 +89,10 @@ namespace Xbox
     //---------------------------------------------------------------------------------
     // Xbox One Texture Tiling / Detiling (requires XG DLL to be present at runtime)
 
-    HRESULT Tile(_In_ const DirectX::Image& srcImage, _Out_ XboxImage& xbox, _In_ XG_TILE_MODE mode = XG_TILE_MODE_INVALID);
+    HRESULT Tile(_In_ const DirectX::Image& srcImage, _Out_ XboxImage& xbox, _In_ XboxTileMode mode = c_XboxTileModeInvalid);
     HRESULT Tile(
         _In_ const DirectX::Image* srcImages, _In_ size_t nimages, _In_ const DirectX::TexMetadata& metadata,
-        _Out_ XboxImage& xbox, _In_ XG_TILE_MODE mode = XG_TILE_MODE_INVALID);
+        _Out_ XboxImage& xbox, _In_ XboxTileMode mode = c_XboxTileModeInvalid);
 
     HRESULT Detile(_In_ const XboxImage& xbox, _Out_ DirectX::ScratchImage& image);
 
@@ -112,7 +116,9 @@ namespace Xbox
     //---------------------------------------------------------------------------------
     // Direct3D 12.X functions
 
-#if defined(_XBOX_ONE) && defined(_TITLE) && defined(__d3d12_x_h__)
+#if defined(_XBOX_ONE) && defined(_TITLE) && (defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__))
+
+
 
     HRESULT CreateTexture(
         _In_ ID3D12Device* d3dDevice,

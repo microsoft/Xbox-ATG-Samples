@@ -51,7 +51,7 @@ HRESULT Xbox::CreateTexture(
     *grfxMemory = nullptr;
     *ppResource = nullptr;
 
-    if (!xbox.GetPointer() || !xbox.GetAlignment() || !xbox.GetSize() || xbox.GetTileMode() == XG_TILE_MODE_INVALID)
+    if (!xbox.GetPointer() || !xbox.GetAlignment() || !xbox.GetSize() || xbox.GetTileMode() == c_XboxTileModeInvalid)
         return E_INVALIDARG;
 
     // Allocate graphics memory

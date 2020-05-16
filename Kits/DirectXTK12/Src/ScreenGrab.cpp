@@ -283,13 +283,12 @@ HRESULT DirectX::SaveDDSTextureToFile(
 
     // Setup header
     const size_t MAX_HEADER_SIZE = sizeof(uint32_t) + sizeof(DDS_HEADER) + sizeof(DDS_HEADER_DXT10);
-    uint8_t fileHeader[MAX_HEADER_SIZE];
+    uint8_t fileHeader[MAX_HEADER_SIZE] = {};
 
     *reinterpret_cast<uint32_t*>(&fileHeader[0]) = DDS_MAGIC;
 
     auto header = reinterpret_cast<DDS_HEADER*>(&fileHeader[0] + sizeof(uint32_t));
     size_t headerSize = sizeof(uint32_t) + sizeof(DDS_HEADER);
-    memset(header, 0, sizeof(DDS_HEADER));
     header->size = sizeof(DDS_HEADER);
     header->flags = DDS_HEADER_FLAGS_TEXTURE | DDS_HEADER_FLAGS_MIPMAP;
     header->height = desc.Height;
@@ -348,7 +347,6 @@ HRESULT DirectX::SaveDDSTextureToFile(
 
             headerSize += sizeof(DDS_HEADER_DXT10);
             extHeader = reinterpret_cast<DDS_HEADER_DXT10*>(fileHeader + sizeof(uint32_t) + sizeof(DDS_HEADER));
-            memset(extHeader, 0, sizeof(DDS_HEADER_DXT10));
             extHeader->dxgiFormat = desc.Format;
             extHeader->resourceDimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
             extHeader->arraySize = 1;
@@ -492,7 +490,7 @@ HRESULT DirectX::SaveWICTextureToFile(
         return hr;
 
     // Determine source format's WIC equivalent
-    WICPixelFormatGUID pfGuid;
+    WICPixelFormatGUID pfGuid = {};
     bool sRGB = forceSRGB;
     switch (desc.Format)
     {
@@ -601,7 +599,7 @@ HRESULT DirectX::SaveWICTextureToFile(
         return hr;
 
     // Pick a target format
-    WICPixelFormatGUID targetGuid;
+    WICPixelFormatGUID targetGuid = {};
     if (targetFormat)
     {
         targetGuid = *targetFormat;
@@ -736,7 +734,8 @@ HRESULT DirectX::SaveWICTextureToFile(
     {
         // Conversion required to write
         ComPtr<IWICBitmap> source;
-        hr = pWIC->CreateBitmapFromMemory(static_cast<UINT>(desc.Width), desc.Height, pfGuid,
+        hr = pWIC->CreateBitmapFromMemory(static_cast<UINT>(desc.Width), desc.Height,
+            pfGuid,
             static_cast<UINT>(dstRowPitch), static_cast<UINT>(imageSize),
             static_cast<BYTE*>(pMappedMemory), source.GetAddressOf());
         if (FAILED(hr))
@@ -757,6 +756,7 @@ HRESULT DirectX::SaveWICTextureToFile(
         hr = FC->CanConvert(pfGuid, targetGuid, &canConvert);
         if (FAILED(hr) || !canConvert)
         {
+            pStaging->Unmap(0, &writeRange);
             return E_UNEXPECTED;
         }
 
@@ -769,21 +769,17 @@ HRESULT DirectX::SaveWICTextureToFile(
 
         WICRect rect = { 0, 0, static_cast<INT>(desc.Width), static_cast<INT>(desc.Height) };
         hr = frame->WriteSource(FC.Get(), &rect);
-        if (FAILED(hr))
-        {
-            pStaging->Unmap(0, &writeRange);
-            return hr;
-        }
     }
     else
     {
         // No conversion required
         hr = frame->WritePixels(desc.Height, static_cast<UINT>(dstRowPitch), static_cast<UINT>(imageSize), static_cast<BYTE*>(pMappedMemory));
-        if (FAILED(hr))
-            return hr;
     }
 
     pStaging->Unmap(0, &writeRange);
+
+    if (FAILED(hr))
+        return hr;
 
     hr = frame->Commit();
     if (FAILED(hr))

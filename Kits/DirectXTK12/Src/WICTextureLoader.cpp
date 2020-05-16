@@ -29,11 +29,6 @@
 #include "LoaderHelpers.h"
 #include "ResourceUploadBatch.h"
 
-namespace DirectX
-{
-    uint32_t CountMips(uint32_t width, uint32_t height) noexcept;
-}
-
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
@@ -246,11 +241,16 @@ namespace
 
         if (!maxsize)
         {
-            maxsize = D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION;
+            maxsize = size_t(D3D12_REQ_TEXTURE2D_U_OR_V_DIMENSION);
         }
 
-        UINT twidth, theight;
-        if (width > maxsize || height > maxsize)
+        UINT twidth = width;
+        UINT theight = height;
+        if (loadFlags & WIC_LOADER_FIT_POW2)
+        {
+            LoaderHelpers::FitPowerOf2(width, height, twidth, theight, maxsize);
+        }
+        else if (width > maxsize || height > maxsize)
         {
             float ar = static_cast<float>(height) / static_cast<float>(width);
             if (width > height)
@@ -265,10 +265,11 @@ namespace
             }
             assert(twidth <= maxsize && theight <= maxsize);
         }
-        else
+
+        if (loadFlags & WIC_LOADER_MAKE_SQUARE)
         {
-            twidth = width;
-            theight = height;
+            twidth = std::max<UINT>(twidth, theight);
+            theight = twidth;
         }
 
         // Determine format
@@ -310,6 +311,13 @@ namespace
         else
         {
             bpp = _WICBitsPerPixel(pixelFormat);
+        }
+
+        if (loadFlags & WIC_LOADER_FORCE_RGBA32)
+        {
+            memcpy_s(&convertGUID, sizeof(WICPixelFormatGUID), &GUID_WICPixelFormat32bppRGBA, sizeof(GUID));
+            format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            bpp = 32;
         }
 
         if (!bpp)
@@ -476,7 +484,8 @@ namespace
         }
 
         // Count the number of mips
-        uint32_t mipCount = (loadFlags & (WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_MIP_RESERVE)) ? CountMips(twidth, theight) : 1;
+        uint32_t mipCount = (loadFlags & (WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_MIP_RESERVE))
+            ? LoaderHelpers::CountMips(twidth, theight) : 1u;
 
         // Create texture
         D3D12_RESOURCE_DESC desc = {};
@@ -731,7 +740,7 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx(
         DXGI_FORMAT fmt = GetPixelFormat(frame.Get());
         if (!resourceUpload.IsSupportedForGenerateMips(fmt))
         {
-            DebugTrace("WARNING: This device does not support autogen mips for this format (%d)\n", static_cast<int>(fmt));
+            DebugTrace("WARNING: Autogen of mips ignored (device doesn't support this format (%d) or trying to use a copy queue)\n", static_cast<int>(fmt));
             loadFlags &= ~WIC_LOADER_MIP_AUTOGEN;
         }
     }
@@ -905,7 +914,7 @@ HRESULT DirectX::CreateWICTextureFromFileEx(
         DXGI_FORMAT fmt = GetPixelFormat(frame.Get());
         if (!resourceUpload.IsSupportedForGenerateMips(fmt))
         {
-            DebugTrace("WARNING: This device does not support autogen mips for this format (%d)\n", static_cast<int>(fmt));
+            DebugTrace("WARNING: Autogen of mips ignored (device doesn't support this format (%d) or trying to use a copy queue)\n", static_cast<int>(fmt));
             loadFlags &= ~WIC_LOADER_MIP_AUTOGEN;
         }
     }

@@ -51,7 +51,7 @@ namespace
         _In_reads_bytes_(size) const void* pSource,
         size_t size,
         DirectX::TexMetadata& metadata,
-        _Out_opt_ XG_TILE_MODE* tmode,
+        _Out_opt_ XboxTileMode* tmode,
         _Out_opt_ uint32_t* dataSize,
         _Out_opt_ uint32_t* baseAlignment)
     {
@@ -59,7 +59,7 @@ namespace
             return E_INVALIDARG;
 
         if (tmode)
-            *tmode = XG_TILE_MODE_INVALID;
+            *tmode = c_XboxTileModeInvalid;
         if (dataSize)
             *dataSize = 0;
         if (baseAlignment)
@@ -177,7 +177,7 @@ namespace
             return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
         }
 
-        if (static_cast<XG_TILE_MODE>(xboxext->tileMode) == XG_TILE_MODE_INVALID)
+        if (static_cast<XboxTileMode>(xboxext->tileMode) == c_XboxTileModeInvalid)
         {
             return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
         }
@@ -193,7 +193,7 @@ namespace
         metadata.miscFlags2 = xboxext->miscFlags2;
 
         if (tmode)
-            *tmode = static_cast<XG_TILE_MODE>(xboxext->tileMode);
+            *tmode = static_cast<XboxTileMode>(xboxext->tileMode);
 
         if (baseAlignment)
             *baseAlignment = xboxext->baseAlignment;
@@ -467,7 +467,7 @@ HRESULT Xbox::LoadFromDDSMemory(
     TexMetadata mdata;
     uint32_t dataSize;
     uint32_t baseAlignment;
-    XG_TILE_MODE tmode;
+    XboxTileMode tmode;
     HRESULT hr = DecodeDDSHeader(pSource, size, mdata, &tmode, &dataSize, &baseAlignment);
     if (hr == S_FALSE)
     {
@@ -567,7 +567,7 @@ HRESULT Xbox::LoadFromDDSFile(
     }
 
     TexMetadata mdata;
-    XG_TILE_MODE tmode;
+    XboxTileMode tmode;
     uint32_t dataSize;
     uint32_t baseAlignment;
     HRESULT hr = DecodeDDSHeader(header, bytesRead, mdata, &tmode, &dataSize, &baseAlignment);
