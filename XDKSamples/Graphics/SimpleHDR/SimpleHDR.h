@@ -54,7 +54,16 @@
 class Sample
 {
 public:
-    Sample();
+
+    Sample() noexcept(false);
+    ~Sample() = default;
+
+    Sample(Sample&&) = delete;
+    Sample& operator= (Sample&&) = delete;
+
+    Sample(Sample const&) = delete;
+    Sample& operator= (Sample const&) = delete;
+
     void Initialize(IUnknown* window);
     void Tick();
     void OnSuspending();

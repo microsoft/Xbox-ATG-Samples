@@ -11,9 +11,8 @@
 
 #pragma once
 
-#include <stdint.h>
-
 #include <algorithm>
+#include <cstdint>
 #include <functional>
 #include <vector>
 
@@ -40,7 +39,7 @@ namespace DirectX
 
     //---------------------------------------------------------------------------------
     // DXGI Format Utilities
-    bool __cdecl IsValid(_In_ DXGI_FORMAT fmt) noexcept;
+    constexpr bool __cdecl IsValid(_In_ DXGI_FORMAT fmt) noexcept;
     bool __cdecl IsCompressed(_In_ DXGI_FORMAT fmt) noexcept;
     bool __cdecl IsPacked(_In_ DXGI_FORMAT fmt) noexcept;
     bool __cdecl IsVideo(_In_ DXGI_FORMAT fmt) noexcept;
@@ -169,6 +168,10 @@ namespace DirectX
 
         DDS_FLAGS_FORCE_DX10_EXT_MISC2  = 0x20000,
             // DDS_FLAGS_FORCE_DX10_EXT including miscFlags2 information (result may not be compatible with D3DX10 or D3DX11)
+
+        DDS_FLAGS_FORCE_DX9_LEGACY      = 0x40000,
+            // Force use of legacy header for DDS writer (will fail if unable to write as such)
+
     };
 
     enum WIC_FLAGS

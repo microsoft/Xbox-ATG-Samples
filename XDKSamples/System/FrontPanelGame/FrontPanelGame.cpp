@@ -12,7 +12,7 @@
 
 #include "FrontPanel\CPUShapes.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using namespace ATG;
@@ -20,7 +20,7 @@ using ButtonState = FrontPanelInput::ButtonStateTracker::ButtonState;
 
 using Microsoft::WRL::ComPtr;
 
-Sample::Sample()
+Sample::Sample() noexcept(false)
     : m_frame(0)
     , m_score(0)
     , m_alive(false)

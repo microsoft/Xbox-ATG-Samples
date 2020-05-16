@@ -11,7 +11,7 @@
 #include "ATGColors.h"
 #include "ReadData.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 
@@ -73,7 +73,7 @@ namespace
     }
 }
 
-Sample::Sample()
+Sample::Sample() noexcept(false)
 {
     // Use gamma-correct rendering.
     m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM_SRGB);

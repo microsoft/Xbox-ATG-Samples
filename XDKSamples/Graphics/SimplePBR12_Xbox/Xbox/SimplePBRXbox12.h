@@ -18,7 +18,14 @@ class Sample
 public:
     friend class SharedSimplePBR;
 
-    Sample();
+    Sample() noexcept(false);
+    ~Sample() = default;
+
+    Sample(Sample&&) = default;
+    Sample& operator= (Sample&&) = default;
+
+    Sample(Sample const&) = delete;
+    Sample& operator= (Sample const&) = delete;
 
     // Initialization and management
     void Initialize(IUnknown* window);
@@ -34,7 +41,7 @@ public:
     inline static DXGI_FORMAT GetBackBufferFormat() { return DXGI_FORMAT_R10G10B10A2_UNORM; }
     inline static DXGI_FORMAT GetDepthFormat() { return DXGI_FORMAT_D32_FLOAT; }
 
-    bool RequestHDRMode() const { return m_deviceResources ? (m_deviceResources->GetDeviceOptions() & DX::DeviceResources::c_EnableHDR) != 0 : false; }
+    bool RequestHDRMode() const noexcept { return m_deviceResources ? (m_deviceResources->GetDeviceOptions() & DX::DeviceResources::c_EnableHDR) != 0 : false; }
 
 private:
 

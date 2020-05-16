@@ -23,7 +23,7 @@ namespace
     const int numFiles = _countof(g_FileList);
 }
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;

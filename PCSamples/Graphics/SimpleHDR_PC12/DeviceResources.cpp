@@ -43,9 +43,9 @@ DeviceResources::DeviceResources(DXGI_FORMAT backBufferFormat, DXGI_FORMAT depth
     m_options(flags),
     m_deviceNotify(nullptr)
 {
-    if (backBufferCount > MAX_BACK_BUFFER_COUNT)
+    if (backBufferCount < 2 || backBufferCount > MAX_BACK_BUFFER_COUNT)
     {
-        throw std::out_of_range("backBufferCount too large");
+        throw std::out_of_range("invalid backBufferCount");
     }
 
     if (minFeatureLevel < D3D_FEATURE_LEVEL_11_0)

@@ -10,13 +10,13 @@
 
 #include "ATGColors.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
 
-Sample::Sample()
+Sample::Sample() noexcept(false)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>(
         GetBackBufferFormat(), GetDepthFormat(), 2,

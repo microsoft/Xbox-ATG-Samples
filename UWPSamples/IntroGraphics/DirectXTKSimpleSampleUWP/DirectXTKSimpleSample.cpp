@@ -8,14 +8,14 @@
 #include "pch.h"
 #include "DirectXTKSimpleSample.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
 using Microsoft::WRL::ComPtr;
 
-Sample::Sample()
+Sample::Sample() noexcept(false)
 {
     // DirectX Tool Kit supports all feature levels
     m_deviceResources = std::make_unique<DX::DeviceResources>(

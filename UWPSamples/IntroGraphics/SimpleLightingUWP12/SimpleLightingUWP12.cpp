@@ -11,7 +11,7 @@
 #include "ATGColors.h"
 #include "ReadData.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 
@@ -26,7 +26,7 @@ namespace
     };
 }
 
-Sample::Sample()
+Sample::Sample() noexcept(false)
     : m_mappedConstantData(nullptr)
     , m_constantDataGpuAddr(0)
     , m_curRotationAngleRad(0.0f)

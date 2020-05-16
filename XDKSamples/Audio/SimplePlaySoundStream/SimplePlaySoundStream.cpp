@@ -8,7 +8,7 @@
 #include "pch.h"
 #include "SimplePlaySoundStream.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;

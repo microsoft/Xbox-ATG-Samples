@@ -10,13 +10,13 @@
 
 #include "ATGColors.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
 
-Sample::Sample()
+Sample::Sample() noexcept(false)
 {
     m_deviceResources = std::make_unique<DX::DeviceResources>(DXGI_FORMAT_B8G8R8A8_UNORM, DXGI_FORMAT_UNKNOWN);
     m_deviceResources->RegisterDeviceNotify(this);

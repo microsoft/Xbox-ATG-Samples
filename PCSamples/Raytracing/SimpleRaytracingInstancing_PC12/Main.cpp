@@ -294,7 +294,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, unsigned int message, WPARAM wParam, LPARAM 
 }
 
 // Exit helper
-void ExitSample()
+void ExitSample() noexcept
 {
     PostQuitMessage(0);
 }

@@ -211,7 +211,8 @@ namespace
         if (IsPacked(format))
         {
             size_t bpp = (BitsPerPixel(format) + 7) / 8;
-            //assert(bpp == layout.Plane[0].BytesPerElement);
+
+            // XG incorrectly returns 2 instead of 4 here for layout.Plane[0].BytesPerElement
 
             size_t w = result[0]->width;
             assert(((w + 1) / 2) == layout.Plane[0].MipLayout[level].WidthElements);
@@ -336,7 +337,8 @@ namespace
         else if (IsPacked(format))
         {
             size_t bpp = (BitsPerPixel(format) + 7) / 8;
-            //assert(bpp == layout.Plane[0].BytesPerElement);
+
+            // XG incorrectly returns 2 instead of 4 here for layout.Plane[0].BytesPerElement
 
             size_t w = result[0]->width;
             size_t h = result[0]->height;
@@ -466,7 +468,8 @@ namespace
         else if (IsPacked(result.format))
         {
             size_t bpp = (BitsPerPixel(result.format) + 7) / 8;
-            //assert(bpp == layout.Plane[0].BytesPerElement);
+
+            // XG incorrectly returns 2 instead of 4 here for layout.Plane[0].BytesPerElement
 
             assert(((result.width + 1) / 2) == layout.Plane[0].MipLayout[level].WidthElements);
             assert(result.height == layout.Plane[0].MipLayout[level].HeightElements);
@@ -581,7 +584,7 @@ HRESULT Xbox::Detile(
     const XboxImage& xbox,
     DirectX::ScratchImage& image)
 {
-    if (!xbox.GetSize() || !xbox.GetPointer() || xbox.GetTileMode() == XG_TILE_MODE_INVALID)
+    if (!xbox.GetSize() || !xbox.GetPointer() || xbox.GetTileMode() == c_XboxTileModeInvalid)
         return E_INVALIDARG;
 
     image.Release();
@@ -823,4 +826,3 @@ HRESULT Xbox::Detile(
 
     return S_OK;
 }
-

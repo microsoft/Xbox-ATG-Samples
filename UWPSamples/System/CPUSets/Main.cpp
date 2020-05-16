@@ -432,7 +432,7 @@ int __cdecl main(Platform::Array<Platform::String^>^ /*argv*/)
 }
 
 
-void ExitSample()
+void ExitSample() noexcept
 {
     Windows::ApplicationModel::Core::CoreApplication::Exit();
 }

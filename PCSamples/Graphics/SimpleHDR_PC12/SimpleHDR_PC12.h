@@ -19,8 +19,14 @@ class Sample final : public DX::IDeviceNotify
 {
 public:
 
-    Sample();
+    Sample() noexcept(false);
     ~Sample();
+
+    Sample(Sample&&) = default;
+    Sample& operator= (Sample&&) = default;
+
+    Sample(Sample const&) = delete;
+    Sample& operator= (Sample const&) = delete;
 
     // Initialization and management
     void Initialize(HWND window, int width, int height);

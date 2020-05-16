@@ -17,7 +17,14 @@ class Sample final : public DX::IDeviceNotify
 {
 public:
 
-    Sample();
+    Sample() noexcept(false);
+    ~Sample() = default;
+
+    Sample(Sample&&) = default;
+    Sample& operator= (Sample&&) = default;
+
+    Sample(Sample const&) = delete;
+    Sample& operator= (Sample const&) = delete;
 
     // Initialization and management
     void Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTATION rotation);

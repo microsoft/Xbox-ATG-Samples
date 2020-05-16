@@ -11,7 +11,7 @@
 #include "ATGColors.h"
 #include "ControllerFont.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
@@ -194,6 +194,7 @@ void Sample::Render()
             {
             case PROCESSOR_ARCHITECTURE_AMD64:  arch = L"AMD64"; break;
             case PROCESSOR_ARCHITECTURE_ARM:    arch = L"ARM"; break;
+            case PROCESSOR_ARCHITECTURE_ARM64:  arch = L"ARM64"; break;
             case PROCESSOR_ARCHITECTURE_INTEL:  arch = L"INTEL"; break;
             }
 
@@ -1047,7 +1048,9 @@ void Sample::Render()
                 }
 
                 D3D12_FEATURE_DATA_SHADER_MODEL shaderModel = {};
-                #if defined(NTDDI_WIN10_19H1) && (NTDDI_VERSION >= NTDDI_WIN10_19H1)
+                #if defined(NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB)
+                shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_6;
+                #elif defined(NTDDI_WIN10_19H1) && (NTDDI_VERSION >= NTDDI_WIN10_19H1)
                 shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_5;
                 #elif defined(NTDDI_WIN10_RS5) && (NTDDI_VERSION >= NTDDI_WIN10_RS5)
                 shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_4;
@@ -1088,6 +1091,10 @@ void Sample::Render()
 
                 #if defined(NTDDI_WIN10_19H1) && (NTDDI_VERSION >= NTDDI_WIN10_19H1)
                 case D3D_SHADER_MODEL_6_5: shaderModelVer = L"6.5"; break;
+                #endif
+
+                #if defined(NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB)
+                case D3D_SHADER_MODEL_6_6: shaderModelVer = L"6.6"; break;
                 #endif
                 }
 
@@ -1330,6 +1337,10 @@ void Sample::Render()
                     {
                         case D3D12_SHARED_RESOURCE_COMPATIBILITY_TIER_0: srcompatTier = L"Tier 0"; break;
                         case D3D12_SHARED_RESOURCE_COMPATIBILITY_TIER_1: srcompatTier = L"Tier 1"; break;
+
+                        #if defined(NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB)
+                        case D3D12_SHARED_RESOURCE_COMPATIBILITY_TIER_2: srcompatTier = L"Tier 2"; break;
+                        #endif
                     }
 
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"SharedResourceCompatibilityTier", left, y, m_scale);
@@ -1406,6 +1417,10 @@ void Sample::Render()
                     {
                     case D3D12_RAYTRACING_TIER_NOT_SUPPORTED: rtTier = L"Not Supported"; break;
                     case D3D12_RAYTRACING_TIER_1_0: rtTier = L"Tier 1"; break;
+
+                    #if defined(NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB)
+                    case D3D12_RAYTRACING_TIER_1_1: rtTier = L"Tier 1.1"; break;
+                    #endif
                     }
 
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"RaytracingTier", left, y, m_scale);
@@ -1466,6 +1481,44 @@ void Sample::Render()
 
                     DrawStringLeft(m_batch.get(), m_smallFont.get(), L"BackgroundProcessingSupported", left, y, m_scale);
                     y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts6.BackgroundProcessingSupported ? L"true" : L"false", right, y, m_scale);
+                }
+                #endif
+
+                // Optional Direct3D 12 features for Windows 10 "20H1" Update
+                #if defined(NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB)
+                D3D12_FEATURE_DATA_D3D12_OPTIONS7 d3d12opts7 = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS7, &d3d12opts7, sizeof(d3d12opts7))))
+                {
+                    found = true;
+
+                    // https://devblogs.microsoft.com/directx/coming-to-directx-12-more-control-over-memory-allocation/
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"D3D12_HEAP_FLAG_CREATE_NOT_RESIDENT", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), L"true", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"D3D12_HEAP_FLAG_CREATE_NOT_ZEROED", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), L"true", right, y, m_scale);
+
+
+                    const wchar_t* msTier = L"Unknown";
+                    switch (d3d12opts7.MeshShaderTier)
+                    {
+                    case D3D12_MESH_SHADER_TIER_NOT_SUPPORTED: msTier = L"Not Supported"; break;
+                    case D3D12_MESH_SHADER_TIER_1: msTier = L"Tier 1"; break;
+                    }
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"MeshShaderTier", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), msTier, right, y, m_scale);
+
+                    const wchar_t* sfTier = L"Unknown";
+                    switch (d3d12opts7.SamplerFeedbackTier)
+                    {
+                    case D3D12_SAMPLER_FEEDBACK_TIER_NOT_SUPPORTED: sfTier = L"Not Supported"; break;
+                    case D3D12_SAMPLER_FEEDBACK_TIER_0_9: sfTier = L"Tier 0.9"; break;
+                    case D3D12_SAMPLER_FEEDBACK_TIER_1_0: sfTier = L"Tier 1.0"; break;
+                    }
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"SamplerFeedbackTier", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), sfTier, right, y, m_scale);
                 }
                 #endif
 

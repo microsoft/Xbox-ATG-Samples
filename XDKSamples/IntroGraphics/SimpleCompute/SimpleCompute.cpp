@@ -14,7 +14,7 @@
 
 #define USE_FAST_SEMANTICS
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 

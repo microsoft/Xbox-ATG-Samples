@@ -12,7 +12,7 @@
 #include "ATGColors.h"
 #include "ControllerFont.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 

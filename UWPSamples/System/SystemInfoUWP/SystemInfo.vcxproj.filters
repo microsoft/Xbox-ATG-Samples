@@ -23,6 +23,9 @@
     <Filter Include="Common\Telemetry\x64">
       <UniqueIdentifier>{3b9b4e46-0015-4bef-aabc-59b118282d12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Telemetry\ARM64">
+      <UniqueIdentifier>{8df7baad-0ce1-41a8-80a8-6113a0aa15d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -81,6 +84,9 @@
     <None Include="Readme.docx" />
     <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
       <Filter>Assets</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\ARM64\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\ARM64</Filter>
     </None>
     <None Include="..\..\..\Kits\Telemetry\ARM\ATGTelemetryUWP.dll">
       <Filter>Common\Telemetry\ARM</Filter>

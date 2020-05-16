@@ -12,7 +12,7 @@
 #include "ControllerFont.h"
 #include "FindMedia.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;

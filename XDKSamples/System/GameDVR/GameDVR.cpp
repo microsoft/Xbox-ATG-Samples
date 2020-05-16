@@ -15,7 +15,7 @@ using namespace Windows::Xbox::Media::Capture;
 using namespace Windows::Foundation;
 using namespace Windows::Storage::Streams;
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 

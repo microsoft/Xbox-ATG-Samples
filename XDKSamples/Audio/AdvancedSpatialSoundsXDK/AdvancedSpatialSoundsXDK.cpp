@@ -85,7 +85,7 @@ namespace
     static_assert(_countof(g_pointFileList) == _countof(g_pointFileNames), "List size mismatch");
 }
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;

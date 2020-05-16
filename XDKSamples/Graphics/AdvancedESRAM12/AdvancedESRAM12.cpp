@@ -8,7 +8,7 @@
 #include "pch.h"
 #include "AdvancedESRAM12.h"
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 using namespace ATG;

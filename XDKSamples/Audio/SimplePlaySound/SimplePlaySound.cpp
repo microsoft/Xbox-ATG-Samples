@@ -20,7 +20,7 @@ static const wchar_t* g_FileList[] = {
     nullptr
 };
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace DirectX;
 

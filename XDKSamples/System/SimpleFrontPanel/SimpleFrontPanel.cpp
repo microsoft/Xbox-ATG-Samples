@@ -59,14 +59,14 @@ namespace
     const DDS_PIXELFORMAT DDSPF_L8 = { sizeof(DDS_PIXELFORMAT), DDS_LUMINANCE, 0,  8, 0xff, 0x00, 0x00, 0x00 };
 }
 
-extern void ExitSample();
+extern void ExitSample() noexcept;
 
 using namespace ATG;
 using namespace DirectX;
 
 using Microsoft::WRL::ComPtr;
 
-Sample::Sample()
+Sample::Sample() noexcept(false)
     : m_frame(0)
     , m_screenWidth(0)
     , m_screenHeight(0)

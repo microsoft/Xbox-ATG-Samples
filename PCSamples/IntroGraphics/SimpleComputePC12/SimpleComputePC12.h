@@ -58,6 +58,12 @@ public:
     Sample() noexcept(false);
     ~Sample();
 
+    Sample(Sample&&) = delete;
+    Sample& operator= (Sample&&) = delete;
+
+    Sample(Sample const&) = delete;
+    Sample& operator= (Sample const&) = delete;
+
     // Initialization and management
     void Initialize(HWND window, int width, int height);
 

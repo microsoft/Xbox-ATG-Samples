@@ -17,7 +17,14 @@ class Sample
 {
 public:
 
-    Sample();
+    Sample() noexcept(false);
+    ~Sample() = default;
+
+    Sample(Sample&&) = default;
+    Sample& operator= (Sample&&) = default;
+
+    Sample(Sample const&) = delete;
+    Sample& operator= (Sample const&) = delete;
 
     // Initialization and management
     void Initialize(IUnknown* window);
@@ -31,7 +38,7 @@ public:
     void OnVisibilityChanged(Windows::UI::Core::VisibilityChangedEventArgs^ args);
 
     // Properties
-    bool RequestHDRMode() const { return m_deviceResources ? (m_deviceResources->GetDeviceOptions() & DX::DeviceResources::c_EnableHDR) != 0 : false; }
+    bool RequestHDRMode() const noexcept { return m_deviceResources ? (m_deviceResources->GetDeviceOptions() & DX::DeviceResources::c_EnableHDR) != 0 : false; }
 
 private:
 
