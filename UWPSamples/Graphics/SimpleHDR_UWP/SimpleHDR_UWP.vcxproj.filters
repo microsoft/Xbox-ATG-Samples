@@ -35,6 +35,9 @@
     <Filter Include="Standard Sample Files\ATG Tool Kit\FullScreenQuad">
       <UniqueIdentifier>{6b21fc29-b3cf-47cc-a590-270ed8605e08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Standard Sample Files\Common\Telemetry\ARM64">
+      <UniqueIdentifier>{a877fc8c-8836-4c17-9d45-8cc3cf6baa39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -113,6 +116,9 @@
       <Filter>Standard Sample Files\ATG Tool Kit\FullScreenQuad</Filter>
     </None>
     <None Include="Readme.docx" />
+    <None Include="..\..\..\Kits\Telemetry\ARM64\ATGTelemetryUWP.dll">
+      <Filter>Standard Sample Files\Common\Telemetry\ARM64</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />

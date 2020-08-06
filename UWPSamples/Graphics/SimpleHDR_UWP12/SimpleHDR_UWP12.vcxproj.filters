@@ -35,6 +35,9 @@
     <Filter Include="Standard Sample Files\Shaders">
       <UniqueIdentifier>{457e466b-28f2-426e-96c0-604d76402c3e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Standard Sample Files\Common\Telemetry\ARM64">
+      <UniqueIdentifier>{52879ed1-5bc8-45b3-b51d-4ea5b7aa92fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -121,6 +124,9 @@
     </None>
     <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
       <Filter>Standard Sample Files\Assets</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\ARM64\ATGTelemetryUWP.dll">
+      <Filter>Standard Sample Files\Common\Telemetry\ARM64</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
