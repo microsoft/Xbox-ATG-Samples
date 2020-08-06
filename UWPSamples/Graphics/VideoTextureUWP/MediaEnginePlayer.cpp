@@ -283,11 +283,18 @@ void MediaEnginePlayer::OnMediaEngineEvent(uint32_t meEvent)
             if (m_mediaEngine)
             {
                 ComPtr<IMFMediaError> error;
-                m_mediaEngine->GetError(&error);
-                USHORT errorCode = error->GetErrorCode();
-                char buff[128] = {};
-                sprintf_s(buff, "ERROR: Media Foundation Event Error %u", errorCode);
-                OutputDebugStringA(buff);
+                if (SUCCEEDED(m_mediaEngine->GetError(&error)))
+                {
+                    USHORT errorCode = error->GetErrorCode();
+                    HRESULT hr = error->GetExtendedErrorCode();
+                    char buff[128] = {};
+                    sprintf_s(buff, "ERROR: Media Foundation Event Error %u (%08X)\n", errorCode, static_cast<unsigned int>(hr));
+                    OutputDebugStringA(buff);
+                }
+                else
+                {
+                    OutputDebugStringA("ERROR: Media Foundation Event Error *FAILED GetError*\n");
+                }
             }
             #endif
             break;
