@@ -26,6 +26,9 @@
     <Filter Include="Common\Telemetry\x64">
       <UniqueIdentifier>{b4ecaa89-d5a9-4587-81eb-b16f913bce3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Telemetry\ARM64">
+      <UniqueIdentifier>{6f710c9b-371d-413a-bc96-2b35c6024af6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -90,6 +93,9 @@
     </None>
     <None Include="..\..\..\..\Kits\Telemetry\ARM\ATGTelemetryUWP.dll">
       <Filter>Common\Telemetry\ARM</Filter>
+    </None>
+    <None Include="..\..\..\..\Kits\Telemetry\ARM64\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\ARM64</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -11,7 +11,7 @@
     <Filter Include="ATG Tool Kit">
       <UniqueIdentifier>{10ae51c0-7081-4e55-9ca3-4a9074bfb6a1}</UniqueIdentifier>
     </Filter>
-      <Filter Include="Common\Telemetry">
+    <Filter Include="Common\Telemetry">
       <UniqueIdentifier>{f04fc9a1-d629-4755-ba2e-3d71e3b307db}</UniqueIdentifier>
     </Filter>
     <Filter Include="Common\Telemetry\ARM">
@@ -23,7 +23,10 @@
     <Filter Include="Common\Telemetry\x64">
       <UniqueIdentifier>{debde8dc-79ad-43c5-bf6a-656a5faeba3a}</UniqueIdentifier>
     </Filter>
-</ItemGroup>
+    <Filter Include="Common\Telemetry\ARM64">
+      <UniqueIdentifier>{476fb32b-ecc0-48f4-8107-af9d2e25739a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="StepTimer.h">
@@ -84,12 +87,15 @@
     <None Include="..\..\..\Media\Fonts\XboxOneControllerLegendSmall.spritefont">
       <Filter>Assets</Filter>
     </None>
+    <None Include="..\..\..\Kits\Telemetry\ARM64\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\ARM64</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Media Include="..\..\..\Media\Sounds\ATG_SpatialMotion_monoFunkDrums1Loop.wav">
       <Filter>Assets</Filter>
     </Media>
-      <None Include="..\..\..\Kits\Telemetry\ARM\ATGTelemetryUWP.dll">
+    <None Include="..\..\..\Kits\Telemetry\ARM\ATGTelemetryUWP.dll">
       <Filter>Common\Telemetry\ARM</Filter>
     </None>
     <None Include="..\..\..\Kits\Telemetry\x64\ATGTelemetryUWP.dll">
@@ -98,5 +104,5 @@
     <None Include="..\..\..\Kits\Telemetry\Win32\ATGTelemetryUWP.dll">
       <Filter>Common\Telemetry\Win32</Filter>
     </None>
-</ItemGroup>
+  </ItemGroup>
 </Project>

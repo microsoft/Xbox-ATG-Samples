@@ -23,6 +23,9 @@
     <Filter Include="Common\Telemetry\x64">
       <UniqueIdentifier>6bba8e0b-fbdb-43a5-a4d2-36c130222568</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Telemetry\ARM64">
+      <UniqueIdentifier>{3c6c6300-b80c-4777-af89-64671d1ccbfd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -76,6 +79,9 @@
       <Filter>Common\Telemetry\x64</Filter>
     </None>
     <None Include="Readme.docx" />
+    <None Include="..\..\..\Kits\Telemetry\ARM64\ATGTelemetryUWP.dll">
+      <Filter>Common\Telemetry\ARM64</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />

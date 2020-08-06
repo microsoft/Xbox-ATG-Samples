@@ -59,6 +59,9 @@
     <Filter Include="UWP\Telemetry\x64">
       <UniqueIdentifier>{30597bb4-101e-4958-aedc-5971c63a8260}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UWP\Telemetry\ARM64">
+      <UniqueIdentifier>{dda3b69a-5721-4797-a6cd-e8514bcb7b9d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shared\SharedSimplePBR.h">
@@ -229,6 +232,9 @@
     </None>
     <None Include="..\..\..\Kits\ATGTK\PBREffect\PixelPacking_Velocity.hlsli">
       <Filter>ATG Tool Kit\PBREffect</Filter>
+    </None>
+    <None Include="..\..\..\Kits\Telemetry\ARM64\ATGTelemetryUWP.dll">
+      <Filter>UWP\Telemetry\ARM64</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
