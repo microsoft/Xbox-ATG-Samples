@@ -5,6 +5,8 @@
     <ClCompile Include="DirectXTexEXR.cpp">
       <Filter>EXR</Filter>
     </ClCompile>
+    <ClCompile Include="ExtendedBMP.cpp" />
+    <ClCompile Include="PortablePixMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -116,6 +116,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DirectXTexEXR.cpp" />
+    <ClCompile Include="ExtendedBMP.cpp" />
+    <ClCompile Include="PortablePixMap.cpp" />
     <ClCompile Include="texconv.cpp" />
   </ItemGroup>
   <ItemGroup>
