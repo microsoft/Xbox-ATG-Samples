@@ -24,10 +24,10 @@ using Microsoft::WRL::ComPtr;
 
 namespace
 {
-    const int c_MaxSamples = 16;
+    constexpr int c_MaxSamples = 16;
 
-    const int Dirty_ConstantBuffer  = 0x01;
-    const int Dirty_Parameters      = 0x02;
+    constexpr int Dirty_ConstantBuffer  = 0x01;
+    constexpr int Dirty_Parameters      = 0x02;
 
     // Constant buffer layout. Must match the shader!
     __declspec(align(16)) struct PostProcessConstants
@@ -42,7 +42,17 @@ namespace
 // Include the precompiled shader code.
 namespace
 {
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX_SCARLETT
+    #include "Shaders/Compiled/XboxGamingScarlettPostProcess_VSQuadDual.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettPostProcess_PSMerge.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettPostProcess_PSBloomCombine.inc"
+#elif defined(_GAMING_XBOX)
+    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_VSQuadDual.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_PSMerge.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_PSBloomCombine.inc"
+#elif defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOnePostProcess_VSQuadDual.inc"
 
     #include "Shaders/Compiled/XboxOnePostProcess_PSMerge.inc"

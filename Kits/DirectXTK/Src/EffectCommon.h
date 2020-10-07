@@ -12,10 +12,11 @@
 #include <memory>
 
 #include "Effects.h"
-#include "PlatformHelpers.h"
-#include "ConstantBuffer.h"
-#include "SharedResourcePool.h"
 #include "AlignedNew.h"
+#include "BufferHelpers.h"
+#include "DirectXHelpers.h"
+#include "PlatformHelpers.h"
+#include "SharedResourcePool.h"
 
 
 // BasicEffect, SkinnedEffect, et al, have many things in common, but also significant
@@ -29,14 +30,14 @@ namespace DirectX
     // Bitfield tracks which derived parameter values need to be recomputed.
     namespace EffectDirtyFlags
     {
-        const int ConstantBuffer        = 0x01;
-        const int WorldViewProj         = 0x02;
-        const int WorldInverseTranspose = 0x04;
-        const int EyePosition           = 0x08;
-        const int MaterialColor         = 0x10;
-        const int FogVector             = 0x20;
-        const int FogEnable             = 0x40;
-        const int AlphaTest             = 0x80;
+        constexpr int ConstantBuffer        = 0x01;
+        constexpr int WorldViewProj         = 0x02;
+        constexpr int WorldInverseTranspose = 0x04;
+        constexpr int EyePosition           = 0x08;
+        constexpr int MaterialColor         = 0x10;
+        constexpr int FogVector             = 0x20;
+        constexpr int FogEnable             = 0x40;
+        constexpr int AlphaTest             = 0x80;
     }
 
 
@@ -84,7 +85,7 @@ namespace DirectX
     {
         EffectLights() noexcept;
 
-        static const int MaxDirectionalLights = IEffectLights::MaxDirectionalLights;
+        static constexpr int MaxDirectionalLights = IEffectLights::MaxDirectionalLights;
 
 
         // Fields.
@@ -129,6 +130,7 @@ namespace DirectX
         ID3D11VertexShader* DemandCreateVertexShader(_Inout_ Microsoft::WRL::ComPtr<ID3D11VertexShader>& vertexShader, ShaderBytecode const& bytecode);
         ID3D11PixelShader * DemandCreatePixelShader (_Inout_ Microsoft::WRL::ComPtr<ID3D11PixelShader> & pixelShader,  ShaderBytecode const& bytecode);
         ID3D11ShaderResourceView* GetDefaultTexture();
+        D3D_FEATURE_LEVEL GetDeviceFeatureLevel() const;
 
     protected:
         Microsoft::WRL::ComPtr<ID3D11Device> mDevice;
@@ -150,6 +152,7 @@ namespace DirectX
             mConstantBuffer(device),
             mDeviceResources(deviceResourcesPool.DemandCreate(device))
         {
+            SetDebugObjectName(mConstantBuffer.GetBuffer(), "Effect");
         }
 
 
@@ -220,8 +223,9 @@ namespace DirectX
         }
 
 
-        // Helper returns the default texture.
+        // Helpers
         ID3D11ShaderResourceView* GetDefaultTexture() { return mDeviceResources->GetDefaultTexture(); }
+        D3D_FEATURE_LEVEL GetDeviceFeatureLevel() const { return mDeviceResources->GetDeviceFeatureLevel(); }
 
 
     protected:
@@ -273,9 +277,9 @@ namespace DirectX
             }
 
 
-            // Gets or lazily creates the default texture
+            // Helpers
             ID3D11ShaderResourceView* GetDefaultTexture() { return EffectDeviceResources::GetDefaultTexture(); }
-
+            D3D_FEATURE_LEVEL GetDeviceFeatureLevel() const { return EffectDeviceResources::GetDeviceFeatureLevel(); }
 
         private:
             Microsoft::WRL::ComPtr<ID3D11VertexShader> mVertexShaders[Traits::VertexShaderCount];

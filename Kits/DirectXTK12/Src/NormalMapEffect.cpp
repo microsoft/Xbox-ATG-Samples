@@ -12,48 +12,49 @@
 
 using namespace DirectX;
 
-
-// Constant buffer layout. Must match the shader!
-struct NormalMapEffectConstants
+namespace
 {
-    XMVECTOR diffuseColor;
-    XMVECTOR emissiveColor;
-    XMVECTOR specularColorAndPower;
-    
-    XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];
-    XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
-    XMVECTOR lightSpecularColor[IEffectLights::MaxDirectionalLights];
+    // Constant buffer layout. Must match the shader!
+    struct NormalMapEffectConstants
+    {
+        XMVECTOR diffuseColor;
+        XMVECTOR emissiveColor;
+        XMVECTOR specularColorAndPower;
 
-    XMVECTOR eyePosition;
+        XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];
+        XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
+        XMVECTOR lightSpecularColor[IEffectLights::MaxDirectionalLights];
 
-    XMVECTOR fogColor;
-    XMVECTOR fogVector;
+        XMVECTOR eyePosition;
 
-    XMMATRIX world;
-    XMVECTOR worldInverseTranspose[3];
-    XMMATRIX worldViewProj;
-};
+        XMVECTOR fogColor;
+        XMVECTOR fogVector;
 
-static_assert((sizeof(NormalMapEffectConstants) % 16) == 0, "CB size not padded correctly");
+        XMMATRIX world;
+        XMVECTOR worldInverseTranspose[3];
+        XMMATRIX worldViewProj;
+    };
+
+    static_assert((sizeof(NormalMapEffectConstants) % 16) == 0, "CB size not padded correctly");
 
 
-// Traits type describes our characteristics to the EffectBase template.
-struct NormalMapEffectTraits
-{
-    using ConstantBufferType = NormalMapEffectConstants;
+    // Traits type describes our characteristics to the EffectBase template.
+    struct NormalMapEffectTraits
+    {
+        using ConstantBufferType = NormalMapEffectConstants;
 
-    static const int VertexShaderCount = 8;
-    static const int PixelShaderCount = 4;
-    static const int ShaderPermutationCount = 16;
-    static const int RootSignatureCount = 2;
-};
-
+        static constexpr int VertexShaderCount = 8;
+        static constexpr int PixelShaderCount = 4;
+        static constexpr int ShaderPermutationCount = 16;
+        static constexpr int RootSignatureCount = 2;
+    };
+}
 
 // Internal NormalMapEffect implementation class.
 class NormalMapEffect::Impl : public EffectBase<NormalMapEffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool specularMap);
+    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
 
     enum RootParameterIndex
     {
@@ -74,7 +75,7 @@ public:
 
     EffectLights lights;
 
-    int GetPipelineStatePermutation(bool vertexColorEnabled, bool biasedVertexNormals) const noexcept;
+    int GetPipelineStatePermutation(uint32_t effectFlags) const noexcept;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -83,7 +84,37 @@ public:
 // Include the precompiled shader code.
 namespace
 {
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX_SCARLETT
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTx.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxVc.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxNoSpec.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxVcNoSpec.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxVcBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxNoSpecBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_VSNormalPixelLightingTxVcNoSpecBn.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_PSNormalPixelLightingTx.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_PSNormalPixelLightingTxNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_PSNormalPixelLightingTxNoSpec.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettNormalMapEffect_PSNormalPixelLightingTxNoFogSpec.inc"
+#elif defined(_GAMING_XBOX)
+    #include "Shaders/Compiled/XboxGamingXboxOneNormalMapEffect_VSNormalPixelLightingTx.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneNormalMapEffect_VSNormalPixelLightingTxVc.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneNormalMapEffect_VSNormalPixelLightingTxNoSpec.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneNormalMapEffect_VSNormalPixelLightingTxVcNoSpec.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOneNormalMapEffect_VSNormalPixelLightingTxBn.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneNormalMapEffect_VSNormalPixelLightingTxVcBn.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneNormalMapEffect_VSNormalPixelLightingTxNoSpecBn.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneNormalMapEffect_VSNormalPixelLightingTxVcNoSpecBn.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOneNormalMapEffect_PSNormalPixelLightingTx.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneNormalMapEffect_PSNormalPixelLightingTxNoFog.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneNormalMapEffect_PSNormalPixelLightingTxNoSpec.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneNormalMapEffect_PSNormalPixelLightingTxNoFogSpec.inc"
+#elif defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOneNormalMapEffect_VSNormalPixelLightingTx.inc"
     #include "Shaders/Compiled/XboxOneNormalMapEffect_VSNormalPixelLightingTxVc.inc"
     #include "Shaders/Compiled/XboxOneNormalMapEffect_VSNormalPixelLightingTxNoSpec.inc"
@@ -199,13 +230,16 @@ SharedResourcePool<ID3D12Device*, EffectBase<NormalMapEffectTraits>::DeviceResou
 
 
 // Constructor.
-NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool ispecularMap)
+NormalMapEffect::Impl::Impl(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription)
     : EffectBase(device),
-    specularMap(ispecularMap),
-    texture{},
-    specular{},
-    normal{},
-    sampler{}
+        specularMap((effectFlags & EffectFlags::Specular) != 0),
+        texture{},
+        specular{},
+        normal{},
+        sampler{}
 {
     static_assert(_countof(EffectBase<NormalMapEffectTraits>::VertexShaderIndices) == NormalMapEffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(_countof(EffectBase<NormalMapEffectTraits>::VertexShaderBytecode) == NormalMapEffectTraits::VertexShaderCount, "array/max mismatch");
@@ -257,9 +291,7 @@ NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Ef
     fog.enabled = (effectFlags & EffectFlags::Fog) != 0;
 
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation(
-        (effectFlags & EffectFlags::VertexColor) != 0,
-        (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
+    int sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < NormalMapEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < NormalMapEffectTraits::ShaderPermutationCount);
 
@@ -281,7 +313,7 @@ NormalMapEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Ef
 }
 
 
-int NormalMapEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled, bool biasedVertexNormals) const noexcept
+int NormalMapEffect::Impl::GetPipelineStatePermutation(uint32_t effectFlags) const noexcept
 {
     int permutation = 0;
 
@@ -292,18 +324,17 @@ int NormalMapEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled, 
     }
 
     // Support vertex coloring?
-    if (vertexColorEnabled)
+    if (effectFlags & EffectFlags::VertexColor)
     {
         permutation += 2;
     }
 
-    // Specular map?
     if (!specularMap)
     {
         permutation += 4;
     }
 
-    if (biasedVertexNormals)
+    if (effectFlags & EffectFlags::BiasedVertexNormals)
     {
         // Compressed normals need to be scaled and biased in the vertex shader.
         permutation += 8;
@@ -357,15 +388,18 @@ void NormalMapEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
 
 // Public constructor.
-NormalMapEffect::NormalMapEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool specularMap)
-  : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, specularMap))
+NormalMapEffect::NormalMapEffect(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription)
+    : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription))
 {
 }
 
 
 // Move constructor.
 NormalMapEffect::NormalMapEffect(NormalMapEffect&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
+    : pImpl(std::move(moveFrom.pImpl))
 {
 }
 

@@ -19,6 +19,8 @@
 using namespace ATG;
 using namespace DX;
 
+#pragma warning(disable : 4365)
+
 //--------------------------------------------------------------------------------------
 // RasterGlyphSheet implementation
 //--------------------------------------------------------------------------------------
@@ -29,11 +31,6 @@ namespace ATG
     static inline bool operator<(const RasterGlyphSheet::RasterGlyph &left, const RasterGlyphSheet::RasterGlyph &right)
     {
         return left.character < right.character;
-    }
-
-    static inline bool operator< (wchar_t left, const RasterGlyphSheet::RasterGlyph &right)
-    {
-        return left < right.character;
     }
 
     static inline bool operator< (const RasterGlyphSheet::RasterGlyph &left, wchar_t right)

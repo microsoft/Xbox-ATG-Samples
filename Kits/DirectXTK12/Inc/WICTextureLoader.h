@@ -19,7 +19,9 @@
 
 #pragma once
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX_SCARLETT
+#include <d3d12_xs.h>
+#elif (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
 #include <d3d12_x.h>
 #else
 #include <d3d12.h>
@@ -38,11 +40,12 @@ namespace DirectX
         WIC_LOADER_DEFAULT      = 0,
         WIC_LOADER_FORCE_SRGB   = 0x1,
         WIC_LOADER_IGNORE_SRGB  = 0x2,
-        WIC_LOADER_MIP_AUTOGEN  = 0x4,
-        WIC_LOADER_MIP_RESERVE  = 0x8,
-        WIC_LOADER_FORCE_RGBA32 = 0x10,
+        WIC_LOADER_SRGB_DEFAULT = 0x4,
+        WIC_LOADER_MIP_AUTOGEN  = 0x8,
+        WIC_LOADER_MIP_RESERVE  = 0x10,
         WIC_LOADER_FIT_POW2     = 0x20,
         WIC_LOADER_MAKE_SQUARE  = 0x40,
+        WIC_LOADER_FORCE_RGBA32 = 0x80,
     };
 
     class ResourceUploadBatch;
@@ -90,7 +93,7 @@ namespace DirectX
         size_t wicDataSize,
         size_t maxsize,
         D3D12_RESOURCE_FLAGS resFlags,
-        unsigned int loadFlags,
+        WIC_LOADER_FLAGS loadFlags,
         _Outptr_ ID3D12Resource** texture,
         std::unique_ptr<uint8_t[]>& decodedData,
         D3D12_SUBRESOURCE_DATA& subresource) noexcept;
@@ -100,7 +103,7 @@ namespace DirectX
         _In_z_ const wchar_t* szFileName,
         size_t maxsize,
         D3D12_RESOURCE_FLAGS resFlags,
-        unsigned int loadFlags,
+        WIC_LOADER_FLAGS loadFlags,
         _Outptr_ ID3D12Resource** texture,
         std::unique_ptr<uint8_t[]>& decodedData,
         D3D12_SUBRESOURCE_DATA& subresource) noexcept;
@@ -113,7 +116,7 @@ namespace DirectX
         size_t wicDataSize,
         size_t maxsize,
         D3D12_RESOURCE_FLAGS resFlags,
-        unsigned int loadFlags,
+        WIC_LOADER_FLAGS loadFlags,
         _Outptr_ ID3D12Resource** texture);
 
     HRESULT __cdecl CreateWICTextureFromFileEx(
@@ -122,6 +125,17 @@ namespace DirectX
         _In_z_ const wchar_t* szFileName,
         size_t maxsize,
         D3D12_RESOURCE_FLAGS resFlags,
-        unsigned int loadFlags,
+        WIC_LOADER_FLAGS loadFlags,
         _Outptr_ ID3D12Resource** texture);
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-dynamic-exception-spec"
+#endif
+
+    DEFINE_ENUM_FLAG_OPERATORS(WIC_LOADER_FLAGS);
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 }

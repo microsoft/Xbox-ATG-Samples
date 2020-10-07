@@ -52,7 +52,7 @@ void Sample::Initialize(IUnknown* window)
 // Executes basic render loop.
 void Sample::Tick()
 {
-    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Frame %I64u", m_frame);
+    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Frame %llu", m_frame);
 
     m_timer.Tick([&]()
     {
@@ -294,10 +294,7 @@ void Sample::CreateDevice()
     // Initialize device dependent objects here (independent of window size).
     m_graphicsMemory = std::make_unique<GraphicsMemory>(m_d3dDevice.Get());
 
-    m_resourceDescriptors = std::make_unique<DescriptorHeap>(m_d3dDevice.Get(),
-        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
-        Descriptors::Count);
+    m_resourceDescriptors = std::make_unique<DescriptorHeap>(m_d3dDevice.Get(), Descriptors::Count);
 }
 
 // Allocate all memory resources that change on a window SizeChanged event.

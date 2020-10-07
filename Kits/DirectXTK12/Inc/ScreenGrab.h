@@ -16,7 +16,9 @@
 
 #pragma once
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX_SCARLETT
+#include <d3d12_xs.h>
+#elif (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
 #include <d3d12_x.h>
 #else
 #include <d3d12.h>
@@ -46,5 +48,5 @@ namespace DirectX
         D3D12_RESOURCE_STATES afterState = D3D12_RESOURCE_STATE_RENDER_TARGET,
         _In_opt_ const GUID* targetFormat = nullptr,
         _In_opt_ std::function<void __cdecl(IPropertyBag2*)> setCustomProps = nullptr,
-        bool forceSRGB = false) noexcept;
+        bool forceSRGB = false);
 }

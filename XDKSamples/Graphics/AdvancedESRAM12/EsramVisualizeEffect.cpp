@@ -33,7 +33,7 @@ namespace ATG
         desc.pRootSignature = m_rootSignature.Get();
         desc.CS = { shaderBlob.data(), shaderBlob.size() };
 
-        DX::ThrowIfFailed(device->CreateComputePipelineStateX(&desc, 0, nullptr, IID_GRAPHICS_PPV_ARGS(m_pipelineState.GetAddressOf())));
+        DX::ThrowIfFailed(device->CreateComputePipelineState(&desc, IID_GRAPHICS_PPV_ARGS(m_pipelineState.GetAddressOf())));
 
         SetDebugObjectName(m_pipelineState.Get(), L"EsramVisualizeEffect");
     }

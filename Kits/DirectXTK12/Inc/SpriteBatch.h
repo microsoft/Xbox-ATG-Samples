@@ -9,7 +9,9 @@
 
 #pragma once
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX_SCARLETT
+#include <d3d12_xs.h>
+#elif (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
 #include <d3d12_x.h>
 #else
 #include <d3d12.h>
@@ -98,6 +100,11 @@ namespace DirectX
         // Begin/End a batch of sprite drawing operations.
         void XM_CALLCONV Begin(
             _In_ ID3D12GraphicsCommandList* commandList,
+            SpriteSortMode sortMode = SpriteSortMode_Deferred,
+            FXMMATRIX transformMatrix = MatrixIdentity);
+        void XM_CALLCONV Begin(
+            _In_ ID3D12GraphicsCommandList* commandList,
+            D3D12_GPU_DESCRIPTOR_HANDLE sampler,
             SpriteSortMode sortMode = SpriteSortMode_Deferred,
             FXMMATRIX transformMatrix = MatrixIdentity);
         void __cdecl End();

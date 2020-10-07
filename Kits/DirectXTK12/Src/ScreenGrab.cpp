@@ -110,7 +110,6 @@ namespace
 
         // Readback resources must be buffers
         D3D12_RESOURCE_DESC bufferDesc = {};
-        bufferDesc.Alignment = desc.Alignment;
         bufferDesc.DepthOrArraySize = 1;
         bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
         bufferDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
@@ -120,7 +119,6 @@ namespace
         bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
         bufferDesc.MipLevels = 1;
         bufferDesc.SampleDesc.Count = 1;
-        bufferDesc.SampleDesc.Quality = 0;
 
         ComPtr<ID3D12Resource> copySource(pSource);
         if (desc.SampleDesc.Count > 1)
@@ -258,7 +256,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
         &fpRowPitch,
         &totalResourceSize);
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
     // Round up the srcPitch to multiples of 1024
     UINT64 dstRowPitch = (fpRowPitch + static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u) & ~(static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u);
 #else
@@ -400,7 +398,7 @@ HRESULT DirectX::SaveDDSTextureToFile(
 
     uint8_t* dptr = pixels.get();
 
-    size_t msize = std::min<size_t>(rowPitch, rowPitch);
+    size_t msize = std::min<size_t>(rowPitch, size_t(dstRowPitch));
     for (size_t h = 0; h < rowCount; ++h)
     {
         memcpy_s(dptr, rowPitch, sptr, msize);
@@ -445,7 +443,7 @@ HRESULT DirectX::SaveWICTextureToFile(
     D3D12_RESOURCE_STATES afterState,
     const GUID* targetFormat,
     std::function<void(IPropertyBag2*)> setCustomProps,
-    bool forceSRGB) noexcept
+    bool forceSRGB)
 {
     if (!fileName)
         return E_INVALIDARG;
@@ -473,7 +471,7 @@ HRESULT DirectX::SaveWICTextureToFile(
         &fpRowPitch,
         &totalResourceSize);
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
     // Round up the srcPitch to multiples of 1024
     UINT64 dstRowPitch = (fpRowPitch + static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u) & ~(static_cast<uint64_t>(D3D12XBOX_TEXTURE_DATA_PITCH_ALIGNMENT) - 1u);
 #else
@@ -675,7 +673,7 @@ HRESULT DirectX::SaveWICTextureToFile(
                 (void)metawriter->RemoveMetadataByName(L"/sRGB/RenderingIntent");
             }
         }
-    #if defined(_XBOX_ONE) && defined(_TITLE)
+    #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
         else if (memcmp(&guidContainerFormat, &GUID_ContainerFormatJpeg, sizeof(GUID)) == 0)
         {
             // Set Software name

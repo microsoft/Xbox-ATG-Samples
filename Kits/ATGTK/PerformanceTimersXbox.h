@@ -58,7 +58,7 @@ namespace DX
     };
 
 
-#if defined(__d3d12_x_h__)
+#if defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
     //----------------------------------------------------------------------------------
     // DirectX 12.X implementation of GPU timer
     template<typename t_CommandList = ID3D12CommandList>

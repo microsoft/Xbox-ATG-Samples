@@ -85,7 +85,7 @@ void Sample::Initialize(IUnknown* window)
 // Executes basic render loop.
 void Sample::Tick()
 {
-    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Frame %I64u", m_frame);
+    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Frame %llu", m_frame);
 
     m_timer.Tick([&]()
     {
@@ -275,7 +275,7 @@ void Sample::CreateDeviceDependentResources()
 
     m_graphicsMemory = std::make_unique<GraphicsMemory>(device);
 
-    m_resourceDescriptorHeap = std::make_unique<DescriptorHeap>(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, ResourceDescriptors::Count);
+    m_resourceDescriptorHeap = std::make_unique<DescriptorHeap>(device, ResourceDescriptors::Count);
 
     m_primitiveBatch = std::make_unique<DirectX::PrimitiveBatch<VertexPositionColor>>(device);
 

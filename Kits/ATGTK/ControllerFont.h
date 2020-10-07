@@ -279,28 +279,28 @@ namespace DX
                         float bsize = XMVectorGetX(butnFont->MeasureString(button));
                         float offsetX = (bsize * buttonScale / 2.f);
 
-                        if (outPos.x < result.left)
+                        if (outPos.x < float(result.left))
                             result.left = long(outPos.x);
 
-                        if (outPos.y < result.top)
+                        if (outPos.y < float(result.top))
                             result.top = long(outPos.y);
 
                         outPos.x += offsetX;
                         outPos.y -= offsetY;
 
-                        if (outPos.x < result.left)
+                        if (outPos.x < float(result.left))
                             result.left = long(outPos.x);
 
-                        if (outPos.y < result.top)
+                        if (outPos.y < float(result.top))
                             result.top = long(outPos.y);
 
                         outPos.x += bsize * buttonScale;
                         outPos.y += offsetY;
 
-                        if (result.right < outPos.x)
+                        if (float(result.right) < outPos.x)
                             result.right = long(outPos.x);
 
-                        if (result.bottom < outPos.y)
+                        if (float(result.bottom) < outPos.y)
                             result.bottom = long(outPos.y);
                     }
 
@@ -320,18 +320,18 @@ namespace DX
                 case '[':
                     if (*strBuffer)
                     {
-                        if (outPos.x < result.left)
+                        if (outPos.x < float(result.left))
                             result.left = long(outPos.x);
 
-                        if (outPos.y < result.top)
+                        if (outPos.y < float(result.top))
                             result.top = long(outPos.y);
 
                         outPos.x += XMVectorGetX(textFont->MeasureString(strBuffer)) * scale;
 
-                        if (result.right < outPos.x)
+                        if (float(result.right) < outPos.x)
                             result.right = long(outPos.x);
 
-                        if (result.bottom < outPos.y)
+                        if (float(result.bottom) < outPos.y)
                             result.bottom = long(outPos.y);
 
                         memset(strBuffer, 0, sizeof(strBuffer));
@@ -345,18 +345,18 @@ namespace DX
                 case '\n':
                     if (*strBuffer)
                     {
-                        if (outPos.x < result.left)
+                        if (outPos.x < float(result.left))
                             result.left = long(outPos.x);
 
-                        if (outPos.y < result.top)
+                        if (outPos.y < float(result.top))
                             result.top = long(outPos.y);
 
                         outPos.x += XMVectorGetX(textFont->MeasureString(strBuffer)) * scale;
 
-                        if (result.right < outPos.x)
+                        if (float(result.right) < outPos.x)
                             result.right = long(outPos.x);
 
-                        if (result.bottom < outPos.y)
+                        if (float(result.bottom) < outPos.y)
                             result.bottom = long(outPos.y);
 
                         memset(strBuffer, 0, sizeof(strBuffer));
@@ -375,18 +375,18 @@ namespace DX
 
         if (*strBuffer)
         {
-            if (outPos.x < result.left)
+            if (outPos.x < float(result.left))
                 result.left = long(outPos.x);
 
-            if (outPos.y < result.top)
+            if (outPos.y < float(result.top))
                 result.top = long(outPos.y);
 
             outPos.x += XMVectorGetX(textFont->MeasureString(strBuffer)) * scale;
 
-            if (result.right < outPos.x)
+            if (float(result.right) < outPos.x)
                 result.right = long(outPos.x);
 
-            if (result.bottom < outPos.y)
+            if (float(result.bottom) < outPos.y)
                 result.bottom = long(outPos.y);
         }
 

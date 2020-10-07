@@ -202,7 +202,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
     pHash.Reset();
 
     // Print out some fun stats
-    PrintMessage("hash = %I64x, compilation time %d ms, output blob size is %d bytes before stripping\n",
+    PrintMessage("hash = %llx, compilation time %d ms, output blob size is %d bytes before stripping\n",
         hash,
         (endTime - startTime) / (qpf / 1000),
         pCode->GetBufferSize());
@@ -222,7 +222,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
         path[pathCharCount] = 0;
 
         // 2. Generate the good PIX friendly PDB name and paste it back with the path
-        swprintf(pdbPath, _countof(pdbPath), L"%s%I64x.pdb", path, hash);
+        swprintf(pdbPath, _countof(pdbPath), L"%s%llx.pdb", path, hash);
     }
 
     // The new recommended system is this.

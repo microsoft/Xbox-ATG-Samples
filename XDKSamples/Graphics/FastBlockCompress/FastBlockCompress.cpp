@@ -124,7 +124,7 @@ void Sample::Initialize(IUnknown* window)
 // Executes basic render loop.
 void Sample::Tick()
 {
-    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Frame %I64u", m_frame);
+    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Frame %llu", m_frame);
 
     m_timer.Tick([&]()
     {
@@ -813,8 +813,6 @@ void Sample::CreateDeviceDependentResources()
     rtState;
 
     m_resourceDescriptors = std::make_unique<DescriptorPile>(device,
-        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
         256,
         Descriptors::Count);
 

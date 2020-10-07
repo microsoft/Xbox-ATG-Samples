@@ -117,7 +117,7 @@ void Sample::Initialize(IUnknown* window)
 // Executes basic render loop.
 void Sample::Tick()
 {
-    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Frame %I64u", m_frame);
+    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Frame %llu", m_frame);
 
     m_timer.Tick([&]()
     {
@@ -391,10 +391,7 @@ void Sample::CreateDeviceDependentResources()
 
     m_resourceState[0] = m_resourceState[1] = ResourceState_ReadyCompute;
 
-    m_resourceDescriptors = std::make_unique<DescriptorHeap>(device,
-        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
-        Descriptors::Count);
+    m_resourceDescriptors = std::make_unique<DescriptorHeap>(device, Descriptors::Count);
 
     // create compute fence and event
     m_computeFenceEvent.Attach(CreateEventEx(nullptr, FALSE, FALSE, EVENT_ALL_ACCESS));
@@ -426,10 +423,7 @@ void Sample::CreateDeviceDependentResources()
         device->CreateSampler(s_samplerType, m_samplerDescriptorHeap->GetCpuHandle(0));
     }
 
-    m_SRVDescriptorHeap = std::make_unique<DescriptorHeap>(device,
-        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
-        e_iHeapEnd);
+    m_SRVDescriptorHeap = std::make_unique<DescriptorHeap>(device, e_iHeapEnd);
 
     // create fractal texture and views
     const D3D12_HEAP_PROPERTIES defaultHeapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);

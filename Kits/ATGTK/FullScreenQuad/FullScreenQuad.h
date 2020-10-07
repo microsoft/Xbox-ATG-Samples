@@ -15,7 +15,7 @@
 namespace DX
 {
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 
     class FullScreenQuad
     {

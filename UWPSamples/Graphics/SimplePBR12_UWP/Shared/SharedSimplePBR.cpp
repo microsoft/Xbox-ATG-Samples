@@ -296,8 +296,6 @@ void SharedSimplePBR::CreateDeviceDependentResources()
 
     // create heaps
     m_srvPile = std::make_unique<DescriptorPile>(device,
-        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
         128, // Maximum descriptors for both static and dynamic
         StaticDescriptors::Reserve);
     m_rtvHeap = std::make_unique<DescriptorHeap>(device, D3D12_DESCRIPTOR_HEAP_TYPE_RTV, D3D12_DESCRIPTOR_HEAP_FLAG_NONE, 1);

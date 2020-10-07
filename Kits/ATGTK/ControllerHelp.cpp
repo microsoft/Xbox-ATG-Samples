@@ -23,12 +23,16 @@
 
 #pragma warning( disable : 4061 )
 
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wcovered-switch-default"
+#endif
+
 using namespace DirectX;
 using namespace SimpleMath;
 
 namespace
 {
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
     enum Descriptors
     {
         Segoe18 = 0,
@@ -188,7 +192,7 @@ struct ATG::Help::CalloutBox
         if (type == CalloutType::LINE_TO_ANCHOR)
         {
             // callout circle is 12x12 so -6 from x and y to get top left coordinates
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
             batch->Draw(help.m_descriptorHeap->GetGpuHandle(Descriptors::CircleTex), help.m_circleTexSize,
                 Vector2(calloutLine.x - 6, calloutLine.y - 6));
 #elif defined(__d3d11_h__) || defined(__d3d11_x_h__)
@@ -751,7 +755,7 @@ ATG::Help::~Help()
     }
 }
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 void ATG::Help::Render(ID3D12GraphicsCommandList* commandList)
 {
     // Set the descriptor heaps
@@ -864,7 +868,7 @@ void ATG::Help::ReleaseDevice()
     m_gamepadTex.Reset();
     m_backgroundTex.Reset();
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
     m_descriptorHeap.reset();
 #elif defined(__d3d11_h__) || defined(__d3d11_x_h__)
     m_states.reset();
@@ -873,10 +877,10 @@ void ATG::Help::ReleaseDevice()
 #endif
 }
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 void ATG::Help::RestoreDevice(ID3D12Device* device, ResourceUploadBatch& uploadBatch, const RenderTargetState& rtState)
 {
-    m_descriptorHeap = std::make_unique<DescriptorHeap>(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, Descriptors::Count);
+    m_descriptorHeap = std::make_unique<DescriptorHeap>(device, Descriptors::Count);
     
     SpriteBatchPipelineStateDescription sbPsoDesc(rtState, &CommonStates::AlphaBlend);    
     m_spriteBatch = std::make_unique<SpriteBatch>(device, uploadBatch, sbPsoDesc);
@@ -887,7 +891,7 @@ void ATG::Help::RestoreDevice(ID3D12Device* device, ResourceUploadBatch& uploadB
         CommonStates::DepthNone, CommonStates::CullNone, rtState, D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
     m_lineEffect = std::make_unique<BasicEffect>(device, EffectFlags::VertexColor, fxPsoDesc);
 
-    unsigned int loadFlags = m_linearColors ? DDS_LOADER_FORCE_SRGB : DDS_LOADER_DEFAULT;
+    DDS_LOADER_FLAGS loadFlags = m_linearColors ? DDS_LOADER_FORCE_SRGB : DDS_LOADER_DEFAULT;
 
 #if !defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP)
     wchar_t buff[MAX_PATH];

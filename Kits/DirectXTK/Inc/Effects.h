@@ -88,7 +88,7 @@ namespace DirectX
 
         virtual void __cdecl EnableDefaultLighting() = 0;
 
-        static const int MaxDirectionalLights = 3;
+        static constexpr int MaxDirectionalLights = 3;
 
     protected:
         IEffectLights() = default;
@@ -133,7 +133,7 @@ namespace DirectX
         virtual void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) = 0;
         virtual void __cdecl ResetBoneTransforms() = 0;
 
-        static const int MaxBones = 72;
+        static constexpr int MaxBones = 72;
 
     protected:
         IEffectSkinning() = default;
@@ -319,6 +319,13 @@ namespace DirectX
     class EnvironmentMapEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog
     {
     public:
+        enum Mapping
+        {
+            Mapping_Cube = 0,       // Cubic environment map
+            Mapping_Sphere,         // Spherical environment map
+            Mapping_DualParabola,   // Dual-parabola environment map (requires Feature Level 10.0)
+        };
+
         explicit EnvironmentMapEffect(_In_ ID3D11Device* device);
         EnvironmentMapEffect(EnvironmentMapEffect&& moveFrom) noexcept;
         EnvironmentMapEffect& operator= (EnvironmentMapEffect&& moveFrom) noexcept;
@@ -363,9 +370,10 @@ namespace DirectX
 
         // Texture setting.
         void __cdecl SetTexture(_In_opt_ ID3D11ShaderResourceView* value);
+        void __cdecl SetEnvironmentMap(_In_opt_ ID3D11ShaderResourceView* value);
 
         // Environment map settings.
-        void __cdecl SetEnvironmentMap(_In_opt_ ID3D11ShaderResourceView* value);
+        void __cdecl SetMode(Mapping mapping);
         void __cdecl SetEnvironmentMapAmount(float value);
         void XM_CALLCONV SetEnvironmentMapSpecular(FXMVECTOR value);
         void __cdecl SetFresnelFactor(float value);
@@ -510,7 +518,7 @@ namespace DirectX
 
         void __cdecl EnableDefaultLighting() override;
 
-        static const int MaxDirectionalLights = 4;
+        static constexpr int MaxDirectionalLights = 4;
 
         // Vertex color setting.
         void __cdecl SetVertexColorEnabled(bool value);
@@ -520,7 +528,7 @@ namespace DirectX
         void __cdecl SetTexture(_In_opt_ ID3D11ShaderResourceView* value);
         void __cdecl SetTexture(int whichTexture, _In_opt_ ID3D11ShaderResourceView* value);
 
-        static const int MaxTextures = 8;
+        static constexpr int MaxTextures = 8;
 
         // Animation setting.
         void __cdecl SetWeightsPerVertex(int value) override;
@@ -893,7 +901,7 @@ namespace DirectX
         // DGSL methods.
         struct DGSLEffectInfo : public EffectInfo
         {
-            static const int BaseTextureOffset = 4;
+            static constexpr int BaseTextureOffset = 4;
 
             const wchar_t* textures[DGSLEffect::MaxTextures - BaseTextureOffset];
             const wchar_t* pixelShader;

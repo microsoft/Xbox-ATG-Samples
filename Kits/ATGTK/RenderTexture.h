@@ -9,12 +9,16 @@
 
 #pragma once
 
+#include <wrl/client.h>
+
+#include <DirectXMath.h>
+
 namespace DX
 {
     class RenderTexture
     {
     public:
-        RenderTexture(DXGI_FORMAT format);
+        RenderTexture(DXGI_FORMAT format) noexcept;
 
         RenderTexture(RenderTexture&&) = default;
         RenderTexture& operator= (RenderTexture&&) = default;
@@ -22,13 +26,13 @@ namespace DX
         RenderTexture(RenderTexture const&) = delete;
         RenderTexture& operator= (RenderTexture const&) = delete;
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 
         void SetDevice(_In_ ID3D12Device* device, D3D12_CPU_DESCRIPTOR_HANDLE srvDescriptor, D3D12_CPU_DESCRIPTOR_HANDLE rtvDescriptor);
 
         void SizeResources(size_t width, size_t height);
 
-        void ReleaseDevice();
+        void ReleaseDevice() noexcept;
 
         void TransitionTo(_In_ ID3D12GraphicsCommandList* commandList, D3D12_RESOURCE_STATES afterState);
 
@@ -42,12 +46,22 @@ namespace DX
             TransitionTo(commandList, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE);
         }
 
+        void Clear(_In_ ID3D12GraphicsCommandList* commandList)
+        {
+            commandList->ClearRenderTargetView(m_rtvDescriptor, m_clearColor, 0, nullptr);
+        }
+
         void SetClearColor(DirectX::FXMVECTOR color)
         {
             DirectX::XMStoreFloat4(reinterpret_cast<DirectX::XMFLOAT4*>(m_clearColor), color);
         }
 
-        ID3D12Resource* GetResource() const { return m_resource.Get(); }
+        ID3D12Resource* GetResource() const noexcept { return m_resource.Get(); }
+
+        D3D12_RESOURCE_STATES GetCurrentState() const noexcept { return m_state; }
+
+        void UpdateState(D3D12_RESOURCE_STATES state) noexcept { m_state = state; }
+            // Use when a state transition was applied to the resource directly
 
     private:
         Microsoft::WRL::ComPtr<ID3D12Device>                m_device;
@@ -63,15 +77,15 @@ namespace DX
 
         void SizeResources(size_t width, size_t height);
 
-        void ReleaseDevice();
+        void ReleaseDevice() noexcept;
 
 #if defined(_XBOX_ONE) && defined(_TITLE)
         void EndScene(_In_ ID3D11DeviceContextX* context);
 #endif
 
-        ID3D11Texture2D*            GetRenderTarget() const { return m_renderTarget.Get(); }
-        ID3D11RenderTargetView*	    GetRenderTargetView() const { return m_renderTargetView.Get(); }
-        ID3D11ShaderResourceView*   GetShaderResourceView() const { return m_shaderResourceView.Get(); }
+        ID3D11Texture2D*            GetRenderTarget() const noexcept { return m_renderTarget.Get(); }
+        ID3D11RenderTargetView*	    GetRenderTargetView() const noexcept { return m_renderTargetView.Get(); }
+        ID3D11ShaderResourceView*   GetShaderResourceView() const noexcept { return m_shaderResourceView.Get(); }
 
     private:
         Microsoft::WRL::ComPtr<ID3D11Device>                m_device;
@@ -89,7 +103,7 @@ namespace DX
     public:
         void SetWindow(const RECT& rect);
 
-        DXGI_FORMAT GetFormat() const { return m_format; }
+        DXGI_FORMAT GetFormat() const noexcept { return m_format; }
         
     private:
         DXGI_FORMAT                                         m_format;

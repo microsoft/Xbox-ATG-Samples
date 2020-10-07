@@ -20,7 +20,7 @@
 #include "PrimitiveBatch.h"
 #include "VertexTypes.h"
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 #include "DescriptorHeap.h"
 #include "ResourceUploadBatch.h"
 #elif !defined(__d3d11_h__) && !defined(__d3d11_x_h__)
@@ -76,7 +76,7 @@ namespace ATG
 
         ~Help();
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
         void Render(ID3D12GraphicsCommandList* commandList);
 
         void RestoreDevice(ID3D12Device* device, DirectX::ResourceUploadBatch& uploadBatch, const DirectX::RenderTargetState& rtState);
@@ -98,7 +98,7 @@ namespace ATG
         std::unique_ptr<DirectX::BasicEffect>                                   m_lineEffect;
         std::unique_ptr<DirectX::SpriteFont>                                    m_spriteFonts[3];
         
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
         std::unique_ptr<DirectX::DescriptorHeap>                                m_descriptorHeap;
 
         Microsoft::WRL::ComPtr<ID3D12Resource>                                  m_circleTex;

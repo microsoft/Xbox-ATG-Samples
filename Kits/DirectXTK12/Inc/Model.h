@@ -9,7 +9,9 @@
 
 #pragma once
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX_SCARLETT
+#include <d3d12_xs.h>
+#elif (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
 #include <d3d12_x.h>
 #else
 #include <d3d12.h>
@@ -50,8 +52,6 @@ namespace DirectX
         ModelLoader_MaterialColorsSRGB  = 0x1,
         ModelLoader_AllowLargeModels    = 0x2,
     };
-
-    inline ModelLoaderFlags operator|(ModelLoaderFlags a, ModelLoaderFlags b) noexcept { return static_cast<ModelLoaderFlags>(static_cast<int>(a) | static_cast<int>(b)); }
 
     //----------------------------------------------------------------------------------
     // Each mesh part is a submesh with a single effect
@@ -350,4 +350,15 @@ namespace DirectX
             int samplerDescriptorOffset,
             _In_ const ModelMeshPart* part) const;
     };
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-dynamic-exception-spec"
+#endif
+
+    DEFINE_ENUM_FLAG_OPERATORS(ModelLoaderFlags);
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 }

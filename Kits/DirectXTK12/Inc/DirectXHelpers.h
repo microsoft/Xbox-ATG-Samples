@@ -9,7 +9,9 @@
 
 #pragma once
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX_SCARLETT
+#include <d3d12_xs.h>
+#elif (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
 #include <d3d12_x.h>
 #else
 #include <d3d12.h>
@@ -25,7 +27,9 @@
 
 #include <wrl/client.h>
 
+#ifndef _GAMING_XBOX
 #pragma comment(lib,"dxguid.lib")
+#endif
 
 #ifndef IID_GRAPHICS_PPV_ARGS
 #define IID_GRAPHICS_PPV_ARGS(x) IID_PPV_ARGS(x)
@@ -219,6 +223,10 @@ namespace DirectX
         std::vector<D3D12_RESOURCE_BARRIER> mBarriers;
     };
 
+    // Helper to check for power-of-2
+    template<typename T>
+    constexpr bool IsPowerOf2(T x) noexcept { return ((x != 0) && !(x & (x - 1))); }
+
     // Helpers for aligning values by a power of 2
     template<typename T>
     inline T AlignDown(T size, size_t alignment) noexcept
@@ -226,7 +234,7 @@ namespace DirectX
         if (alignment > 0)
         {
             assert(((alignment - 1) & alignment) == 0);
-            T mask = static_cast<T>(alignment - 1);
+            auto mask = static_cast<T>(alignment - 1);
             return size & ~mask;
         }
         return size;
@@ -238,7 +246,7 @@ namespace DirectX
         if (alignment > 0)
         {
             assert(((alignment - 1) & alignment) == 0);
-            T mask = static_cast<T>(alignment - 1);
+            auto mask = static_cast<T>(alignment - 1);
             return (size + mask) & ~mask;
         }
         return size;

@@ -572,7 +572,7 @@ void Sample::RenderUI()
 // Executes basic render loop.
 void Sample::Tick()
 {
-    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Frame %I64u", m_frame);
+    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Frame %llu", m_frame);
 
     m_timer.Tick([&]()
     {
@@ -778,10 +778,7 @@ void Sample::CreateDeviceDependentResources()
         static_cast<UINT>(RTVDescriptors::Count));
 
     // Create descriptor heap for resources
-    m_resourceDescriptorHeap = std::make_unique<DescriptorHeap>(d3dDevice,
-        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
-        static_cast<UINT>(ResourceDescriptors::Count));
+    m_resourceDescriptorHeap = std::make_unique<DescriptorHeap>(d3dDevice, static_cast<UINT>(ResourceDescriptors::Count));
 
     ResourceUploadBatch resourceUpload(d3dDevice);
     resourceUpload.Begin();

@@ -165,7 +165,7 @@ void Sample::Initialize(IUnknown* window)
 // Executes basic render loop.
 void Sample::Tick()
 {
-    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Frame %I64u", m_frame);
+    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Frame %llu", m_frame);
 
     m_timer.Tick([&]()
     {
@@ -398,9 +398,7 @@ void Sample::CreateDeviceDependentResources()
     XMStoreFloat3(&m_cameraEye, c_cameraEye);
 
     // UI resources
-    m_fontDescriptors = std::make_unique<DescriptorHeap>(device,
-        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, Descriptors::Count);
+    m_fontDescriptors = std::make_unique<DescriptorHeap>(device, Descriptors::Count);
 
     RenderTargetState rtState(m_deviceResources->GetBackBufferFormat(), m_deviceResources->GetDepthBufferFormat());
     SpriteBatchPipelineStateDescription pd(rtState, &CommonStates::AlphaBlend);
@@ -500,7 +498,7 @@ void Sample::CreateShaders()
 
         // Create constant buffer view.
         const uint32_t c_cbCount = 1;
-        m_resourceDescriptors = std::make_unique<DescriptorHeap>(device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, c_cbCount);
+        m_resourceDescriptors = std::make_unique<DescriptorHeap>(device, c_cbCount);
 
         D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
         cbvDesc.BufferLocation = m_cbPerFrame->GetGPUVirtualAddress();

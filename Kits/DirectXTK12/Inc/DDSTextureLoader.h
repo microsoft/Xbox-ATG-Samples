@@ -15,7 +15,9 @@
 
 #pragma once
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX_SCARLETT
+#include <d3d12_xs.h>
+#elif (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
 #include <d3d12_x.h>
 #else
 #include <d3d12.h>
@@ -32,7 +34,7 @@ namespace DirectX
 
 #ifndef DDS_ALPHA_MODE_DEFINED
 #define DDS_ALPHA_MODE_DEFINED
-    enum DDS_ALPHA_MODE
+    enum DDS_ALPHA_MODE : uint32_t
     {
         DDS_ALPHA_MODE_UNKNOWN       = 0,
         DDS_ALPHA_MODE_STRAIGHT      = 1,
@@ -46,8 +48,8 @@ namespace DirectX
     {
         DDS_LOADER_DEFAULT      = 0,
         DDS_LOADER_FORCE_SRGB   = 0x1,
-        DDS_LOADER_MIP_AUTOGEN  = 0x4,
-        DDS_LOADER_MIP_RESERVE  = 0x8,
+        DDS_LOADER_MIP_AUTOGEN  = 0x8,
+        DDS_LOADER_MIP_RESERVE  = 0x10,
     };
 
     // Standard version
@@ -100,7 +102,7 @@ namespace DirectX
         size_t ddsDataSize,
         size_t maxsize,
         D3D12_RESOURCE_FLAGS resFlags,
-        unsigned int loadFlags,
+        DDS_LOADER_FLAGS loadFlags,
         _Outptr_ ID3D12Resource** texture,
         std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
@@ -111,7 +113,7 @@ namespace DirectX
         _In_z_ const wchar_t* szFileName,
         size_t maxsize,
         D3D12_RESOURCE_FLAGS resFlags,
-        unsigned int loadFlags,
+        DDS_LOADER_FLAGS loadFlags,
         _Outptr_ ID3D12Resource** texture,
         std::unique_ptr<uint8_t[]>& ddsData,
         std::vector<D3D12_SUBRESOURCE_DATA>& subresources,
@@ -126,7 +128,7 @@ namespace DirectX
         size_t ddsDataSize,
         size_t maxsize,
         D3D12_RESOURCE_FLAGS resFlags,
-        unsigned int loadFlags,
+        DDS_LOADER_FLAGS loadFlags,
         _Outptr_ ID3D12Resource** texture,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
@@ -137,8 +139,19 @@ namespace DirectX
         _In_z_ const wchar_t* szFileName,
         size_t maxsize,
         D3D12_RESOURCE_FLAGS resFlags,
-        unsigned int loadFlags,
+        DDS_LOADER_FLAGS loadFlags,
         _Outptr_ ID3D12Resource** texture,
         _Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr,
         _Out_opt_ bool* isCubeMap = nullptr);
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-dynamic-exception-spec"
+#endif
+
+    DEFINE_ENUM_FLAG_OPERATORS(DDS_LOADER_FLAGS);
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 }

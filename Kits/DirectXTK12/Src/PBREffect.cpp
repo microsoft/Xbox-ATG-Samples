@@ -12,58 +12,57 @@
 
 using namespace DirectX;
 
-
-// Constant buffer layout. Must match the shader!
-struct PBREffectConstants
-{    
-    XMVECTOR eyePosition;
-    XMMATRIX world;
-    XMVECTOR worldInverseTranspose[3];
-    XMMATRIX worldViewProj;
-    XMMATRIX prevWorldViewProj; // for velocity generation
-
-    XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];           
-    XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
-    
-    // PBR Parameters
-    XMVECTOR Albedo;
-    float    Metallic;
-    float    Roughness;
-    int      numRadianceMipLevels;
-
-    // Size of render target 
-    float   targetWidth;
-    float   targetHeight;
-};
-
-static_assert((sizeof(PBREffectConstants) % 16) == 0, "CB size not padded correctly");
-
-
-// Traits type describes our characteristics to the EffectBase template.
-struct PBREffectTraits
+namespace
 {
-    using ConstantBufferType = PBREffectConstants;
+    // Constant buffer layout. Must match the shader!
+    struct PBREffectConstants
+    {
+        XMVECTOR eyePosition;
+        XMMATRIX world;
+        XMVECTOR worldInverseTranspose[3];
+        XMMATRIX worldViewProj;
+        XMMATRIX prevWorldViewProj; // for velocity generation
 
-    static const int VertexShaderCount = 4;
-    static const int PixelShaderCount = 5;
-    static const int ShaderPermutationCount = 10;
-    static const int RootSignatureCount = 1;
-};
+        XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];
+        XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
 
+        // PBR Parameters
+        XMVECTOR Albedo;
+        float    Metallic;
+        float    Roughness;
+        int      numRadianceMipLevels;
+
+        // Size of render target 
+        float   targetWidth;
+        float   targetHeight;
+    };
+
+    static_assert((sizeof(PBREffectConstants) % 16) == 0, "CB size not padded correctly");
+
+
+    // Traits type describes our characteristics to the EffectBase template.
+    struct PBREffectTraits
+    {
+        using ConstantBufferType = PBREffectConstants;
+
+        static constexpr int VertexShaderCount = 4;
+        static constexpr int PixelShaderCount = 5;
+        static constexpr int ShaderPermutationCount = 10;
+        static constexpr int RootSignatureCount = 1;
+    };
+}
 
 // Internal PBREffect implementation class.
 class PBREffect::Impl : public EffectBase<PBREffectTraits>
 {
 public:
     Impl(_In_ ID3D12Device* device, 
-        int effectFlags, 
-        const EffectPipelineStateDescription& pipelineDescription,
-        bool emissive,
-        bool generateVelocity);
+        uint32_t effectFlags,
+        const EffectPipelineStateDescription& pipelineDescription);
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 
-    int GetPipelineStatePermutation(bool velocityEnabled, bool biasedVertexNormals) const noexcept;
+    int GetPipelineStatePermutation(uint32_t effectFlags) const noexcept;
 
     bool textureEnabled;
     bool emissiveMap;
@@ -91,7 +90,29 @@ public:
 // Include the precompiled shader code.
 namespace
 {
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX_SCARLETT
+    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_VSConstant.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_VSConstantVelocity.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_VSConstantBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_VSConstantVelocityBn.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_PSConstant.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_PSTextured.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_PSTexturedEmissive.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_PSTexturedVelocity.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettPBREffect_PSTexturedEmissiveVelocity.inc"
+#elif defined(_GAMING_XBOX)
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_VSConstant.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_VSConstantVelocity.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_VSConstantBn.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_VSConstantVelocityBn.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_PSConstant.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_PSTextured.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_PSTexturedEmissive.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_PSTexturedVelocity.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOnePBREffect_PSTexturedEmissiveVelocity.inc"
+#elif defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOnePBREffect_VSConstant.inc"
     #include "Shaders/Compiled/XboxOnePBREffect_VSConstantVelocity.inc"
     #include "Shaders/Compiled/XboxOnePBREffect_VSConstantBn.inc"
@@ -177,14 +198,12 @@ SharedResourcePool<ID3D12Device*, EffectBase<PBREffectTraits>::DeviceResources> 
 
 // Constructor.
 PBREffect::Impl::Impl(_In_ ID3D12Device* device,
-    int effectFlags,
-    const EffectPipelineStateDescription& pipelineDescription,
-    bool emissive,
-    bool generateVelocity)
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription)
     : EffectBase(device),
-    emissiveMap(emissive),
-    descriptors{},
-    lightColor{}
+        emissiveMap((effectFlags & EffectFlags::Emissive) != 0),
+        descriptors{},
+        lightColor{}
 {
     static_assert(_countof(EffectBase<PBREffectTraits>::VertexShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
     static_assert(_countof(EffectBase<PBREffectTraits>::VertexShaderBytecode) == PBREffectTraits::VertexShaderCount, "array/max mismatch");
@@ -208,7 +227,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
     {
         textureEnabled = false;
 
-        if (emissive || generateVelocity)
+        if (effectFlags & (EffectFlags::Emissive | EffectFlags::Velocity))
         {
             DebugTrace("ERROR: PBREffect does not support emissive or velocity without surface textures\n");
             throw std::invalid_argument("PBREffect");
@@ -276,8 +295,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
     }
 
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation(generateVelocity,
-        (effectFlags & EffectFlags::BiasedVertexNormals) != 0);
+    int sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < PBREffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < PBREffectTraits::ShaderPermutationCount);
 
@@ -299,12 +317,12 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
 }
 
 
-int PBREffect::Impl::GetPipelineStatePermutation(bool velocityEnabled, bool biasedVertexNormals) const noexcept
+int PBREffect::Impl::GetPipelineStatePermutation(uint32_t effectFlags) const noexcept
 {
     int permutation = 0;
 
     // Textured RMA vs. constant albedo/roughness/metalness?
-    if (velocityEnabled)
+    if (effectFlags & EffectFlags::Velocity)
     {
         // Optional velocity buffer (implies textured RMA)?
         permutation = 3;
@@ -320,7 +338,7 @@ int PBREffect::Impl::GetPipelineStatePermutation(bool velocityEnabled, bool bias
         permutation += 1;
     }
 
-    if (biasedVertexNormals)
+    if (effectFlags & EffectFlags::BiasedVertexNormals)
     {
         // Compressed normals need to be scaled and biased in the vertex shader.
         permutation += 5;
@@ -455,19 +473,17 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 }
 
 // Public constructor.
-PBREffect::PBREffect(_In_ ID3D12Device* device, 
-                     int effectFlags, 
-                    const EffectPipelineStateDescription& pipelineDescription, 
-                    bool emissive,
-                    bool generateVelocity)
-    : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, emissive, generateVelocity))
+PBREffect::PBREffect(_In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription)
+    : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription))
 {
 }
 
 
 // Move constructor.
 PBREffect::PBREffect(PBREffect&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
+    : pImpl(std::move(moveFrom.pImpl))
 {
 }
 
