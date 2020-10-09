@@ -70,7 +70,7 @@ void Sample::Initialize(IUnknown* window)
 // Executes basic render loop.
 void Sample::Tick()
 {
-    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Frame %I64u", m_frame);
+    PIXBeginEvent(PIX_COLOR_DEFAULT, L"Frame %llu", m_frame);
 
     m_timer.Tick([&]()
     {
@@ -281,7 +281,7 @@ void Sample::Render()
             device->GetGpuHardwareConfiguration(&hwConfig);
 
             wchar_t buff[128] = {};
-            swprintf_s(buff, L"%I64u", hwConfig.GpuFrequency);
+            swprintf_s(buff, L"%llu", hwConfig.GpuFrequency);
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"GPU Frequency", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
 

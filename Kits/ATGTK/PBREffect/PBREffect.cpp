@@ -79,8 +79,7 @@ class ATG::PBREffect::Impl : public EffectBase<PBREffectTraits>
 public:
     Impl(_In_ ID3D12Device* device, 
         int effectFlags, 
-        const EffectPipelineStateDescription& pipelineDescription,
-        bool generateVelocity);
+        const EffectPipelineStateDescription& pipelineDescription);
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 
@@ -89,9 +88,6 @@ public:
     static const int MaxDirectionalLights = 3;
     
     int flags;
-
-    // When PBR moves into DirectXTK, this could become an effect flag.
-    bool doGenerateVelocity;
 
     enum RootParameterIndex
     {
@@ -144,10 +140,9 @@ const int EffectBase<PBREffectTraits>::PixelShaderIndices[] =
 SharedResourcePool<ID3D12Device*, EffectBase<PBREffectTraits>::DeviceResources> EffectBase<PBREffectTraits>::deviceResourcesPool;
 
 // Constructor.
-ATG::PBREffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool generateVelocity)
+ATG::PBREffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
     : EffectBase(device),
       flags(effectFlags),
-      doGenerateVelocity(generateVelocity),
       descriptors{}
 {
     static_assert( _countof(EffectBase<PBREffectTraits>::VertexShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch" );
@@ -209,7 +204,7 @@ ATG::PBREffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Eff
 
     // Create pipeline state
     int sp = GetPipelineStatePermutation((effectFlags & EffectFlags::Texture) != 0,
-                                         doGenerateVelocity);
+        (effectFlags & EffectFlags::Velocity) != 0);
     int vi = EffectBase<PBREffectTraits>::VertexShaderIndices[sp];
     int pi = EffectBase<PBREffectTraits>::PixelShaderIndices[sp];
    
@@ -301,9 +296,8 @@ void ATG::PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 // Public constructor.
 ATG::PBREffect::PBREffect(_In_ ID3D12Device* device,
                      int effectFlags, 
-                    const EffectPipelineStateDescription& pipelineDescription, 
-                    bool generateVelocity)
-    : pImpl(new Impl(device, effectFlags, pipelineDescription, generateVelocity))
+                    const EffectPipelineStateDescription& pipelineDescription)
+    : pImpl(new Impl(device, effectFlags, pipelineDescription))
 {
 }
 

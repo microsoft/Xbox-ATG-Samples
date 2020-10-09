@@ -9,7 +9,9 @@
 
 #pragma once
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX_SCARLETT
+#include <d3d12_xs.h>
+#elif (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
 #include <d3d12_x.h>
 #else
 #include <d3d12.h>
@@ -77,6 +79,8 @@ namespace DirectX
             return *this;
         }
 
+        PrimitiveBatch(PrimitiveBatch const&) = delete;
+        PrimitiveBatch& operator= (PrimitiveBatch const&) = delete;
 
         // Similar to the D3D9 API DrawPrimitiveUP.
         void Draw(D3D_PRIMITIVE_TOPOLOGY topology, _In_reads_(vertexCount) TVertex const* vertices, size_t vertexCount)

@@ -7,11 +7,13 @@
 #pragma once
 
 #include <stdint.h>
-#include <memory>
-#include <vector>
-#include <stack>
 #include <assert.h>
+
+#include <iostream>
+#include <memory>
+#include <stack>
 #include <type_traits>
+#include <vector>
 
 #define ENABLE_IF_INTEGRAL(_T_) typename std::enable_if<std::is_integral<_T_>::value>::type* = nullptr
 #define ENABLE_IF_NOT_INTEGRAL(_T_) typename std::enable_if<!std::is_integral<_T_>::value>::type* = nullptr
@@ -787,14 +789,14 @@ namespace ATG
         };
 
     public:
-        template<typename T>
+        template<typename TB>
         class ClassVisitorAction
         {
         public:
             template<typename MmbrTyp>
             struct P2Mmbr
             {
-                typedef MmbrTyp T::*ptr;
+                typedef MmbrTyp TB::*ptr;
             };
 
             ClassVisitorAction(IClassVisitorActionImpl *impl)
@@ -802,12 +804,12 @@ namespace ATG
             {
             }
 
-            ClassVisitorAction(ClassVisitorAction<T> &&rhs)
+            ClassVisitorAction(ClassVisitorAction<TB> &&rhs)
                 : m_impl(std::move(rhs.m_impl))
             {
             }
 
-            ClassVisitorAction &operator=(ClassVisitorAction<T> &&rhs)
+            ClassVisitorAction &operator=(ClassVisitorAction<TB> &&rhs)
             {
                 m_impl = std::move(rhs.m_impl);
                 return *this;
@@ -816,12 +818,12 @@ namespace ATG
             ClassVisitorAction(const ClassVisitorAction &) = delete;
             ClassVisitorAction&  operator=(const ClassVisitorAction &) = delete;
 
-            void Visit(T &inst, class ResolvedActionContext &ctx) const
+            void Visit(TB &inst, class ResolvedActionContext &ctx) const
             {
                 m_impl->VisitAction(inst, static_cast<VisitorContext&>(ctx));
             }
 
-            void Visit(const T &inst, class ResolvedActionContext &ctx) const
+            void Visit(const TB &inst, class ResolvedActionContext &ctx) const
             {
                 m_impl->ConstVisitAction(inst, static_cast<ConstVisitorContext&>(ctx));
             }

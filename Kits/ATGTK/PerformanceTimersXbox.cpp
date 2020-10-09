@@ -188,7 +188,7 @@ private:
 //======================================================================================
 // GPUTimer (DirectX 12.X)
 //======================================================================================
-#if defined(__d3d12_x_h__)
+#if defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 
 template<typename t_CommandList>
 void GPUCommandListTimer<t_CommandList>::BeginFrame(_In_ t_CommandList* commandList)
@@ -397,7 +397,6 @@ namespace DX
 {
     template class GPUCommandListTimer<ID3D12GraphicsCommandList>;
     template class GPUCommandListTimer<ID3D12XboxDmaCommandList>;
-    template class GPUCommandListTimer<ID3D12GraphicsCommandList>;
 }
 
 

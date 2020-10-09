@@ -12,38 +12,40 @@
 
 using namespace DirectX;
 
-
-// Constant buffer layout. Must match the shader!
-struct DebugEffectConstants
+namespace
 {
-    XMVECTOR ambientDownAndAlpha;
-    XMVECTOR ambientRange;
-    
-    XMMATRIX world;
-    XMVECTOR worldInverseTranspose[3];
-    XMMATRIX worldViewProj;
-};
+    // Constant buffer layout. Must match the shader!
+    struct DebugEffectConstants
+    {
+        XMVECTOR ambientDownAndAlpha;
+        XMVECTOR ambientRange;
 
-static_assert((sizeof(DebugEffectConstants) % 16) == 0, "CB size not padded correctly");
+        XMMATRIX world;
+        XMVECTOR worldInverseTranspose[3];
+        XMMATRIX worldViewProj;
+    };
+
+    static_assert((sizeof(DebugEffectConstants) % 16) == 0, "CB size not padded correctly");
 
 
-// Traits type describes our characteristics to the EffectBase template.
-struct DebugEffectTraits
-{
-    using ConstantBufferType = DebugEffectConstants;
+    // Traits type describes our characteristics to the EffectBase template.
+    struct DebugEffectTraits
+    {
+        using ConstantBufferType = DebugEffectConstants;
 
-    static const int VertexShaderCount = 4;
-    static const int PixelShaderCount = 4;
-    static const int ShaderPermutationCount = 16;
-    static const int RootSignatureCount = 1;
-};
-
+        static constexpr int VertexShaderCount = 4;
+        static constexpr int PixelShaderCount = 4;
+        static constexpr int ShaderPermutationCount = 16;
+        static constexpr int RootSignatureCount = 1;
+    };
+}
 
 // Internal DebugEffect implementation class.
 class DebugEffect::Impl : public EffectBase<DebugEffectTraits>
 {
 public:
-    Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, DebugEffect::Mode debugMode);
+    Impl(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
+        DebugEffect::Mode debugMode);
 
     enum RootParameterIndex
     {
@@ -60,7 +62,29 @@ public:
 // Include the precompiled shader code.
 namespace
 {
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX_SCARLETT
+    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebug.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugVc.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugBn.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_VSDebugVcBn.inc"
+
+    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_PSHemiAmbient.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_PSRGBNormals.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_PSRGBTangents.inc"
+    #include "Shaders/Compiled/XboxGamingScarlettDebugEffect_PSRGBBiTangents.inc"
+#elif defined(_GAMING_XBOX)
+    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebug.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugVc.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugBn.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_VSDebugVcBn.inc"
+
+    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_PSHemiAmbient.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_PSRGBNormals.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_PSRGBTangents.inc"
+    #include "Shaders/Compiled/XboxGamingXboxOneDebugEffect_PSRGBBiTangents.inc"
+#elif defined(_XBOX_ONE) && defined(_TITLE)
     #include "Shaders/Compiled/XboxOneDebugEffect_VSDebug.inc"
     #include "Shaders/Compiled/XboxOneDebugEffect_VSDebugVc.inc"
 
@@ -163,7 +187,11 @@ SharedResourcePool<ID3D12Device*, EffectBase<DebugEffectTraits>::DeviceResources
 
 
 // Constructor.
-DebugEffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, DebugEffect::Mode debugMode)
+DebugEffect::Impl::Impl(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    DebugEffect::Mode debugMode)
     : EffectBase(device)
 {
     static_assert(_countof(EffectBase<DebugEffectTraits>::VertexShaderIndices) == DebugEffectTraits::ShaderPermutationCount, "array/max mismatch");
@@ -279,15 +307,19 @@ void DebugEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
 
 // Public constructor.
-DebugEffect::DebugEffect(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, Mode debugMode)
-  : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, debugMode))
+DebugEffect::DebugEffect(
+    _In_ ID3D12Device* device,
+    uint32_t effectFlags,
+    const EffectPipelineStateDescription& pipelineDescription,
+    Mode debugMode)
+    : pImpl(std::make_unique<Impl>(device, effectFlags, pipelineDescription, debugMode))
 {
 }
 
 
 // Move constructor.
 DebugEffect::DebugEffect(DebugEffect&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
+    : pImpl(std::move(moveFrom.pImpl))
 {
 }
 

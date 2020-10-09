@@ -30,8 +30,9 @@ Durango12
 Profile
 Release
 x64
-Kits/DirectXTK/Src/Shaders/Compiled/XboxOne*.*
-Kits/DirectXTK12/Src/Shaders/Compiled/XboxOne*.*
+Kits/DirectXTK/Src/Shaders/Compiled/
+Kits/DirectXTK12/Src/Shaders/Compiled/
+Kits/DirectXTex/Shaders/Compiled/
 UWPSamples/Graphics/SimplePBR12_UWP/Compiled/
 XDKSamples/Graphics/SimplePBR12_Xbox/Compiled/
 XDKSamples/Graphics/SimpleDmaDecompression/zlib/lib/

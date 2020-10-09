@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <DirectXColors.h>
 #include <DirectXCollision.h>
 
 #include "PrimitiveBatch.h"

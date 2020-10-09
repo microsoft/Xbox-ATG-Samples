@@ -808,10 +808,7 @@ void Sample::CreateDeviceDependentResources()
         static_cast<UINT>(RTVDescriptors::Count));
 
     // Create descriptor heap for resources
-    m_resourceDescriptorHeap = std::make_unique<DescriptorHeap>(device,
-        D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV,
-        D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE,
-        static_cast<UINT>(ResourceDescriptors::Count));
+    m_resourceDescriptorHeap = std::make_unique<DescriptorHeap>(device, static_cast<UINT>(ResourceDescriptors::Count));
 
     ResourceUploadBatch resourceUpload(device);
     resourceUpload.Begin();

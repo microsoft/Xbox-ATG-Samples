@@ -21,7 +21,7 @@ using namespace DX;
 
 const XMVECTORF32 TextConsole::Line::s_defaultColor = Colors::Transparent;
 
-TextConsole::TextConsole()
+TextConsole::TextConsole() noexcept
     : m_layout{},
     m_foregroundColor(1.f, 1.f, 1.f, 1.f),
     m_debugOutput(false),
@@ -31,14 +31,14 @@ TextConsole::TextConsole()
     Clear();
 }
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 _Use_decl_annotations_
 TextConsole::TextConsole(
     ID3D12Device* device,
     ResourceUploadBatch& upload,
     const RenderTargetState& rtState,
     const wchar_t* fontName,
-    D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptor)
+    D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptor) noexcept(false)
     : m_layout{},
     m_foregroundColor(1.f, 1.f, 1.f, 1.f),
     m_debugOutput(false),
@@ -51,7 +51,7 @@ TextConsole::TextConsole(
 }
 #else
 _Use_decl_annotations_
-TextConsole::TextConsole(ID3D11DeviceContext* context, const wchar_t* fontName)
+TextConsole::TextConsole(ID3D11DeviceContext* context, const wchar_t* fontName) noexcept(false)
     : m_layout{},
     m_foregroundColor(1.f, 1.f, 1.f, 1.f),
     m_debugOutput(false),
@@ -64,7 +64,7 @@ TextConsole::TextConsole(ID3D11DeviceContext* context, const wchar_t* fontName)
 }
 #endif
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 void TextConsole::Render(_In_ ID3D12GraphicsCommandList* commandList)
 #else
 void TextConsole::Render()
@@ -82,7 +82,7 @@ void TextConsole::Render()
 
     XMVECTOR foregroundColor = XMLoadFloat4(&m_foregroundColor);
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
     m_batch->Begin(commandList);
 #else
     m_batch->Begin();
@@ -106,7 +106,7 @@ void TextConsole::Render()
     m_batch->End();
 }
 
-void TextConsole::Clear()
+void TextConsole::Clear() noexcept
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -222,7 +222,7 @@ void TextConsole::SetWindow(const RECT& layout)
 
     m_layout = layout;
 
-    assert(m_font != 0);
+    assert(m_font != nullptr);
 
     float lineSpacing = m_font->GetLineSpacing();
     unsigned int rows = std::max<unsigned int>(1, static_cast<unsigned int>(float(layout.bottom - layout.top) / lineSpacing));
@@ -262,7 +262,7 @@ void TextConsole::SetWindow(const RECT& layout)
     }
 }
 
-void TextConsole::ReleaseDevice()
+void TextConsole::ReleaseDevice() noexcept
 {
     m_batch.reset();
     m_font.reset();
@@ -271,7 +271,7 @@ void TextConsole::ReleaseDevice()
 #endif
 }
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 _Use_decl_annotations_
 void TextConsole::RestoreDevice(
     ID3D12Device* device,
@@ -390,21 +390,21 @@ void TextConsole::IncrementLine()
 }
 
 //--------------------------------------------------------------------------------------
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
-TextConsoleImage::TextConsoleImage() :
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
+TextConsoleImage::TextConsoleImage() noexcept :
     TextConsole(),
     m_bgGpuDescriptor{},
     m_bgSize{}
 {
 }
 #else
-TextConsoleImage::TextConsoleImage() :
+TextConsoleImage::TextConsoleImage() noexcept :
     TextConsole()
 {
 }
 #endif
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 _Use_decl_annotations_
 TextConsoleImage::TextConsoleImage(
     ID3D12Device* device,
@@ -413,7 +413,7 @@ TextConsoleImage::TextConsoleImage(
     const wchar_t* fontName,
     const wchar_t* image,
     D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorFont, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorFont,
-    D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorImage, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorImage) :
+    D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorImage, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorImage) noexcept(false) :
     TextConsole(),
     m_bgGpuDescriptor{},
     m_bgSize{}
@@ -424,14 +424,14 @@ TextConsoleImage::TextConsoleImage(
 }
 #else
 _Use_decl_annotations_
-TextConsoleImage::TextConsoleImage(ID3D11DeviceContext* context, const wchar_t* fontName, const wchar_t* image) :
+TextConsoleImage::TextConsoleImage(ID3D11DeviceContext* context, const wchar_t* fontName, const wchar_t* image) noexcept(false) :
     TextConsole()
 {
     RestoreDevice(context, fontName, image);
 }
 #endif
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 void TextConsoleImage::Render(_In_ ID3D12GraphicsCommandList* commandList)
 {
     m_batch->Begin(commandList);
@@ -473,7 +473,7 @@ void TextConsoleImage::SetWindow(const RECT& fullscreen, bool useSafeRect)
     auto width = UINT(std::max<LONG>(fullscreen.right - fullscreen.left, 1));
     auto height = UINT(std::max<LONG>(fullscreen.bottom - fullscreen.top, 1));
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
     D3D12_VIEWPORT vp = { 0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height),
         D3D12_DEFAULT_VIEWPORT_MIN_DEPTH, D3D12_DEFAULT_VIEWPORT_MAX_DEPTH };
     m_batch->SetViewport(vp);
@@ -483,14 +483,14 @@ void TextConsoleImage::SetWindow(const RECT& fullscreen, bool useSafeRect)
 #endif
 }
 
-void TextConsoleImage::ReleaseDevice()
+void TextConsoleImage::ReleaseDevice() noexcept
 {
     TextConsole::ReleaseDevice();
 
     m_background.Reset();
 }
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 _Use_decl_annotations_
 void TextConsoleImage::RestoreDevice(
     ID3D12Device* device,

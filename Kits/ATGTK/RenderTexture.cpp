@@ -16,18 +16,16 @@
 #include <stdio.h>
 #include <stdexcept>
 
-#include <wrl/client.h>
-
 using namespace DirectX;
 using namespace DX;
 
 using Microsoft::WRL::ComPtr;
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 //======================================================================================
 // Direct3D 12
 //======================================================================================
-RenderTexture::RenderTexture(DXGI_FORMAT format) :
+RenderTexture::RenderTexture(DXGI_FORMAT format) noexcept :
     m_state(D3D12_RESOURCE_STATE_COMMON),
     m_srvDescriptor{},
     m_rtvDescriptor{},
@@ -51,7 +49,7 @@ void RenderTexture::SetDevice(_In_ ID3D12Device* device, D3D12_CPU_DESCRIPTOR_HA
     }
 
     {
-        D3D12_FEATURE_DATA_FORMAT_SUPPORT formatSupport = { m_format };
+        D3D12_FEATURE_DATA_FORMAT_SUPPORT formatSupport = { m_format, D3D12_FORMAT_SUPPORT1_NONE, D3D12_FORMAT_SUPPORT2_NONE };
         if (FAILED(device->CheckFeatureSupport(D3D12_FEATURE_FORMAT_SUPPORT, &formatSupport, sizeof(formatSupport))))
         {
             throw std::exception("CheckFeatureSupport");
@@ -102,7 +100,7 @@ void RenderTexture::SizeResources(size_t width, size_t height)
         static_cast<UINT>(height),
         1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET);
 
-    D3D12_CLEAR_VALUE clearValue = { m_format };
+    D3D12_CLEAR_VALUE clearValue = { m_format, {} };
     memcpy(clearValue.Color, m_clearColor, sizeof(clearValue.Color));
 
     m_state = D3D12_RESOURCE_STATE_RENDER_TARGET;
@@ -127,7 +125,7 @@ void RenderTexture::SizeResources(size_t width, size_t height)
     m_height = height;
 }
 
-void RenderTexture::ReleaseDevice()
+void RenderTexture::ReleaseDevice() noexcept
 {
     m_resource.Reset();
     m_device.Reset();
@@ -148,7 +146,7 @@ void RenderTexture::TransitionTo(_In_ ID3D12GraphicsCommandList* commandList, D3
 //======================================================================================
 // Direct3D 11
 //======================================================================================
-RenderTexture::RenderTexture(DXGI_FORMAT format) :
+RenderTexture::RenderTexture(DXGI_FORMAT format) noexcept :
 #if defined(_XBOX_ONE) && defined(_TITLE)
     m_fastSemantics(false),
 #endif
@@ -258,7 +256,7 @@ void RenderTexture::SizeResources(size_t width, size_t height)
 }
 
 
-void RenderTexture::ReleaseDevice()
+void RenderTexture::ReleaseDevice() noexcept
 {
     m_renderTargetView.Reset();
     m_shaderResourceView.Reset();

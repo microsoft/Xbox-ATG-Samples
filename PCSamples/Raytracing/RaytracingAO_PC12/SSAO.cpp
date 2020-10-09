@@ -171,8 +171,7 @@ void SSAO::CreateDescriptorHeaps()
     // Allocate a csu heap.
     {
         const uint32_t c_csuCount = SSAOCSUDesc::CSUCount;
-        m_csuDescriptors = std::make_unique<DescriptorHeap>(
-            device, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE, c_csuCount);
+        m_csuDescriptors = std::make_unique<DescriptorHeap>(device, c_csuCount);
     }
 
     // Allocate a sampler heap.

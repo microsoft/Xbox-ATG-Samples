@@ -92,16 +92,39 @@
 #define _WIN32_WINNT_WIN10 0x0A00
 #endif
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#ifdef _GAMING_XBOX
+#include <gxdk.h>
+
+#if _GXDK_VER < 0x4A610D2B /* GXDK Edition 200600 */
+#error DirectX Tool Kit requires the June 2020 GDK or later
+#endif
+
+#ifdef _GAMING_XBOX_SCARLETT
+#include <d3d12_xs.h>
+#include <d3dx12_xs.h>
+#else
+#include <d3d12_x.h>
+#include <d3dx12_x.h>
+#endif
+#elif defined(_XBOX_ONE) && defined(_TITLE)
 #include <xdk.h>
 
 #if _XDK_VER < 0x295A044C /* XDK Edition 160200 */
 #error DirectX Tool Kit for Direct3D 12 requires the February 2016 XDK or later
 #endif
 
-#include <d3d12_x.h> // core 12.x header
-#include <d3dx12_x.h>  // utility 12.x header
+#include <d3d12_x.h>
+#include <d3dx12_x.h>
 #else
+
+#ifdef _GAMING_DESKTOP
+#include <grdk.h>
+
+#if _GRDK_VER < 0x47BB2070 /* GDK Edition 191102 */
+#error DirectX Tool Kit requires the November 2020 GDK QFE2 or later
+#endif
+#endif
+
 #include <dxgi1_4.h>
 #include <d3d12.h>
 
@@ -183,7 +206,7 @@
 #include <x3daudio.h>
 #include <xapofx.h>
 
-#if defined(_XBOX_ONE) && defined(_TITLE)
+#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
 #include <apu.h>
 #include <shapexmacontext.h>
 #include <xma2defs.h>

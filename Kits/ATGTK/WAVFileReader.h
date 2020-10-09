@@ -9,8 +9,9 @@
 
 #pragma once
 
-#include <stdint.h>
 #include <objbase.h>
+
+#include <cstdint>
 #include <memory>
 #include <mmreg.h>
 
@@ -21,7 +22,7 @@
 
 namespace DX
 {
-    inline uint32_t GetFormatTag(const WAVEFORMATEX* wfx)
+    inline uint32_t GetFormatTag(_In_ const WAVEFORMATEX* wfx) noexcept
     {
         if (wfx->wFormatTag == WAVE_FORMAT_EXTENSIBLE)
         {
@@ -51,14 +52,14 @@ namespace DX
         _In_ size_t wavDataSize,
         _Outptr_ const WAVEFORMATEX** wfx,
         _Outptr_ const uint8_t** startAudio,
-        _Out_ uint32_t* audioBytes);
+        _Out_ uint32_t* audioBytes) noexcept;
 
     HRESULT LoadWAVAudioFromFile(
         _In_z_ const wchar_t* szFileName,
         _Inout_ std::unique_ptr<uint8_t[]>& wavData,
         _Outptr_ const WAVEFORMATEX** wfx,
         _Outptr_ const uint8_t** startAudio,
-        _Out_ uint32_t* audioBytes);
+        _Out_ uint32_t* audioBytes) noexcept;
 
     struct WAVData
     {
@@ -70,7 +71,7 @@ namespace DX
         const uint32_t* seek;       // Note: XMA Seek data is Big-Endian
         uint32_t seekCount;
 
-        size_t GetSampleDuration() const
+        size_t GetSampleDuration() const noexcept
         {
             if (!wfx || !wfx->nChannels)
                 return 0;
@@ -101,14 +102,14 @@ namespace DX
                     }
                     break;
 
-                #endif
+            #endif
 
-                #if defined(_XBOX_ONE) && defined(_TITLE)
+            #if defined(_XBOX_ONE) && defined(_TITLE)
 
                 case WAVE_FORMAT_XMA2:
                     return reinterpret_cast<const XMA2WAVEFORMATEX*>(wfx)->SamplesEncoded;
 
-                #endif
+            #endif
 
                 default:
                     if (wfx->wBitsPerSample > 0)
@@ -121,7 +122,7 @@ namespace DX
             return 0;
         }
 
-        size_t GetSampleDurationMS() const
+        size_t GetSampleDurationMS() const noexcept
         {
             if (!wfx || !wfx->nSamplesPerSec)
                 return 0;
@@ -134,10 +135,10 @@ namespace DX
     HRESULT LoadWAVAudioInMemoryEx(
         _In_reads_bytes_(wavDataSize) const uint8_t* wavData,
         _In_ size_t wavDataSize,
-        _Out_ WAVData& result);
+        _Out_ WAVData& result) noexcept;
 
     HRESULT LoadWAVAudioFromFileEx(
         _In_z_ const wchar_t* szFileName,
         _Inout_ std::unique_ptr<uint8_t[]>& wavData,
-        _Out_ WAVData& result);
+        _Out_ WAVData& result) noexcept;
 }

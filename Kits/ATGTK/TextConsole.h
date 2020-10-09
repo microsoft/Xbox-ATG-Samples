@@ -12,7 +12,7 @@
 
 #pragma once
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
 #include "RenderTargetState.h"
 #include "ResourceUploadBatch.h"
 #endif
@@ -30,16 +30,16 @@ namespace DX
     class TextConsole
     {
     public:
-        TextConsole();
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+        TextConsole() noexcept;
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
         TextConsole(
             _In_ ID3D12Device* device,
             DirectX::ResourceUploadBatch& upload,
             const DirectX::RenderTargetState& rtState,
             _In_z_ const wchar_t* fontName,
-            D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptor);
+            D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptor, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptor) noexcept(false);
 #elif defined(__d3d11_h__) || defined(__d3d11_x_h__)
-        TextConsole(_In_ ID3D11DeviceContext* context, _In_z_ const wchar_t* fontName);
+        TextConsole(_In_ ID3D11DeviceContext* context, _In_z_ const wchar_t* fontName) noexcept(false);
 #else
 #   error Please #include <d3d11.h> or <d3d12.h>
 #endif
@@ -50,13 +50,13 @@ namespace DX
         TextConsole(TextConsole const&) = delete;
         TextConsole& operator= (TextConsole const&) = delete;
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
         void Render(_In_ ID3D12GraphicsCommandList* commandList);
 #else
         void Render();
 #endif
 
-        void Clear();
+        void Clear() noexcept;
 
         void Write(_In_z_ const wchar_t* str);
         void XM_CALLCONV Write(DirectX::FXMVECTOR color, _In_z_ const wchar_t* str);
@@ -73,8 +73,8 @@ namespace DX
 
         void SetDebugOutput(bool debug) { m_debugOutput = debug; }
 
-        void ReleaseDevice();
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+        void ReleaseDevice() noexcept;
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
         void RestoreDevice(
             _In_ ID3D12Device* device,
             DirectX::ResourceUploadBatch& upload,
@@ -134,8 +134,8 @@ namespace DX
     class TextConsoleImage : public TextConsole
     {
     public:
-        TextConsoleImage();
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+        TextConsoleImage() noexcept;
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
         TextConsoleImage(
             _In_ ID3D12Device* device,
             DirectX::ResourceUploadBatch& upload,
@@ -143,9 +143,9 @@ namespace DX
             _In_z_ const wchar_t* fontName,
             _In_z_ const wchar_t* image,
             D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorFont, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorFont,
-            D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorImage, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorImage);
+            D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorImage, D3D12_GPU_DESCRIPTOR_HANDLE gpuDescriptorImage) noexcept(false);
 #else
-        TextConsoleImage(_In_ ID3D11DeviceContext* context, _In_z_ const wchar_t* fontName, _In_z_ const wchar_t* image);
+        TextConsoleImage(_In_ ID3D11DeviceContext* context, _In_z_ const wchar_t* fontName, _In_z_ const wchar_t* image) noexcept(false);
 #endif
 
         TextConsoleImage(TextConsoleImage&&) = delete;
@@ -154,7 +154,7 @@ namespace DX
         TextConsoleImage(TextConsoleImage const&) = delete;
         TextConsoleImage& operator= (TextConsoleImage const&) = delete;
 
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
         void Render(_In_ ID3D12GraphicsCommandList* commandList);
 #else
         void Render();
@@ -163,8 +163,8 @@ namespace DX
         void SetWindow(const RECT& layout) = delete;
         void SetWindow(const RECT& fullscreen, bool useSafeRect);
 
-        void ReleaseDevice();
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+        void ReleaseDevice() noexcept;
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
         void RestoreDevice(
             _In_ ID3D12Device* device,
             DirectX::ResourceUploadBatch& upload,
@@ -185,7 +185,7 @@ namespace DX
 #endif
 
     private:
-#if defined(__d3d12_h__) || defined(__d3d12_x_h__)
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
         D3D12_GPU_DESCRIPTOR_HANDLE                         m_bgGpuDescriptor;
         DirectX::XMUINT2                                    m_bgSize;
         Microsoft::WRL::ComPtr<ID3D12Resource>              m_background;

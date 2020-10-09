@@ -73,7 +73,7 @@ namespace ATG
             // Force SRGB on albedo texture
             DX::ThrowIfFailed(
                 CreateDDSTextureFromFileEx(device, resourceUpload, fullTexturePath[Albedo], 0,
-                    D3D12_RESOURCE_FLAG_NONE, WIC_LOADER_FORCE_SRGB,
+                    D3D12_RESOURCE_FLAG_NONE, DDS_LOADER_FORCE_SRGB,
                     m_textureResources[Albedo].ReleaseAndGetAddressOf()));
 
             // Reload others as linear

@@ -70,7 +70,7 @@ namespace
 namespace DirectX
 {
     // Reuse the WIC factory function from the DirectX Tool Kit. For implementation details, see WICTextureLoader.cpp
-#ifdef __d3d12_x_h__
+#if defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
     extern IWICImagingFactory2* _GetWIC();
 #else
     extern IWICImagingFactory* _GetWIC();

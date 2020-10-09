@@ -16,11 +16,19 @@
 
 #pragma once
 
-#if !defined(_XBOX_ONE) || !defined(_TITLE)
-#error This module only supports Xbox One exclusive apps
+#if !(defined(_XBOX_ONE) && defined(_TITLE)) && !defined(_GAMING_XBOX)
+#error This module only supports Xbox exclusive apps
 #endif
 
+#ifdef _GAMING_XBOX_SCARLETT
+#include <d3d12_xs.h>
+#else
 #include <d3d12_x.h>
+#endif
+
+#ifdef _GAMING_XBOX
+#pragma comment(lib,"xmem.lib")
+#endif
 
 #include <cstdint>
 
@@ -28,7 +36,7 @@
 #define DDS_ALPHA_MODE_DEFINED
 namespace DirectX
 {
-    enum DDS_ALPHA_MODE
+    enum DDS_ALPHA_MODE : uint32_t
     {
         DDS_ALPHA_MODE_UNKNOWN = 0,
         DDS_ALPHA_MODE_STRAIGHT = 1,
