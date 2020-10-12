@@ -219,7 +219,7 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
  <tr>
   <td>Xbox One (XDK only)</td>
   <td><a href="XDKSamples/Graphics/AsyncPresent">AsyncPresent</a></td>
-  <td><a href="XDKSamples/Graphics/HLSLSymbols">HLSL Symbols</a></td> 
+  <td><a href="XDKSamples/Graphics/HLSLSymbols">HLSL Symbols</a></td>
   <td><a href="XDKSamples/Graphics/SimpleDmaDecompression">Simple DMA Decompression</a></td>
  </tr>
 </table>
@@ -373,33 +373,37 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
  </tr>
 </table>
 
-# Requirements
+## Requirements
 
-## UWP apps
+### UWP apps
 * Windows 10 Anniversary Update (Version 1607) or later
 * Visual Studio 2017 ([15.8](https://walbourn.github.io/vs-2017-15-8-update/) or [15.9](https://walbourn.github.io/vs-2017-15-9-update/) update) with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, and *Windows 10 SDK ([10.0.17763.0](https://walbourn.github.io/windows-10-october-2018-update/))*.
 
-## XDK apps
+### XDK apps
 * Xbox One Development Kit
 * Xbox One XDK (specific version requirements covered in each sample's readme)
 * Visual Studio 2015 or Visual Studio 2017 (_via upgrade in place_)
 
-## PC apps
+### PC apps
 * Visual Studio 2015 Update 3 -or- Visual Studio 2017 (_via upgrade in place_) with the *Desktop development with C++* workload and *Windows 8.1 SDK* component.
 * _DirectX 11:_ Windows 7 Service Pack 1 with the DirectX 11.1 Runtime via [KB2670838](http://support.microsoft.com/kb/2670838) or later.
 * _DirectX 12:_ Windows 10; requires the Windows 10 Anniversary Update SDK (14393) or later to build.
 * _DirectX Raytracing:_ Windows 10 October 2018 Update or later.
 
-# Privacy Statement
+## Privacy Statement
 
 When compiling and running a sample, the file name of the sample executable will be sent to Microsoft to help track sample usage. To opt-out of this data collection, you can remove the block of code in ``Main.cpp`` labeled _Sample Usage Telemetry_.
 
 For more information about Microsoft's privacy policies in general, see the [Microsoft Privacy Statement](https://privacy.microsoft.com/privacystatement/).
 
-# Code of Conduct
+## Code of Conduct
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-# Other Samples
+## Trademarks
+
+This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft trademarks or logos is subject to and must follow [Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general). Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship. Any use of third-party trademarks or logos are subject to those third-party's policies.
+
+## Other Samples
 
 For more ATG samples, see [DirectML-Samples](https://github.com/microsoft/DirectML-Samples), [PlayFab-Samples](https://github.com/PlayFab/PlayFab-Samples), and [Xbox-LIVE-Samples](https://github.com/microsoft/xbox-live-samples).
