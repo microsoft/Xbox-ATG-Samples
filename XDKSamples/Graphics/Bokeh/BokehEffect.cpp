@@ -271,6 +271,7 @@ namespace ATG
         D3D11_MAPPED_SUBRESOURCE mapping;
         context->Map(m_bokehCB.Get(), 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &mapping);
         std::memcpy(mapping.pData, &cb, sizeof(cb));
+        context->Unmap(m_bokehCB.Get(), 0);
 
         context->VSSetConstantBuffers(0, 1, m_bokehCB.GetAddressOf());
         context->GSSetConstantBuffers(0, 1, m_bokehCB.GetAddressOf());
