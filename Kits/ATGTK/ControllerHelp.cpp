@@ -413,7 +413,8 @@ const ATG::Help::CalloutBox ATG::Help::CalloutBox::s_CalloutTemplates[] =
         HELP_CALLOUT_COLOR,
         ANCHOR_DPAD_ALL,
         nullptr,
-        CALLOUT_LINE_DPAD_ALL
+        CALLOUT_LINE_DPAD_ALL,
+        { 0, 0 }
     },
     // DPAD_DOWN
     {
@@ -427,7 +428,8 @@ const ATG::Help::CalloutBox ATG::Help::CalloutBox::s_CalloutTemplates[] =
         HELP_CALLOUT_COLOR,
         ANCHOR_DPAD_ALL,
         nullptr,
-        CALLOUT_LINE_DPAD_ALL
+        CALLOUT_LINE_DPAD_ALL,
+        { 0, 0 }
     },
     // DPAD_LEFT
     {
@@ -441,7 +443,8 @@ const ATG::Help::CalloutBox ATG::Help::CalloutBox::s_CalloutTemplates[] =
         HELP_CALLOUT_COLOR,
         ANCHOR_DPAD_ALL,
         nullptr,
-        CALLOUT_LINE_DPAD_ALL
+        CALLOUT_LINE_DPAD_ALL,
+        { 0, 0 }
     },
     // DPAD_RIGHT
     {
@@ -455,7 +458,8 @@ const ATG::Help::CalloutBox ATG::Help::CalloutBox::s_CalloutTemplates[] =
         HELP_CALLOUT_COLOR,
         ANCHOR_DPAD_ALL,
         nullptr,
-        CALLOUT_LINE_DPAD_ALL
+        CALLOUT_LINE_DPAD_ALL,
+        { 0, 0 }
     },
     // DPAD_ALL
     {
@@ -763,7 +767,7 @@ void ATG::Help::Render(ID3D12GraphicsCommandList* commandList)
     {
         m_descriptorHeap->Heap()
     };
-    commandList->SetDescriptorHeaps(_countof(descriptorHeaps), descriptorHeaps);
+    commandList->SetDescriptorHeaps(static_cast<UINT>(std::size(descriptorHeaps)), descriptorHeaps);
 
     D3D12_VIEWPORT vp1{ 0.0f, 0.0f, static_cast<float>(m_screenSize.right), static_cast<float>(m_screenSize.bottom),
         D3D12_MIN_DEPTH, D3D12_MAX_DEPTH };
@@ -859,7 +863,7 @@ void ATG::Help::ReleaseDevice()
     m_primBatch.reset();
     m_lineEffect.reset();
 
-    for (size_t i = 0; i < _countof(m_spriteFonts); ++i)
+    for (size_t i = 0; i < std::size(m_spriteFonts); ++i)
     {
         m_spriteFonts[i].reset();
     }

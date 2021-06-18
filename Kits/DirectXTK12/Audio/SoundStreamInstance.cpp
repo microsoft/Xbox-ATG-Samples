@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: SoundStreamInstance.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248929
@@ -15,6 +15,10 @@
 #include "SoundCommon.h"
 
 #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 #include <apu.h>
 #include <shapexmacontext.h>
 #endif
@@ -140,7 +144,7 @@ public:
         mBufferRead.reset(CreateEventEx(nullptr, nullptr, 0, EVENT_MODIFY_STATE | SYNCHRONIZE));
         if (!mBufferEnd || !mBufferRead)
         {
-            throw std::exception("CreateEvent");
+            throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "CreateEventEx");
         }
 
         ThrowIfFailed(AllocateStreamingBuffers(wfx));
@@ -232,7 +236,7 @@ public:
             return;
 
         HANDLE events[] = { mBufferRead.get(), mBufferEnd.get() };
-        switch (WaitForMultipleObjectsEx(_countof(events), events, FALSE, 0, FALSE))
+        switch (WaitForMultipleObjectsEx(static_cast<DWORD>(std::size(events)), events, FALSE, 0, FALSE))
         {
         case WAIT_TIMEOUT:
             break;
@@ -263,7 +267,7 @@ public:
             break;
 
         case WAIT_FAILED:
-            throw std::exception("WaitForMultipleObjects");
+            throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "WaitForMultipleObjectsEx");
         }
     }
 
@@ -819,7 +823,7 @@ void SoundStreamInstance::SetPan(float pan)
 }
 
 
-void SoundStreamInstance::Apply3D(const AudioListener& listener, const AudioEmitter& emitter, bool rhcoords)
+void SoundStreamInstance::Apply3D(const X3DAUDIO_LISTENER& listener, const X3DAUDIO_EMITTER& emitter, bool rhcoords)
 {
     pImpl->mBase.Apply3D(listener, emitter, rhcoords);
 }
@@ -840,6 +844,12 @@ SoundState SoundStreamInstance::GetState() noexcept
         pImpl->mPlaying = false;
     }
     return state;
+}
+
+
+unsigned int SoundStreamInstance::GetChannelCount() const noexcept
+{
+    return pImpl->mBase.GetChannelCount();
 }
 
 

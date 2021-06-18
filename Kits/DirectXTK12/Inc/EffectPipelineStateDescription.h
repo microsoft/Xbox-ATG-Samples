@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: EffectPipelineStateDescription.h
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
@@ -19,6 +19,7 @@
 #endif
 
 #include <cstdint>
+#include <cstring>
 
 #include "RenderTargetState.h"
 
@@ -73,7 +74,7 @@ namespace DirectX
             psoDesc.IBStripCutValue = stripCutValue;
             psoDesc.PrimitiveTopologyType = primitiveTopology;
             psoDesc.NumRenderTargets = renderTargetState.numRenderTargets;
-            memcpy_s(psoDesc.RTVFormats, sizeof(psoDesc.RTVFormats), renderTargetState.rtvFormats, sizeof(DXGI_FORMAT) * D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT);
+            memcpy(psoDesc.RTVFormats, renderTargetState.rtvFormats, sizeof(DXGI_FORMAT) * D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT);
             psoDesc.DSVFormat = renderTargetState.dsvFormat;
             psoDesc.SampleDesc = renderTargetState.sampleDesc;
             psoDesc.NodeMask = renderTargetState.nodeMask;

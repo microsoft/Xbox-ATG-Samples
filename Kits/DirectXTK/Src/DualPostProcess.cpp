@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: DualPostProcess.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248929
@@ -29,7 +29,7 @@ namespace
     constexpr int Dirty_Parameters      = 0x02;
 
     // Constant buffer layout. Must match the shader!
-    __declspec(align(16)) struct PostProcessConstants
+    XM_ALIGNED_STRUCT(16) PostProcessConstants
     {
         XMVECTOR sampleOffsets[c_MaxSamples];
         XMVECTOR sampleWeights[c_MaxSamples];
@@ -68,7 +68,7 @@ namespace
         { PostProcess_PSBloomCombine,       sizeof(PostProcess_PSBloomCombine) },
     };
 
-    static_assert(_countof(pixelShaders) == DualPostProcess::Effect_Max, "array/max mismatch");
+    static_assert(static_cast<unsigned int>(std::size(pixelShaders)) == DualPostProcess::Effect_Max, "array/max mismatch");
 
     // Factory for lazily instantiating shaders.
     class DeviceResources
@@ -176,7 +176,7 @@ DualPostProcess::Impl::Impl(_In_ ID3D11Device* device)
 {
     if (device->GetFeatureLevel() < D3D_FEATURE_LEVEL_10_0)
     {
-        throw std::exception("DualPostProcess requires Feature Level 10.0 or later");
+        throw std::runtime_error("DualPostProcess requires Feature Level 10.0 or later");
     }
 
     SetDebugObjectName(mConstantBuffer.GetBuffer(), "DualPostProcess");
@@ -308,7 +308,7 @@ void DualPostProcess::Process(
 void DualPostProcess::SetEffect(Effect fx)
 {
     if (fx >= Effect_Max)
-        throw std::out_of_range("Effect not defined");
+        throw std::invalid_argument("Effect not defined");
 
     pImpl->fx = fx;
     pImpl->SetDirtyFlag();

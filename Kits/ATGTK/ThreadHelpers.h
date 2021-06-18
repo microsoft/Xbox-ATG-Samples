@@ -1,15 +1,15 @@
 //--------------------------------------------------------------------------------------
 // File: ThreadHelpers.h
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //-------------------------------------------------------------------------------------
 
 #pragma once
 
-#include <assert.h>
-#include <stdint.h>
-
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <map>
 #include <mutex>

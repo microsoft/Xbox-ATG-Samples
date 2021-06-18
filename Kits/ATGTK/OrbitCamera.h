@@ -3,13 +3,14 @@
 //
 // Helper for implementing Model-View camera
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //-------------------------------------------------------------------------------------
 
 #pragma once
 
-#include <memory.h>
+#include <memory>
+
 #include "GamePad.h"
 
 

@@ -3,7 +3,7 @@
 //
 // Functions for loading audio data from Wave Banks
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248929
@@ -17,6 +17,10 @@
 #include "SoundCommon.h"
 
 #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+
 #include <apu.h>
 #include <shapexmacontext.h>
 #endif
@@ -151,7 +155,7 @@ namespace
 
                 case TAG_WMA:
                 {
-                    static const uint32_t aWMABlockAlign[] =
+                    static const uint32_t aWMABlockAlign[17] =
                     {
                         929,
                         1487,
@@ -173,7 +177,7 @@ namespace
                     };
 
                     uint32_t dwBlockAlignIndex = wBlockAlign & 0x1F;
-                    if (dwBlockAlignIndex < _countof(aWMABlockAlign))
+                    if (dwBlockAlignIndex < 17)
                         return aWMABlockAlign[dwBlockAlignIndex];
                 }
                 break;
@@ -201,7 +205,7 @@ namespace
 
                 case TAG_WMA:
                 {
-                    static const uint32_t aWMAAvgBytesPerSec[] =
+                    static const uint32_t aWMAAvgBytesPerSec[7] =
                     {
                         12000,
                         24000,
@@ -214,7 +218,7 @@ namespace
                     // bitrate = entry * 8
 
                     uint32_t dwBytesPerSecIndex = wBlockAlign >> 5;
-                    if (dwBytesPerSecIndex < _countof(aWMAAvgBytesPerSec))
+                    if (dwBytesPerSecIndex < 7)
                         return aWMAAvgBytesPerSec[dwBytesPerSecIndex];
                 }
                 break;

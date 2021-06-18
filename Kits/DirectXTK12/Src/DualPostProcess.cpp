@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: DualPostProcess.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
@@ -30,7 +30,7 @@ namespace
     constexpr int Dirty_Parameters      = 0x02;
 
     // Constant buffer layout. Must match the shader!
-    __declspec(align(16)) struct PostProcessConstants
+    XM_ALIGNED_STRUCT(16) PostProcessConstants
     {
         XMVECTOR sampleOffsets[c_MaxSamples];
         XMVECTOR sampleWeights[c_MaxSamples];
@@ -76,7 +76,7 @@ namespace
         { PostProcess_PSBloomCombine,   sizeof(PostProcess_PSBloomCombine) },
     };
 
-    static_assert(_countof(pixelShaders) == DualPostProcess::Effect_Max, "array/max mismatch");
+    static_assert(std::size(pixelShaders) == DualPostProcess::Effect_Max, "array/max mismatch");
 
     // Factory for lazily instantiating shared root signatures.
     class DeviceResources
@@ -176,7 +176,7 @@ DualPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& 
     mDeviceResources(deviceResourcesPool.DemandCreate(device))
 {
     if (ifx >= Effect_Max)
-        throw std::out_of_range("Effect not defined");
+        throw std::invalid_argument("Effect not defined");
    
     // Create root signature.
     {
@@ -215,7 +215,7 @@ DualPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetState& 
         // Constant buffer
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 
-        rsigDesc.Init(_countof(rootParameters), rootParameters, 1, &sampler, rootSignatureFlags);
+        rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 1, &sampler, rootSignatureFlags);
 
         mRootSignature = mDeviceResources->GetRootSignature(rsigDesc);
     }
@@ -251,7 +251,7 @@ void DualPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandList)
     if (!texture.ptr || !texture2.ptr)
     {
         DebugTrace("ERROR: Missing texture(s) for DualPostProcess (%llu, %llu)\n", texture.ptr, texture2.ptr);
-        throw std::exception("DualPostProcess");
+        throw std::runtime_error("DualPostProcess");
     }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV2, texture2);

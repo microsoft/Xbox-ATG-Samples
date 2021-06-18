@@ -14,7 +14,7 @@
 // For a full-featured DDS file reader, writer, and texture processing pipeline see
 // the 'Texconv' sample and the 'DirectXTex' library.
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248926
@@ -29,6 +29,7 @@
 #include <d3d11_1.h>
 #endif
 
+#include <cstddef>
 #include <cstdint>
 
 #pragma comment(lib,"uuid.lib")

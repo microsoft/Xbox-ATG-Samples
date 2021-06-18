@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: SpriteBatch.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
@@ -70,7 +70,7 @@ namespace
 }
 
 // Internal SpriteBatch implementation class.
-__declspec(align(16)) class SpriteBatch::Impl : public AlignedNew<SpriteBatch::Impl>
+XM_ALIGNED_STRUCT(16) SpriteBatch::Impl : public AlignedNew<SpriteBatch::Impl>
 {
 public:
     Impl(_In_ ID3D12Device* device,
@@ -94,7 +94,7 @@ public:
         unsigned int flags);
 
     // Info about a single sprite that is waiting to be drawn.
-    __declspec(align(16)) struct SpriteInfo : public AlignedNew<SpriteInfo>
+    XM_ALIGNED_STRUCT(16) SpriteInfo : public AlignedNew<SpriteInfo>
     {
         XMFLOAT4A source;
         XMFLOAT4A destination;
@@ -200,7 +200,7 @@ private:
         ComPtr<ID3D12Resource> indexBuffer;
         D3D12_INDEX_BUFFER_VIEW indexBufferView;
         ComPtr<ID3D12RootSignature> rootSignatureStatic;
-        ComPtr<ID3D12RootSignature> rootSignatureHeap; 
+        ComPtr<ID3D12RootSignature> rootSignatureHeap;
         ID3D12Device* mDevice;
 
     private:
@@ -367,7 +367,7 @@ void SpriteBatch::Impl::DeviceResources::CreateRootSignatures(_In_ ID3D12Device*
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
-        rsigDesc.Init(_countof(rootParameters), rootParameters, 1, &sampler, rootSignatureFlags);
+        rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 1, &sampler, rootSignatureFlags);
 
         ThrowIfFailed(::CreateRootSignature(device, &rsigDesc, rootSignatureStatic.ReleaseAndGetAddressOf()));
 
@@ -383,7 +383,7 @@ void SpriteBatch::Impl::DeviceResources::CreateRootSignatures(_In_ ID3D12Device*
         rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler, D3D12_SHADER_VISIBILITY_PIXEL);
 
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
-        rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
+        rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 0, nullptr, rootSignatureFlags);
 
         ThrowIfFailed(::CreateRootSignature(device, &rsigDesc, rootSignatureHeap.ReleaseAndGetAddressOf()));
 
@@ -445,7 +445,7 @@ SpriteBatch::Impl::Impl(ID3D12Device* device, ResourceUploadBatch& upload, const
     d3dDesc.DSVFormat = psoDesc.renderTargetState.dsvFormat;
     d3dDesc.NodeMask = psoDesc.renderTargetState.nodeMask;
     d3dDesc.NumRenderTargets = psoDesc.renderTargetState.numRenderTargets;
-    memcpy_s(d3dDesc.RTVFormats, sizeof(d3dDesc.RTVFormats), psoDesc.renderTargetState.rtvFormats, sizeof(DXGI_FORMAT) * D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT);
+    memcpy(d3dDesc.RTVFormats, psoDesc.renderTargetState.rtvFormats, sizeof(DXGI_FORMAT) * D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT);
     d3dDesc.SampleDesc = psoDesc.renderTargetState.sampleDesc;
     d3dDesc.SampleMask = psoDesc.renderTargetState.sampleMask;
     d3dDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
@@ -502,7 +502,7 @@ void XM_CALLCONV SpriteBatch::Impl::Begin(
     if (mInBeginEndPair)
     {
         DebugTrace("ERROR: Cannot nest Begin calls on a single SpriteBatch\n");
-        throw std::exception("SpriteBatch::Begin");
+        throw std::logic_error("SpriteBatch::Begin");
     }
 
     mSortMode = sortMode;
@@ -524,7 +524,7 @@ void SpriteBatch::Impl::End()
     if (!mInBeginEndPair)
     {
         DebugTrace("ERROR: Begin must be called before End\n");
-        throw std::exception("SpriteBatch::End");
+        throw std::logic_error("SpriteBatch::End");
     }
 
     if (mSortMode != SpriteSortMode_Immediate)
@@ -556,11 +556,11 @@ void XM_CALLCONV SpriteBatch::Impl::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     if (!mInBeginEndPair)
     {
         DebugTrace("ERROR: Begin must be called before Draw\n");
-        throw std::exception("SpriteBatch::Draw");
+        throw std::logic_error("SpriteBatch::Draw");
     }
 
     if (!texture.ptr)
-        throw std::exception("Invalid texture for Draw");
+        throw std::invalid_argument("Invalid texture for Draw");
 
     // Get a pointer to the output sprite.
     if (mSpriteQueueCount >= mSpriteQueueArraySize)
@@ -979,7 +979,7 @@ XMMATRIX SpriteBatch::Impl::GetViewportTransform(_In_ DXGI_MODE_ROTATION rotatio
     if (!mSetViewport)
     {
         DebugTrace("ERROR: SpriteBatch requires viewport information via SetViewport\n");
-        throw std::exception("Viewport not set.");
+        throw std::runtime_error("Viewport not set.");
     }
 
     // Compute the matrix.
@@ -1076,12 +1076,12 @@ void XM_CALLCONV SpriteBatch::Begin(
     FXMMATRIX transformMatrix)
 {
     if (!sampler.ptr)
-        throw std::exception("Invalid heap-based sampler for Begin");
+        throw std::invalid_argument("Invalid heap-based sampler for Begin");
 
     if (!pImpl->mSampler.ptr)
     {
         DebugTrace("ERROR: sampler version of Begin requires SpriteBatch was created with a heap-based sampler\n");
-        throw std::exception("SpriteBatch::Begin");
+        throw std::runtime_error("SpriteBatch::Begin");
     }
 
     pImpl->mSampler = sampler;
@@ -1110,7 +1110,7 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
 _Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     XMUINT2 const& textureSize,
-    XMFLOAT2 const& position, 
+    XMFLOAT2 const& position,
     RECT const* sourceRectangle,
     FXMVECTOR color,
     float rotation,
@@ -1128,7 +1128,7 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
 
 
 _Use_decl_annotations_
-void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture, 
+void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     XMUINT2 const& textureSize,
     XMFLOAT2 const& position,
     RECT const* sourceRectangle,
@@ -1158,7 +1158,7 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture, XMUINT2 
 _Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     XMUINT2 const& textureSize,
-    FXMVECTOR position, 
+    FXMVECTOR position,
     RECT const* sourceRectangle,
     FXMVECTOR color,
     float rotation,
@@ -1199,7 +1199,7 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
 }
 
 
-void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture, 
+void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     XMUINT2 const& textureSize,
     RECT const& destinationRectangle,
     FXMVECTOR color)
@@ -1217,8 +1217,8 @@ void XM_CALLCONV SpriteBatch::Draw(D3D12_GPU_DESCRIPTOR_HANDLE texture,
     RECT const* sourceRectangle,
     FXMVECTOR color,
     float rotation,
-    XMFLOAT2 const& origin, 
-    SpriteEffects effects, 
+    XMFLOAT2 const& origin,
+    SpriteEffects effects,
     float layerDepth)
 {
     XMVECTOR destination = LoadRect(&destinationRectangle); // x, y, w, h

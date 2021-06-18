@@ -3,7 +3,7 @@
 //
 // DirectXTex Auxillary functions for Xbox One texture blob
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
@@ -177,6 +177,8 @@ HRESULT XboxImage::Initialize(const XG_TEXTURE1D_DESC& desc, const XG_RESOURCE_L
     if (!memory)
         return E_OUTOFMEMORY;
 
+    memset(memory, 0, layout.SizeBytes);
+
     memset(&metadata, 0, sizeof(metadata));
     metadata.width = desc.Width;
     metadata.height = 1;
@@ -189,7 +191,11 @@ HRESULT XboxImage::Initialize(const XG_TEXTURE1D_DESC& desc, const XG_RESOURCE_L
 
     dataSize = static_cast<uint32_t>(layout.SizeBytes);
     baseAlignment = static_cast<uint32_t>(layout.BaseAlignmentBytes);
+#if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
+    tilemode = desc.SwizzleMode;
+#else
     tilemode = desc.TileMode;
+#endif
 
     return S_OK;
 }
@@ -211,6 +217,8 @@ HRESULT XboxImage::Initialize(const XG_TEXTURE2D_DESC& desc, const XG_RESOURCE_L
     if (!memory)
         return E_OUTOFMEMORY;
 
+    memset(memory, 0, layout.SizeBytes);
+
     memset(&metadata, 0, sizeof(metadata));
     metadata.width = desc.Width;
     metadata.height = desc.Height;
@@ -224,7 +232,11 @@ HRESULT XboxImage::Initialize(const XG_TEXTURE2D_DESC& desc, const XG_RESOURCE_L
 
     dataSize = static_cast<uint32_t>(layout.SizeBytes);
     baseAlignment = static_cast<uint32_t>(layout.BaseAlignmentBytes);
+#if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
+    tilemode = desc.SwizzleMode;
+#else
     tilemode = desc.TileMode;
+#endif
 
     return S_OK;
 }
@@ -246,6 +258,8 @@ HRESULT XboxImage::Initialize(const XG_TEXTURE3D_DESC& desc, const XG_RESOURCE_L
     if (!memory)
         return E_OUTOFMEMORY;
 
+    memset(memory, 0, layout.SizeBytes);
+
     memset(&metadata, 0, sizeof(metadata));
     metadata.width = desc.Width;
     metadata.height = desc.Height;
@@ -258,7 +272,11 @@ HRESULT XboxImage::Initialize(const XG_TEXTURE3D_DESC& desc, const XG_RESOURCE_L
 
     dataSize = static_cast<uint32_t>(layout.SizeBytes);
     baseAlignment = static_cast<uint32_t>(layout.BaseAlignmentBytes);
+#if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
+    tilemode = desc.SwizzleMode;
+#else
     tilemode = desc.TileMode;
+#endif
 
     return S_OK;
 }
@@ -275,6 +293,8 @@ HRESULT XboxImage::Initialize(const DirectX::TexMetadata& mdata, XboxTileMode tm
     memory = reinterpret_cast<uint8_t*>(_aligned_malloc(size, 16));
     if (!memory)
         return E_OUTOFMEMORY;
+
+    memset(memory, 0, size);
 
     metadata = mdata;
 

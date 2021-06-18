@@ -3,7 +3,7 @@
 //
 // DirectXTex Auxillary functions for using the OpenEXR library
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
@@ -14,19 +14,41 @@
 
 #include <DirectXPackedVector.h>
 
-#include <assert.h>
+#include <cassert>
 #include <exception>
 #include <memory>
+#include <stdexcept>
+#include <string>
 
 //
 // Requires the OpenEXR library <http://www.openexr.com/> and ZLIB <http://www.zlib.net>
 //
 
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wswitch-enum"
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-dynamic-exception-spec"
+#pragma clang diagnostic ignored "-Wfloat-equal"
+#pragma clang diagnostic ignored "-Wimplicit-int-conversion"
+#pragma clang diagnostic ignored "-Wlanguage-extension-token"
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#pragma clang diagnostic ignored "-Wshadow-field-in-constructor"
+#pragma clang diagnostic ignored "-Wsign-conversion"
+#pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
+#endif
+
 #pragma warning(push)
-#pragma warning(disable : 4244 4996)
+#pragma warning(disable : 4244 4996 26439 26495)
 #include <ImfRgbaFile.h>
 #include <ImfIO.h>
 #pragma warning(pop)
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
 
 static_assert(sizeof(Imf::Rgba) == 8, "Mismatch size");
 
@@ -34,6 +56,7 @@ using namespace DirectX;
 using PackedVector::XMHALF4;
 
 // Comment out this first anonymous namespace if you add the include of DirectXTexP.h above
+#ifdef WIN32
 namespace
 {
     struct handle_closer { void operator()(HANDLE h) { assert(h != INVALID_HANDLE_VALUE); if (h) CloseHandle(h); } };
@@ -66,7 +89,9 @@ namespace
         HANDLE m_handle;
     };
 }
+#endif
 
+#ifdef WIN32
 namespace
 {
     class com_exception : public std::exception
@@ -74,10 +99,10 @@ namespace
     public:
         com_exception(HRESULT hr) : result(hr) {}
 
-        const char* what() const override
+        const char* what() const noexcept override
         {
             static char s_str[64] = {};
-            sprintf_s(s_str, "Failure with HRESULT of %08X", result);
+            sprintf_s(s_str, "Failure with HRESULT of %08X", static_cast<unsigned int>(result));
             return s_str;
         }
 
@@ -108,8 +133,8 @@ namespace
             }
         }
 
-        InputStream(const InputStream &) = delete;
-        InputStream& operator = (const InputStream &) = delete;
+        InputStream(const InputStream&) = delete;
+        InputStream& operator = (const InputStream&) = delete;
 
         bool read(char c[], int n) override
         {
@@ -137,13 +162,13 @@ namespace
             {
                 throw com_exception(HRESULT_FROM_WIN32(GetLastError()));
             }
-            return result.QuadPart;
+            return static_cast<Imf::Int64>(result.QuadPart);
         }
 
         void seekg(Imf::Int64 pos) override
         {
             LARGE_INTEGER dist;
-            dist.QuadPart = pos;
+            dist.QuadPart = static_cast<LONGLONG>(pos);
             if (!SetFilePointerEx(m_hFile, dist, nullptr, FILE_BEGIN))
             {
                 throw com_exception(HRESULT_FROM_WIN32(GetLastError()));
@@ -166,8 +191,8 @@ namespace
         OutputStream(HANDLE hFile, const char fileName[]) :
             OStream(fileName), m_hFile(hFile) {}
 
-        OutputStream(const OutputStream &) = delete;
-        OutputStream& operator = (const OutputStream &) = delete;
+        OutputStream(const OutputStream&) = delete;
+        OutputStream& operator = (const OutputStream&) = delete;
 
         void write(const char c[], int n) override
         {
@@ -186,13 +211,13 @@ namespace
             {
                 throw com_exception(HRESULT_FROM_WIN32(GetLastError()));
             }
-            return result.QuadPart;
+            return static_cast<Imf::Int64>(result.QuadPart);
         }
 
         void seekp(Imf::Int64 pos) override
         {
             LARGE_INTEGER dist;
-            dist.QuadPart = pos;
+            dist.QuadPart = static_cast<LONGLONG>(pos);
             if (!SetFilePointerEx(m_hFile, dist, nullptr, FILE_BEGIN))
             {
                 throw com_exception(HRESULT_FROM_WIN32(GetLastError()));
@@ -203,6 +228,7 @@ namespace
         HANDLE m_hFile;
     };
 }
+#endif // WIN32
 
 
 //=====================================================================================
@@ -218,7 +244,8 @@ HRESULT DirectX::GetMetadataFromEXRFile(const wchar_t* szFile, TexMetadata& meta
     if (!szFile)
         return E_INVALIDARG;
 
-    char fileName[MAX_PATH];
+#ifdef WIN32
+    char fileName[MAX_PATH] = {};
     const int result = WideCharToMultiByte(CP_UTF8, 0, szFile, -1, fileName, MAX_PATH, nullptr, nullptr);
     if (result <= 0)
     {
@@ -237,12 +264,20 @@ HRESULT DirectX::GetMetadataFromEXRFile(const wchar_t* szFile, TexMetadata& meta
     }
 
     InputStream stream(hFile.get(), fileName);
+#else
+    std::wstring wFileName(szFile);
+    std::string fileName(wFileName.cbegin(), wFileName.cend());
+#endif
 
     HRESULT hr = S_OK;
 
     try
     {
+#ifdef WIN32
         Imf::RgbaInputFile file(stream);
+#else
+        Imf::RgbaInputFile file(fileName.c_str());
+#endif
 
         const auto dw = file.dataWindow();
 
@@ -258,6 +293,7 @@ HRESULT DirectX::GetMetadataFromEXRFile(const wchar_t* szFile, TexMetadata& meta
         metadata.format = DXGI_FORMAT_R16G16B16A16_FLOAT;
         metadata.dimension = TEX_DIMENSION_TEXTURE2D;
     }
+#ifdef WIN32
     catch (const com_exception& exc)
     {
 #ifdef _DEBUG
@@ -265,7 +301,8 @@ HRESULT DirectX::GetMetadataFromEXRFile(const wchar_t* szFile, TexMetadata& meta
 #endif
         hr = exc.hr();
     }
-#ifdef _DEBUG
+#endif
+#if defined(WIN32) && defined(_DEBUG)
     catch (const std::exception& exc)
     {
         OutputDebugStringA(exc.what());
@@ -302,7 +339,8 @@ HRESULT DirectX::LoadFromEXRFile(const wchar_t* szFile, TexMetadata* metadata, S
         memset(metadata, 0, sizeof(TexMetadata));
     }
 
-    char fileName[MAX_PATH];
+#ifdef WIN32
+    char fileName[MAX_PATH] = {};
     const int result = WideCharToMultiByte(CP_UTF8, 0, szFile, -1, fileName, MAX_PATH, nullptr, nullptr);
     if (result <= 0)
     {
@@ -321,12 +359,20 @@ HRESULT DirectX::LoadFromEXRFile(const wchar_t* szFile, TexMetadata* metadata, S
     }
 
     InputStream stream(hFile.get(), fileName);
+#else
+    std::wstring wFileName(szFile);
+    std::string fileName(wFileName.cbegin(), wFileName.cend());
+#endif
 
     HRESULT hr = S_OK;
 
     try
     {
+#ifdef WIN32
         Imf::RgbaInputFile file(stream);
+#else
+        Imf::RgbaInputFile file(fileName.c_str());
+#endif
 
         auto dw = file.dataWindow();
 
@@ -345,13 +391,15 @@ HRESULT DirectX::LoadFromEXRFile(const wchar_t* szFile, TexMetadata* metadata, S
             metadata->dimension = TEX_DIMENSION_TEXTURE2D;
         }
 
-        hr = image.Initialize2D(DXGI_FORMAT_R16G16B16A16_FLOAT, width, height, 1, 1);
+        hr = image.Initialize2D(DXGI_FORMAT_R16G16B16A16_FLOAT,
+            static_cast<size_t>(width), static_cast<size_t>(height), 1u, 1u);
         if (FAILED(hr))
             return hr;
 
-        file.setFrameBuffer(reinterpret_cast<Imf::Rgba*>(image.GetPixels()) - dw.min.x - dw.min.y * width, 1, width);
+        file.setFrameBuffer(reinterpret_cast<Imf::Rgba*>(image.GetPixels()) - dw.min.x - dw.min.y * width, 1, static_cast<size_t>(width));
         file.readPixels(dw.min.y, dw.max.y);
     }
+#ifdef WIN32
     catch (const com_exception& exc)
     {
 #ifdef _DEBUG
@@ -359,7 +407,8 @@ HRESULT DirectX::LoadFromEXRFile(const wchar_t* szFile, TexMetadata* metadata, S
 #endif
         hr = exc.hr();
     }
-#ifdef _DEBUG
+#endif
+#if defined(WIN32) && defined(_DEBUG)
     catch (const std::exception& exc)
     {
         OutputDebugStringA(exc.what());
@@ -398,7 +447,7 @@ HRESULT DirectX::SaveToEXRFile(const Image& image, const wchar_t* szFile)
         return E_POINTER;
 
     if (image.width > INT32_MAX || image.height > INT32_MAX)
-        return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+        return /* HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED) */ static_cast<HRESULT>(0x80070032L);
 
     switch (image.format)
     {
@@ -412,10 +461,11 @@ HRESULT DirectX::SaveToEXRFile(const Image& image, const wchar_t* szFile)
         break;
 
     default:
-        return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+        return /* HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED) */ static_cast<HRESULT>(0x80070032L);
     }
 
-    char fileName[MAX_PATH];
+#ifdef WIN32
+    char fileName[MAX_PATH] = {};
     const int result = WideCharToMultiByte(CP_UTF8, 0, szFile, -1, fileName, MAX_PATH, nullptr, nullptr);
     if (result <= 0)
     {
@@ -425,7 +475,7 @@ HRESULT DirectX::SaveToEXRFile(const Image& image, const wchar_t* szFile)
 #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
     ScopedHandle hFile(safe_handle(CreateFile2(szFile, GENERIC_WRITE, 0, CREATE_ALWAYS, nullptr)));
 #else
-    ScopedHandle hFile(safe_handle(CreateFileW(szFile, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, 0, nullptr)));
+    ScopedHandle hFile(safe_handle(CreateFileW(szFile, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr)));
 #endif
     if (!hFile)
     {
@@ -435,6 +485,10 @@ HRESULT DirectX::SaveToEXRFile(const Image& image, const wchar_t* szFile)
     auto_delete_file delonfail(hFile.get());
 
     OutputStream stream(hFile.get(), fileName);
+#else
+    std::wstring wFileName(szFile);
+    std::string fileName(wFileName.cbegin(), wFileName.cend());
+#endif
 
     HRESULT hr = S_OK;
 
@@ -443,7 +497,11 @@ HRESULT DirectX::SaveToEXRFile(const Image& image, const wchar_t* szFile)
         const int width = static_cast<int>(image.width);
         const int height = static_cast<int>(image.height);
 
+#ifdef WIN32
         Imf::RgbaOutputFile file(stream, Imf::Header(width, height), Imf::WRITE_RGBA);
+#else
+        Imf::RgbaOutputFile file(fileName.c_str(), Imf::Header(width, height), Imf::WRITE_RGBA);
+#endif
 
         if (image.format == DXGI_FORMAT_R16G16B16A16_FLOAT)
         {
@@ -452,11 +510,18 @@ HRESULT DirectX::SaveToEXRFile(const Image& image, const wchar_t* szFile)
         }
         else
         {
-            std::unique_ptr<XMHALF4> temp(new (std::nothrow) XMHALF4[width * height]);
+            uint64_t bytes = image.width * image.height;
+
+            if (bytes > UINT32_MAX)
+            {
+                return /* HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW) */ static_cast<HRESULT>(0x80070216L);
+            }
+
+            std::unique_ptr<XMHALF4> temp(new (std::nothrow) XMHALF4[static_cast<size_t>(bytes)]);
             if (!temp)
                 return E_OUTOFMEMORY;
 
-            file.setFrameBuffer(reinterpret_cast<const Imf::Rgba*>(temp.get()), 1, width);
+            file.setFrameBuffer(reinterpret_cast<const Imf::Rgba*>(temp.get()), 1, image.width);
 
             auto sPtr = image.pixels;
             auto dPtr = temp.get();
@@ -501,6 +566,7 @@ HRESULT DirectX::SaveToEXRFile(const Image& image, const wchar_t* szFile)
             }
         }
     }
+#ifdef WIN32
     catch (const com_exception& exc)
     {
 #ifdef _DEBUG
@@ -508,7 +574,8 @@ HRESULT DirectX::SaveToEXRFile(const Image& image, const wchar_t* szFile)
 #endif
         hr = exc.hr();
     }
-#ifdef _DEBUG
+#endif
+#if defined(WIN32) && defined(_DEBUG)
     catch (const std::exception& exc)
     {
         OutputDebugStringA(exc.what());
@@ -528,7 +595,9 @@ HRESULT DirectX::SaveToEXRFile(const Image& image, const wchar_t* szFile)
     if (FAILED(hr))
         return hr;
 
+#ifdef WIN32
     delonfail.clear();
+#endif
 
     return S_OK;
 }

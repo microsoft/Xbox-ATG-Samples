@@ -1,9 +1,9 @@
 //-------------------------------------------------------------------------------------
-// DirectXTexp.h
-//  
+// DirectXTexP.h
+//
 // DirectX Texture Library - Private header
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248926
@@ -70,6 +70,7 @@
 #pragma clang diagnostic ignored "-Wunknown-pragmas"
 #endif
 
+#if defined(WIN32) || defined(_WIN32)
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -85,11 +86,11 @@
 #define NOHELP
 #pragma warning(pop)
 
+#include <Windows.h>
+
 #ifndef _WIN32_WINNT_WIN10
 #define _WIN32_WINNT_WIN10 0x0A00
 #endif
-
-#include <Windows.h>
 
 #ifdef _GAMING_XBOX_SCARLETT
 #include <d3d12_xs.h>
@@ -99,34 +100,56 @@
 #include <d3d12_x.h>
 #include <d3d11_x.h>
 #elif (_WIN32_WINNT >= _WIN32_WINNT_WIN10)
+#ifdef USING_DIRECTX_HEADERS
+#include <directx/dxgiformat.h>
+#include <directx/d3d12.h>
+#else
 #include <d3d12.h>
+#endif
 #include <d3d11_4.h>
 #else
 #include <d3d11_1.h>
 #endif
+#else // !WIN32
+#include <wsl/winadapter.h>
+#include <wsl/wrladapter.h>
+#include <directx/d3d12.h>
+#endif
+
+#include <algorithm>
+#include <cassert>
+#include <cstdlib>
+#include <ctime>
+#include <cstring>
+#include <iterator>
+#include <memory>
+#include <new>
+
+#ifndef WIN32
+#include <fstream>
+#include <filesystem>
+#include <thread>
+#endif
 
 #define _XM_NO_XMVECTOR_OVERLOADS_
 
-#include <DirectXMath.h>
 #include <DirectXPackedVector.h>
-#include <assert.h>
 
-#include <malloc.h>
-#include <memory>
-
-#include <vector>
-
-#include <time.h>
-#include <stdlib.h>
-#include <search.h>
-
-#include <Ole2.h>
+#if (DIRECTX_MATH_VERSION < 315)
+#define XM_ALIGNED_DATA(x) __declspec(align(x))
+#endif
 
 #include "DirectXTex.h"
 
-#include <wincodec.h>
+#include <malloc.h>
 
+#ifdef WIN32
+#include <Ole2.h>
+#include <wincodec.h>
 #include <wrl\client.h>
+#else
+using WICPixelFormatGUID = GUID;
+#endif
 
 #include "scoped.h"
 
@@ -146,10 +169,34 @@
 
 #define XBOX_DXGI_FORMAT_R4G4_UNORM DXGI_FORMAT(190)
 
+// HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW)
+#define HRESULT_E_ARITHMETIC_OVERFLOW static_cast<HRESULT>(0x80070216L)
+
+// HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED)
+#define HRESULT_E_NOT_SUPPORTED static_cast<HRESULT>(0x80070032L)
+
+// HRESULT_FROM_WIN32(ERROR_HANDLE_EOF)
+#define HRESULT_E_HANDLE_EOF static_cast<HRESULT>(0x80070026L)
+
+// HRESULT_FROM_WIN32(ERROR_INVALID_DATA)
+#define HRESULT_E_INVALID_DATA static_cast<HRESULT>(0x8007000DL)
+
+// HRESULT_FROM_WIN32(ERROR_FILE_TOO_LARGE)
+#define HRESULT_E_FILE_TOO_LARGE static_cast<HRESULT>(0x800700DFL)
+
+// HRESULT_FROM_WIN32(ERROR_CANNOT_MAKE)
+#define HRESULT_E_CANNOT_MAKE static_cast<HRESULT>(0x80070052L)
+
+// HRESULT_FROM_WIN32(ERROR_INSUFFICIENT_BUFFER)
+#ifndef E_NOT_SUFFICIENT_BUFFER
+#define E_NOT_SUFFICIENT_BUFFER static_cast<HRESULT>(0x8007007AL)
+#endif
+
 namespace DirectX
 {
     //---------------------------------------------------------------------------------
     // WIC helper functions
+#ifdef WIN32
     DXGI_FORMAT __cdecl _WICToDXGI(_In_ const GUID& guid) noexcept;
     bool __cdecl _DXGIToWIC(_In_ DXGI_FORMAT format, _Out_ GUID& guid, _In_ bool ignoreRGBvsBGR = false) noexcept;
 
@@ -234,7 +281,7 @@ namespace DirectX
             return WICBitmapInterpolationModeFant;
         }
     }
-
+#endif // WIN32
 
     //---------------------------------------------------------------------------------
     // Image helper functions
@@ -262,7 +309,7 @@ namespace DirectX
         CONVF_FLOAT     = 0x1,
         CONVF_UNORM     = 0x2,
         CONVF_UINT      = 0x4,
-        CONVF_SNORM     = 0x8, 
+        CONVF_SNORM     = 0x8,
         CONVF_SINT      = 0x10,
         CONVF_DEPTH     = 0x20,
         CONVF_STENCIL   = 0x40,
@@ -296,7 +343,7 @@ namespace DirectX
         void* pDestination, _In_ size_t outSize,
         _In_reads_bytes_(inSize) const void* pSource, _In_ size_t inSize,
         _In_ DXGI_FORMAT format, _In_ uint32_t tflags) noexcept;
- 
+
     _Success_(return != false) bool __cdecl _ExpandScanline(
         _Out_writes_bytes_(outSize) void* pDestination, _In_ size_t outSize,
         _In_ DXGI_FORMAT outFormat,

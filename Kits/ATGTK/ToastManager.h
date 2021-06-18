@@ -3,7 +3,7 @@
 //
 // A helper for showing text messages as toast notifications
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //-------------------------------------------------------------------------------------
 

@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: DescriptorHeap.h
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
@@ -17,10 +17,10 @@
 #include <d3d12.h>
 #endif
 
+#include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <stdexcept>
-
-#include <assert.h>
 
 #include <wrl/client.h>
 

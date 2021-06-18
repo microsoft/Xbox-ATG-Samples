@@ -4,14 +4,15 @@
 // Helper function to find the location of a media file for Windows desktop apps
 // since they lack appx packaging support.
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //-------------------------------------------------------------------------------------
 
 #pragma once
 
+#include <cstddef>
+#include <cstring>
 #include <exception>
-#include <string.h>
 
 
 namespace DX
@@ -34,6 +35,8 @@ namespace DX
         static const wchar_t* s_defSearchFolders[] =
         {
             L"Assets",
+            L"Assets\\Fonts",
+            L"Assets\\Textures",
             L"Media",
             L"Media\\Textures",
             L"Media\\Fonts",

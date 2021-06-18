@@ -3,7 +3,7 @@
 //
 // Class for compositing text with Xbox controller font button sprites
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //-------------------------------------------------------------------------------------
 

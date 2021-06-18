@@ -16,7 +16,8 @@ namespace ATG
     {
     public:
         explicit PBREffect(_In_ ID3D12Device* device, int effectFlags, 
-            const DirectX::EffectPipelineStateDescription& pipelineDescription);
+            const DirectX::EffectPipelineStateDescription& pipelineDescription,
+            bool generateVelocity = false);
         PBREffect(PBREffect&& moveFrom);
         PBREffect& operator= (PBREffect&& moveFrom);
 

@@ -3,7 +3,7 @@
 //
 // Class to draw a full-screen quad
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
@@ -61,7 +61,7 @@ void FullScreenQuad::Initialize(_In_ ID3D12Device* d3dDevice)
     rootParameters[RootParameterIndex::TextureSRV_2].InitAsDescriptorTable(1, &textureSRVs_2, D3D12_SHADER_VISIBILITY_PIXEL);
 
     CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
-    rootSignatureDesc.Init(_countof(rootParameters), rootParameters, 1, &sampler, rootSignatureFlags);
+    rootSignatureDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 1, &sampler, rootSignatureFlags);
 
     ComPtr<ID3DBlob> signature;
     ComPtr<ID3DBlob> error;

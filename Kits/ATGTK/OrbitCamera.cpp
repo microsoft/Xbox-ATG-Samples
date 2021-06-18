@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: OrbitCamera.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //-------------------------------------------------------------------------------------
 
@@ -12,6 +12,8 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "SimpleMath.h"
+
+#include <utility>
 
 using namespace DirectX;
 using namespace DX;

@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: DualTextureEffect.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
@@ -163,10 +163,10 @@ DualTextureEffect::Impl::Impl(
         texture2{},
         texture2Sampler{}
 {
-    static_assert(_countof(EffectBase<DualTextureEffectTraits>::VertexShaderIndices) == DualTextureEffectTraits::ShaderPermutationCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<DualTextureEffectTraits>::VertexShaderBytecode) == DualTextureEffectTraits::VertexShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<DualTextureEffectTraits>::PixelShaderBytecode) == DualTextureEffectTraits::PixelShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<DualTextureEffectTraits>::PixelShaderIndices) == DualTextureEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<DualTextureEffectTraits>::VertexShaderIndices)) == DualTextureEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<DualTextureEffectTraits>::VertexShaderBytecode)) == DualTextureEffectTraits::VertexShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<DualTextureEffectTraits>::PixelShaderBytecode)) == DualTextureEffectTraits::PixelShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<DualTextureEffectTraits>::PixelShaderIndices)) == DualTextureEffectTraits::ShaderPermutationCount, "array/max mismatch");
 
     // Create root signature.
     {
@@ -193,7 +193,7 @@ DualTextureEffect::Impl::Impl(
 
         // Create the root signature
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc = {};
-        rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
+        rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 0, nullptr, rootSignatureFlags);
 
         mRootSignature = GetRootSignature(0, rsigDesc);
     }
@@ -206,12 +206,12 @@ DualTextureEffect::Impl::Impl(
     if (effectFlags & EffectFlags::PerPixelLightingBit)
     {
         DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::PerPixelLighting\n");
-        throw std::invalid_argument("DualTextureEffect");
+        throw std::invalid_argument("PerPixelLighting effect flag is invalid");
     }
     else if (effectFlags & EffectFlags::Lighting)
     {
         DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::Lighting\n");
-        throw std::invalid_argument("DualTextureEffect");
+        throw std::invalid_argument("Lighting effect flag is invalid");
     }
 
     // Create pipeline state.
@@ -277,12 +277,12 @@ void DualTextureEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     if (!texture1.ptr || !texture2.ptr)
     {
         DebugTrace("ERROR: Missing texture(s) for DualTextureEffect (texture1 %llu, texture2 %llu)\n", texture1.ptr, texture2.ptr);
-        throw std::exception("DualTextureEffect");
+        throw std::runtime_error("DualTextureEffect");
     }
     if (!texture1Sampler.ptr || !texture2Sampler.ptr)
     {
         DebugTrace("ERROR: Missing sampler(s) for DualTextureEffect (samplers1 %llu, samplers2 %llu)\n", texture2Sampler.ptr, texture2Sampler.ptr);
-        throw std::exception("DualTextureEffect");
+        throw std::runtime_error("DualTextureEffect");
     }
 
     // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.

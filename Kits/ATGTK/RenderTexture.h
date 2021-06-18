@@ -3,11 +3,13 @@
 //
 // Helper for managing offscreen render targets
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //-------------------------------------------------------------------------------------
 
 #pragma once
+
+#include <cstddef>
 
 #include <wrl/client.h>
 

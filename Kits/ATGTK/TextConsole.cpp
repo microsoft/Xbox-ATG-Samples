@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: TextConsole.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
@@ -12,7 +12,11 @@
 #include "DDSTextureLoader.h"
 #include "WICTextureLoader.h"
 
-#include <assert.h>
+#include <algorithm>
+#include <cassert>
+#include <cstdarg>
+#include <cwchar>
+#include <utility>
 
 using Microsoft::WRL::ComPtr;
 
@@ -518,7 +522,7 @@ void TextConsoleImage::RestoreDevice(
     auto desc = m_background->GetDesc();
     if (desc.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D)
     {
-        throw std::exception("Only supports 2D images");
+        throw std::runtime_error("Only supports 2D images");
     }
 
     D3D12_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};

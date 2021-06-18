@@ -79,7 +79,8 @@ class ATG::PBREffect::Impl : public EffectBase<PBREffectTraits>
 public:
     Impl(_In_ ID3D12Device* device, 
         int effectFlags, 
-        const EffectPipelineStateDescription& pipelineDescription);
+        const EffectPipelineStateDescription& pipelineDescription,
+        bool generateVelocity);
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 
@@ -88,6 +89,9 @@ public:
     static const int MaxDirectionalLights = 3;
     
     int flags;
+
+    // When PBR moves into DirectXTK, this could become an effect flag.
+    bool doGenerateVelocity;
 
     enum RootParameterIndex
     {
@@ -140,15 +144,16 @@ const int EffectBase<PBREffectTraits>::PixelShaderIndices[] =
 SharedResourcePool<ID3D12Device*, EffectBase<PBREffectTraits>::DeviceResources> EffectBase<PBREffectTraits>::deviceResourcesPool;
 
 // Constructor.
-ATG::PBREffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription)
+ATG::PBREffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const EffectPipelineStateDescription& pipelineDescription, bool generateVelocity)
     : EffectBase(device),
       flags(effectFlags),
+      doGenerateVelocity(generateVelocity),
       descriptors{}
 {
-    static_assert( _countof(EffectBase<PBREffectTraits>::VertexShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<PBREffectTraits>::VertexShaderBytecode) == PBREffectTraits::VertexShaderCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<PBREffectTraits>::PixelShaderBytecode) == PBREffectTraits::PixelShaderCount, "array/max mismatch" );
-    static_assert( _countof(EffectBase<PBREffectTraits>::PixelShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch" );
+    static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::VertexShaderIndices)) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::VertexShaderBytecode)) == PBREffectTraits::VertexShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::PixelShaderBytecode)) == PBREffectTraits::PixelShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::PixelShaderIndices)) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
 
     // Lighting
     static const XMVECTORF32 defaultLightDirection = { 0, -1, 0, 0 };
@@ -185,12 +190,12 @@ ATG::PBREffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Eff
         CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 1)
     };
 
-    for (int i = 0; i < _countof(textureSRV); i++)
+    for (size_t i = 0; i < std::size(textureSRV); i++)
     {
         rootParameters[i].InitAsDescriptorTable(1, &textureSRV[i]);
     }
 
-    for (int i = 0; i < _countof(textureSampler); i++)
+    for (size_t i = 0; i < std::size(textureSampler); i++)
     {
         rootParameters[i + SurfaceSampler].InitAsDescriptorTable(1, &textureSampler[i]);
     }
@@ -198,13 +203,13 @@ ATG::PBREffect::Impl::Impl(_In_ ID3D12Device* device, int effectFlags, const Eff
     rootParameters[ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
     CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
-    rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
+    rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 0, nullptr, rootSignatureFlags);
 
     mRootSignature = GetRootSignature(0, rsigDesc);
 
     // Create pipeline state
     int sp = GetPipelineStatePermutation((effectFlags & EffectFlags::Texture) != 0,
-        (effectFlags & EffectFlags::Velocity) != 0);
+                                         doGenerateVelocity);
     int vi = EffectBase<PBREffectTraits>::VertexShaderIndices[sp];
     int pi = EffectBase<PBREffectTraits>::PixelShaderIndices[sp];
    
@@ -296,8 +301,9 @@ void ATG::PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 // Public constructor.
 ATG::PBREffect::PBREffect(_In_ ID3D12Device* device,
                      int effectFlags, 
-                    const EffectPipelineStateDescription& pipelineDescription)
-    : pImpl(new Impl(device, effectFlags, pipelineDescription))
+                    const EffectPipelineStateDescription& pipelineDescription, 
+                    bool generateVelocity)
+    : pImpl(new Impl(device, effectFlags, pipelineDescription, generateVelocity))
 {
 }
 

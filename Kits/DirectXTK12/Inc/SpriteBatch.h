@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: SpriteBatch.h
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
@@ -15,13 +15,15 @@
 #include <d3d12_x.h>
 #else
 #include <d3d12.h>
-#include <dxgi.h>
+#include <dxgi1_4.h>
 #endif
+
+#include <cstdint>
+#include <functional>
+#include <memory>
 
 #include <DirectXMath.h>
 #include <DirectXColors.h>
-#include <functional>
-#include <memory>
 
 #include "RenderTargetState.h"
 
@@ -124,15 +126,17 @@ namespace DirectX
         void XM_CALLCONV Draw(D3D12_GPU_DESCRIPTOR_HANDLE textureSRV, XMUINT2 const& textureSize, RECT const& destinationRectangle, _In_opt_ RECT const* sourceRectangle, FXMVECTOR color = Colors::White, float rotation = 0, XMFLOAT2 const& origin = Float2Zero, SpriteEffects effects = SpriteEffects_None, float layerDepth = 0);
 
         // Rotation mode to be applied to the sprite transformation
+#if defined(__dxgi1_2_h__) || defined(__d3d11_x_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
         void __cdecl SetRotation(DXGI_MODE_ROTATION mode);
         DXGI_MODE_ROTATION __cdecl GetRotation() const noexcept;
+#endif
 
         // Set viewport for sprite transformation
         void __cdecl SetViewport(const D3D12_VIEWPORT& viewPort);
 
     private:
         // Private implementation.
-        class Impl;
+        struct Impl;
 
         std::unique_ptr<Impl> pImpl;
 

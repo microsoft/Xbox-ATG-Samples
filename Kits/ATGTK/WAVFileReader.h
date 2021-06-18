@@ -3,16 +3,17 @@
 //
 // Functions for loading WAV audio files
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //-------------------------------------------------------------------------------------
 
 #pragma once
 
-#include <objbase.h>
-
+#include <cstddef>
 #include <cstdint>
 #include <memory>
+
+#include <objbase.h>
 #include <mmreg.h>
 
 #if defined(_XBOX_ONE) && defined(_TITLE)
@@ -29,7 +30,7 @@ namespace DX
             if (wfx->cbSize < (sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)))
                 return 0;
 
-            static const GUID s_wfexBase = { 0x00000000, 0x0000, 0x0010, 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 };
+            static const GUID s_wfexBase = { 0x00000000, 0x0000, 0x0010, { 0x80, 0x00, 0x00, 0xAA, 0x00, 0x38, 0x9B, 0x71 } };
 
             auto wfex = reinterpret_cast<const WAVEFORMATEXTENSIBLE*>(wfx);
 

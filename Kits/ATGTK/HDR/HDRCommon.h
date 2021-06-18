@@ -3,14 +3,13 @@
 //
 // Simple helper functions for HDR
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
 #pragma once
 
-#include <stdlib.h>
-#include <math.h>
+#include <cstdlib>
 #include <cmath>
 
 namespace DX
@@ -21,14 +20,14 @@ namespace DX
     // Apply the ST.2084 curve to normalized linear values and outputs normalized non-linear values
     inline float LinearToST2084(float normalizedLinearValue)
     {
-        float ST2084 = pow((0.8359375f + 18.8515625f * pow(abs(normalizedLinearValue), 0.1593017578f)) / (1.0f + 18.6875f * pow(abs(normalizedLinearValue), 0.1593017578f)), 78.84375f);
+        float ST2084 = powf((0.8359375f + 18.8515625f * powf(abs(normalizedLinearValue), 0.1593017578f)) / (1.0f + 18.6875f * powf(abs(normalizedLinearValue), 0.1593017578f)), 78.84375f);
         return ST2084;  // Don't clamp between [0..1], so we can still perform operations on scene values higher than 10,000 nits
     }
 
     // ST.2084 to linear, resulting in a linear normalized value
     inline float ST2084ToLinear(float ST2084)
     {
-        float normalizedLinear = pow(std::max(pow(abs(ST2084), 1.0f / 78.84375f) - 0.8359375f, 0.0f) / (18.8515625f - 18.6875f * pow(abs(ST2084), 1.0f / 78.84375f)), 1.0f / 0.1593017578f);
+        float normalizedLinear = powf(std::max(powf(abs(ST2084), 1.0f / 78.84375f) - 0.8359375f, 0.0f) / (18.8515625f - 18.6875f * powf(abs(ST2084), 1.0f / 78.84375f)), 1.0f / 0.1593017578f);
         return normalizedLinear;
     }
 

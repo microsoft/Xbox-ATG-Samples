@@ -11,7 +11,7 @@
 // For a full-featured DDS file reader, writer, and texture processing pipeline see
 // the 'Texconv' sample and the 'DirectXTex' library.
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
@@ -181,7 +181,7 @@ namespace
     //---------------------------------------------------------------------------------
     DXGI_FORMAT _WICToDXGI(const GUID& guid) noexcept
     {
-        for (size_t i = 0; i < _countof(g_WICFormats); ++i)
+        for (size_t i = 0; i < std::size(g_WICFormats); ++i)
         {
             if (memcmp(&g_WICFormats[i].wic, &guid, sizeof(GUID)) == 0)
                 return g_WICFormats[i].format;
@@ -286,7 +286,7 @@ namespace
         DXGI_FORMAT format = _WICToDXGI(pixelFormat);
         if (format == DXGI_FORMAT_UNKNOWN)
         {
-            for (size_t i = 0; i < _countof(g_WICConvert); ++i)
+            for (size_t i = 0; i < std::size(g_WICConvert); ++i)
             {
                 if (memcmp(&g_WICConvert[i].source, &pixelFormat, sizeof(WICPixelFormatGUID)) == 0)
                 {
@@ -581,7 +581,7 @@ namespace
         DXGI_FORMAT format = _WICToDXGI(pixelFormat);
         if (format == DXGI_FORMAT_UNKNOWN)
         {
-            for (size_t i = 0; i < _countof(g_WICConvert); ++i)
+            for (size_t i = 0; i < std::size(g_WICConvert); ++i)
             {
                 if (memcmp(&g_WICConvert[i].source, &pixelFormat, sizeof(WICPixelFormatGUID)) == 0)
                 {

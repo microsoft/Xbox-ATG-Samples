@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: BufferHelpers.h
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248929
@@ -9,14 +9,15 @@
 
 #pragma once
 
+#include <cassert>
+#include <cstddef>
+
 #if defined(_XBOX_ONE) && defined(_TITLE)
 #include <d3d11_x.h>
 #include "GraphicsMemory.h"
 #else
 #include <d3d11_1.h>
 #endif
-
-#include <assert.h>
 
 #include <wrl\client.h>
 

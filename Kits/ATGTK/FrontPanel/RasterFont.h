@@ -5,8 +5,8 @@
 // Copyright (C) Microsoft Corporation. All rights reserved.
 //--------------------------------------------------------------------------------------
 #pragma once
+
 #include <memory>
-#include <stdint.h>
 #include <string>
 #include <vector>
 
