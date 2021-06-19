@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: NormalMapEffect.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248929
@@ -181,13 +181,13 @@ NormalMapEffect::Impl::Impl(_In_ ID3D11Device* device)
 {
     if (device->GetFeatureLevel() < D3D_FEATURE_LEVEL_10_0)
     {
-        throw std::exception("NormalMapEffect requires Feature Level 10.0 or later");
+        throw std::runtime_error("NormalMapEffect requires Feature Level 10.0 or later");
     }
 
-    static_assert(_countof(EffectBase<NormalMapEffectTraits>::VertexShaderIndices) == NormalMapEffectTraits::ShaderPermutationCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<NormalMapEffectTraits>::VertexShaderBytecode) == NormalMapEffectTraits::VertexShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<NormalMapEffectTraits>::PixelShaderBytecode) == NormalMapEffectTraits::PixelShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<NormalMapEffectTraits>::PixelShaderIndices) == NormalMapEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<NormalMapEffectTraits>::VertexShaderIndices)) == NormalMapEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<NormalMapEffectTraits>::VertexShaderBytecode)) == NormalMapEffectTraits::VertexShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<NormalMapEffectTraits>::PixelShaderBytecode)) == NormalMapEffectTraits::PixelShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<NormalMapEffectTraits>::PixelShaderIndices)) == NormalMapEffectTraits::ShaderPermutationCount, "array/max mismatch");
 
     lights.InitializeConstants(constants.specularColorAndPower, constants.lightDirection, constants.lightDiffuseColor, constants.lightSpecularColor);
 }
@@ -237,7 +237,7 @@ void NormalMapEffect::Impl::Apply(_In_ ID3D11DeviceContext* deviceContext)
 
     // Set the textures
     ID3D11ShaderResourceView* textures[] = { texture.Get(), specularTexture.Get(), normalTexture.Get()};
-    deviceContext->PSSetShaderResources(0, _countof(textures), textures);
+    deviceContext->PSSetShaderResources(0, static_cast<UINT>(std::size(textures)), textures);
     
     // Set shaders and constant buffers.
     ApplyShaders(deviceContext, GetCurrentShaderPermutation());
@@ -388,7 +388,7 @@ void NormalMapEffect::SetLightingEnabled(bool value)
 {
     if (!value)
     {
-        throw std::exception("NormalMapEffect does not support turning off lighting");
+        throw std::invalid_argument("NormalMapEffect does not support turning off lighting");
     }
 }
 

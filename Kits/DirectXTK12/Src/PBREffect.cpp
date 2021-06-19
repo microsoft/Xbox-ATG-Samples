@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: PBREffect.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
@@ -205,10 +205,10 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
         descriptors{},
         lightColor{}
 {
-    static_assert(_countof(EffectBase<PBREffectTraits>::VertexShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<PBREffectTraits>::VertexShaderBytecode) == PBREffectTraits::VertexShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<PBREffectTraits>::PixelShaderBytecode) == PBREffectTraits::PixelShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<PBREffectTraits>::PixelShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::VertexShaderIndices)) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::VertexShaderBytecode)) == PBREffectTraits::VertexShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::PixelShaderBytecode)) == PBREffectTraits::PixelShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::PixelShaderIndices)) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
 
     // Lighting
     static const XMVECTORF32 defaultLightDirection = { { { 0, -1, 0, 0 } } };
@@ -230,7 +230,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
         if (effectFlags & (EffectFlags::Emissive | EffectFlags::Velocity))
         {
             DebugTrace("ERROR: PBREffect does not support emissive or velocity without surface textures\n");
-            throw std::invalid_argument("PBREffect");
+            throw std::invalid_argument("Specified effects flags requires Texture");
         }
     }
 
@@ -263,12 +263,12 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
             CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 1)
         };
 
-        for (size_t i = 0; i < _countof(textureSRV); i++)
+        for (size_t i = 0; i < std::size(textureSRV); i++)
         {
             rootParameters[i].InitAsDescriptorTable(1, &textureSRV[i]);
         }
 
-        for (size_t i = 0; i < _countof(textureSampler); i++)
+        for (size_t i = 0; i < std::size(textureSampler); i++)
         {
             rootParameters[i + SurfaceSampler].InitAsDescriptorTable(1, &textureSampler[i]);
         }
@@ -276,7 +276,7 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
         rootParameters[ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
         CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
-        rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
+        rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 0, nullptr, rootSignatureFlags);
 
         mRootSignature = GetRootSignature(0, rsigDesc);
     }
@@ -286,12 +286,12 @@ PBREffect::Impl::Impl(_In_ ID3D12Device* device,
     if (effectFlags & EffectFlags::Fog)
     {
         DebugTrace("ERROR: PBEffect does not implement EffectFlags::Fog\n");
-        throw std::invalid_argument("PBREffect");
+        throw std::invalid_argument("Fog effect flag is invalid");
     }
     else  if (effectFlags & EffectFlags::VertexColor)
     {
         DebugTrace("ERROR: PBEffect does not implement EffectFlags::VertexColor\n");
-        throw std::invalid_argument("PBREffect");
+        throw std::invalid_argument("VertexColor effect flag is invalid");
     }
 
     // Create pipeline state.
@@ -392,13 +392,13 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     if (!descriptors[RadianceTexture].ptr || !descriptors[RadianceSampler].ptr)
     {
         DebugTrace("ERROR: Missing radiance texture or sampler for PBREffect (texture %llu, sampler %llu)\n", descriptors[RadianceTexture].ptr, descriptors[RadianceSampler].ptr);
-        throw std::exception("PBREffect");
+        throw std::runtime_error("PBREffect");
     }
 
     if (!descriptors[IrradianceTexture].ptr)
     {
         DebugTrace("ERROR: Missing irradiance texture for PBREffect (texture %llu)\n", descriptors[IrradianceTexture].ptr);
-        throw std::exception("PBREffect");
+        throw std::runtime_error("PBREffect");
     }
 
     // Set the root parameters
@@ -423,19 +423,19 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
         if (!descriptors[AlbedoTexture].ptr || !descriptors[SurfaceSampler].ptr)
         {
             DebugTrace("ERROR: Missing albedo texture or sampler for PBREffect (texture %llu, sampler %llu)\n", descriptors[AlbedoTexture].ptr, descriptors[SurfaceSampler].ptr);
-            throw std::exception("PBREffect");
+            throw std::runtime_error("PBREffect");
         }
 
         if (!descriptors[NormalTexture].ptr)
         {
             DebugTrace("ERROR: Missing normal map texture for PBREffect (texture %llu)\n", descriptors[NormalTexture].ptr);
-            throw std::exception("PBREffect");
+            throw std::runtime_error("PBREffect");
         }
 
         if (!descriptors[RMATexture].ptr)
         {
             DebugTrace("ERROR: Missing roughness/metalness texture for PBREffect (texture %llu)\n", descriptors[RMATexture].ptr);
-            throw std::exception("PBREffect");
+            throw std::runtime_error("PBREffect");
         }
 
         for (unsigned i = 0; i < ConstantBuffer; i++)
@@ -452,7 +452,7 @@ void PBREffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
             if (!descriptors[EmissiveTexture].ptr)
             {
                 DebugTrace("ERROR: Missing emissive map texture for PBREffect (texture %llu)\n", descriptors[NormalTexture].ptr);
-                throw std::exception("PBREffect");
+                throw std::runtime_error("PBREffect");
             }
 
             commandList->SetGraphicsRootDescriptorTable(EmissiveTexture, descriptors[EmissiveTexture]);

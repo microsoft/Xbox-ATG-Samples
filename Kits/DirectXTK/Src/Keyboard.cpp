@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: Keyboard.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248929
@@ -67,7 +67,7 @@ public:
     {
         if (s_keyboard)
         {
-            throw std::exception("Keyboard is a singleton");
+            throw std::logic_error("Keyboard is a singleton");
         }
 
         s_keyboard = this;
@@ -96,10 +96,9 @@ public:
         {
             if (mGameInput)
             {
-                HRESULT hr = mGameInput->UnregisterCallback(mDeviceToken, UINT64_MAX);
-                if (FAILED(hr))
+                if (!mGameInput->UnregisterCallback(mDeviceToken, UINT64_MAX))
                 {
-                    DebugTrace("ERROR: GameInput::UnregisterCallback [keyboard] failed (%08X)", static_cast<unsigned int>(hr));
+                    DebugTrace("ERROR: GameInput::UnregisterCallback [keyboard] failed");
                 }
             }
 
@@ -210,7 +209,7 @@ public:
     {
         if (s_keyboard)
         {
-            throw std::exception("Keyboard is a singleton");
+            throw std::logic_error("Keyboard is a singleton");
         }
 
         s_keyboard = this;
@@ -343,7 +342,7 @@ public:
     {
         if (s_keyboard)
         {
-            throw std::exception("Keyboard is a singleton");
+            throw std::logic_error("Keyboard is a singleton");
         }
 
         s_keyboard = this;
@@ -604,7 +603,7 @@ bool Keyboard::IsConnected() const
 Keyboard& Keyboard::Get()
 {
     if (!Impl::s_keyboard || !Impl::s_keyboard->mOwner)
-        throw std::exception("Keyboard is a singleton");
+        throw std::logic_error("Keyboard singleton not created");
 
     return *Impl::s_keyboard->mOwner;
 }

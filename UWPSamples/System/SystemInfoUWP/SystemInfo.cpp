@@ -1004,6 +1004,9 @@ void Sample::Render()
                 // Determine highest feature level
                 static const D3D_FEATURE_LEVEL s_featureLevels[] =
                 {
+#if defined(NTDDI_WIN10_FE) && (NTDDI_VERSION >= NTDDI_WIN10_FE)
+                    D3D_FEATURE_LEVEL_12_2,
+#endif
                     D3D_FEATURE_LEVEL_12_1,
                     D3D_FEATURE_LEVEL_12_0,
                     D3D_FEATURE_LEVEL_11_1,
@@ -1027,6 +1030,9 @@ void Sample::Render()
                 case D3D_FEATURE_LEVEL_11_1: featLevel = L"11.1"; break;
                 case D3D_FEATURE_LEVEL_12_0: featLevel = L"12.0"; break;
                 case D3D_FEATURE_LEVEL_12_1: featLevel = L"12.1"; break;
+#if defined(NTDDI_WIN10_FE) && (NTDDI_VERSION >= NTDDI_WIN10_FE)
+                case D3D_FEATURE_LEVEL_12_2: featLevel = L"12.2"; break;
+#endif
                 }
 
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Hardware Feature Level", left, y, m_scale);
@@ -1048,7 +1054,9 @@ void Sample::Render()
                 }
 
                 D3D12_FEATURE_DATA_SHADER_MODEL shaderModel = {};
-                #if defined(NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB)
+                #if defined(NTDDI_WIN10_FE) && (NTDDI_VERSION >= NTDDI_WIN10_FE)
+                shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_7;
+                #elif defined(NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB)
                 shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_6;
                 #elif defined(NTDDI_WIN10_19H1) && (NTDDI_VERSION >= NTDDI_WIN10_19H1)
                 shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_5;
@@ -1095,6 +1103,10 @@ void Sample::Render()
 
                 #if defined(NTDDI_WIN10_VB) && (NTDDI_VERSION >= NTDDI_WIN10_VB)
                 case D3D_SHADER_MODEL_6_6: shaderModelVer = L"6.6"; break;
+                #endif
+
+                #if defined(NTDDI_WIN10_FE) && (NTDDI_VERSION >= NTDDI_WIN10_FE)
+                case D3D_SHADER_MODEL_6_7: shaderModelVer = L"6.7"; break;
                 #endif
                 }
 

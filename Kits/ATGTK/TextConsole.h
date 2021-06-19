@@ -6,7 +6,7 @@
 //
 // Note: This is best used with monospace rather than proportional fonts
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
@@ -19,6 +19,7 @@
 #include "SpriteBatch.h"
 #include "SpriteFont.h"
 
+#include <memory>
 #include <mutex>
 #include <vector>
 

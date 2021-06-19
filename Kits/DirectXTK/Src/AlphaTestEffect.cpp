@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: AlphaTestEffect.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248929
@@ -146,10 +146,10 @@ AlphaTestEffect::Impl::Impl(_In_ ID3D11Device* device)
     referenceAlpha(0),
     vertexColorEnabled(false)
 {
-    static_assert(_countof(EffectBase<AlphaTestEffectTraits>::VertexShaderIndices) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode) == AlphaTestEffectTraits::VertexShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode) == AlphaTestEffectTraits::PixelShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<AlphaTestEffectTraits>::PixelShaderIndices) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<AlphaTestEffectTraits>::VertexShaderIndices)) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<AlphaTestEffectTraits>::VertexShaderBytecode)) == AlphaTestEffectTraits::VertexShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<AlphaTestEffectTraits>::PixelShaderBytecode)) == AlphaTestEffectTraits::PixelShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<AlphaTestEffectTraits>::PixelShaderIndices)) == AlphaTestEffectTraits::ShaderPermutationCount, "array/max mismatch");
 }
 
 
@@ -259,7 +259,7 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D11DeviceContext* deviceContext)
                 break;
 
             default:
-                throw std::exception("Unknown alpha test function");
+                throw std::runtime_error("Unknown alpha test function");
         }
 
         // x = compareTo, y = threshold, zw = resultSelector.

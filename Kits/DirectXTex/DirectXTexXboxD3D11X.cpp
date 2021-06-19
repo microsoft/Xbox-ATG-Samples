@@ -4,14 +4,16 @@
 // DirectXTex Auxillary functions for creating resouces from XboxImage containers
 // via the CreatePlacement APIs
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //-------------------------------------------------------------------------------------
 
 #include "DirectXTexP.h"
 #include "DirectXTexXbox.h"
 
-#if !defined(_XBOX_ONE) || !defined(_TITLE)
+#ifdef _GAMING_XBOX
+#error This module is not supported for GDK
+#elif !defined(_XBOX_ONE) || !defined(_TITLE)
 #error This module only supports Xbox One exclusive apps
 #endif
 

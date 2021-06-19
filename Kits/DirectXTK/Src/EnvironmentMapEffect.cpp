@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: EnvironmentMapEffect.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248929
@@ -65,7 +65,6 @@ public:
     bool specularEnabled;
     bool biasedVertexNormals;
     EnvironmentMapEffect::Mapping mapping;
-    bool shaderModel4;
 
     EffectLights lights;
 
@@ -353,10 +352,10 @@ EnvironmentMapEffect::Impl::Impl(_In_ ID3D11Device* device)
     biasedVertexNormals(false),
     mapping(Mapping_Cube)
 {
-    static_assert(_countof(EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices) == EnvironmentMapEffectTraits::ShaderPermutationCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<EnvironmentMapEffectTraits>::VertexShaderBytecode) == EnvironmentMapEffectTraits::VertexShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<EnvironmentMapEffectTraits>::PixelShaderBytecode) == EnvironmentMapEffectTraits::PixelShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices) == EnvironmentMapEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<EnvironmentMapEffectTraits>::VertexShaderIndices)) == EnvironmentMapEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<EnvironmentMapEffectTraits>::VertexShaderBytecode)) == EnvironmentMapEffectTraits::VertexShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<EnvironmentMapEffectTraits>::PixelShaderBytecode)) == EnvironmentMapEffectTraits::PixelShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<EnvironmentMapEffectTraits>::PixelShaderIndices)) == EnvironmentMapEffectTraits::ShaderPermutationCount, "array/max mismatch");
 
     constants.environmentMapAmount = 1;
     constants.fresnelFactor = 1;
@@ -572,7 +571,7 @@ void EnvironmentMapEffect::SetLightingEnabled(bool value)
 {
     if (!value)
     {
-        throw std::exception("EnvironmentMapEffect does not support turning off lighting");
+        throw std::invalid_argument("EnvironmentMapEffect does not support turning off lighting");
     }
 }
 
@@ -685,7 +684,7 @@ void EnvironmentMapEffect::SetMode(EnvironmentMapEffect::Mapping mapping)
     {
         if (pImpl->GetDeviceFeatureLevel() < D3D_FEATURE_LEVEL_10_0)
         {
-            throw std::exception("Dual Parabola requires Feature Level 10.0 or later");
+            throw std::runtime_error("Dual Parabola requires Feature Level 10.0 or later");
         }
     }
 

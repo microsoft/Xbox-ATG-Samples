@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: GraphicsMemory.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
@@ -53,11 +53,26 @@ namespace
         // 4 - 16k allocator
         // etc...
         // Need to convert to an index.
-        DWORD bitIndex = 0;
+
+#ifdef _MSC_VER
+        unsigned long bitIndex = 0;
+
 #ifdef _WIN64
         return _BitScanForward64(&bitIndex, allocatorPageSize) ? bitIndex + 1 : 0;
 #else
-        return _BitScanForward(&bitIndex, static_cast<DWORD>(allocatorPageSize)) ? bitIndex + 1 : 0;
+        return _BitScanForward(&bitIndex, static_cast<unsigned long>(allocatorPageSize)) ? bitIndex + 1 : 0;
+#endif
+
+#elif defined(__GNUC__)
+
+#ifdef __LP64__
+        return static_cast<size_t>(__builtin_ffsll(static_cast<long long>(allocatorPageSize)));
+#else
+        return static_cast<size_t>(__builtin_ffs(static_cast<int>(allocatorPageSize)));
+#endif
+
+#else
+#error Unknown forward bit-scan syntax
 #endif
     }
 
@@ -171,7 +186,7 @@ namespace
             size_t totalPageCount = 0;
             size_t committedMemoryUsage = 0;
             size_t totalMemoryUsage = 0;
-           
+
             ScopedLock lock(mMutex);
 
             for (auto& i : mPools)
@@ -218,7 +233,7 @@ public:
     #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
         if (s_graphicsMemory)
         {
-            throw std::exception("GraphicsMemory is a singleton");
+            throw std::logic_error("GraphicsMemory is a singleton");
         }
 
         s_graphicsMemory = this;
@@ -251,7 +266,7 @@ public:
     #if !(defined(_XBOX_ONE) && defined(_TITLE)) && !defined(_GAMING_XBOX)
         if (s_graphicsMemory.find(device) != s_graphicsMemory.cend())
         {
-            throw std::exception("GraphicsMemory is a per-device singleton");
+            throw std::logic_error("GraphicsMemory is a per-device singleton");
         }
         s_graphicsMemory[device] = this;
     #endif
@@ -346,7 +361,7 @@ GraphicsMemory::GraphicsMemory(GraphicsMemory&& moveFrom) noexcept
 
 // Move assignment.
 GraphicsMemory& GraphicsMemory::operator= (GraphicsMemory&& moveFrom) noexcept
-{ 
+{
     pImpl = std::move(moveFrom.pImpl);
     pImpl->mOwner = this;
     return *this;
@@ -393,7 +408,7 @@ void GraphicsMemory::ResetStatistics()
 GraphicsMemory& GraphicsMemory::Get(_In_opt_ ID3D12Device*)
 {
     if (!Impl::s_graphicsMemory || !Impl::s_graphicsMemory->mOwner)
-        throw std::exception("GraphicsMemory singleton not created");
+        throw std::logic_error("GraphicsMemory singleton not created");
 
     return *Impl::s_graphicsMemory->mOwner;
 }
@@ -401,7 +416,7 @@ GraphicsMemory& GraphicsMemory::Get(_In_opt_ ID3D12Device*)
 GraphicsMemory& GraphicsMemory::Get(_In_opt_ ID3D12Device* device)
 {
     if (Impl::s_graphicsMemory.empty())
-        throw std::exception("GraphicsMemory singleton not created");
+        throw std::logic_error("GraphicsMemory singleton not created");
 
     std::map<ID3D12Device*, GraphicsMemory::Impl*>::const_iterator it;
     if (!device)
@@ -417,7 +432,7 @@ GraphicsMemory& GraphicsMemory::Get(_In_opt_ ID3D12Device* device)
     }
 
     if (it == Impl::s_graphicsMemory.cend() || !it->second->mOwner)
-        throw std::exception("GraphicsMemory per-device singleton not created");
+        throw std::logic_error("GraphicsMemory per-device singleton not created");
 
     return *it->second->mOwner;
 }
@@ -586,4 +601,3 @@ void SharedGraphicsResource::Reset(const SharedGraphicsResource& resource) noexc
 {
     mSharedResource = resource.mSharedResource;
 }
-

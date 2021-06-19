@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: BinaryReader.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248929
@@ -27,7 +27,7 @@ BinaryReader::BinaryReader(_In_z_ wchar_t const* fileName) noexcept(false) :
     {
         DebugTrace("ERROR: BinaryReader failed (%08X) to load '%ls'\n",
             static_cast<unsigned int>(hr), fileName);
-        throw std::exception("BinaryReader");
+        throw std::runtime_error("BinaryReader");
     }
 
     mPos = mOwnedData.get();
@@ -44,8 +44,16 @@ BinaryReader::BinaryReader(_In_reads_bytes_(dataSize) uint8_t const* dataBlob, s
 
 
 // Reads from the filesystem into memory.
-HRESULT BinaryReader::ReadEntireFile(_In_z_ wchar_t const* fileName, _Inout_ std::unique_ptr<uint8_t[]>& data, _Out_ size_t* dataSize)
+HRESULT BinaryReader::ReadEntireFile(
+    _In_z_ wchar_t const* fileName,
+    _Inout_ std::unique_ptr<uint8_t[]>& data,
+    _Out_ size_t* dataSize)
 {
+    if (!fileName || !dataSize)
+        return E_INVALIDARG;
+
+    *dataSize = 0;
+
     // Open the file.
 #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
     ScopedHandle hFile(safe_handle(CreateFile2(fileName, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, nullptr)));

@@ -3,7 +3,7 @@
 //
 // DirectXTex Auxillary functions for converting from Xbox One tiled to linear
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
@@ -46,7 +46,12 @@ namespace
 
             for (size_t x = 0; x < w; ++x)
             {
+#if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
+                UINT64 element = (packed) ? (x >> 1) : x;
+                size_t offset = computer->GetTexelElementOffsetBytes(0, level, element, 0, item, 0, nullptr);
+#else
                 size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, 0, item, 0);
+#endif
                 if (offset == size_t(-1))
                     return E_FAIL;
 
@@ -101,7 +106,12 @@ namespace
 
                 for (size_t x = 0; x < w; ++x)
                 {
+#if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
+                    UINT64 element = (packed) ? (x >> 1) : x;
+                    size_t offset = computer->GetTexelElementOffsetBytes(0, level, element, y, item, 0, nullptr);
+#else
                     size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, item, 0);
+#endif
                     if (offset == size_t(-1))
                         return E_FAIL;
 
@@ -152,7 +162,12 @@ namespace
 
                 for (size_t x = 0; x < w; ++x)
                 {
+#if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
+                    UINT64 element = (packed) ? (x >> 1) : x;
+                    size_t offset = computer->GetTexelElementOffsetBytes(0, level, element, y, z, 0, nullptr);
+#else
                     size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, z, 0);
+#endif
                     if (offset == size_t(-1))
                         return E_FAIL;
 
@@ -203,6 +218,10 @@ namespace
         assert(!IsCompressed(format));
 
         bool byelement = IsTypeless(format);
+#if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
+        if (nimages > 1)
+            byelement = true;
+#endif
 
         if (IsPacked(format))
         {
@@ -233,7 +252,7 @@ namespace
 
             UINT32 tiledPixels = mip.PitchPixels * mip.PaddedDepthOrArraySize;
 
-            ScopedAlignedArrayXMVECTOR scanline(reinterpret_cast<XMVECTOR*>(_aligned_malloc(sizeof(XMVECTOR) * (tiledPixels + result[0]->width), 16)));
+            auto scanline = make_AlignedArrayXMVECTOR(tiledPixels + result[0]->width);
 
             XMVECTOR* target = scanline.get();
             XMVECTOR* tiled = target + result[0]->width;
@@ -264,7 +283,11 @@ namespace
 
                 for (size_t x = 0; x < img->width; ++x)
                 {
+#if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
+                    size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, 0, item, 0, nullptr);
+#else
                     size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, 0, item, 0);
+#endif
                     if (offset == size_t(-1))
                         return E_FAIL;
 
@@ -312,6 +335,10 @@ namespace
         assert(format == xbox.GetMetadata().format);
 
         bool byelement = IsTypeless(format);
+#if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
+        if (nimages > 1)
+            byelement = true;
+#endif
 
         if (IsCompressed(format))
         {
@@ -366,9 +393,7 @@ namespace
 
             const UINT32 tiledPixels = mip.PaddedWidthElements * mip.PaddedHeightElements * mip.PaddedDepthOrArraySize;
 
-            ScopedAlignedArrayXMVECTOR scanline(
-                reinterpret_cast<XMVECTOR*>(_aligned_malloc(
-                    sizeof(XMVECTOR) * (tiledPixels + result[0]->width), 16)));
+            auto scanline = make_AlignedArrayXMVECTOR(tiledPixels + result[0]->width);
 
             XMVECTOR* target = scanline.get();
             XMVECTOR* tiled = target + result[0]->width;
@@ -402,7 +427,11 @@ namespace
                 {
                     for (size_t x = 0; x < img->width; ++x)
                     {
+#if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
+                        size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, item, 0, nullptr);
+#else
                         size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, item, 0);
+#endif
                         if (offset == size_t(-1))
                             return E_FAIL;
 
@@ -446,6 +475,9 @@ namespace
         assert(layout.Planes == 1);
 
         bool byelement = IsTypeless(result.format);
+#if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
+        byelement = true;
+#endif
 
         if (IsCompressed(result.format))
         {
@@ -496,9 +528,7 @@ namespace
             const UINT32 tiledPixels = mip.PaddedWidthElements * mip.PaddedHeightElements * mip.PaddedDepthOrArraySize;
             assert(tiledPixels >= (result.width * result.height * slices));
 
-            ScopedAlignedArrayXMVECTOR scanline(
-                reinterpret_cast<XMVECTOR*>(_aligned_malloc(
-                    sizeof(XMVECTOR) * (tiledPixels + result.width), 16)));
+            auto scanline = make_AlignedArrayXMVECTOR(tiledPixels + result.width);
 
             XMVECTOR* target = scanline.get();
             XMVECTOR* tiled = target + result.width;
@@ -546,7 +576,11 @@ namespace
                 {
                     for (size_t x = 0; x < result.width; ++x)
                     {
+#if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
+                        size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, z, 0, nullptr);
+#else
                         size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, z, 0);
+#endif
                         if (offset == size_t(-1))
                             return E_FAIL;
 
@@ -624,7 +658,11 @@ HRESULT Xbox::Detile(
         desc.Usage = XG_USAGE_DEFAULT;
         desc.BindFlags = XG_BIND_SHADER_RESOURCE;
         desc.MiscFlags = (metadata.IsCubemap()) ? XG_RESOURCE_MISC_TEXTURECUBE : 0;
+#if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
+        desc.SwizzleMode = xbox.GetTileMode();
+#else
         desc.TileMode = xbox.GetTileMode();
+#endif
 
         ComPtr<XGTextureAddressComputer> computer;
         HRESULT hr = XGCreateTexture1DComputer(&desc, computer.GetAddressOf());
@@ -699,7 +737,11 @@ HRESULT Xbox::Detile(
         desc.Usage = XG_USAGE_DEFAULT;
         desc.BindFlags = XG_BIND_SHADER_RESOURCE;
         desc.MiscFlags = (metadata.miscFlags & TEX_MISC_TEXTURECUBE) ? XG_RESOURCE_MISC_TEXTURECUBE : 0;
+#if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
+        desc.SwizzleMode = xbox.GetTileMode();
+#else
         desc.TileMode = xbox.GetTileMode();
+#endif
 
         ComPtr<XGTextureAddressComputer> computer;
         HRESULT hr = XGCreateTexture2DComputer(&desc, computer.GetAddressOf());
@@ -772,7 +814,11 @@ HRESULT Xbox::Detile(
         desc.Format = static_cast<XG_FORMAT>(metadata.format);
         desc.Usage = XG_USAGE_DEFAULT;
         desc.BindFlags = XG_BIND_SHADER_RESOURCE;
+#if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
+        desc.SwizzleMode = xbox.GetTileMode();
+#else
         desc.TileMode = xbox.GetTileMode();
+#endif
 
         ComPtr<XGTextureAddressComputer> computer;
         HRESULT hr = XGCreateTexture3DComputer(&desc, computer.GetAddressOf());

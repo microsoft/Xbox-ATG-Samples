@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: PBREffect.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
@@ -15,23 +15,23 @@ using namespace DirectX;
 
 // Constant buffer layout. Must match the shader!
 struct PBREffectConstants
-{    
+{
     XMVECTOR eyePosition;
     XMMATRIX world;
     XMVECTOR worldInverseTranspose[3];
     XMMATRIX worldViewProj;
     XMMATRIX prevWorldViewProj; // for velocity generation
 
-    XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];           
+    XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];
     XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
-    
+
     // PBR Parameters
     XMVECTOR Albedo;
     float    Metallic;
     float    Roughness;
     int      numRadianceMipLevels;
 
-    // Size of render target 
+    // Size of render target
     float   targetWidth;
     float   targetHeight;
 };
@@ -90,7 +90,7 @@ namespace
     #include "Shaders/Compiled/XboxOnePBREffect_PSTexturedEmissive.inc"
     #include "Shaders/Compiled/XboxOnePBREffect_PSTexturedVelocity.inc"
     #include "Shaders/Compiled/XboxOnePBREffect_PSTexturedEmissiveVelocity.inc"
-#else    
+#else
     #include "Shaders/Compiled/PBREffect_VSConstant.inc"
     #include "Shaders/Compiled/PBREffect_VSConstantVelocity.inc"
     #include "Shaders/Compiled/PBREffect_VSConstantBn.inc"
@@ -172,13 +172,13 @@ PBREffect::Impl::Impl(_In_ ID3D11Device* device)
 {
     if (device->GetFeatureLevel() < D3D_FEATURE_LEVEL_10_0)
     {
-        throw std::exception("PBREffect requires Feature Level 10.0 or later");
+        throw std::runtime_error("PBREffect requires Feature Level 10.0 or later");
     }
 
-    static_assert(_countof(EffectBase<PBREffectTraits>::VertexShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<PBREffectTraits>::VertexShaderBytecode) == PBREffectTraits::VertexShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<PBREffectTraits>::PixelShaderBytecode) == PBREffectTraits::PixelShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<PBREffectTraits>::PixelShaderIndices) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::VertexShaderIndices)) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::VertexShaderBytecode)) == PBREffectTraits::VertexShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::PixelShaderBytecode)) == PBREffectTraits::PixelShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<PBREffectTraits>::PixelShaderIndices)) == PBREffectTraits::ShaderPermutationCount, "array/max mismatch");
 
     // Lighting
     static const XMVECTORF32 defaultLightDirection = { { { 0, -1, 0, 0 } } };
@@ -235,7 +235,7 @@ void PBREffect::Impl::Apply(_In_ ID3D11DeviceContext* deviceContext)
     constants.prevWorldViewProj = constants.worldViewProj;
 
     // Compute derived parameter values.
-    matrices.SetConstants(dirtyFlags, constants.worldViewProj);        
+    matrices.SetConstants(dirtyFlags, constants.worldViewProj);
 
     // World inverse transpose matrix.
     if (dirtyFlags & EffectDirtyFlags::WorldInverseTranspose)
@@ -270,7 +270,7 @@ void PBREffect::Impl::Apply(_In_ ID3D11DeviceContext* deviceContext)
             albedoTexture.Get(), normalTexture.Get(), rmaTexture.Get(),
             emissiveTexture.Get(),
             radianceTexture.Get(), irradianceTexture.Get() };
-        deviceContext->PSSetShaderResources(0, _countof(textures), textures);
+        deviceContext->PSSetShaderResources(0, static_cast<UINT>(std::size(textures)), textures);
     }
     else
     {
@@ -278,7 +278,7 @@ void PBREffect::Impl::Apply(_In_ ID3D11DeviceContext* deviceContext)
             nullptr, nullptr, nullptr,
             nullptr,
             radianceTexture.Get(), irradianceTexture.Get() };
-        deviceContext->PSSetShaderResources(0, _countof(textures), textures);
+        deviceContext->PSSetShaderResources(0, static_cast<UINT>(std::size(textures)), textures);
     }
 
     // Set shaders and constant buffers.
@@ -366,7 +366,7 @@ void PBREffect::SetLightingEnabled(bool value)
 {
     if (!value)
     {
-        throw std::exception("PBREffect does not support turning off lighting");
+        throw std::invalid_argument("PBREffect does not support turning off lighting");
     }
 }
 

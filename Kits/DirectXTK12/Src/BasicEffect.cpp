@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: BasicEffect.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
@@ -418,10 +418,10 @@ BasicEffect::Impl::Impl(
         texture{},
         sampler{}
 {
-    static_assert(_countof(EffectBase<BasicEffectTraits>::VertexShaderIndices) == BasicEffectTraits::ShaderPermutationCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<BasicEffectTraits>::VertexShaderBytecode) == BasicEffectTraits::VertexShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<BasicEffectTraits>::PixelShaderBytecode) == BasicEffectTraits::PixelShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<BasicEffectTraits>::PixelShaderIndices) == BasicEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<BasicEffectTraits>::VertexShaderIndices)) == BasicEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<BasicEffectTraits>::VertexShaderBytecode)) == BasicEffectTraits::VertexShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<BasicEffectTraits>::PixelShaderBytecode)) == BasicEffectTraits::PixelShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<BasicEffectTraits>::PixelShaderIndices)) == BasicEffectTraits::ShaderPermutationCount, "array/max mismatch");
 
     lights.InitializeConstants(constants.specularColorAndPower, constants.lightDirection, constants.lightDiffuseColor, constants.lightSpecularColor);
 
@@ -454,7 +454,7 @@ BasicEffect::Impl::Impl(
             rootParameters[RootParameterIndex::TextureSampler].InitAsDescriptorTable(1, &textureSampler, D3D12_SHADER_VISIBILITY_PIXEL);
 
             // use all parameters
-            rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
+            rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 0, nullptr, rootSignatureFlags);
 
             mRootSignature = GetRootSignature(1, rsigDesc);
         }
@@ -559,7 +559,7 @@ void BasicEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
         if (!texture.ptr || !sampler.ptr)
         {
             DebugTrace("ERROR: Missing texture or sampler for BasicEffect (texture %llu, sampler %llu)\n", texture.ptr, sampler.ptr);
-            throw std::exception("BasicEffect");
+            throw std::runtime_error("BasicEffect");
         }
 
         // **NOTE** If D3D asserts or crashes here, you probably need to call commandList->SetDescriptorHeaps() with the required descriptor heaps.

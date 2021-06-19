@@ -1,9 +1,9 @@
 //-------------------------------------------------------------------------------------
 // DirectXTexConvert.cpp
-//  
-// DirectX Texture Library - Image pixel format conversion 
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// DirectX Texture Library - Image pixel format conversion
+//
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248926
@@ -435,7 +435,7 @@ void DirectX::_CopyScanline(
         return;
 
     size_t size = std::min<size_t>(outSize, inSize);
-    memcpy_s(pDestination, outSize, pSource, size);
+    memcpy(pDestination, pSource, size);
 }
 
 
@@ -605,7 +605,7 @@ void DirectX::_SwizzleScanline(
         return;
 
     size_t size = std::min<size_t>(outSize, inSize);
-    memcpy_s(pDestination, outSize, pSource, size);
+    memcpy(pDestination, pSource, size);
 }
 
 
@@ -777,7 +777,7 @@ _Use_decl_annotations_ bool DirectX::_LoadScanline(
     case DXGI_FORMAT_R32G32B32A32_FLOAT:
     {
         size_t msize = (size > (sizeof(XMVECTOR)*count)) ? (sizeof(XMVECTOR)*count) : size;
-        memcpy_s(dPtr, sizeof(XMVECTOR)*count, pSource, msize);
+        memcpy(dPtr, pSource, msize);
     }
     return true;
 
@@ -1611,15 +1611,23 @@ bool DirectX::_StoreScanline(
     size_t count,
     float threshold) noexcept
 {
-    assert(pDestination && size > 0);
-    assert(pSource && count > 0 && ((reinterpret_cast<uintptr_t>(pSource) & 0xF) == 0));
+    assert(pDestination != nullptr);
     assert(IsValid(format) && !IsTypeless(format) && !IsCompressed(format) && !IsPlanar(format) && !IsPalettized(format));
+
+    if (!size || !count)
+        return false;
 
     const XMVECTOR* __restrict sPtr = pSource;
     if (!sPtr)
         return false;
 
-    const XMVECTOR* ePtr = pSource + count;
+    assert((reinterpret_cast<uintptr_t>(pSource) & 0xF) == 0);
+
+    const XMVECTOR* ePtr = sPtr + count;
+
+#ifdef _PREFAST_
+    *reinterpret_cast<uint8_t*>(pDestination) = 0;
+#endif
 
     switch (static_cast<int>(format))
     {
@@ -2640,7 +2648,7 @@ HRESULT DirectX::_ConvertToR16G16B16A16(const Image& srcImage, ScratchImage& ima
     if (FAILED(hr))
         return hr;
 
-    ScopedAlignedArrayXMVECTOR scanline(static_cast<XMVECTOR*>(_aligned_malloc((sizeof(XMVECTOR) * srcImage.width), 16)));
+    auto scanline = make_AlignedArrayXMVECTOR(srcImage.width);
     if (!scanline)
     {
         image.Release();
@@ -2693,7 +2701,7 @@ HRESULT DirectX::_ConvertFromR16G16B16A16(const Image& srcImage, const Image& de
     if (srcImage.width != destImage.width || srcImage.height != destImage.height)
         return E_FAIL;
 
-    ScopedAlignedArrayXMVECTOR scanline(static_cast<XMVECTOR*>(_aligned_malloc((sizeof(XMVECTOR) * srcImage.width), 16)));
+    auto scanline = make_AlignedArrayXMVECTOR(srcImage.width);
     if (!scanline)
         return E_OUTOFMEMORY;
 
@@ -2735,9 +2743,10 @@ bool DirectX::_StoreScanlineLinear(
     TEX_FILTER_FLAGS flags,
     float threshold) noexcept
 {
-    assert(pDestination && size > 0);
-    assert(pSource && count > 0 && ((reinterpret_cast<uintptr_t>(pSource) & 0xF) == 0));
-    assert(IsValid(format) && !IsTypeless(format) && !IsCompressed(format) && !IsPlanar(format) && !IsPalettized(format));
+    if (!pSource || !count)
+        return false;
+
+    assert((reinterpret_cast<uintptr_t>(pSource) & 0xF) == 0);
 
     switch (format)
     {
@@ -2810,10 +2819,6 @@ bool DirectX::_LoadScanlineLinear(
     DXGI_FORMAT format,
     TEX_FILTER_FLAGS flags) noexcept
 {
-    assert(pDestination && count > 0 && ((reinterpret_cast<uintptr_t>(pDestination) & 0xF) == 0));
-    assert(pSource && size > 0);
-    assert(IsValid(format) && !IsTypeless(format, false) && !IsCompressed(format) && !IsPlanar(format) && !IsPalettized(format));
-
     switch (format)
     {
     case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
@@ -2972,10 +2977,9 @@ namespace
         { XBOX_DXGI_FORMAT_R4G4_UNORM,               4, CONVF_UNORM | CONVF_R | CONVF_G },
     };
 
-#pragma prefast( suppress : 25004, "Signature must match bsearch_s" );
-    int __cdecl ConvertCompare(void *context, const void* ptr1, const void *ptr2) noexcept
+#pragma prefast( suppress : 25004, "Signature must match bsearch" );
+    int __cdecl ConvertCompare(const void* ptr1, const void *ptr2) noexcept
     {
-        UNREFERENCED_PARAMETER(context);
         auto p1 = static_cast<const ConvertData*>(ptr1);
         auto p2 = static_cast<const ConvertData*>(ptr2);
         if (p1->format == p2->format) return 0;
@@ -2988,9 +2992,9 @@ uint32_t DirectX::_GetConvertFlags(DXGI_FORMAT format) noexcept
 {
 #ifdef _DEBUG
     // Ensure conversion table is in ascending order
-    assert(_countof(g_ConvertTable) > 0);
+    assert(std::size(g_ConvertTable) > 0);
     DXGI_FORMAT lastvalue = g_ConvertTable[0].format;
-    for (size_t index = 1; index < _countof(g_ConvertTable); ++index)
+    for (size_t index = 1; index < std::size(g_ConvertTable); ++index)
     {
         assert(g_ConvertTable[index].format > lastvalue);
         lastvalue = g_ConvertTable[index].format;
@@ -2998,8 +3002,8 @@ uint32_t DirectX::_GetConvertFlags(DXGI_FORMAT format) noexcept
 #endif
 
     ConvertData key = { format, 0, 0 };
-    auto in = reinterpret_cast<const ConvertData*>(bsearch_s(&key, g_ConvertTable, _countof(g_ConvertTable), sizeof(ConvertData),
-        ConvertCompare, nullptr));
+    auto in = reinterpret_cast<const ConvertData*>(bsearch(&key, g_ConvertTable, std::size(g_ConvertTable), sizeof(ConvertData),
+        ConvertCompare));
     return (in) ? in->flags : 0;
 }
 
@@ -3020,9 +3024,9 @@ void DirectX::_ConvertScanline(
 
 #ifdef _DEBUG
     // Ensure conversion table is in ascending order
-    assert(_countof(g_ConvertTable) > 0);
+    assert(std::size(g_ConvertTable) > 0);
     DXGI_FORMAT lastvalue = g_ConvertTable[0].format;
-    for (size_t index = 1; index < _countof(g_ConvertTable); ++index)
+    for (size_t index = 1; index < std::size(g_ConvertTable); ++index)
     {
         assert(g_ConvertTable[index].format > lastvalue);
         lastvalue = g_ConvertTable[index].format;
@@ -3032,10 +3036,10 @@ void DirectX::_ConvertScanline(
     // Determine conversion details about source and dest formats
     ConvertData key = { inFormat, 0, 0 };
     auto in = reinterpret_cast<const ConvertData*>(
-        bsearch_s(&key, g_ConvertTable, _countof(g_ConvertTable), sizeof(ConvertData), ConvertCompare, nullptr));
+        bsearch(&key, g_ConvertTable, std::size(g_ConvertTable), sizeof(ConvertData), ConvertCompare));
     key.format = outFormat;
     auto out = reinterpret_cast<const ConvertData*>(
-        bsearch_s(&key, g_ConvertTable, _countof(g_ConvertTable), sizeof(ConvertData), ConvertCompare, nullptr));
+        bsearch(&key, g_ConvertTable, std::size(g_ConvertTable), sizeof(ConvertData), ConvertCompare));
     if (!in || !out)
     {
         assert(false);
@@ -3910,9 +3914,17 @@ bool DirectX::_StoreScanlineDither(
     size_t z,
     XMVECTOR* pDiffusionErrors) noexcept
 {
-    assert(pDestination && size > 0);
-    assert(pSource && count > 0 && ((reinterpret_cast<uintptr_t>(pSource) & 0xF) == 0));
+    assert(pDestination != nullptr);
     assert(IsValid(format) && !IsTypeless(format) && !IsCompressed(format) && !IsPlanar(format) && !IsPalettized(format));
+
+    if (!size || !count)
+        return false;
+
+    const XMVECTOR* __restrict sPtr = pSource;
+    if (!sPtr)
+        return false;
+
+    assert((reinterpret_cast<uintptr_t>(pSource) & 0xF) == 0);
 
     XMVECTOR ordered[4];
     if (pDiffusionErrors)
@@ -3946,11 +3958,11 @@ bool DirectX::_StoreScanlineDither(
         ordered[3] = XMVectorSplatW(dither);
     }
 
-    const XMVECTOR* __restrict sPtr = pSource;
-    if (!sPtr)
-        return false;
-
     const void* ePtr = static_cast<const uint8_t*>(pDestination) + size;
+
+#ifdef _PREFAST_
+    *reinterpret_cast<uint8_t*>(pDestination) = 0;
+#endif
 
     XMVECTOR vError = XMVectorZero();
 
@@ -4373,6 +4385,14 @@ namespace
         _Out_ WICPixelFormatGUID& pfGUID,
         _Out_ WICPixelFormatGUID& targetGUID) noexcept
     {
+#ifndef WIN32
+        UNREFERENCED_PARAMETER(filter);
+        UNREFERENCED_PARAMETER(sformat);
+        UNREFERENCED_PARAMETER(tformat);
+        UNREFERENCED_PARAMETER(pfGUID);
+        UNREFERENCED_PARAMETER(targetGUID);
+        return false;
+#else
         memset(&pfGUID, 0, sizeof(GUID));
         memset(&targetGUID, 0, sizeof(GUID));
 
@@ -4514,6 +4534,7 @@ namespace
         }
 
         return true;
+#endif // WIN32
     }
 
     //-------------------------------------------------------------------------------------
@@ -4527,6 +4548,15 @@ namespace
         _In_ float threshold,
         _In_ const Image& destImage)
     {
+#ifndef WIN32
+        UNREFERENCED_PARAMETER(srcImage);
+        UNREFERENCED_PARAMETER(pfGUID);
+        UNREFERENCED_PARAMETER(targetGUID);
+        UNREFERENCED_PARAMETER(filter);
+        UNREFERENCED_PARAMETER(threshold);
+        UNREFERENCED_PARAMETER(destImage);
+        return E_NOTIMPL;
+#else
         assert(srcImage.width == destImage.width);
         assert(srcImage.height == destImage.height);
 
@@ -4553,7 +4583,7 @@ namespace
 
         if (srcImage.rowPitch > UINT32_MAX || srcImage.slicePitch > UINT32_MAX
             || destImage.rowPitch > UINT32_MAX || destImage.slicePitch > UINT32_MAX)
-            return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
+            return HRESULT_E_ARITHMETIC_OVERFLOW;
 
         ComPtr<IWICBitmap> source;
         hr = pWIC->CreateBitmapFromMemory(static_cast<UINT>(srcImage.width), static_cast<UINT>(srcImage.height), pfGUID,
@@ -4571,8 +4601,8 @@ namespace
             return hr;
 
         return S_OK;
+#endif // WIN32
     }
-
 
     //-------------------------------------------------------------------------------------
     // Convert the source image (not using WIC)
@@ -4597,7 +4627,7 @@ namespace
         if (filter & TEX_FILTER_DITHER_DIFFUSION)
         {
             // Error diffusion dithering (aka Floyd-Steinberg dithering)
-            ScopedAlignedArrayXMVECTOR scanline(static_cast<XMVECTOR*>(_aligned_malloc((sizeof(XMVECTOR)*(width * 2 + 2)), 16)));
+            auto scanline = make_AlignedArrayXMVECTOR(uint64_t(width) * 2 + 2);
             if (!scanline)
                 return E_OUTOFMEMORY;
 
@@ -4620,7 +4650,7 @@ namespace
         }
         else
         {
-            ScopedAlignedArrayXMVECTOR scanline(static_cast<XMVECTOR*>(_aligned_malloc((sizeof(XMVECTOR)*width), 16)));
+            auto scanline = make_AlignedArrayXMVECTOR(width);
             if (!scanline)
                 return E_OUTOFMEMORY;
 
@@ -4840,7 +4870,7 @@ HRESULT DirectX::Convert(
         || IsPlanar(srcImage.format) || IsPlanar(format)
         || IsPalettized(srcImage.format) || IsPalettized(format)
         || IsTypeless(srcImage.format) || IsTypeless(format))
-        return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+        return HRESULT_E_NOT_SUPPORTED;
 
     if ((srcImage.width > UINT32_MAX) || (srcImage.height > UINT32_MAX))
         return E_INVALIDARG;
@@ -4896,7 +4926,7 @@ HRESULT DirectX::Convert(
         || IsPlanar(metadata.format) || IsPlanar(format)
         || IsPalettized(metadata.format) || IsPalettized(format)
         || IsTypeless(metadata.format) || IsTypeless(format))
-        return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+        return HRESULT_E_NOT_SUPPORTED;
 
     if ((metadata.width > UINT32_MAX) || (metadata.height > UINT32_MAX))
         return E_INVALIDARG;
@@ -5049,7 +5079,7 @@ HRESULT DirectX::ConvertToSinglePlane(const Image& srcImage, ScratchImage& image
 
     DXGI_FORMAT format = _PlanarToSingle(srcImage.format);
     if (format == DXGI_FORMAT_UNKNOWN)
-        return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+        return HRESULT_E_NOT_SUPPORTED;
 
     if ((srcImage.width > UINT32_MAX) || (srcImage.height > UINT32_MAX))
         return E_INVALIDARG;
@@ -5092,12 +5122,12 @@ HRESULT DirectX::ConvertToSinglePlane(
     if (metadata.IsVolumemap())
     {
         // Direct3D does not support any planar formats for Texture3D
-        return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+        return HRESULT_E_NOT_SUPPORTED;
     }
 
     DXGI_FORMAT format = _PlanarToSingle(metadata.format);
     if (format == DXGI_FORMAT_UNKNOWN)
-        return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+        return HRESULT_E_NOT_SUPPORTED;
 
     if ((metadata.width > UINT32_MAX) || (metadata.height > UINT32_MAX))
         return E_INVALIDARG;

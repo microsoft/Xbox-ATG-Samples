@@ -3,7 +3,7 @@
 //
 // A sky box rendering helper.
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
@@ -95,10 +95,10 @@ SkyboxEffect::Impl::Impl(_In_ ID3D12Device* device, const EffectPipelineStateDes
     : EffectBase(device),
     descriptors{}
 {
-    static_assert(_countof(EffectBase<SkyboxEffectTraits>::VertexShaderIndices) == SkyboxEffectTraits::ShaderPermutationCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<SkyboxEffectTraits>::VertexShaderBytecode) == SkyboxEffectTraits::VertexShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<SkyboxEffectTraits>::PixelShaderBytecode) == SkyboxEffectTraits::PixelShaderCount, "array/max mismatch");
-    static_assert(_countof(EffectBase<SkyboxEffectTraits>::PixelShaderIndices) == SkyboxEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<SkyboxEffectTraits>::VertexShaderIndices)) == SkyboxEffectTraits::ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<SkyboxEffectTraits>::VertexShaderBytecode)) == SkyboxEffectTraits::VertexShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<SkyboxEffectTraits>::PixelShaderBytecode)) == SkyboxEffectTraits::PixelShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(EffectBase<SkyboxEffectTraits>::PixelShaderIndices)) == SkyboxEffectTraits::ShaderPermutationCount, "array/max mismatch");
 
     // Create root signature
     D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
@@ -116,7 +116,7 @@ SkyboxEffect::Impl::Impl(_In_ ID3D12Device* device, const EffectPipelineStateDes
     rootParameters[ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
     CD3DX12_ROOT_SIGNATURE_DESC rsigDesc;
-    rsigDesc.Init(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
+    rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 0, nullptr, rootSignatureFlags);
 
     // Create the root signature
     mRootSignature = GetRootSignature(0, rsigDesc);

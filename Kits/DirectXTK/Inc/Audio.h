@@ -3,7 +3,7 @@
 //
 // DirectXTK for Audio header
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248929
@@ -11,6 +11,13 @@
 //--------------------------------------------------------------------------------------
 
 #pragma once
+
+#include <cstddef>
+#include <cstdint>
+#include <functional>
+#include <memory>
+#include <string>
+#include <vector>
 
 #include <objbase.h>
 #include <mmreg.h>
@@ -41,17 +48,15 @@
 #include <xapofx.h>
 
 #ifndef USING_XAUDIO2_REDIST
+#if defined(USING_XAUDIO2_8) && defined(NTDDI_WIN10) && !defined(_M_IX86)
+// The xaudio2_8.lib in the Windows 10 SDK for x86 is incorrectly annotated as __cdecl instead of __stdcall, so avoid using it in this case.
+#pragma comment(lib,"xaudio2_8.lib")
+#else
 #pragma comment(lib,"xaudio2.lib")
+#endif
 #endif
 
 #include <DirectXMath.h>
-
-
-#include <cstdint>
-#include <functional>
-#include <memory>
-#include <string>
-#include <vector>
 
 
 namespace DirectX
@@ -594,6 +599,8 @@ namespace DirectX
                 XMStoreFloat3(reinterpret_cast<XMFLOAT3*>(&Position), newPos);
             }
         }
+
+        void __cdecl EnableDefaultMultiChannel(unsigned int channels, float radius = 1.f);
     };
 
 
@@ -618,11 +625,13 @@ namespace DirectX
         void __cdecl SetPitch(float pitch);
         void __cdecl SetPan(float pan);
 
-        void __cdecl Apply3D(const AudioListener& listener, const AudioEmitter& emitter, bool rhcoords = true);
+        void __cdecl Apply3D(const X3DAUDIO_LISTENER& listener, const X3DAUDIO_EMITTER& emitter, bool rhcoords = true);
 
         bool __cdecl IsLooped() const noexcept;
 
         SoundState __cdecl GetState() noexcept;
+
+        unsigned int __cdecl GetChannelCount() const noexcept;
 
         IVoiceNotify* __cdecl GetVoiceNotify() const noexcept;
 
@@ -662,11 +671,13 @@ namespace DirectX
         void __cdecl SetPitch(float pitch);
         void __cdecl SetPan(float pan);
 
-        void __cdecl Apply3D(const AudioListener& listener, const AudioEmitter& emitter, bool rhcoords = true);
+        void __cdecl Apply3D(const X3DAUDIO_LISTENER& listener, const X3DAUDIO_EMITTER& emitter, bool rhcoords = true);
 
         bool __cdecl IsLooped() const noexcept;
 
         SoundState __cdecl GetState() noexcept;
+
+        unsigned int __cdecl GetChannelCount() const noexcept;
 
         IVoiceNotify* __cdecl GetVoiceNotify() const noexcept;
 
@@ -708,7 +719,7 @@ namespace DirectX
         void __cdecl SetPitch(float pitch);
         void __cdecl SetPan(float pan);
 
-        void __cdecl Apply3D(const AudioListener& listener, const AudioEmitter& emitter, bool rhcoords = true);
+        void __cdecl Apply3D(const X3DAUDIO_LISTENER& listener, const X3DAUDIO_EMITTER& emitter, bool rhcoords = true);
 
         void __cdecl SubmitBuffer(_In_reads_bytes_(audioBytes) const uint8_t* pAudioData, size_t audioBytes);
         void __cdecl SubmitBuffer(_In_reads_bytes_(audioBytes) const uint8_t* pAudioData, uint32_t offset, size_t audioBytes);
@@ -727,6 +738,8 @@ namespace DirectX
         int __cdecl GetPendingBufferCount() const noexcept;
 
         const WAVEFORMATEX* __cdecl GetFormat() const noexcept;
+
+        unsigned int __cdecl GetChannelCount() const noexcept;
 
     private:
         // Private implementation.

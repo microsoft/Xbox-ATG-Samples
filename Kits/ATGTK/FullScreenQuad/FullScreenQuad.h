@@ -3,7 +3,7 @@
 //
 // Class to draw a full-screen quad
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
@@ -21,8 +21,17 @@ namespace DX
     {
     public:
         void Initialize(_In_ ID3D12Device* d3dDevice);
-        void Draw(_In_ ID3D12GraphicsCommandList* d3dCommandList, _In_ ID3D12PipelineState* d3dPSO, D3D12_GPU_DESCRIPTOR_HANDLE texture, D3D12_GPU_VIRTUAL_ADDRESS constantBuffer = 0);
-        void Draw(_In_ ID3D12GraphicsCommandList* d3dCommandList, _In_ ID3D12PipelineState* d3dPSO, D3D12_GPU_DESCRIPTOR_HANDLE texture, D3D12_GPU_DESCRIPTOR_HANDLE texture2, D3D12_GPU_VIRTUAL_ADDRESS constantBuffer = 0);
+        void Draw(
+            _In_ ID3D12GraphicsCommandList* d3dCommandList,
+            _In_ ID3D12PipelineState* d3dPSO,
+            D3D12_GPU_DESCRIPTOR_HANDLE texture,
+            D3D12_GPU_VIRTUAL_ADDRESS constantBuffer = 0);
+        void Draw(
+            _In_ ID3D12GraphicsCommandList* d3dCommandList,
+            _In_ ID3D12PipelineState* d3dPSO,
+            D3D12_GPU_DESCRIPTOR_HANDLE texture,
+            D3D12_GPU_DESCRIPTOR_HANDLE texture2,
+            D3D12_GPU_VIRTUAL_ADDRESS constantBuffer = 0);
 
         void ReleaseDevice();
 

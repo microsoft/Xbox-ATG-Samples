@@ -11,10 +11,12 @@
 #include "Serialization.h"
 #include "BufferDescriptor.h"
 
-#include <fstream>
 #include <algorithm>
-#include <io.h>
+#include <cstdarg>
 #include <fstream>
+#include <new>
+
+#include <io.h>
 
 using namespace ATG;
 using namespace DX;

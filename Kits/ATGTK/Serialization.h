@@ -6,13 +6,15 @@
 //--------------------------------------------------------------------------------------
 #pragma once
 
-#include <stdint.h>
-#include <assert.h>
-
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
 #include <iostream>
 #include <memory>
 #include <stack>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 #define ENABLE_IF_INTEGRAL(_T_) typename std::enable_if<std::is_integral<_T_>::value>::type* = nullptr
@@ -1405,7 +1407,7 @@ namespace ATG
         ctx.Visit();
         return srzBffr.GetBytesWritten();
     }
-    
+
     template<typename T>
     size_t Serialize(const T &serializeMe, uint8_t *outputBuffer, size_t outputBufferSize)
     {

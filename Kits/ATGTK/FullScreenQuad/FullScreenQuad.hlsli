@@ -3,7 +3,7 @@
 //
 // Common shader code to draw a full-screen quad
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 

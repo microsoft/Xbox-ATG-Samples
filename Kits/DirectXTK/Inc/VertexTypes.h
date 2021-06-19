@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: VertexTypes.h
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248929
@@ -14,6 +14,8 @@
 #else
 #include <d3d11_1.h>
 #endif
+
+#include <cstdint>
 
 #include <DirectXMath.h>
 

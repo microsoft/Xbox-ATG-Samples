@@ -6,7 +6,7 @@
 //
 // http://www.mwgfx.co.uk/programs/dxtbmp.htm
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248926
@@ -24,8 +24,10 @@
 
 #include <Windows.h>
 
+#include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <new>
 
 #include "DirectXTex.h"
 

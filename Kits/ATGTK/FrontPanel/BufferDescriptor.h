@@ -6,7 +6,8 @@
 //--------------------------------------------------------------------------------------
 #pragma once
 
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 
 
 namespace ATG

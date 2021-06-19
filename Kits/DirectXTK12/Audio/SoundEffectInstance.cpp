@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: SoundEffectInstance.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248929
@@ -215,7 +215,7 @@ void SoundEffectInstance::Impl::Play(bool loop)
             wfx->wFormatTag, wfx->nChannels, wfx->wBitsPerSample, wfx->nSamplesPerSec, length);
     #endif
         mBase.Stop(true, mLooped);
-        throw std::exception("SubmitSourceBuffer");
+        throw std::runtime_error("SubmitSourceBuffer");
     }
 }
 
@@ -316,7 +316,7 @@ void SoundEffectInstance::SetPan(float pan)
 }
 
 
-void SoundEffectInstance::Apply3D(const AudioListener& listener, const AudioEmitter& emitter, bool rhcoords)
+void SoundEffectInstance::Apply3D(const X3DAUDIO_LISTENER& listener, const X3DAUDIO_EMITTER& emitter, bool rhcoords)
 {
     pImpl->mBase.Apply3D(listener, emitter, rhcoords);
 }
@@ -332,6 +332,12 @@ bool SoundEffectInstance::IsLooped() const noexcept
 SoundState SoundEffectInstance::GetState() noexcept
 {
     return pImpl->mBase.GetState(true);
+}
+
+
+unsigned int SoundEffectInstance::GetChannelCount() const noexcept
+{
+    return pImpl->mBase.GetChannelCount();
 }
 
 

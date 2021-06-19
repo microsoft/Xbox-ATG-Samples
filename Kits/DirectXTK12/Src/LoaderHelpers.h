@@ -3,7 +3,7 @@
 //
 // Helper functions for texture loaders and screen grabber
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248929
@@ -296,6 +296,8 @@ namespace DirectX
                 return E_POINTER;
             }
 
+            *bitSize = 0;
+
             if (ddsDataSize > UINT32_MAX)
             {
                 return E_FAIL;
@@ -328,7 +330,7 @@ namespace DirectX
                 (MAKEFOURCC('D', 'X', '1', '0') == hdr->ddspf.fourCC))
             {
                 // Must be long enough for both headers and magic value
-                if (ddsDataSize < (sizeof(DDS_HEADER) + sizeof(uint32_t) + sizeof(DDS_HEADER_DXT10)))
+                if (ddsDataSize < (sizeof(uint32_t) + sizeof(DDS_HEADER) + sizeof(DDS_HEADER_DXT10)))
                 {
                     return E_FAIL;
                 }
@@ -359,6 +361,8 @@ namespace DirectX
             {
                 return E_POINTER;
             }
+
+            *bitSize = 0;
 
             // open the file
         #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
@@ -409,19 +413,21 @@ namespace DirectX
             }
 
             // read the data in
-            DWORD BytesRead = 0;
+            DWORD bytesRead = 0;
             if (!ReadFile(hFile.get(),
                 ddsData.get(),
                 fileInfo.EndOfFile.LowPart,
-                &BytesRead,
+                &bytesRead,
                 nullptr
                 ))
             {
+                ddsData.reset();
                 return HRESULT_FROM_WIN32(GetLastError());
             }
 
-            if (BytesRead < fileInfo.EndOfFile.LowPart)
+            if (bytesRead < fileInfo.EndOfFile.LowPart)
             {
+                ddsData.reset();
                 return E_FAIL;
             }
 
@@ -429,6 +435,7 @@ namespace DirectX
             auto dwMagicNumber = *reinterpret_cast<const uint32_t*>(ddsData.get());
             if (dwMagicNumber != DDS_MAGIC)
             {
+                ddsData.reset();
                 return E_FAIL;
             }
 
@@ -438,6 +445,7 @@ namespace DirectX
             if (hdr->size != sizeof(DDS_HEADER) ||
                 hdr->ddspf.size != sizeof(DDS_PIXELFORMAT))
             {
+                ddsData.reset();
                 return E_FAIL;
             }
 
@@ -447,8 +455,9 @@ namespace DirectX
                 (MAKEFOURCC('D', 'X', '1', '0') == hdr->ddspf.fourCC))
             {
                 // Must be long enough for both headers and magic value
-                if (fileInfo.EndOfFile.LowPart < (sizeof(DDS_HEADER) + sizeof(uint32_t) + sizeof(DDS_HEADER_DXT10)))
+                if (fileInfo.EndOfFile.LowPart < (sizeof(uint32_t) + sizeof(DDS_HEADER) + sizeof(DDS_HEADER_DXT10)))
                 {
+                    ddsData.reset();
                     return E_FAIL;
                 }
 
@@ -637,82 +646,114 @@ namespace DirectX
                 // Note that sRGB formats are written using the "DX10" extended header
 
                 switch (ddpf.RGBBitCount)
-                {
-                    case 32:
-                        if (ISBITMASK(0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000))
-                        {
-                            return DXGI_FORMAT_R8G8B8A8_UNORM;
-                        }
+                 {
+                case 32:
+                    if (ISBITMASK(0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000))
+                    {
+                        return DXGI_FORMAT_R8G8B8A8_UNORM;
+                    }
 
-                        if (ISBITMASK(0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000))
-                        {
-                            return DXGI_FORMAT_B8G8R8A8_UNORM;
-                        }
+                    if (ISBITMASK(0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000))
+                    {
+                        return DXGI_FORMAT_B8G8R8A8_UNORM;
+                    }
 
-                        if (ISBITMASK(0x00ff0000, 0x0000ff00, 0x000000ff, 0))
-                        {
-                            return DXGI_FORMAT_B8G8R8X8_UNORM;
-                        }
+                    if (ISBITMASK(0x00ff0000, 0x0000ff00, 0x000000ff, 0))
+                    {
+                        return DXGI_FORMAT_B8G8R8X8_UNORM;
+                    }
 
-                        // No DXGI format maps to ISBITMASK(0x000000ff,0x0000ff00,0x00ff0000,0) aka D3DFMT_X8B8G8R8
+                    // No DXGI format maps to ISBITMASK(0x000000ff,0x0000ff00,0x00ff0000,0) aka D3DFMT_X8B8G8R8
 
-                        // Note that many common DDS reader/writers (including D3DX) swap the
-                        // the RED/BLUE masks for 10:10:10:2 formats. We assume
-                        // below that the 'backwards' header mask is being used since it is most
-                        // likely written by D3DX. The more robust solution is to use the 'DX10'
-                        // header extension and specify the DXGI_FORMAT_R10G10B10A2_UNORM format directly
+                    // Note that many common DDS reader/writers (including D3DX) swap the
+                    // the RED/BLUE masks for 10:10:10:2 formats. We assume
+                    // below that the 'backwards' header mask is being used since it is most
+                    // likely written by D3DX. The more robust solution is to use the 'DX10'
+                    // header extension and specify the DXGI_FORMAT_R10G10B10A2_UNORM format directly
 
-                        // For 'correct' writers, this should be 0x000003ff,0x000ffc00,0x3ff00000 for RGB data
-                        if (ISBITMASK(0x3ff00000, 0x000ffc00, 0x000003ff, 0xc0000000))
-                        {
-                            return DXGI_FORMAT_R10G10B10A2_UNORM;
-                        }
+                    // For 'correct' writers, this should be 0x000003ff,0x000ffc00,0x3ff00000 for RGB data
+                    if (ISBITMASK(0x3ff00000, 0x000ffc00, 0x000003ff, 0xc0000000))
+                    {
+                        return DXGI_FORMAT_R10G10B10A2_UNORM;
+                    }
 
-                        // No DXGI format maps to ISBITMASK(0x000003ff,0x000ffc00,0x3ff00000,0xc0000000) aka D3DFMT_A2R10G10B10
+                    // No DXGI format maps to ISBITMASK(0x000003ff,0x000ffc00,0x3ff00000,0xc0000000) aka D3DFMT_A2R10G10B10
 
-                        if (ISBITMASK(0x0000ffff, 0xffff0000, 0, 0))
-                        {
-                            return DXGI_FORMAT_R16G16_UNORM;
-                        }
+                    if (ISBITMASK(0x0000ffff, 0xffff0000, 0, 0))
+                    {
+                        return DXGI_FORMAT_R16G16_UNORM;
+                    }
 
-                        if (ISBITMASK(0xffffffff, 0, 0, 0))
-                        {
-                            // Only 32-bit color channel format in D3D9 was R32F
-                            return DXGI_FORMAT_R32_FLOAT; // D3DX writes this out as a FourCC of 114
-                        }
-                        break;
+                    if (ISBITMASK(0xffffffff, 0, 0, 0))
+                    {
+                        // Only 32-bit color channel format in D3D9 was R32F
+                        return DXGI_FORMAT_R32_FLOAT; // D3DX writes this out as a FourCC of 114
+                    }
+                    break;
 
-                    case 24:
-                        // No 24bpp DXGI formats aka D3DFMT_R8G8B8
-                        break;
+                case 24:
+                    // No 24bpp DXGI formats aka D3DFMT_R8G8B8
+                    break;
 
-                    case 16:
-                        if (ISBITMASK(0x7c00, 0x03e0, 0x001f, 0x8000))
-                        {
-                            return DXGI_FORMAT_B5G5R5A1_UNORM;
-                        }
-                        if (ISBITMASK(0xf800, 0x07e0, 0x001f, 0))
-                        {
-                            return DXGI_FORMAT_B5G6R5_UNORM;
-                        }
+                case 16:
+                    if (ISBITMASK(0x7c00, 0x03e0, 0x001f, 0x8000))
+                    {
+                        return DXGI_FORMAT_B5G5R5A1_UNORM;
+                    }
+                    if (ISBITMASK(0xf800, 0x07e0, 0x001f, 0))
+                    {
+                        return DXGI_FORMAT_B5G6R5_UNORM;
+                    }
 
-                        // No DXGI format maps to ISBITMASK(0x7c00,0x03e0,0x001f,0) aka D3DFMT_X1R5G5B5
+                    // No DXGI format maps to ISBITMASK(0x7c00,0x03e0,0x001f,0) aka D3DFMT_X1R5G5B5
 
-                        if (ISBITMASK(0x0f00, 0x00f0, 0x000f, 0xf000))
-                        {
-                            return DXGI_FORMAT_B4G4R4A4_UNORM;
-                        }
+                    if (ISBITMASK(0x0f00, 0x00f0, 0x000f, 0xf000))
+                    {
+                        return DXGI_FORMAT_B4G4R4A4_UNORM;
+                    }
 
-                        // No DXGI format maps to ISBITMASK(0x0f00,0x00f0,0x000f,0) aka D3DFMT_X4R4G4B4
+                    // NVTT versions 1.x wrote this as RGB instead of LUMINANCE
+                    if (ISBITMASK(0x00ff, 0, 0, 0xff00))
+                    {
+                        return DXGI_FORMAT_R8G8_UNORM;
+                    }
+                    if (ISBITMASK(0xffff, 0, 0, 0))
+                    {
+                        return DXGI_FORMAT_R16_UNORM;
+                    }
 
-                        // No 3:3:2, 3:3:2:8, or paletted DXGI formats aka D3DFMT_A8R3G3B2, D3DFMT_R3G3B2, D3DFMT_P8, D3DFMT_A8P8, etc.
-                        break;
+                    // No DXGI format maps to ISBITMASK(0x0f00,0x00f0,0x000f,0) aka D3DFMT_X4R4G4B4
+
+                    // No 3:3:2:8 or paletted DXGI formats aka D3DFMT_A8R3G3B2, D3DFMT_A8P8, etc.
+                    break;
+
+                case 8:
+                    // NVTT versions 1.x wrote this as RGB instead of LUMINANCE
+                    if (ISBITMASK(0xff, 0, 0, 0))
+                    {
+                        return DXGI_FORMAT_R8_UNORM;
+                    }
+
+                    // No 3:3:2 or paletted DXGI formats aka D3DFMT_R3G3B2, D3DFMT_P8
+                    break;
                 }
             }
             else if (ddpf.flags & DDS_LUMINANCE)
             {
-                if (8 == ddpf.RGBBitCount)
+                switch (ddpf.RGBBitCount)
                 {
+                case 16:
+                    if (ISBITMASK(0xffff, 0, 0, 0))
+                    {
+                        return DXGI_FORMAT_R16_UNORM; // D3DX10/11 writes this out as DX10 extension
+                    }
+                    if (ISBITMASK(0x00ff, 0, 0, 0xff00))
+                    {
+                        return DXGI_FORMAT_R8G8_UNORM; // D3DX10/11 writes this out as DX10 extension
+                    }
+                    break;
+
+                case 8:
                     if (ISBITMASK(0xff, 0, 0, 0))
                     {
                         return DXGI_FORMAT_R8_UNORM; // D3DX10/11 writes this out as DX10 extension
@@ -724,18 +765,7 @@ namespace DirectX
                     {
                         return DXGI_FORMAT_R8G8_UNORM; // Some DDS writers assume the bitcount should be 8 instead of 16
                     }
-                }
-
-                if (16 == ddpf.RGBBitCount)
-                {
-                    if (ISBITMASK(0xffff, 0, 0, 0))
-                    {
-                        return DXGI_FORMAT_R16_UNORM; // D3DX10/11 writes this out as DX10 extension
-                    }
-                    if (ISBITMASK(0x00ff, 0, 0, 0xff00))
-                    {
-                        return DXGI_FORMAT_R8G8_UNORM; // D3DX10/11 writes this out as DX10 extension
-                    }
+                    break;
                 }
             }
             else if (ddpf.flags & DDS_ALPHA)
@@ -747,16 +777,9 @@ namespace DirectX
             }
             else if (ddpf.flags & DDS_BUMPDUDV)
             {
-                if (16 == ddpf.RGBBitCount)
+                switch (ddpf.RGBBitCount)
                 {
-                    if (ISBITMASK(0x00ff, 0xff00, 0, 0))
-                    {
-                        return DXGI_FORMAT_R8G8_SNORM; // D3DX10/11 writes this out as DX10 extension
-                    }
-                }
-
-                if (32 == ddpf.RGBBitCount)
-                {
+                case 32:
                     if (ISBITMASK(0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000))
                     {
                         return DXGI_FORMAT_R8G8B8A8_SNORM; // D3DX10/11 writes this out as DX10 extension
@@ -767,6 +790,14 @@ namespace DirectX
                     }
 
                     // No DXGI format maps to ISBITMASK(0x3ff00000, 0x000ffc00, 0x000003ff, 0xc0000000) aka D3DFMT_A2W10V10U10
+                    break;
+
+                case 16:
+                    if (ISBITMASK(0x00ff, 0xff00, 0, 0))
+                    {
+                        return DXGI_FORMAT_R8G8_SNORM; // D3DX10/11 writes this out as DX10 extension
+                    }
+                    break;
                 }
 
                 // No DXGI format maps to DDPF_BUMPLUMINANCE aka D3DFMT_L6V5U5, D3DFMT_X8L8V8U8

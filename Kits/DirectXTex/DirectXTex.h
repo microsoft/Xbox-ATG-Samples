@@ -3,7 +3,7 @@
 //
 // DirectX Texture Library
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248926
@@ -11,11 +11,13 @@
 
 #pragma once
 
-#include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <functional>
+#include <utility>
 #include <vector>
 
+#if defined(WIN32) || defined(_WIN32)
 #if !defined(__d3d11_h__) && !defined(__d3d11_x_h__) && !defined(__d3d12_h__) && !defined(__d3d12_x_h__) && !defined(__XBOX_D3D12_X__)
 #ifdef _GAMING_XBOX_SCARLETT
 #include <d3d12_xs.h>
@@ -27,15 +29,25 @@
 #include <d3d11_1.h>
 #endif
 #endif
+#else // !WIN32
+#include <directx/dxgiformat.h>
+#include <wsl/winadapter.h>
+#endif
 
 #include <DirectXMath.h>
 
+#ifdef WIN32
+#ifdef NTDDI_WIN10_FE
+#include <ocidl.h>
+#else
 #include <OCIdl.h>
-
-#define DIRECTX_TEX_VERSION 191
+#endif
 
 struct IWICImagingFactory;
 struct IWICMetadataQueryReader;
+#endif
+
+#define DIRECTX_TEX_VERSION 193
 
 
 namespace DirectX
@@ -284,6 +296,7 @@ namespace DirectX
         _In_ TGA_FLAGS flags,
         _Out_ TexMetadata& metadata) noexcept;
 
+#ifdef WIN32
     HRESULT __cdecl GetMetadataFromWICMemory(
         _In_reads_bytes_(size) const void* pSource, _In_ size_t size,
         _In_ WIC_FLAGS flags,
@@ -295,6 +308,7 @@ namespace DirectX
         _In_ WIC_FLAGS flags,
         _Out_ TexMetadata& metadata,
         _In_opt_ std::function<void __cdecl(IWICMetadataQueryReader*)> getMQR = nullptr);
+#endif
 
     // Compatability helpers
     HRESULT __cdecl GetMetadataFromTGAMemory(
@@ -386,7 +400,11 @@ namespace DirectX
         void *__cdecl GetBufferPointer() const noexcept { return m_buffer; }
         size_t __cdecl GetBufferSize() const noexcept { return m_size; }
 
+        HRESULT __cdecl Resize(size_t size) noexcept;
+            // Reallocate for a new size
+
         HRESULT __cdecl Trim(size_t size) noexcept;
+            // Shorten size without reallocation
 
     private:
         void*   m_buffer;
@@ -449,6 +467,7 @@ namespace DirectX
         _In_z_ const wchar_t* szFile, _In_opt_ const TexMetadata* metadata = nullptr) noexcept;
 
     // WIC operations
+#ifdef WIN32
     HRESULT __cdecl LoadFromWICMemory(
         _In_reads_bytes_(size) const void* pSource, _In_ size_t size,
         _In_ WIC_FLAGS flags,
@@ -478,6 +497,7 @@ namespace DirectX
         _In_ WIC_FLAGS flags, _In_ REFGUID guidContainerFormat,
         _In_z_ const wchar_t* szFile, _In_opt_ const GUID* targetFormat = nullptr,
         _In_opt_ std::function<void __cdecl(IPropertyBag2*)> setCustomProps = nullptr);
+#endif // WIN32
 
     // Compatability helpers
     HRESULT __cdecl LoadFromTGAMemory(
@@ -503,11 +523,13 @@ namespace DirectX
         TEX_FR_FLIP_VERTICAL    = 0x10,
     };
 
+#ifdef WIN32
     HRESULT __cdecl FlipRotate(_In_ const Image& srcImage, _In_ TEX_FR_FLAGS flags, _Out_ ScratchImage& image) noexcept;
     HRESULT __cdecl FlipRotate(
         _In_reads_(nimages) const Image* srcImages, _In_ size_t nimages, _In_ const TexMetadata& metadata,
         _In_ TEX_FR_FLAGS flags, _Out_ ScratchImage& result) noexcept;
         // Flip and/or rotate image
+#endif
 
     enum TEX_FILTER_FLAGS : unsigned long
     {
@@ -787,7 +809,7 @@ namespace DirectX
 
     //---------------------------------------------------------------------------------
     // WIC utility code
-
+#ifdef WIN32
     enum WICCodecs
     {
         WIC_CODEC_BMP = 1,          // Windows Bitmap (.bmp)
@@ -803,6 +825,7 @@ namespace DirectX
 
     IWICImagingFactory* __cdecl GetWICFactory(bool& iswic2) noexcept;
     void __cdecl SetWICFactory(_In_opt_ IWICImagingFactory* pWIC) noexcept;
+#endif
 
     //---------------------------------------------------------------------------------
     // Direct3D 11 functions

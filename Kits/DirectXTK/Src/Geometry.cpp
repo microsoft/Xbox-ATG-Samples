@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: Geometry.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248929
@@ -24,7 +24,7 @@ namespace
     {
         // Use >=, not > comparison, because some D3D level 9_x hardware does not support 0xFFFF index values.
         if (value >= USHRT_MAX)
-            throw std::exception("Index value out of range: cannot tesselate primitive so finely");
+            throw std::out_of_range("Index value out of range: cannot tesselate primitive so finely");
     }
 
 
@@ -150,7 +150,7 @@ void DirectX::ComputeSphere(VertexCollection& vertices, IndexCollection& indices
     indices.clear();
 
     if (tessellation < 3)
-        throw std::out_of_range("tesselation parameter out of range");
+        throw std::invalid_argument("tesselation parameter must be at least 3");
 
     size_t verticalSegments = tessellation;
     size_t horizontalSegments = tessellation * 2;
@@ -372,7 +372,7 @@ void DirectX::ComputeGeoSphere(VertexCollection& vertices, IndexCollection& indi
     vertices.reserve(vertexPositions.size());
     for (auto it = vertexPositions.begin(); it != vertexPositions.end(); ++it)
     {
-        auto vertexValue = *it;
+        const auto& vertexValue = *it;
 
         auto normal = XMVector3Normalize(XMLoadFloat3(&vertexValue));
         auto pos = XMVectorScale(normal, radius);
@@ -472,7 +472,7 @@ void DirectX::ComputeGeoSphere(VertexCollection& vertices, IndexCollection& indi
     // poles, but reduce stretching.
     auto fixPole = [&](size_t poleIndex)
     {
-        auto poleVertex = vertices[poleIndex];
+        const auto& poleVertex = vertices[poleIndex];
         bool overwrittenPoleVertex = false; // overwriting the original pole vertex saves us one vertex
 
         for (size_t i = 0; i < indices.size(); i += 3)
@@ -617,7 +617,7 @@ void DirectX::ComputeCylinder(VertexCollection& vertices, IndexCollection& indic
     indices.clear();
 
     if (tessellation < 3)
-        throw std::out_of_range("tesselation parameter out of range");
+        throw std::invalid_argument("tesselation parameter must be at least 3");
 
     height /= 2;
 
@@ -666,7 +666,7 @@ void DirectX::ComputeCone(VertexCollection& vertices, IndexCollection& indices, 
     indices.clear();
 
     if (tessellation < 3)
-        throw std::out_of_range("tesselation parameter out of range");
+        throw std::invalid_argument("tesselation parameter must be at least 3");
 
     height /= 2;
 
@@ -720,7 +720,7 @@ void DirectX::ComputeTorus(VertexCollection& vertices, IndexCollection& indices,
     indices.clear();
 
     if (tessellation < 3)
-        throw std::out_of_range("tesselation parameter out of range");
+        throw std::invalid_argument("tesselation parameter must be at least 3");
 
     size_t stride = tessellation + 1;
 
@@ -799,7 +799,7 @@ void DirectX::ComputeTetrahedron(VertexCollection& vertices, IndexCollection& in
         1, 3, 2,
     };
 
-    for (size_t j = 0; j < _countof(faces); j += 3)
+    for (size_t j = 0; j < std::size(faces); j += 3)
     {
         uint32_t v0 = faces[j];
         uint32_t v1 = faces[j + 1];
@@ -865,7 +865,7 @@ void DirectX::ComputeOctahedron(VertexCollection& vertices, IndexCollection& ind
         5, 0, 3
     };
 
-    for (size_t j = 0; j < _countof(faces); j += 3)
+    for (size_t j = 0; j < std::size(faces); j += 3)
     {
         uint32_t v0 = faces[j];
         uint32_t v1 = faces[j + 1];
@@ -979,7 +979,7 @@ void DirectX::ComputeDodecahedron(VertexCollection& vertices, IndexCollection& i
     };
 
     size_t t = 0;
-    for (size_t j = 0; j < _countof(faces); j += 5, ++t)
+    for (size_t j = 0; j < std::size(faces); j += 5, ++t)
     {
         uint32_t v0 = faces[j];
         uint32_t v1 = faces[j + 1];
@@ -1083,7 +1083,7 @@ void DirectX::ComputeIcosahedron(VertexCollection& vertices, IndexCollection& in
         11, 7, 5
     };
 
-    for (size_t j = 0; j < _countof(faces); j += 3)
+    for (size_t j = 0; j < std::size(faces); j += 3)
     {
         uint32_t v0 = faces[j];
         uint32_t v1 = faces[j + 1];
@@ -1162,7 +1162,7 @@ void DirectX::ComputeTeapot(VertexCollection& vertices, IndexCollection& indices
     indices.clear();
 
     if (tessellation < 1)
-        throw std::out_of_range("tesselation parameter out of range");
+        throw std::invalid_argument("tesselation parameter must be non-zero");
 
     XMVECTOR scaleVector = XMVectorReplicate(size);
 
@@ -1170,7 +1170,7 @@ void DirectX::ComputeTeapot(VertexCollection& vertices, IndexCollection& indices
     XMVECTOR scaleNegateZ = XMVectorMultiply(scaleVector, g_XMNegateZ);
     XMVECTOR scaleNegateXZ = XMVectorMultiply(scaleVector, XMVectorMultiply(g_XMNegateX, g_XMNegateZ));
 
-    for (size_t i = 0; i < _countof(TeapotPatches); i++)
+    for (size_t i = 0; i < std::size(TeapotPatches); i++)
     {
         TeapotPatch const& patch = TeapotPatches[i];
 

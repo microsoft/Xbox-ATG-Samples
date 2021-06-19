@@ -3,7 +3,7 @@
 //
 // Utilities for reading & writing Portable PixMap files (PPM/PFM)
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248926
@@ -21,8 +21,10 @@
 
 #include <Windows.h>
 
+#include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <new>
 
 #include "DirectXTex.h"
 
@@ -377,9 +379,11 @@ HRESULT __cdecl SaveToPortablePixMap(
     }
 
 #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
-    ScopedHandle hFile(safe_handle(CreateFile2(szFile, GENERIC_WRITE, 0, CREATE_ALWAYS, nullptr)));
+    ScopedHandle hFile(safe_handle(CreateFile2(szFile,
+        GENERIC_WRITE, 0, CREATE_ALWAYS, nullptr)));
 #else
-    ScopedHandle hFile(safe_handle(CreateFileW(szFile, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, 0, nullptr)));
+    ScopedHandle hFile(safe_handle(CreateFileW(szFile,
+        GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr)));
 #endif
     if (!hFile)
         return HRESULT_FROM_WIN32(GetLastError());
@@ -658,9 +662,11 @@ HRESULT __cdecl SaveToPortablePixMapHDR(
     tmpImage.Release();
 
 #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
-    ScopedHandle hFile(safe_handle(CreateFile2(szFile, GENERIC_WRITE, 0, CREATE_ALWAYS, nullptr)));
+    ScopedHandle hFile(safe_handle(CreateFile2(szFile,
+        GENERIC_WRITE, 0, CREATE_ALWAYS, nullptr)));
 #else
-    ScopedHandle hFile(safe_handle(CreateFileW(szFile, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, 0, nullptr)));
+    ScopedHandle hFile(safe_handle(CreateFileW(szFile,
+        GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr)));
 #endif
     if (!hFile)
         return HRESULT_FROM_WIN32(GetLastError());

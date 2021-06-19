@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: ToneMapPostProcess.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
@@ -36,7 +36,7 @@ namespace
 #endif
 
     // Constant buffer layout. Must match the shader!
-    __declspec(align(16)) struct ToneMapConstants
+    XM_ALIGNED_STRUCT(16) ToneMapConstants
     {
         // linearExposure is .x
         // paperWhiteNits is .y
@@ -146,7 +146,7 @@ namespace
 #endif
     };
 
-    static_assert(_countof(pixelShaders) == PixelShaderCount, "array/max mismatch");
+    static_assert(std::size(pixelShaders) == PixelShaderCount, "array/max mismatch");
 
     const int pixelShaderIndices[] =
     {
@@ -189,7 +189,7 @@ namespace
 #endif
     };
 
-    static_assert(_countof(pixelShaderIndices) == ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(pixelShaderIndices)) == ShaderPermutationCount, "array/max mismatch");
 
     // Factory for lazily instantiating shared root signatures.
     class DeviceResources
@@ -276,10 +276,10 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetStat
     mDeviceResources(deviceResourcesPool.DemandCreate(device))
 {
     if (op >= Operator_Max)
-        throw std::out_of_range("Tonemap operator not defined");
+        throw std::invalid_argument("Tonemap operator not defined");
 
     if (func > TransferFunction_Max)
-        throw std::out_of_range("Transfer function not defined");
+        throw std::invalid_argument("Transfer function not defined");
 
     // Create root signature.
     {
@@ -317,7 +317,7 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D12Device* device, const RenderTargetStat
         // Constant buffer
         rootParameters[RootParameterIndex::ConstantBuffer].InitAsConstantBufferView(0, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 
-        rsigDesc.Init(_countof(rootParameters), rootParameters, 1, &sampler, rootSignatureFlags);
+        rsigDesc.Init(static_cast<UINT>(std::size(rootParameters)), rootParameters, 1, &sampler, rootSignatureFlags);
 
         mRootSignature = mDeviceResources->GetRootSignature(rsigDesc);
     }
@@ -369,7 +369,7 @@ void ToneMapPostProcess::Impl::Process(_In_ ID3D12GraphicsCommandList* commandLi
     if (!texture.ptr)
     {
         DebugTrace("ERROR: Missing texture for ToneMapPostProcess (texture %llu)\n", texture.ptr);
-        throw std::exception("ToneMapPostProcess");
+        throw std::runtime_error("ToneMapPostProcess");
     }
     commandList->SetGraphicsRootDescriptorTable(RootParameterIndex::TextureSRV, texture);
 

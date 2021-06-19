@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: pch.h
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkID=615561
@@ -125,8 +125,14 @@
 #endif
 #endif
 
-#include <dxgi1_4.h>
+#ifdef USING_DIRECTX_HEADERS
+#include <directx/dxgiformat.h>
+#include <directx/d3d12.h>
+#else
 #include <d3d12.h>
+#endif
+
+#include <dxgi1_4.h>
 
 #ifdef __clang__
 #pragma clang diagnostic push
@@ -135,7 +141,11 @@
 #endif
 
 #define D3DX12_NO_STATE_OBJECT_HELPERS
+#ifdef USING_DIRECTX_HEADERS
+#include <directx/d3dx12.h>
+#else
 #include "d3dx12.h"
+#endif
 #endif
 
 #ifdef __clang__
@@ -149,17 +159,15 @@
 #pragma warning(pop)
 #endif
 
-#define _XM_NO_XMVECTOR_OVERLOADS_
-
-#include <DirectXMath.h>
-#include <DirectXPackedVector.h>
-#include <DirectXCollision.h>
-
 #include <algorithm>
 #include <atomic>
 #include <array>
+#include <cassert>
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
+#include <cstring>
+#include <cwchar>
 #include <exception>
 #include <initializer_list>
 #include <iterator>
@@ -167,9 +175,11 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <new>
 #include <set>
 #include <stdexcept>
 #include <string>
+#include <system_error>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -185,6 +195,16 @@
 #pragma warning(pop)
 
 #include <malloc.h>
+
+#define _XM_NO_XMVECTOR_OVERLOADS_
+
+#include <DirectXMath.h>
+#include <DirectXPackedVector.h>
+#include <DirectXCollision.h>
+
+#if (DIRECTX_MATH_VERSION < 315)
+#define XM_ALIGNED_STRUCT(x) __declspec(align(x)) struct
+#endif
 
 #pragma warning(push)
 #pragma warning(disable : 4467 5038 5204 5220)

@@ -3,21 +3,25 @@
 //
 // Functions for loading WAV audio files
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //-------------------------------------------------------------------------------------
 
 #include "pch.h"
 #include "WAVFileReader.h"
 
+#include <new>
+
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wunused-const-variable"
 #endif
 
 #ifndef MAKEFOURCC
-#define MAKEFOURCC(ch0, ch1, ch2, ch3)                              \
-                ((uint32_t)(uint8_t)(ch0) | ((uint32_t)(uint8_t)(ch1) << 8) |       \
-                ((uint32_t)(uint8_t)(ch2) << 16) | ((uint32_t)(uint8_t)(ch3) << 24 ))
+#define MAKEFOURCC(ch0, ch1, ch2, ch3) \
+                (static_cast<uint32_t>(static_cast<uint8_t>(ch0)) \
+                | (static_cast<uint32_t>(static_cast<uint8_t>(ch1)) << 8) \
+                | (static_cast<uint32_t>(static_cast<uint8_t>(ch2)) << 16) \
+                | (static_cast<uint32_t>(static_cast<uint8_t>(ch3)) << 24))
 #endif /* defined(MAKEFOURCC) */
 
 namespace

@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: ToneMapPostProcess.cpp
 //
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 //
 // http://go.microsoft.com/fwlink/?LinkId=248929
@@ -34,7 +34,7 @@ namespace
 #endif
 
     // Constant buffer layout. Must match the shader!
-    __declspec(align(16)) struct ToneMapConstants
+    XM_ALIGNED_STRUCT(16) ToneMapConstants
     {
         // linearExposure is .x
         // paperWhiteNits is .y
@@ -111,7 +111,7 @@ namespace
 #endif
     };
 
-    static_assert(_countof(pixelShaders) == PixelShaderCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(pixelShaders)) == PixelShaderCount, "array/max mismatch");
 
     const int pixelShaderIndices[] =
     {
@@ -154,7 +154,7 @@ namespace
 #endif
     };
 
-    static_assert(_countof(pixelShaderIndices) == ShaderPermutationCount, "array/max mismatch");
+    static_assert(static_cast<int>(std::size(pixelShaderIndices)) == ShaderPermutationCount, "array/max mismatch");
 
     // Factory for lazily instantiating shaders.
     class DeviceResources
@@ -263,7 +263,7 @@ ToneMapPostProcess::Impl::Impl(_In_ ID3D11Device* device)
 {
     if (device->GetFeatureLevel() < D3D_FEATURE_LEVEL_10_0)
     {
-        throw std::exception("ToneMapPostProcess requires Feature Level 10.0 or later");
+        throw std::runtime_error("ToneMapPostProcess requires Feature Level 10.0 or later");
     }
 
     SetDebugObjectName(mConstantBuffer.GetBuffer(), "ToneMapPostProcess");
@@ -391,7 +391,7 @@ void ToneMapPostProcess::Process(
 void ToneMapPostProcess::SetOperator(Operator op)
 {
     if (op >= Operator_Max)
-        throw std::out_of_range("Tonemap operator not defined");
+        throw std::invalid_argument("Tonemap operator not defined");
 
     pImpl->op = op;
 }
@@ -400,7 +400,7 @@ void ToneMapPostProcess::SetOperator(Operator op)
 void ToneMapPostProcess::SetTransferFunction(TransferFunction func)
 {
     if (func >= TransferFunction_Max)
-        throw std::out_of_range("Electro-optical transfer function not defined");
+        throw std::invalid_argument("Electro-optical transfer function not defined");
 
     pImpl->func = func;
 }
