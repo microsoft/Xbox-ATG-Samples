@@ -1,5 +1,7 @@
 # Xbox-ATG-Samples
 
+**These samples are for the older Xbox One XDK. For the latest Xbox ATG samples using the Microsoft GDK, see [Xbox-GDK-Samples](https://github.com/microsoft/Xbox-GDK-Samples/).**
+
 This repo contains game development samples written by the Microsoft Xbox Advanced Technology Group.
 
 * ``Kits`` contains support code used by the samples
