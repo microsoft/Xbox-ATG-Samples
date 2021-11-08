@@ -956,7 +956,7 @@ namespace DirectX
                 {
                     FILE_DISPOSITION_INFO info = {};
                     info.DeleteFile = TRUE;
-                    (void)SetFileInformationByHandle(m_handle, FileDispositionInfo, &info, sizeof(info));
+                    std::ignore = SetFileInformationByHandle(m_handle, FileDispositionInfo, &info, sizeof(info));
                 }
             }
 
@@ -1008,7 +1008,7 @@ namespace DirectX
             return count;
         }
 
-        inline void FitPowerOf2(UINT origx, UINT origy, UINT& targetx, UINT& targety, size_t maxsize)
+        inline void FitPowerOf2(UINT origx, UINT origy, _Inout_ UINT& targetx, _Inout_ UINT& targety, size_t maxsize)
         {
             float origAR = float(origx) / float(origy);
 

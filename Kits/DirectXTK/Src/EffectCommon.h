@@ -130,11 +130,13 @@ namespace DirectX
         ID3D11VertexShader* DemandCreateVertexShader(_Inout_ Microsoft::WRL::ComPtr<ID3D11VertexShader>& vertexShader, ShaderBytecode const& bytecode);
         ID3D11PixelShader * DemandCreatePixelShader (_Inout_ Microsoft::WRL::ComPtr<ID3D11PixelShader> & pixelShader,  ShaderBytecode const& bytecode);
         ID3D11ShaderResourceView* GetDefaultTexture();
+        ID3D11ShaderResourceView* GetDefaultNormalTexture();
         D3D_FEATURE_LEVEL GetDeviceFeatureLevel() const;
 
     protected:
         Microsoft::WRL::ComPtr<ID3D11Device> mDevice;
         Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mDefaultTexture;
+        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> mDefaultNormalTexture;
 
         std::mutex mMutex;
     };
@@ -155,6 +157,11 @@ namespace DirectX
             SetDebugObjectName(mConstantBuffer.GetBuffer(), "Effect");
         }
 
+        EffectBase(EffectBase&&) = default;
+        EffectBase& operator= (EffectBase&&) = default;
+
+        EffectBase(EffectBase const&) = delete;
+        EffectBase& operator= (EffectBase const&) = delete;
 
         // Fields.
         typename Traits::ConstantBufferType constants;
@@ -171,6 +178,7 @@ namespace DirectX
         // Client code needs this in order to create matching input layouts.
         void GetVertexShaderBytecode(int permutation, _Out_ void const** pShaderByteCode, _Out_ size_t* pByteCodeLength) noexcept
         {
+            assert(pShaderByteCode != nullptr && pByteCodeLength != nullptr);
             assert(permutation >= 0 && permutation < Traits::ShaderPermutationCount);
             _Analysis_assume_(permutation >= 0 && permutation < Traits::ShaderPermutationCount);
             int shaderIndex = VertexShaderIndices[permutation];
@@ -225,6 +233,7 @@ namespace DirectX
 
         // Helpers
         ID3D11ShaderResourceView* GetDefaultTexture() { return mDeviceResources->GetDefaultTexture(); }
+        ID3D11ShaderResourceView* GetDefaultNormalTexture() { return mDeviceResources->GetDefaultNormalTexture(); }
         D3D_FEATURE_LEVEL GetDeviceFeatureLevel() const { return mDeviceResources->GetDeviceFeatureLevel(); }
 
 
@@ -279,6 +288,7 @@ namespace DirectX
 
             // Helpers
             ID3D11ShaderResourceView* GetDefaultTexture() { return EffectDeviceResources::GetDefaultTexture(); }
+            ID3D11ShaderResourceView* GetDefaultNormalTexture() { return EffectDeviceResources::GetDefaultNormalTexture(); }
             D3D_FEATURE_LEVEL GetDeviceFeatureLevel() const { return EffectDeviceResources::GetDeviceFeatureLevel(); }
 
         private:

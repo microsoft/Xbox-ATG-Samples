@@ -28,8 +28,9 @@ namespace DirectX
     {
     public:
         Mouse() noexcept(false);
-        Mouse(Mouse&& moveFrom) noexcept;
-        Mouse& operator= (Mouse&& moveFrom) noexcept;
+
+        Mouse(Mouse&&) noexcept;
+        Mouse& operator= (Mouse&&) noexcept;
 
         Mouse(Mouse const&) = delete;
         Mouse& operator=(Mouse const&) = delete;
@@ -107,7 +108,7 @@ namespace DirectX
         static void __cdecl ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam);
     #elif (WINAPI_FAMILY == WINAPI_FAMILY_GAMES)
         static void __cdecl ProcessMessage(UINT message, WPARAM wParam, LPARAM lParam);
-        static void __cdecl SetResolution(bool use4k);
+        static void __cdecl SetResolution(float scale);
     #endif
     #endif
 

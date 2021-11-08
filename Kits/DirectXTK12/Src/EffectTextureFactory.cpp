@@ -216,9 +216,9 @@ _Use_decl_annotations_
 EffectTextureFactory::EffectTextureFactory(
     ID3D12Device* device,
     ResourceUploadBatch& resourceUploadBatch,
-    ID3D12DescriptorHeap* descriptorHeap) noexcept(false)
+    ID3D12DescriptorHeap* descriptorHeap) noexcept(false) :
+        pImpl(std::make_unique<Impl>(device, resourceUploadBatch, descriptorHeap))
 {
-    pImpl = std::make_unique<Impl>(device, resourceUploadBatch, descriptorHeap);
 }
 
 _Use_decl_annotations_
@@ -226,26 +226,16 @@ EffectTextureFactory::EffectTextureFactory(
     ID3D12Device* device,
     ResourceUploadBatch& resourceUploadBatch,
     size_t numDescriptors,
-    D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags) noexcept(false)
-{
-    pImpl = std::make_unique<Impl>(device, resourceUploadBatch, numDescriptors, descriptorHeapFlags);
-}
-
-EffectTextureFactory::~EffectTextureFactory()
+    D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags) noexcept(false) :
+        pImpl(std::make_unique<Impl>(device, resourceUploadBatch, numDescriptors, descriptorHeapFlags))
 {
 }
 
 
-EffectTextureFactory::EffectTextureFactory(EffectTextureFactory&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
+EffectTextureFactory::EffectTextureFactory(EffectTextureFactory&&) noexcept = default;
+EffectTextureFactory& EffectTextureFactory::operator= (EffectTextureFactory&&) noexcept = default;
+EffectTextureFactory::~EffectTextureFactory() = default;
 
-EffectTextureFactory& EffectTextureFactory::operator= (EffectTextureFactory&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
 
 _Use_decl_annotations_
 size_t EffectTextureFactory::CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex)
@@ -253,11 +243,14 @@ size_t EffectTextureFactory::CreateTexture(_In_z_ const wchar_t* name, int descr
     return pImpl->CreateTexture(name, descriptorIndex);
 }
 
+
 void EffectTextureFactory::ReleaseCache()
 {
     pImpl->ReleaseCache();
 }
 
+
+// Properties.
 void EffectTextureFactory::SetSharing(bool enabled) noexcept
 {
     pImpl->SetSharing(enabled);

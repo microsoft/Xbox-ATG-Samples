@@ -25,25 +25,25 @@ namespace
 {
     // Include the precompiled shader code.
 #ifdef _GAMING_XBOX_SCARLETT
-    #include "Shaders/Compiled/XboxGamingScarlettSpriteEffect_SpriteVertexShader.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettSpriteEffect_SpritePixelShader.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettSpriteEffect_SpriteVertexShaderHeap.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettSpriteEffect_SpritePixelShaderHeap.inc"
+    #include "XboxGamingScarlettSpriteEffect_SpriteVertexShader.inc"
+    #include "XboxGamingScarlettSpriteEffect_SpritePixelShader.inc"
+    #include "XboxGamingScarlettSpriteEffect_SpriteVertexShaderHeap.inc"
+    #include "XboxGamingScarlettSpriteEffect_SpritePixelShaderHeap.inc"
 #elif defined(_GAMING_XBOX)
-    #include "Shaders/Compiled/XboxGamingXboxOneSpriteEffect_SpriteVertexShader.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneSpriteEffect_SpritePixelShader.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneSpriteEffect_SpriteVertexShaderHeap.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneSpriteEffect_SpritePixelShaderHeap.inc"
+    #include "XboxGamingXboxOneSpriteEffect_SpriteVertexShader.inc"
+    #include "XboxGamingXboxOneSpriteEffect_SpritePixelShader.inc"
+    #include "XboxGamingXboxOneSpriteEffect_SpriteVertexShaderHeap.inc"
+    #include "XboxGamingXboxOneSpriteEffect_SpritePixelShaderHeap.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOneSpriteEffect_SpriteVertexShader.inc"
-    #include "Shaders/Compiled/XboxOneSpriteEffect_SpritePixelShader.inc"
-    #include "Shaders/Compiled/XboxOneSpriteEffect_SpriteVertexShaderHeap.inc"
-    #include "Shaders/Compiled/XboxOneSpriteEffect_SpritePixelShaderHeap.inc"
+    #include "XboxOneSpriteEffect_SpriteVertexShader.inc"
+    #include "XboxOneSpriteEffect_SpritePixelShader.inc"
+    #include "XboxOneSpriteEffect_SpriteVertexShaderHeap.inc"
+    #include "XboxOneSpriteEffect_SpritePixelShaderHeap.inc"
 #else
-    #include "Shaders/Compiled/SpriteEffect_SpriteVertexShader.inc"
-    #include "Shaders/Compiled/SpriteEffect_SpritePixelShader.inc"
-    #include "Shaders/Compiled/SpriteEffect_SpriteVertexShaderHeap.inc"
-    #include "Shaders/Compiled/SpriteEffect_SpritePixelShaderHeap.inc"
+    #include "SpriteEffect_SpriteVertexShader.inc"
+    #include "SpriteEffect_SpritePixelShader.inc"
+    #include "SpriteEffect_SpriteVertexShaderHeap.inc"
+    #include "SpriteEffect_SpritePixelShaderHeap.inc"
 #endif
 
     inline bool operator != (D3D12_GPU_DESCRIPTOR_HANDLE a, D3D12_GPU_DESCRIPTOR_HANDLE b) noexcept
@@ -105,8 +105,8 @@ public:
         unsigned int flags;
 
         // Combine values from the public SpriteEffects enum with these internal-only flags.
-        static const unsigned int SourceInTexels = 4;
-        static const unsigned int DestSizeInPixels = 8;
+        static constexpr unsigned int SourceInTexels = 4;
+        static constexpr unsigned int DestSizeInPixels = 8;
 
         static_assert((SpriteEffects_FlipBoth & (SourceInTexels | DestSizeInPixels)) == 0, "Flag bits must not overlap");
     };
@@ -139,11 +139,11 @@ private:
     XMMATRIX GetViewportTransform(_In_ DXGI_MODE_ROTATION rotation);
 
     // Constants.
-    static const size_t MaxBatchSize = 2048;
-    static const size_t MinBatchSize = 128;
-    static const size_t InitialQueueSize = 64;
-    static const size_t VerticesPerSprite = 4;
-    static const size_t IndicesPerSprite = 6;
+    static constexpr size_t MaxBatchSize = 2048;
+    static constexpr size_t MinBatchSize = 128;
+    static constexpr size_t InitialQueueSize = 64;
+    static constexpr size_t VerticesPerSprite = 4;
+    static constexpr size_t IndicesPerSprite = 6;
 
     //
     // The following functions and members are used to create the default pipeline state objects.
@@ -1038,25 +1038,10 @@ SpriteBatch::SpriteBatch(ID3D12Device* device,
 }
 
 
-// Move constructor.
-SpriteBatch::SpriteBatch(SpriteBatch&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
+SpriteBatch::SpriteBatch(SpriteBatch&&) noexcept = default;
+SpriteBatch& SpriteBatch::operator= (SpriteBatch&&) noexcept = default;
+SpriteBatch::~SpriteBatch() = default;
 
-
-// Move assignment.
-SpriteBatch& SpriteBatch::operator= (SpriteBatch&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-SpriteBatch::~SpriteBatch()
-{
-}
 
 _Use_decl_annotations_
 void XM_CALLCONV SpriteBatch::Begin(

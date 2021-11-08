@@ -92,6 +92,9 @@
 #define _WIN32_WINNT_WIN10 0x0A00
 #endif
 
+#define D3DX12_NO_STATE_OBJECT_HELPERS
+#define D3DX12_NO_CHECK_FEATURE_SUPPORT_CLASS
+
 #ifdef _GAMING_XBOX
 #include <gxdk.h>
 
@@ -100,10 +103,16 @@
 #endif
 
 #ifdef _GAMING_XBOX_SCARLETT
+#pragma warning(push)
+#pragma warning(disable: 5204 5249)
 #include <d3d12_xs.h>
+#pragma warning(pop)
 #include <d3dx12_xs.h>
 #else
+#pragma warning(push)
+#pragma warning(disable: 5204)
 #include <d3d12_x.h>
+#pragma warning(pop)
 #include <d3dx12_x.h>
 #endif
 #elif defined(_XBOX_ONE) && defined(_TITLE)
@@ -140,7 +149,6 @@
 #pragma clang diagnostic ignored "-Wtautological-type-limit-compare"
 #endif
 
-#define D3DX12_NO_STATE_OBJECT_HELPERS
 #ifdef USING_DIRECTX_HEADERS
 #include <directx/d3dx12.h>
 #else
@@ -180,6 +188,7 @@
 #include <stdexcept>
 #include <string>
 #include <system_error>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -223,7 +232,12 @@
 
 #include <xaudio2.h>
 #include <xaudio2fx.h>
+
+#pragma warning(push)
+#pragma warning(disable : 4619 4616 5246)
 #include <x3daudio.h>
+#pragma warning(pop)
+
 #include <xapofx.h>
 
 #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)

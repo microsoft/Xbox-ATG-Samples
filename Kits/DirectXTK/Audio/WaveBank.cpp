@@ -50,10 +50,10 @@ public:
             DebugTrace("WARNING: Destroying WaveBank \"%hs\" with %zu outstanding instances\n",
                 mReader.BankName(), mInstances.size());
 
-            for (auto it = mInstances.begin(); it != mInstances.end(); ++it)
+            for (auto it : mInstances)
             {
-                assert(*it != nullptr);
-                (*it)->OnDestroyParent();
+                assert(it != nullptr);
+                it->OnDestroyParent();
             }
 
             mInstances.clear();
@@ -278,25 +278,9 @@ WaveBank::WaveBank(AudioEngine* engine, const wchar_t* wbFileName)
 }
 
 
-// Move constructor.
-WaveBank::WaveBank(WaveBank&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-WaveBank& WaveBank::operator= (WaveBank&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-WaveBank::~WaveBank()
-{
-}
+WaveBank::WaveBank(WaveBank&&) noexcept = default;
+WaveBank& WaveBank::operator= (WaveBank&&) noexcept = default;
+WaveBank::~WaveBank() = default;
 
 
 // Public methods (one-shots)

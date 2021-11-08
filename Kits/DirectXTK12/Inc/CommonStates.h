@@ -26,8 +26,9 @@ namespace DirectX
     {
     public:
         explicit CommonStates(_In_ ID3D12Device* device);
-        CommonStates(CommonStates&& moveFrom) noexcept;
-        CommonStates& operator = (CommonStates&& moveFrom) noexcept;
+
+        CommonStates(CommonStates&&) noexcept;
+        CommonStates& operator = (CommonStates&&) noexcept;
 
         CommonStates(const CommonStates&) = delete;
         CommonStates& operator = (const CommonStates&) = delete;
@@ -44,6 +45,8 @@ namespace DirectX
         static const D3D12_DEPTH_STENCIL_DESC DepthNone;
         static const D3D12_DEPTH_STENCIL_DESC DepthDefault;
         static const D3D12_DEPTH_STENCIL_DESC DepthRead;
+        static const D3D12_DEPTH_STENCIL_DESC DepthReverseZ;
+        static const D3D12_DEPTH_STENCIL_DESC DepthReadReverseZ;
 
         // Rasterizer states.
         static const D3D12_RASTERIZER_DESC CullNone;

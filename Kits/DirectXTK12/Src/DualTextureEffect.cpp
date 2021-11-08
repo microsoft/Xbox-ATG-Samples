@@ -62,7 +62,7 @@ public:
     D3D12_GPU_DESCRIPTOR_HANDLE texture2;
     D3D12_GPU_DESCRIPTOR_HANDLE texture2Sampler;
 
-    int GetPipelineStatePermutation(bool vertexColorEnabled) const noexcept;
+    int GetPipelineStatePermutation(uint32_t effectFlags) const noexcept;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -72,37 +72,37 @@ public:
 namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
-    #include "Shaders/Compiled/XboxGamingScarlettDualTextureEffect_VSDualTexture.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettDualTextureEffect_VSDualTextureNoFog.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettDualTextureEffect_VSDualTextureVc.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettDualTextureEffect_VSDualTextureVcNoFog.inc"
+    #include "XboxGamingScarlettDualTextureEffect_VSDualTexture.inc"
+    #include "XboxGamingScarlettDualTextureEffect_VSDualTextureNoFog.inc"
+    #include "XboxGamingScarlettDualTextureEffect_VSDualTextureVc.inc"
+    #include "XboxGamingScarlettDualTextureEffect_VSDualTextureVcNoFog.inc"
 
-    #include "Shaders/Compiled/XboxGamingScarlettDualTextureEffect_PSDualTexture.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettDualTextureEffect_PSDualTextureNoFog.inc"
+    #include "XboxGamingScarlettDualTextureEffect_PSDualTexture.inc"
+    #include "XboxGamingScarlettDualTextureEffect_PSDualTextureNoFog.inc"
 #elif defined(_GAMING_XBOX)
-    #include "Shaders/Compiled/XboxGamingXboxOneDualTextureEffect_VSDualTexture.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneDualTextureEffect_VSDualTextureNoFog.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneDualTextureEffect_VSDualTextureVc.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneDualTextureEffect_VSDualTextureVcNoFog.inc"
+    #include "XboxGamingXboxOneDualTextureEffect_VSDualTexture.inc"
+    #include "XboxGamingXboxOneDualTextureEffect_VSDualTextureNoFog.inc"
+    #include "XboxGamingXboxOneDualTextureEffect_VSDualTextureVc.inc"
+    #include "XboxGamingXboxOneDualTextureEffect_VSDualTextureVcNoFog.inc"
 
-    #include "Shaders/Compiled/XboxGamingXboxOneDualTextureEffect_PSDualTexture.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneDualTextureEffect_PSDualTextureNoFog.inc"
+    #include "XboxGamingXboxOneDualTextureEffect_PSDualTexture.inc"
+    #include "XboxGamingXboxOneDualTextureEffect_PSDualTextureNoFog.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOneDualTextureEffect_VSDualTexture.inc"
-    #include "Shaders/Compiled/XboxOneDualTextureEffect_VSDualTextureNoFog.inc"
-    #include "Shaders/Compiled/XboxOneDualTextureEffect_VSDualTextureVc.inc"
-    #include "Shaders/Compiled/XboxOneDualTextureEffect_VSDualTextureVcNoFog.inc"
+    #include "XboxOneDualTextureEffect_VSDualTexture.inc"
+    #include "XboxOneDualTextureEffect_VSDualTextureNoFog.inc"
+    #include "XboxOneDualTextureEffect_VSDualTextureVc.inc"
+    #include "XboxOneDualTextureEffect_VSDualTextureVcNoFog.inc"
 
-    #include "Shaders/Compiled/XboxOneDualTextureEffect_PSDualTexture.inc"
-    #include "Shaders/Compiled/XboxOneDualTextureEffect_PSDualTextureNoFog.inc"
+    #include "XboxOneDualTextureEffect_PSDualTexture.inc"
+    #include "XboxOneDualTextureEffect_PSDualTextureNoFog.inc"
 #else
-    #include "Shaders/Compiled/DualTextureEffect_VSDualTexture.inc"
-    #include "Shaders/Compiled/DualTextureEffect_VSDualTextureNoFog.inc"
-    #include "Shaders/Compiled/DualTextureEffect_VSDualTextureVc.inc"
-    #include "Shaders/Compiled/DualTextureEffect_VSDualTextureVcNoFog.inc"
+    #include "DualTextureEffect_VSDualTexture.inc"
+    #include "DualTextureEffect_VSDualTextureNoFog.inc"
+    #include "DualTextureEffect_VSDualTextureVc.inc"
+    #include "DualTextureEffect_VSDualTextureVcNoFog.inc"
 
-    #include "Shaders/Compiled/DualTextureEffect_PSDualTexture.inc"
-    #include "Shaders/Compiled/DualTextureEffect_PSDualTextureNoFog.inc"
+    #include "DualTextureEffect_PSDualTexture.inc"
+    #include "DualTextureEffect_PSDualTextureNoFog.inc"
 #endif
 }
 
@@ -213,10 +213,14 @@ DualTextureEffect::Impl::Impl(
         DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::Lighting\n");
         throw std::invalid_argument("Lighting effect flag is invalid");
     }
+    else if (effectFlags & EffectFlags::Instancing)
+    {
+        DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::Instancing\n");
+        throw std::invalid_argument("Instancing effect flag is invalid");
+    }
 
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation(
-        (effectFlags & EffectFlags::VertexColor) != 0);
+    int sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < DualTextureEffectTraits::ShaderPermutationCount);
 
@@ -238,7 +242,7 @@ DualTextureEffect::Impl::Impl(
 }
 
 
-int DualTextureEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled) const noexcept
+int DualTextureEffect::Impl::GetPipelineStatePermutation(uint32_t effectFlags) const noexcept
 {
     int permutation = 0;
 
@@ -249,7 +253,7 @@ int DualTextureEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled
     }
 
     // Support vertex coloring?
-    if (vertexColorEnabled)
+    if (effectFlags & EffectFlags::VertexColor)
     {
         permutation += 2;
     }
@@ -309,25 +313,9 @@ DualTextureEffect::DualTextureEffect(
 }
 
 
-// Move constructor.
-DualTextureEffect::DualTextureEffect(DualTextureEffect&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-DualTextureEffect& DualTextureEffect::operator= (DualTextureEffect&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-DualTextureEffect::~DualTextureEffect()
-{
-}
+DualTextureEffect::DualTextureEffect(DualTextureEffect&&) noexcept = default;
+DualTextureEffect& DualTextureEffect::operator= (DualTextureEffect&&) noexcept = default;
+DualTextureEffect::~DualTextureEffect() = default;
 
 
 // IEffect methods

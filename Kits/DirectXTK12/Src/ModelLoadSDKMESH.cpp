@@ -102,18 +102,9 @@ namespace
             flags &= ~static_cast<unsigned int>(DUAL_TEXTURE);
         }
 
-        if (flags & NORMAL_MAPS)
+        if (mh.NormalTexture[0])
         {
-            if (!mh.NormalTexture[0])
-            {
-                flags &= ~static_cast<unsigned int>(NORMAL_MAPS);
-                *normalName = 0;
-            }
-        }
-        else if (mh.NormalTexture[0])
-        {
-            DebugTrace("WARNING: Material '%s' has a normal map, but vertex buffer is missing tangents\n", mh.Name);
-            *normalName = 0;
+            flags |= NORMAL_MAPS;
         }
 
         m = {};
@@ -168,8 +159,8 @@ namespace
         wchar_t matName[DXUT::MAX_MATERIAL_NAME] = {};
         ASCIIToWChar(matName, mh.Name);
 
-        wchar_t albetoTexture[DXUT::MAX_TEXTURE_NAME] = {};
-        ASCIIToWChar(albetoTexture, mh.AlbetoTexture);
+        wchar_t albedoTexture[DXUT::MAX_TEXTURE_NAME] = {};
+        ASCIIToWChar(albedoTexture, mh.AlbedoTexture);
 
         wchar_t normalName[DXUT::MAX_TEXTURE_NAME] = {};
         ASCIIToWChar(normalName, mh.NormalTexture);
@@ -183,13 +174,13 @@ namespace
         m = {};
         m.name = matName;
         m.perVertexColor = false;
-        m.enableSkinning = false;
+        m.enableSkinning = (flags & SKINNING) != 0;
         m.enableDualTexture = false;
         m.enableNormalMaps = true;
         m.biasedVertexNormals = (flags & BIASED_VERTEX_NORMALS) != 0;
         m.alphaValue = (mh.Alpha == 0.f) ? 1.f : mh.Alpha;
 
-        m.diffuseTextureIndex = GetUniqueTextureIndex(albetoTexture, textureDictionary);
+        m.diffuseTextureIndex = GetUniqueTextureIndex(albedoTexture, textureDictionary);
         m.specularTextureIndex = GetUniqueTextureIndex(rmaName, textureDictionary);
         m.normalTextureIndex = GetUniqueTextureIndex(normalName, textureDictionary);
         m.emissiveTextureIndex = GetUniqueTextureIndex(emissiveName, textureDictionary);
@@ -205,7 +196,7 @@ namespace
 
     unsigned int GetInputLayoutDesc(
         _In_reads_(32) const DXUT::D3DVERTEXELEMENT9 decl[],
-        std::vector<D3D12_INPUT_ELEMENT_DESC>& inputDesc)
+        ModelMeshPart::InputLayoutCollection& inputDesc)
     {
         static const D3D12_INPUT_ELEMENT_DESC s_elements[] =
         {
@@ -227,7 +218,7 @@ namespace
 
         bool posfound = false;
 
-        for (uint32_t index = 0; index < DXUT::MAX_VERTEX_ELEMENTS; ++index)
+        for (size_t index = 0; index < DXUT::MAX_VERTEX_ELEMENTS; ++index)
         {
             if (decl[index].Usage == 0xFF)
                 break;
@@ -286,11 +277,6 @@ namespace
 
                 if (unk)
                     break;
-
-                if (decl[index].Usage == D3DDECLUSAGE_TANGENT)
-                {
-                    flags |= NORMAL_MAPS;
-                }
 
                 inputDesc.push_back(desc);
             }
@@ -457,10 +443,18 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
         throw std::runtime_error("End of file");
     auto subsetArray = reinterpret_cast<const DXUT::SDKMESH_SUBSET*>(meshData + header->SubsetDataOffset);
 
-    if (dataSize < header->FrameDataOffset
-        || (dataSize < (header->FrameDataOffset + uint64_t(header->NumFrames) * sizeof(DXUT::SDKMESH_FRAME))))
-        throw std::runtime_error("End of file");
-    // TODO - auto frameArray = reinterpret_cast<const DXUT::SDKMESH_FRAME*>( meshData + header->FrameDataOffset );
+    const DXUT::SDKMESH_FRAME* frameArray = nullptr;
+    if (header->NumFrames > 0)
+    {
+        if (dataSize < header->FrameDataOffset
+            || (dataSize < (header->FrameDataOffset + uint64_t(header->NumFrames) * sizeof(DXUT::SDKMESH_FRAME))))
+            throw std::runtime_error("End of file");
+
+        if (flags & ModelLoader_IncludeBones)
+        {
+            frameArray = reinterpret_cast<const DXUT::SDKMESH_FRAME*>(meshData + header->FrameDataOffset);
+        }
+    }
 
     if (dataSize < header->MaterialDataOffset
         || (dataSize < (header->MaterialDataOffset + uint64_t(header->NumMaterials) * sizeof(DXUT::SDKMESH_MATERIAL))))
@@ -485,14 +479,14 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
     const uint8_t* bufferData = meshData + bufferDataOffset;
 
     // Create vertex buffers
-    std::vector<std::shared_ptr<std::vector<D3D12_INPUT_ELEMENT_DESC>>> vbDecls;
+    std::vector<std::shared_ptr<ModelMeshPart::InputLayoutCollection>> vbDecls;
     vbDecls.resize(header->NumVertexBuffers);
 
     std::vector<unsigned int> materialFlags;
     materialFlags.resize(header->NumVertexBuffers);
 
     bool dec3nwarning = false;
-    for (UINT j = 0; j < header->NumVertexBuffers; ++j)
+    for (size_t j = 0; j < header->NumVertexBuffers; ++j)
     {
         auto& vh = vbArray[j];
 
@@ -509,18 +503,18 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
             || (dataSize < vh.DataOffset + vh.SizeBytes))
             throw std::runtime_error("End of file");
 
-        vbDecls[j] = std::make_shared<std::vector<D3D12_INPUT_ELEMENT_DESC>>();
+        vbDecls[j] = std::make_shared<ModelMeshPart::InputLayoutCollection>();
         unsigned int ilflags = GetInputLayoutDesc(vh.Decl, *vbDecls[j].get());
+
+        if (flags & ModelLoader_DisableSkinning)
+        {
+            ilflags &= ~static_cast<unsigned int>(SKINNING);
+        }
 
         if (ilflags & SKINNING)
         {
-            ilflags &= ~static_cast<unsigned int>(DUAL_TEXTURE | NORMAL_MAPS);
+            ilflags &= ~static_cast<unsigned int>(DUAL_TEXTURE);
         }
-        if (ilflags & DUAL_TEXTURE)
-        {
-            ilflags &= ~static_cast<unsigned int>(NORMAL_MAPS);
-        }
-
         if (ilflags & USES_OBSOLETE_DEC3N)
         {
             dec3nwarning = true;
@@ -536,7 +530,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
     }
 
     // Validate index buffers
-    for (UINT j = 0; j < header->NumIndexBuffers; ++j)
+    for (size_t j = 0; j < header->NumIndexBuffers; ++j)
     {
         auto& ih = ibArray[j];
 
@@ -568,7 +562,7 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
 
     uint32_t partCount = 0;
 
-    for (UINT meshIndex = 0; meshIndex < header->NumMeshes; ++meshIndex)
+    for (size_t meshIndex = 0; meshIndex < header->NumMeshes; ++meshIndex)
     {
         auto& mh = meshArray[meshIndex];
 
@@ -581,18 +575,22 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
         // mh.NumVertexBuffers is sometimes not what you'd expect, so we skip validating it
 
         if (dataSize < mh.SubsetOffset
-            || (dataSize < mh.SubsetOffset + uint64_t(mh.NumSubsets) * sizeof(UINT)))
+            || (dataSize < mh.SubsetOffset + uint64_t(mh.NumSubsets) * sizeof(uint32_t)))
             throw std::runtime_error("End of file");
 
-        auto subsets = reinterpret_cast<const UINT*>(meshData + mh.SubsetOffset);
+        auto subsets = reinterpret_cast<const uint32_t*>(meshData + mh.SubsetOffset);
 
+        const uint32_t* influences = nullptr;
         if (mh.NumFrameInfluences > 0)
         {
             if (dataSize < mh.FrameInfluenceOffset
-                || (dataSize < mh.FrameInfluenceOffset + uint64_t(mh.NumFrameInfluences) * sizeof(UINT)))
+                || (dataSize < mh.FrameInfluenceOffset + uint64_t(mh.NumFrameInfluences) * sizeof(uint32_t)))
                 throw std::runtime_error("End of file");
 
-            // TODO - auto influences = reinterpret_cast<const UINT*>( meshData + mh.FrameInfluenceOffset );
+            if (flags & ModelLoader_IncludeBones)
+            {
+                influences = reinterpret_cast<const uint32_t*>(meshData + mh.FrameInfluenceOffset);
+            }
         }
 
         auto mesh = std::make_shared<ModelMesh>();
@@ -606,8 +604,14 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
         mesh->boundingBox.Extents = mh.BoundingBoxExtents;
         BoundingSphere::CreateFromBoundingBox(mesh->boundingSphere, mesh->boundingBox);
 
+        if (influences)
+        {
+            mesh->boneInfluences.resize(mh.NumFrameInfluences);
+            memcpy(mesh->boneInfluences.data(), influences, sizeof(uint32_t) * mh.NumFrameInfluences);
+        }
+
         // Create subsets
-        for (UINT j = 0; j < mh.NumSubsets; ++j)
+        for (size_t j = 0; j < mh.NumSubsets; ++j)
         {
             auto sIndex = subsets[j];
             if (sIndex >= header->NumTotalSubsets)
@@ -705,6 +709,61 @@ std::unique_ptr<Model> DirectX::Model::CreateFromSDKMESH(
     for (auto texture = std::cbegin(textureDictionary); texture != std::cend(textureDictionary); ++texture)
     {
         model->textureNames[static_cast<size_t>(texture->second)] = texture->first;
+    }
+
+    // Load model bones (if present and requested)
+    if (frameArray)
+    {
+        static_assert(DXUT::INVALID_FRAME == ModelBone::c_Invalid, "ModelBone invalid type mismatch");
+
+        ModelBone::Collection bones;
+        bones.reserve(header->NumFrames);
+        auto transforms = ModelBone::MakeArray(header->NumFrames);
+
+        for (uint32_t j = 0; j < header->NumFrames; ++j)
+        {
+            ModelBone bone(
+                frameArray[j].ParentFrame,
+                frameArray[j].ChildFrame,
+                frameArray[j].SiblingFrame);
+
+            wchar_t boneName[DXUT::MAX_FRAME_NAME] = {};
+            ASCIIToWChar(boneName, frameArray[j].Name);
+            bone.name = boneName;
+            bones.emplace_back(bone);
+
+            transforms[j] = XMLoadFloat4x4(&frameArray[j].Matrix);
+
+            uint32_t index = frameArray[j].Mesh;
+            if (index != DXUT::INVALID_MESH)
+            {
+                if (index >= model->meshes.size())
+                {
+                    throw std::out_of_range("Invalid mesh index found in frame data");
+                }
+
+                if (model->meshes[index]->boneIndex == ModelBone::c_Invalid)
+                {
+                    // Bind the first bone that links to a given mesh
+                    model->meshes[index]->boneIndex = j;
+                }
+            }
+        }
+
+        std::swap(model->bones, bones);
+
+        // Compute inverse bind pose matrices for the model
+        auto bindPose = ModelBone::MakeArray(header->NumFrames);
+        model->CopyAbsoluteBoneTransforms(header->NumFrames, transforms.get(), bindPose.get());
+
+        auto invBoneTransforms = ModelBone::MakeArray(header->NumFrames);
+        for (size_t j = 0; j < header->NumFrames; ++j)
+        {
+            invBoneTransforms[j] = XMMatrixInverse(nullptr, bindPose[j]);
+        }
+
+        std::swap(model->boneMatrices, transforms);
+        std::swap(model->invBindPoseMatrices, invBoneTransforms);
     }
 
     return model;

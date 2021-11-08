@@ -43,25 +43,25 @@ namespace
 namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
-    #include "Shaders/Compiled/XboxGamingScarlettPostProcess_VSQuadDual.inc"
+    #include "XboxGamingScarlettPostProcess_VSQuadDual.inc"
 
-    #include "Shaders/Compiled/XboxGamingScarlettPostProcess_PSMerge.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettPostProcess_PSBloomCombine.inc"
+    #include "XboxGamingScarlettPostProcess_PSMerge.inc"
+    #include "XboxGamingScarlettPostProcess_PSBloomCombine.inc"
 #elif defined(_GAMING_XBOX)
-    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_VSQuadDual.inc"
+    #include "XboxGamingXboxOnePostProcess_VSQuadDual.inc"
 
-    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_PSMerge.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOnePostProcess_PSBloomCombine.inc"
+    #include "XboxGamingXboxOnePostProcess_PSMerge.inc"
+    #include "XboxGamingXboxOnePostProcess_PSBloomCombine.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOnePostProcess_VSQuadDual.inc"
+    #include "XboxOnePostProcess_VSQuadDual.inc"
 
-    #include "Shaders/Compiled/XboxOnePostProcess_PSMerge.inc"
-    #include "Shaders/Compiled/XboxOnePostProcess_PSBloomCombine.inc"
+    #include "XboxOnePostProcess_PSMerge.inc"
+    #include "XboxOnePostProcess_PSBloomCombine.inc"
 #else
-    #include "Shaders/Compiled/PostProcess_VSQuadDual.inc"
+    #include "PostProcess_VSQuadDual.inc"
 
-    #include "Shaders/Compiled/PostProcess_PSMerge.inc"
-    #include "Shaders/Compiled/PostProcess_PSBloomCombine.inc"
+    #include "PostProcess_PSMerge.inc"
+    #include "PostProcess_PSBloomCombine.inc"
 #endif
 }
 
@@ -102,9 +102,9 @@ namespace
         ID3D12Device* GetDevice() const noexcept { return mDevice.Get(); }
 
     protected:
-        ComPtr<ID3D12Device>                        mDevice;
-        Microsoft::WRL::ComPtr<ID3D12RootSignature> mRootSignature;
-        std::mutex                                  mMutex;
+        ComPtr<ID3D12Device>        mDevice;
+        ComPtr<ID3D12RootSignature> mRootSignature;
+        std::mutex                  mMutex;
     };
 }
 
@@ -304,25 +304,9 @@ DualPostProcess::DualPostProcess(_In_ ID3D12Device* device, const RenderTargetSt
 }
 
 
-// Move constructor.
-DualPostProcess::DualPostProcess(DualPostProcess&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-DualPostProcess& DualPostProcess::operator= (DualPostProcess&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-DualPostProcess::~DualPostProcess()
-{
-}
+DualPostProcess::DualPostProcess(DualPostProcess&&) noexcept = default;
+DualPostProcess& DualPostProcess::operator= (DualPostProcess&&) noexcept = default;
+DualPostProcess::~DualPostProcess() = default;
 
 
 // IPostProcess methods.

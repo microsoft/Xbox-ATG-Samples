@@ -48,27 +48,27 @@ namespace
 namespace
 {
 #if defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOnePostProcess_VSQuad.inc"
+    #include "XboxOnePostProcess_VSQuad.inc"
 
-    #include "Shaders/Compiled/XboxOnePostProcess_PSCopy.inc"
-    #include "Shaders/Compiled/XboxOnePostProcess_PSMonochrome.inc"
-    #include "Shaders/Compiled/XboxOnePostProcess_PSSepia.inc"
-    #include "Shaders/Compiled/XboxOnePostProcess_PSDownScale2x2.inc"
-    #include "Shaders/Compiled/XboxOnePostProcess_PSDownScale4x4.inc"
-    #include "Shaders/Compiled/XboxOnePostProcess_PSGaussianBlur5x5.inc"
-    #include "Shaders/Compiled/XboxOnePostProcess_PSBloomExtract.inc"
-    #include "Shaders/Compiled/XboxOnePostProcess_PSBloomBlur.inc"
+    #include "XboxOnePostProcess_PSCopy.inc"
+    #include "XboxOnePostProcess_PSMonochrome.inc"
+    #include "XboxOnePostProcess_PSSepia.inc"
+    #include "XboxOnePostProcess_PSDownScale2x2.inc"
+    #include "XboxOnePostProcess_PSDownScale4x4.inc"
+    #include "XboxOnePostProcess_PSGaussianBlur5x5.inc"
+    #include "XboxOnePostProcess_PSBloomExtract.inc"
+    #include "XboxOnePostProcess_PSBloomBlur.inc"
 #else
-    #include "Shaders/Compiled/PostProcess_VSQuad.inc"
+    #include "PostProcess_VSQuad.inc"
 
-    #include "Shaders/Compiled/PostProcess_PSCopy.inc"
-    #include "Shaders/Compiled/PostProcess_PSMonochrome.inc"
-    #include "Shaders/Compiled/PostProcess_PSSepia.inc"
-    #include "Shaders/Compiled/PostProcess_PSDownScale2x2.inc"
-    #include "Shaders/Compiled/PostProcess_PSDownScale4x4.inc"
-    #include "Shaders/Compiled/PostProcess_PSGaussianBlur5x5.inc"
-    #include "Shaders/Compiled/PostProcess_PSBloomExtract.inc"
-    #include "Shaders/Compiled/PostProcess_PSBloomBlur.inc"
+    #include "PostProcess_PSCopy.inc"
+    #include "PostProcess_PSMonochrome.inc"
+    #include "PostProcess_PSSepia.inc"
+    #include "PostProcess_PSDownScale2x2.inc"
+    #include "PostProcess_PSDownScale4x4.inc"
+    #include "PostProcess_PSGaussianBlur5x5.inc"
+    #include "PostProcess_PSBloomExtract.inc"
+    #include "PostProcess_PSBloomBlur.inc"
 #endif
 }
 
@@ -150,7 +150,7 @@ namespace
 class BasicPostProcess::Impl : public AlignedNew<PostProcessConstants>
 {
 public:
-    Impl(_In_ ID3D11Device* device);
+    explicit Impl(_In_ ID3D11Device* device);
 
     void Process(_In_ ID3D11DeviceContext* deviceContext, std::function<void __cdecl()>& setCustomState);
 
@@ -279,7 +279,7 @@ void BasicPostProcess::Impl::Process(
         void *grfxMemory;
         mConstantBuffer.SetData(deviceContext, constants, &grfxMemory);
 
-        Microsoft::WRL::ComPtr<ID3D11DeviceContextX> deviceContextX;
+        ComPtr<ID3D11DeviceContextX> deviceContextX;
         ThrowIfFailed(deviceContext->QueryInterface(IID_GRAPHICS_PPV_ARGS(deviceContextX.GetAddressOf())));
 
         auto buffer = mConstantBuffer.GetBuffer();
@@ -476,25 +476,9 @@ BasicPostProcess::BasicPostProcess(_In_ ID3D11Device* device)
 }
 
 
-// Move constructor.
-BasicPostProcess::BasicPostProcess(BasicPostProcess&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-BasicPostProcess& BasicPostProcess::operator= (BasicPostProcess&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-BasicPostProcess::~BasicPostProcess()
-{
-}
+BasicPostProcess::BasicPostProcess(BasicPostProcess&&) noexcept = default;
+BasicPostProcess& BasicPostProcess::operator= (BasicPostProcess&&) noexcept = default;
+BasicPostProcess::~BasicPostProcess() = default;
 
 
 // IPostProcess methods.

@@ -20,13 +20,13 @@ using Microsoft::WRL::ComPtr;
 namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
-    #include "Shaders/Compiled/XboxGamingScarlettGenerateMips_main.inc"
+    #include "XboxGamingScarlettGenerateMips_main.inc"
 #elif defined(_GAMING_XBOX)
-    #include "Shaders/Compiled/XboxGamingXboxOneGenerateMips_main.inc"
+    #include "XboxGamingXboxOneGenerateMips_main.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOneGenerateMips_main.inc"
+    #include "XboxOneGenerateMips_main.inc"
 #else
-    #include "Shaders/Compiled/GenerateMips_main.inc"
+    #include "GenerateMips_main.inc"
 #endif
 
     bool FormatIsUAVCompatible(_In_ ID3D12Device* device, bool typedUAVLoadAdditionalFormats, DXGI_FORMAT format) noexcept
@@ -212,8 +212,8 @@ namespace
         };
 #pragma pack(pop)
 
-        static const uint32_t Num32BitConstants = static_cast<uint32_t>(sizeof(ConstantData) / sizeof(uint32_t));
-        static const uint32_t ThreadGroupSize = 8;
+        static constexpr uint32_t Num32BitConstants = static_cast<uint32_t>(sizeof(ConstantData) / sizeof(uint32_t));
+        static constexpr uint32_t ThreadGroupSize = 8;
 
         ComPtr<ID3D12RootSignature> rootSignature;
         ComPtr<ID3D12PipelineState> generateMipsPSO;
@@ -536,7 +536,7 @@ public:
 
         SetDebugObjectName(fence.Get(), L"ResourceUploadBatch");
 
-        HANDLE gpuCompletedEvent = CreateEventEx(nullptr, nullptr, 0, EVENT_ALL_ACCESS);
+        HANDLE gpuCompletedEvent = CreateEventEx(nullptr, nullptr, 0, EVENT_MODIFY_STATE | SYNCHRONIZE);
         if (!gpuCompletedEvent)
             throw std::system_error(std::error_code(static_cast<int>(GetLastError()), std::system_category()), "CreateEventEx");
 
@@ -547,7 +547,7 @@ public:
         auto uploadBatch = new UploadBatch();
         uploadBatch->CommandList = mList;
         uploadBatch->Fence = fence;
-        uploadBatch->GpuCompleteEvent = gpuCompletedEvent;
+        uploadBatch->GpuCompleteEvent.reset(gpuCompletedEvent);
         std::swap(mTrackedObjects, uploadBatch->TrackedObjects);
         std::swap(mTrackedMemoryResources, uploadBatch->TrackedMemoryResources);
 
@@ -556,7 +556,7 @@ public:
         std::future<void> future = std::async(std::launch::async, [uploadBatch]()
         {
             // Wait on the GPU-complete notification
-            DWORD wr = WaitForSingleObject(uploadBatch->GpuCompleteEvent, INFINITE);
+            DWORD wr = WaitForSingleObject(uploadBatch->GpuCompleteEvent.get(), INFINITE);
             if (wr != WAIT_OBJECT_0)
             {
                 if (wr == WAIT_FAILED)
@@ -920,6 +920,7 @@ private:
         auto aliasDesc = resourceDesc;
         aliasDesc.Format = (resourceDesc.Format == DXGI_FORMAT_B8G8R8X8_UNORM || resourceDesc.Format == DXGI_FORMAT_B8G8R8X8_UNORM_SRGB) ? DXGI_FORMAT_B8G8R8X8_UNORM : DXGI_FORMAT_B8G8R8A8_UNORM;
         aliasDesc.Layout = copyDesc.Layout;
+        aliasDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
         ComPtr<ID3D12Resource> aliasCopy;
         ThrowIfFailed(mDevice->CreatePlacedResource(
@@ -995,9 +996,9 @@ private:
         std::vector<SharedGraphicsResource>     TrackedMemoryResources;
         ComPtr<ID3D12GraphicsCommandList>       CommandList;
         ComPtr<ID3D12Fence>                     Fence;
-        HANDLE                                  GpuCompleteEvent;
+        ScopedHandle                            GpuCompleteEvent;
 
-        UploadBatch() noexcept : GpuCompleteEvent(nullptr) {}
+        UploadBatch() noexcept {}
     };
 
     ComPtr<ID3D12Device>                        mDevice;
@@ -1023,25 +1024,9 @@ ResourceUploadBatch::ResourceUploadBatch(_In_ ID3D12Device* device) noexcept(fal
 }
 
 
-// Public destructor.
-ResourceUploadBatch::~ResourceUploadBatch()
-{
-}
-
-
-// Move constructor.
-ResourceUploadBatch::ResourceUploadBatch(ResourceUploadBatch&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-ResourceUploadBatch& ResourceUploadBatch::operator= (ResourceUploadBatch&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
+ResourceUploadBatch::ResourceUploadBatch(ResourceUploadBatch&&) noexcept = default;
+ResourceUploadBatch& ResourceUploadBatch::operator= (ResourceUploadBatch&&) noexcept = default;
+ResourceUploadBatch::~ResourceUploadBatch() = default;
 
 
 void ResourceUploadBatch::Begin(D3D12_COMMAND_LIST_TYPE commandType)

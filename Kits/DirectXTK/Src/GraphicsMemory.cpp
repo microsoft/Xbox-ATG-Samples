@@ -180,12 +180,12 @@ public:
 
         void Clear()
         {
-            for (auto it = mPages.begin(); it != mPages.end(); ++it)
+            for (auto& it : mPages)
             {
-                if (it->mGrfxMemory)
+                if (it.mGrfxMemory)
                 {
-                    VirtualFree(it->mGrfxMemory, 0, MEM_RELEASE);
-                    it->mGrfxMemory = nullptr;
+                    VirtualFree(it.mGrfxMemory, 0, MEM_RELEASE);
+                    it.mGrfxMemory = nullptr;
                 }
             }
 
@@ -301,9 +301,7 @@ GraphicsMemory& GraphicsMemory::operator= (GraphicsMemory&& moveFrom) noexcept
 
 
 // Public destructor.
-GraphicsMemory::~GraphicsMemory()
-{
-}
+GraphicsMemory::~GraphicsMemory() = default;
 
 
 void* GraphicsMemory::Allocate(_In_opt_ ID3D11DeviceContext* context, size_t size, int alignment)

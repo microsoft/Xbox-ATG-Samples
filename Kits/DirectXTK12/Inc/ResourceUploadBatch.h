@@ -18,6 +18,7 @@
 #include <dxgiformat.h>
 #endif
 
+#include <cstdint>
 #include <future>
 #include <memory>
 
@@ -31,8 +32,9 @@ namespace DirectX
     {
     public:
         explicit ResourceUploadBatch(_In_ ID3D12Device* device) noexcept(false);
-        ResourceUploadBatch(ResourceUploadBatch&& moveFrom) noexcept;
-        ResourceUploadBatch& operator= (ResourceUploadBatch&& moveFrom) noexcept;
+
+        ResourceUploadBatch(ResourceUploadBatch&&) noexcept;
+        ResourceUploadBatch& operator= (ResourceUploadBatch&&) noexcept;
 
         ResourceUploadBatch(ResourceUploadBatch const&) = delete;
         ResourceUploadBatch& operator= (ResourceUploadBatch const&) = delete;

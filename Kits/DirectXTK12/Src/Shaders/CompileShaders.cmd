@@ -11,7 +11,7 @@ if %1.==xbox. goto continuexbox
 if %1.==dxil. goto continuedxil
 if %1.==gxdk. goto continuegxdk
 if %1.==. goto continuepc
-echo usage: CompileShaders [xbox]
+echo usage: CompileShaders [xbox | dxil | gxdk]
 exit /b
 
 :continuexbox
@@ -67,7 +67,11 @@ if exist %PCFXC% goto continue
 set PCFXC=fxc.exe
 
 :continue
-@if not exist Compiled mkdir Compiled
+if not defined CompileShadersOutput set CompileShadersOutput=Compiled
+set StrTrim=%CompileShadersOutput%##
+set StrTrim=%StrTrim: ##=%
+set CompileShadersOutput=%StrTrim:##=%
+@if not exist %CompileShadersOutput% mkdir %CompileShadersOutput%
 call :CompileShader%1 AlphaTestEffect vs VSAlphaTest
 call :CompileShader%1 AlphaTestEffect vs VSAlphaTestNoFog
 call :CompileShader%1 AlphaTestEffect vs VSAlphaTestVc
@@ -172,15 +176,34 @@ call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxNoSpecBn
 call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxVcNoSpec
 call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxVcNoSpecBn
 
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxInst
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxBnInst
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxVcInst
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxVcBnInst
+
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxNoSpecInst
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxNoSpecBnInst
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxVcNoSpecInst
+call :CompileShader%1 NormalMapEffect vs VSNormalPixelLightingTxVcNoSpecBnInst
+
+call :CompileShader%1 NormalMapEffect vs VSSkinnedPixelLightingTx
+call :CompileShader%1 NormalMapEffect vs VSSkinnedPixelLightingTxBn
+call :CompileShader%1 NormalMapEffect vs VSSkinnedPixelLightingTxNoSpec
+call :CompileShader%1 NormalMapEffect vs VSSkinnedPixelLightingTxNoSpecBn
+
 call :CompileShader%1 NormalMapEffect ps PSNormalPixelLightingTx
 call :CompileShader%1 NormalMapEffect ps PSNormalPixelLightingTxNoFog
 call :CompileShader%1 NormalMapEffect ps PSNormalPixelLightingTxNoSpec
 call :CompileShader%1 NormalMapEffect ps PSNormalPixelLightingTxNoFogSpec
 
 call :CompileShader%1 PBREffect vs VSConstant
+call :CompileShader%1 PBREffect vs VSConstantInst
 call :CompileShader%1 PBREffect vs VSConstantVelocity
 call :CompileShader%1 PBREffect vs VSConstantBn
+call :CompileShader%1 PBREffect vs VSConstantBnInst
 call :CompileShader%1 PBREffect vs VSConstantVelocityBn
+call :CompileShader%1 PBREffect vs VSSkinned
+call :CompileShader%1 PBREffect vs VSSkinnedBn
 
 call :CompileShader%1 PBREffect ps PSConstant
 call :CompileShader%1 PBREffect ps PSTextured
@@ -192,6 +215,11 @@ call :CompileShader%1 DebugEffect vs VSDebug
 call :CompileShader%1 DebugEffect vs VSDebugBn
 call :CompileShader%1 DebugEffect vs VSDebugVc
 call :CompileShader%1 DebugEffect vs VSDebugVcBn
+
+call :CompileShader%1 DebugEffect vs VSDebugInst
+call :CompileShader%1 DebugEffect vs VSDebugBnInst
+call :CompileShader%1 DebugEffect vs VSDebugVcInst
+call :CompileShader%1 DebugEffect vs VSDebugVcBnInst
 
 call :CompileShader%1 DebugEffect ps PSHemiAmbient
 call :CompileShader%1 DebugEffect ps PSRGBNormals
@@ -255,56 +283,56 @@ endlocal
 exit /b
 
 :CompileShader
-set fxc=%PCFXC% %1.fx %FXCOPTS% /T%2_5_1 %PCOPTS% /E%3 /FhCompiled\%1_%3.inc /FdCompiled\%1_%3.pdb /Vn%1_%3
+set fxc=%PCFXC% %1.fx %FXCOPTS% /T%2_5_1 %PCOPTS% /E%3 /Fh%CompileShadersOutput%\%1_%3.inc /Fd%CompileShadersOutput%\%1_%3.pdb /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileComputeShader
-set fxc=%PCFXC% %1.hlsl %FXCOPTS% /Tcs_5_1 %PCOPTS% /E%2 /FhCompiled\%1_%2.inc /FdCompiled\%1_%2.pdb /Vn%1_%2
+set fxc=%PCFXC% %1.hlsl %FXCOPTS% /Tcs_5_1 %PCOPTS% /E%2 /Fh%CompileShadersOutput%\%1_%2.inc /Fd%CompileShadersOutput%\%1_%2.pdb /Vn%1_%2
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileShaderdxil
-set dxc=%PCDXC% %1.fx %FXCOPTS% /T%2_6_0 /E%3 /FhCompiled\%1_%3.inc /FdCompiled\%1_%3.pdb /Vn%1_%3
+set dxc=%PCDXC% %1.fx %FXCOPTS% /T%2_6_0 /E%3 /Fh%CompileShadersOutput%\%1_%3.inc /Fd%CompileShadersOutput%\%1_%3.pdb /Vn%1_%3
 echo.
 echo %dxc%
 %dxc% || set error=1
 exit /b
 
 :CompileComputeShaderdxil
-set dxc=%PCDXC% %1.hlsl %FXCOPTS% /Tcs_6_0 /E%2 /FhCompiled\%1_%2.inc /FdCompiled\%1_%2.pdb /Vn%1_%2
+set dxc=%PCDXC% %1.hlsl %FXCOPTS% /Tcs_6_0 /E%2 /Fh%CompileShadersOutput%\%1_%2.inc /Fd%CompileShadersOutput%\%1_%2.pdb /Vn%1_%2
 echo.
 echo %dxc%
 %dxc% || set error=1
 exit /b
 
 :CompileShaderxbox
-set fxc=%XBOXFXC% %1.fx %FXCOPTS% /T%2_5_1 %XBOXOPTS% /E%3 /FhCompiled\%XBOXPREFIX%%1_%3.inc /FdCompiled\%XBOXPREFIX%%1_%3.pdb /Vn%1_%3
+set fxc=%XBOXFXC% %1.fx %FXCOPTS% /T%2_5_1 %XBOXOPTS% /E%3 /Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc /Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileComputeShaderxbox
-set fxc==%XBOXFXC% %1.hlsl %FXCOPTS% /Tcs_5_1 %XBOXOPTS% /E%2 /FhCompiled\%XBOXPREFIX%%1_%2.inc /FdCompiled\%XBOXPREFIX%%1_%2.pdb /Vn%1_%2
+set fxc==%XBOXFXC% %1.hlsl %FXCOPTS% /Tcs_5_1 %XBOXOPTS% /E%2 /Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc /Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb /Vn%1_%2
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileShadergxdk
-set dxc=%XBOXDXC% %1.fx %FXCOPTS% /T%2_6_0 /E%3 /FhCompiled\%XBOXPREFIX%%1_%3.inc /FdCompiled\%XBOXPREFIX%%1_%3.pdb /Vn%1_%3
+set dxc=%XBOXDXC% %1.fx %FXCOPTS% /T%2_6_0 /E%3 /Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc /Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb /Vn%1_%3
 echo.
 echo %dxc%
 %dxc% || set error=1
 exit /b
 
 :CompileComputeShadergxdk
-set dxc=%XBOXDXC% %1.hlsl %FXCOPTS% /Tcs_6_0 /E%2 /FhCompiled\%XBOXPREFIX%%1_%2.inc /FdCompiled\%XBOXPREFIX%%1_%2.pdb /Vn%1_%2
+set dxc=%XBOXDXC% %1.hlsl %FXCOPTS% /Tcs_6_0 /E%2 /Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc /Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb /Vn%1_%2
 echo.
 echo %dxc%
 %dxc% || set error=1

@@ -65,9 +65,9 @@ namespace
 
     struct HEADER
     {
-        static const uint32_t SIGNATURE = MAKEFOURCC('W', 'B', 'N', 'D');
-        static const uint32_t BE_SIGNATURE = MAKEFOURCC('D', 'N', 'B', 'W');
-        static const uint32_t VERSION = 44;
+        static constexpr uint32_t SIGNATURE = MAKEFOURCC('W', 'B', 'N', 'D');
+        static constexpr uint32_t BE_SIGNATURE = MAKEFOURCC('D', 'N', 'B', 'W');
+        static constexpr uint32_t VERSION = 44;
 
         enum SEGIDX
         {
@@ -101,15 +101,15 @@ namespace
 
     union MINIWAVEFORMAT
     {
-        static const uint32_t TAG_PCM = 0x0;
-        static const uint32_t TAG_XMA = 0x1;
-        static const uint32_t TAG_ADPCM = 0x2;
-        static const uint32_t TAG_WMA = 0x3;
+        static constexpr uint32_t TAG_PCM = 0x0;
+        static constexpr uint32_t TAG_XMA = 0x1;
+        static constexpr uint32_t TAG_ADPCM = 0x2;
+        static constexpr uint32_t TAG_WMA = 0x3;
 
-        static const uint32_t BITDEPTH_8 = 0x0; // PCM only
-        static const uint32_t BITDEPTH_16 = 0x1; // PCM only
+        static constexpr uint32_t BITDEPTH_8 = 0x0; // PCM only
+        static constexpr uint32_t BITDEPTH_16 = 0x1; // PCM only
 
-        static const size_t ADPCM_BLOCKALIGN_CONVERSION_OFFSET = 22;
+        static constexpr size_t ADPCM_BLOCKALIGN_CONVERSION_OFFSET = 22;
 
         struct
         {
@@ -245,17 +245,17 @@ namespace
 
     struct BANKDATA
     {
-        static const size_t BANKNAME_LENGTH = 64;
+        static constexpr size_t BANKNAME_LENGTH = 64;
 
-        static const uint32_t TYPE_BUFFER = 0x00000000;
-        static const uint32_t TYPE_STREAMING = 0x00000001;
-        static const uint32_t TYPE_MASK = 0x00000001;
+        static constexpr uint32_t TYPE_BUFFER = 0x00000000;
+        static constexpr uint32_t TYPE_STREAMING = 0x00000001;
+        static constexpr uint32_t TYPE_MASK = 0x00000001;
 
-        static const uint32_t FLAGS_ENTRYNAMES = 0x00010000;
-        static const uint32_t FLAGS_COMPACT = 0x00020000;
-        static const uint32_t FLAGS_SYNC_DISABLED = 0x00040000;
-        static const uint32_t FLAGS_SEEKTABLES = 0x00080000;
-        static const uint32_t FLAGS_MASK = 0x000F0000;
+        static constexpr uint32_t FLAGS_ENTRYNAMES = 0x00010000;
+        static constexpr uint32_t FLAGS_COMPACT = 0x00020000;
+        static constexpr uint32_t FLAGS_SYNC_DISABLED = 0x00040000;
+        static constexpr uint32_t FLAGS_SEEKTABLES = 0x00080000;
+        static constexpr uint32_t FLAGS_MASK = 0x000F0000;
 
         uint32_t        dwFlags;                        // Bank flags
         uint32_t        dwEntryCount;                   // Number of entries in the bank
@@ -281,11 +281,11 @@ namespace
 
     struct ENTRY
     {
-        static const uint32_t FLAGS_READAHEAD = 0x00000001;     // Enable stream read-ahead
-        static const uint32_t FLAGS_LOOPCACHE = 0x00000002;     // One or more looping sounds use this wave
-        static const uint32_t FLAGS_REMOVELOOPTAIL = 0x00000004;// Remove data after the end of the loop region
-        static const uint32_t FLAGS_IGNORELOOP = 0x00000008;    // Used internally when the loop region can't be used
-        static const uint32_t FLAGS_MASK = 0x00000008;
+        static constexpr uint32_t FLAGS_READAHEAD = 0x00000001;     // Enable stream read-ahead
+        static constexpr uint32_t FLAGS_LOOPCACHE = 0x00000002;     // One or more looping sounds use this wave
+        static constexpr uint32_t FLAGS_REMOVELOOPTAIL = 0x00000004;// Remove data after the end of the loop region
+        static constexpr uint32_t FLAGS_IGNORELOOP = 0x00000008;    // Used internally when the loop region can't be used
+        static constexpr uint32_t FLAGS_MASK = 0x00000008;
 
         union
         {
@@ -557,7 +557,7 @@ HRESULT WaveBankReader::Impl::Open(const wchar_t* szFileName) noexcept(false)
     BOOL result = GetOverlappedResultEx(hFile.get(), &request, &bytes, INFINITE, FALSE);
 #else
     if (wait)
-        (void)WaitForSingleObject(m_event.get(), INFINITE);
+        std::ignore = WaitForSingleObject(m_event.get(), INFINITE);
 
     BOOL result = GetOverlappedResult(hFile.get(), &request, &bytes, FALSE);
 #endif
@@ -602,7 +602,7 @@ HRESULT WaveBankReader::Impl::Open(const wchar_t* szFileName) noexcept(false)
     result = GetOverlappedResultEx(hFile.get(), &request, &bytes, INFINITE, FALSE);
 #else
     if (wait)
-        (void)WaitForSingleObject(m_event.get(), INFINITE);
+        std::ignore = WaitForSingleObject(m_event.get(), INFINITE);
 
     result = GetOverlappedResult(hFile.get(), &request, &bytes, FALSE);
 #endif
@@ -686,7 +686,7 @@ HRESULT WaveBankReader::Impl::Open(const wchar_t* szFileName) noexcept(false)
             result = GetOverlappedResultEx(hFile.get(), &request, &bytes, INFINITE, FALSE);
         #else
             if (wait)
-                (void)WaitForSingleObject(m_event.get(), INFINITE);
+                std::ignore = WaitForSingleObject(m_event.get(), INFINITE);
 
             result = GetOverlappedResult(hFile.get(), &request, &bytes, FALSE);
         #endif
@@ -737,7 +737,7 @@ HRESULT WaveBankReader::Impl::Open(const wchar_t* szFileName) noexcept(false)
     result = GetOverlappedResultEx(hFile.get(), &request, &bytes, INFINITE, FALSE);
 #else
     if (wait)
-        (void)WaitForSingleObject(m_event.get(), INFINITE);
+        std::ignore = WaitForSingleObject(m_event.get(), INFINITE);
 
     result = GetOverlappedResult(hFile.get(), &request, &bytes, FALSE);
 #endif
@@ -788,7 +788,7 @@ HRESULT WaveBankReader::Impl::Open(const wchar_t* szFileName) noexcept(false)
         result = GetOverlappedResultEx(hFile.get(), &request, &bytes, INFINITE, FALSE);
     #else
         if (wait)
-            (void)WaitForSingleObject(m_event.get(), INFINITE);
+            std::ignore = WaitForSingleObject(m_event.get(), INFINITE);
 
         result = GetOverlappedResult(hFile.get(), &request, &bytes, FALSE);
     #endif
@@ -922,11 +922,11 @@ void WaveBankReader::Impl::Close() noexcept
         {
             DWORD bytes;
         #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
-            (void)GetOverlappedResultEx(m_async, &m_request, &bytes, INFINITE, FALSE);
+            std::ignore = GetOverlappedResultEx(m_async, &m_request, &bytes, INFINITE, FALSE);
         #else
-            (void)WaitForSingleObject(m_request.hEvent, INFINITE);
+            std::ignore = WaitForSingleObject(m_request.hEvent, INFINITE);
 
-            (void)GetOverlappedResult(m_async, &m_request, &bytes, FALSE);
+            std::ignore = GetOverlappedResult(m_async, &m_request, &bytes, FALSE);
         #endif
         }
 
@@ -1311,7 +1311,7 @@ void WaveBankReader::WaitOnPrepare() noexcept
 
     if (pImpl->m_request.hEvent)
     {
-        (void)WaitForSingleObjectEx(pImpl->m_request.hEvent, INFINITE, FALSE);
+        std::ignore = WaitForSingleObjectEx(pImpl->m_request.hEvent, INFINITE, FALSE);
 
         pImpl->UpdatePrepared();
     }

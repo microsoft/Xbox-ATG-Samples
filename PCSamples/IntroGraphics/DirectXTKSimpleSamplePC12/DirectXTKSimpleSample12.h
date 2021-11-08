@@ -81,7 +81,7 @@ private:
     std::unique_ptr<DirectX::PrimitiveBatch<DirectX::VertexPositionColor>>  m_batch;
     std::unique_ptr<DirectX::BasicEffect>                                   m_shapeEffect;
     std::unique_ptr<DirectX::Model>                                         m_model;
-    std::vector<std::shared_ptr<DirectX::IEffect>>                          m_modelEffects;
+    DirectX::Model::EffectCollection                                        m_modelEffects;
     std::unique_ptr<DirectX::EffectTextureFactory>                          m_modelResources;
     std::unique_ptr<DirectX::GeometricPrimitive>                            m_shape;
     std::unique_ptr<DirectX::SpriteBatch>                                   m_sprites;

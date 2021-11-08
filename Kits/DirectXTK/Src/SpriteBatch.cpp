@@ -24,11 +24,11 @@ namespace
 {
     // Include the precompiled shader code.
     #if defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOneSpriteEffect_SpriteVertexShader.inc"
-    #include "Shaders/Compiled/XboxOneSpriteEffect_SpritePixelShader.inc"
+    #include "XboxOneSpriteEffect_SpriteVertexShader.inc"
+    #include "XboxOneSpriteEffect_SpritePixelShader.inc"
     #else
-    #include "Shaders/Compiled/SpriteEffect_SpriteVertexShader.inc"
-    #include "Shaders/Compiled/SpriteEffect_SpritePixelShader.inc"
+    #include "SpriteEffect_SpriteVertexShader.inc"
+    #include "SpriteEffect_SpritePixelShader.inc"
     #endif
 
 
@@ -62,7 +62,7 @@ namespace
 XM_ALIGNED_STRUCT(16) SpriteBatch::Impl : public AlignedNew<SpriteBatch::Impl>
 {
 public:
-    Impl(_In_ ID3D11DeviceContext* deviceContext);
+    explicit Impl(_In_ ID3D11DeviceContext* deviceContext);
 
     void XM_CALLCONV Begin(SpriteSortMode sortMode,
         _In_opt_ ID3D11BlendState* blendState,
@@ -93,8 +93,8 @@ public:
 
 
         // Combine values from the public SpriteEffects enum with these internal-only flags.
-        static const unsigned int SourceInTexels = 4;
-        static const unsigned int DestSizeInPixels = 8;
+        static constexpr unsigned int SourceInTexels = 4;
+        static constexpr unsigned int DestSizeInPixels = 8;
 
         static_assert((SpriteEffects_FlipBoth & (SourceInTexels | DestSizeInPixels)) == 0, "Flag bits must not overlap");
     };
@@ -124,11 +124,11 @@ private:
 
 
     // Constants.
-    static const size_t MaxBatchSize = 2048;
-    static const size_t MinBatchSize = 128;
-    static const size_t InitialQueueSize = 64;
-    static const size_t VerticesPerSprite = 4;
-    static const size_t IndicesPerSprite = 6;
+    static constexpr size_t MaxBatchSize = 2048;
+    static constexpr size_t MinBatchSize = 128;
+    static constexpr size_t InitialQueueSize = 64;
+    static constexpr size_t VerticesPerSprite = 4;
+    static constexpr size_t IndicesPerSprite = 6;
 
 
     // Queue of sprites waiting to be drawn.
@@ -1016,25 +1016,9 @@ SpriteBatch::SpriteBatch(_In_ ID3D11DeviceContext* deviceContext)
 }
 
 
-// Move constructor.
-SpriteBatch::SpriteBatch(SpriteBatch&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-SpriteBatch& SpriteBatch::operator= (SpriteBatch&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-SpriteBatch::~SpriteBatch()
-{
-}
+SpriteBatch::SpriteBatch(SpriteBatch&&) noexcept = default;
+SpriteBatch& SpriteBatch::operator= (SpriteBatch&&) noexcept = default;
+SpriteBatch::~SpriteBatch() = default;
 
 
 _Use_decl_annotations_

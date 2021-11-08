@@ -102,8 +102,8 @@ private:
     std::unique_ptr<DirectX::EffectTextureFactory>  m_modelResources;
     std::unique_ptr<DirectX::IEffectFactory>        m_fxFactory;
 
-    std::vector<std::shared_ptr<DirectX::IEffect>>  m_modelMSAA;
-    std::vector<std::shared_ptr<DirectX::IEffect>>  m_modelStandard;
+    DirectX::Model::EffectCollection                m_modelMSAA;
+    DirectX::Model::EffectCollection                m_modelStandard;
 
     DirectX::SimpleMath::Matrix                     m_world;
     DirectX::SimpleMath::Matrix                     m_view;

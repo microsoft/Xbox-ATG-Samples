@@ -36,13 +36,12 @@ namespace DirectX
         IPostProcess(const IPostProcess&) = delete;
         IPostProcess& operator=(const IPostProcess&) = delete;
 
-        IPostProcess(IPostProcess&&) = delete;
-        IPostProcess& operator=(IPostProcess&&) = delete;
-
         virtual void __cdecl Process(_In_ ID3D12GraphicsCommandList* commandList) = 0;
 
     protected:
         IPostProcess() = default;
+        IPostProcess(IPostProcess&&) = default;
+        IPostProcess& operator=(IPostProcess&&) = default;
     };
 
 
@@ -64,9 +63,10 @@ namespace DirectX
             Effect_Max
         };
 
-        explicit BasicPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx);
-        BasicPostProcess(BasicPostProcess&& moveFrom) noexcept;
-        BasicPostProcess& operator= (BasicPostProcess&& moveFrom) noexcept;
+        BasicPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx);
+
+        BasicPostProcess(BasicPostProcess&&) noexcept;
+        BasicPostProcess& operator= (BasicPostProcess&&) noexcept;
 
         BasicPostProcess(BasicPostProcess const&) = delete;
         BasicPostProcess& operator= (BasicPostProcess const&) = delete;
@@ -108,9 +108,10 @@ namespace DirectX
             Effect_Max
         };
 
-        explicit DualPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx);
-        DualPostProcess(DualPostProcess&& moveFrom) noexcept;
-        DualPostProcess& operator= (DualPostProcess&& moveFrom) noexcept;
+        DualPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState, Effect fx);
+
+        DualPostProcess(DualPostProcess&&) noexcept;
+        DualPostProcess& operator= (DualPostProcess&&) noexcept;
 
         DualPostProcess(DualPostProcess const&) = delete;
         DualPostProcess& operator= (DualPostProcess const&) = delete;
@@ -162,15 +163,23 @@ namespace DirectX
             TransferFunction_Max
         };
 
-        explicit ToneMapPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState,
+        // Color Rotation Transform for HDR10
+        enum ColorPrimaryRotation : unsigned int
+        {
+            HDTV_to_UHDTV,       // Rec.709 to Rec.2020
+            DCI_P3_D65_to_UHDTV, // DCI-P3-D65 (a.k.a Display P3 or P3D65) to Rec.2020
+            HDTV_to_DCI_P3_D65,  // Rec.709 to DCI-P3-D65 (a.k.a Display P3 or P3D65)
+        };
+
+        ToneMapPostProcess(_In_ ID3D12Device* device, const RenderTargetState& rtState,
             Operator op, TransferFunction func
         #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
             , bool mrt = false
         #endif
         );
 
-        ToneMapPostProcess(ToneMapPostProcess&& moveFrom) noexcept;
-        ToneMapPostProcess& operator= (ToneMapPostProcess&& moveFrom) noexcept;
+        ToneMapPostProcess(ToneMapPostProcess&&) noexcept;
+        ToneMapPostProcess& operator= (ToneMapPostProcess&&) noexcept;
 
         ToneMapPostProcess(ToneMapPostProcess const&) = delete;
         ToneMapPostProcess& operator= (ToneMapPostProcess const&) = delete;
@@ -183,11 +192,15 @@ namespace DirectX
         // Properties
         void __cdecl SetHDRSourceTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
 
+        // Sets the Color Rotation Transform for HDR10 signal output
+        void __cdecl SetColorRotation(ColorPrimaryRotation value);
+        void __cdecl SetColorRotation(CXMMATRIX value);
+
         // Sets exposure value for LDR tonemap operators
-        void SetExposure(float exposureValue);
+        void __cdecl SetExposure(float exposureValue);
 
         // Sets ST.2084 parameter for how bright white should be in nits
-        void SetST2084Parameter(float paperWhiteNits);
+        void __cdecl SetST2084Parameter(float paperWhiteNits);
 
     private:
         // Private implementation.

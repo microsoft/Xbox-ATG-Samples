@@ -42,15 +42,15 @@ namespace
 namespace
 {
 #if defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOnePostProcess_VSQuad.inc"
+    #include "XboxOnePostProcess_VSQuad.inc"
 
-    #include "Shaders/Compiled/XboxOnePostProcess_PSMerge.inc"
-    #include "Shaders/Compiled/XboxOnePostProcess_PSBloomCombine.inc"
+    #include "XboxOnePostProcess_PSMerge.inc"
+    #include "XboxOnePostProcess_PSBloomCombine.inc"
 #else
-    #include "Shaders/Compiled/PostProcess_VSQuad.inc"
+    #include "PostProcess_VSQuad.inc"
 
-    #include "Shaders/Compiled/PostProcess_PSMerge.inc"
-    #include "Shaders/Compiled/PostProcess_PSBloomCombine.inc"
+    #include "PostProcess_PSMerge.inc"
+    #include "PostProcess_PSBloomCombine.inc"
 #endif
 }
 
@@ -126,7 +126,7 @@ namespace
 class DualPostProcess::Impl : public AlignedNew<PostProcessConstants>
 {
 public:
-    Impl(_In_ ID3D11Device* device);
+    explicit Impl(_In_ ID3D11Device* device);
 
     void Process(_In_ ID3D11DeviceContext* deviceContext, std::function<void __cdecl()>& setCustomState);
 
@@ -235,7 +235,7 @@ void DualPostProcess::Impl::Process(
     void *grfxMemory;
     mConstantBuffer.SetData(deviceContext, constants, &grfxMemory);
 
-    Microsoft::WRL::ComPtr<ID3D11DeviceContextX> deviceContextX;
+    ComPtr<ID3D11DeviceContextX> deviceContextX;
     ThrowIfFailed(deviceContext->QueryInterface(IID_GRAPHICS_PPV_ARGS(deviceContextX.GetAddressOf())));
 
     auto buffer = mConstantBuffer.GetBuffer();
@@ -274,25 +274,9 @@ DualPostProcess::DualPostProcess(_In_ ID3D11Device* device)
 }
 
 
-// Move constructor.
-DualPostProcess::DualPostProcess(DualPostProcess&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-DualPostProcess& DualPostProcess::operator= (DualPostProcess&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-DualPostProcess::~DualPostProcess()
-{
-}
+DualPostProcess::DualPostProcess(DualPostProcess&&) noexcept = default;
+DualPostProcess& DualPostProcess::operator= (DualPostProcess&&) noexcept = default;
+DualPostProcess::~DualPostProcess() = default;
 
 
 // IPostProcess methods.

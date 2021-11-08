@@ -29,7 +29,7 @@ static_assert(DGSLEffect::MaxTextures == DGSLEffectFactory::DGSLEffectInfo::Base
 class DGSLEffectFactory::Impl
 {
 public:
-    Impl(_In_ ID3D11Device* device)
+    explicit Impl(_In_ ID3D11Device* device)
         : mPath{},
         mDevice(device),
         mSharing(true),
@@ -100,7 +100,15 @@ std::shared_ptr<IEffect> DGSLEffectFactory::Impl::CreateEffect(DGSLEffectFactory
         }
     }
 
-    auto effect = std::make_shared<DGSLEffect>(mDevice.Get(), nullptr, info.enableSkinning);
+    std::shared_ptr<DGSLEffect> effect;
+    if (info.enableSkinning)
+    {
+        effect = std::make_shared<SkinnedDGSLEffect>(mDevice.Get(), nullptr);
+    }
+    else
+    {
+        effect = std::make_shared<DGSLEffect>(mDevice.Get(), nullptr);
+    }
 
     effect->EnableDefaultLighting();
     effect->SetLightingEnabled(true);
@@ -189,7 +197,14 @@ std::shared_ptr<IEffect> DGSLEffectFactory::Impl::CreateDGSLEffect(DGSLEffectFac
 
     if (!info.pixelShader || !*info.pixelShader)
     {
-        effect = std::make_shared<DGSLEffect>(mDevice.Get(), nullptr, info.enableSkinning);
+        if (info.enableSkinning)
+        {
+            effect = std::make_shared<SkinnedDGSLEffect>(mDevice.Get(), nullptr);
+        }
+        else
+        {
+            effect = std::make_shared<DGSLEffect>(mDevice.Get(), nullptr);
+        }
     }
     else
     {
@@ -208,37 +223,39 @@ std::shared_ptr<IEffect> DGSLEffectFactory::Impl::CreateDGSLEffect(DGSLEffectFac
         if (first)
             *first = 0;
 
+        ComPtr<ID3D11PixelShader> ps;
         if (!_wcsicmp(root, L"lambert"))
         {
             allowSpecular = false;
-            effect = std::make_shared<DGSLEffect>(mDevice.Get(), nullptr, info.enableSkinning);
         }
         else if (!_wcsicmp(root, L"phong"))
         {
-            effect = std::make_shared<DGSLEffect>(mDevice.Get(), nullptr, info.enableSkinning);
+            // lighting, allowSpecular = true
         }
         else if (!_wcsicmp(root, L"unlit"))
         {
             lighting = false;
-            effect = std::make_shared<DGSLEffect>(mDevice.Get(), nullptr, info.enableSkinning);
         }
         else if (mDevice->GetFeatureLevel() < D3D_FEATURE_LEVEL_10_0)
         {
             // DGSL shaders are not compatible with Feature Level 9.x, use fallback shader
             wcscat_s(root, L".cso");
 
-            ComPtr<ID3D11PixelShader> ps;
             factory->CreatePixelShader(root, ps.GetAddressOf());
-
-            effect = std::make_shared<DGSLEffect>(mDevice.Get(), ps.Get(), info.enableSkinning);
         }
         else
         {
             // Create DGSL shader and use it for the effect
-            ComPtr<ID3D11PixelShader> ps;
             factory->CreatePixelShader(info.pixelShader, ps.GetAddressOf());
+        }
 
-            effect = std::make_shared<DGSLEffect>(mDevice.Get(), ps.Get(), info.enableSkinning);
+        if (info.enableSkinning)
+        {
+            effect = std::make_shared<SkinnedDGSLEffect>(mDevice.Get(), ps.Get());
+        }
+        else
+        {
+            effect = std::make_shared<DGSLEffect>(mDevice.Get(), ps.Get());
         }
     }
 
@@ -522,21 +539,10 @@ DGSLEffectFactory::DGSLEffectFactory(_In_ ID3D11Device* device)
 {
 }
 
-DGSLEffectFactory::~DGSLEffectFactory()
-{
-}
 
-
-DGSLEffectFactory::DGSLEffectFactory(DGSLEffectFactory&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-DGSLEffectFactory& DGSLEffectFactory::operator= (DGSLEffectFactory&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
+DGSLEffectFactory::DGSLEffectFactory(DGSLEffectFactory&&) noexcept = default;
+DGSLEffectFactory& DGSLEffectFactory::operator= (DGSLEffectFactory&&) noexcept = default;
+DGSLEffectFactory::~DGSLEffectFactory() = default;
 
 
 // IEffectFactory methods

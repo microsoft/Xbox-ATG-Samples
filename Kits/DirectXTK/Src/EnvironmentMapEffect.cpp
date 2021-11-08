@@ -13,52 +13,52 @@
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
-
-// Constant buffer layout. Must match the shader!
-struct EnvironmentMapEffectConstants
+namespace
 {
-    XMVECTOR environmentMapSpecular;
-    float environmentMapAmount;
-    float fresnelFactor;
-    float pad[2];
+    // Constant buffer layout. Must match the shader!
+    struct EnvironmentMapEffectConstants
+    {
+        XMVECTOR environmentMapSpecular;
+        float environmentMapAmount;
+        float fresnelFactor;
+        float pad[2];
 
-    XMVECTOR diffuseColor;
-    XMVECTOR emissiveColor;
-    
-    XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];
-    XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
+        XMVECTOR diffuseColor;
+        XMVECTOR emissiveColor;
 
-    XMVECTOR eyePosition;
+        XMVECTOR lightDirection[IEffectLights::MaxDirectionalLights];
+        XMVECTOR lightDiffuseColor[IEffectLights::MaxDirectionalLights];
 
-    XMVECTOR fogColor;
-    XMVECTOR fogVector;
+        XMVECTOR eyePosition;
 
-    XMMATRIX world;
-    XMVECTOR worldInverseTranspose[3];
-    XMMATRIX worldViewProj;
-};
+        XMVECTOR fogColor;
+        XMVECTOR fogVector;
 
-static_assert((sizeof(EnvironmentMapEffectConstants) % 16) == 0, "CB size not padded correctly");
+        XMMATRIX world;
+        XMVECTOR worldInverseTranspose[3];
+        XMMATRIX worldViewProj;
+    };
 
+    static_assert((sizeof(EnvironmentMapEffectConstants) % 16) == 0, "CB size not padded correctly");
 
-// Traits type describes our characteristics to the EffectBase template.
-struct EnvironmentMapEffectTraits
-{
-    using ConstantBufferType = EnvironmentMapEffectConstants;
+    // Traits type describes our characteristics to the EffectBase template.
+    struct EnvironmentMapEffectTraits
+    {
+        using ConstantBufferType = EnvironmentMapEffectConstants;
 
-    static constexpr int VertexShaderCount = 12;
-    static constexpr int PixelShaderCount = 16;
-    static constexpr int ShaderPermutationCount = 56;
+        static constexpr int VertexShaderCount = 12;
+        static constexpr int PixelShaderCount = 16;
+        static constexpr int ShaderPermutationCount = 56;
 
-    static constexpr int MappingCount = 3;
-};
-
+        static constexpr int MappingCount = 3;
+    };
+}
 
 // Internal EnvironmentMapEffect implementation class.
 class EnvironmentMapEffect::Impl : public EffectBase<EnvironmentMapEffectTraits>
 {
 public:
-    Impl(_In_ ID3D11Device* device);
+    explicit Impl(_In_ ID3D11Device* device);
 
     bool preferPerPixelLighting;
     bool fresnelEnabled;
@@ -80,69 +80,69 @@ public:
 namespace
 {
 #if defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMap.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapFresnel.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapOneLight.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapOneLightFresnel.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapPixelLighting.inc"
+    #include "XboxOneEnvironmentMapEffect_VSEnvMap.inc"
+    #include "XboxOneEnvironmentMapEffect_VSEnvMapFresnel.inc"
+    #include "XboxOneEnvironmentMapEffect_VSEnvMapOneLight.inc"
+    #include "XboxOneEnvironmentMapEffect_VSEnvMapOneLightFresnel.inc"
+    #include "XboxOneEnvironmentMapEffect_VSEnvMapPixelLighting.inc"
 
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapBn.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapFresnelBn.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapOneLightBn.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapOneLightFresnelBn.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_VSEnvMapPixelLightingBn.inc"
+    #include "XboxOneEnvironmentMapEffect_VSEnvMapBn.inc"
+    #include "XboxOneEnvironmentMapEffect_VSEnvMapFresnelBn.inc"
+    #include "XboxOneEnvironmentMapEffect_VSEnvMapOneLightBn.inc"
+    #include "XboxOneEnvironmentMapEffect_VSEnvMapOneLightFresnelBn.inc"
+    #include "XboxOneEnvironmentMapEffect_VSEnvMapPixelLightingBn.inc"
 
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMap.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapNoFog.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapSpecular.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapSpecularNoFog.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapPixelLighting.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapPixelLightingNoFog.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapPixelLightingFresnel.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMap.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMapNoFog.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMapSpecular.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMapSpecularNoFog.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMapPixelLighting.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMapPixelLightingNoFog.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMapPixelLightingFresnel.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog.inc"
 
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapSpherePixelLighting.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapSpherePixelLightingNoFog.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnel.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnelNoFog.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMapSpherePixelLighting.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMapSpherePixelLightingNoFog.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnel.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnelNoFog.inc"
 
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapDualParabolaPixelLighting.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingNoFog.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnel.inc"
-    #include "Shaders/Compiled/XboxOneEnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnelNoFog.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMapDualParabolaPixelLighting.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingNoFog.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnel.inc"
+    #include "XboxOneEnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnelNoFog.inc"
 #else
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMap.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapFresnel.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapOneLight.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapOneLightFresnel.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapPixelLighting.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapPixelLightingSM4.inc"
+    #include "EnvironmentMapEffect_VSEnvMap.inc"
+    #include "EnvironmentMapEffect_VSEnvMapFresnel.inc"
+    #include "EnvironmentMapEffect_VSEnvMapOneLight.inc"
+    #include "EnvironmentMapEffect_VSEnvMapOneLightFresnel.inc"
+    #include "EnvironmentMapEffect_VSEnvMapPixelLighting.inc"
+    #include "EnvironmentMapEffect_VSEnvMapPixelLightingSM4.inc"
 
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapBn.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapFresnelBn.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapOneLightBn.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapOneLightFresnelBn.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapPixelLightingBn.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_VSEnvMapPixelLightingBnSM4.inc"
+    #include "EnvironmentMapEffect_VSEnvMapBn.inc"
+    #include "EnvironmentMapEffect_VSEnvMapFresnelBn.inc"
+    #include "EnvironmentMapEffect_VSEnvMapOneLightBn.inc"
+    #include "EnvironmentMapEffect_VSEnvMapOneLightFresnelBn.inc"
+    #include "EnvironmentMapEffect_VSEnvMapPixelLightingBn.inc"
+    #include "EnvironmentMapEffect_VSEnvMapPixelLightingBnSM4.inc"
 
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMap.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapNoFog.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapSpecular.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapSpecularNoFog.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapPixelLighting.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapPixelLightingNoFog.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapPixelLightingFresnel.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog.inc"
+    #include "EnvironmentMapEffect_PSEnvMap.inc"
+    #include "EnvironmentMapEffect_PSEnvMapNoFog.inc"
+    #include "EnvironmentMapEffect_PSEnvMapSpecular.inc"
+    #include "EnvironmentMapEffect_PSEnvMapSpecularNoFog.inc"
+    #include "EnvironmentMapEffect_PSEnvMapPixelLighting.inc"
+    #include "EnvironmentMapEffect_PSEnvMapPixelLightingNoFog.inc"
+    #include "EnvironmentMapEffect_PSEnvMapPixelLightingFresnel.inc"
+    #include "EnvironmentMapEffect_PSEnvMapPixelLightingFresnelNoFog.inc"
 
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapSpherePixelLighting.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapSpherePixelLightingNoFog.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnel.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnelNoFog.inc"
+    #include "EnvironmentMapEffect_PSEnvMapSpherePixelLighting.inc"
+    #include "EnvironmentMapEffect_PSEnvMapSpherePixelLightingNoFog.inc"
+    #include "EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnel.inc"
+    #include "EnvironmentMapEffect_PSEnvMapSpherePixelLightingFresnelNoFog.inc"
 
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapDualParabolaPixelLighting.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingNoFog.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnel.inc"
-    #include "Shaders/Compiled/EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnelNoFog.inc"
+    #include "EnvironmentMapEffect_PSEnvMapDualParabolaPixelLighting.inc"
+    #include "EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingNoFog.inc"
+    #include "EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnel.inc"
+    #include "EnvironmentMapEffect_PSEnvMapDualParabolaPixelLightingFresnelNoFog.inc"
 #endif
 }
 
@@ -435,6 +435,8 @@ int EnvironmentMapEffect::Impl::GetCurrentShaderPermutation() const noexcept
 // Sets our state onto the D3D device.
 void EnvironmentMapEffect::Impl::Apply(_In_ ID3D11DeviceContext* deviceContext)
 {
+    assert(deviceContext != nullptr);
+
     // Compute derived parameter values.
     matrices.SetConstants(dirtyFlags, constants.worldViewProj);
 
@@ -445,7 +447,7 @@ void EnvironmentMapEffect::Impl::Apply(_In_ ID3D11DeviceContext* deviceContext)
     // Set the textures.
     ID3D11ShaderResourceView* textures[2] =
     {
-        texture.Get(),
+        (texture) ? texture.Get() : GetDefaultTexture(),
         environmentMap.Get(),
     };
 
@@ -463,25 +465,9 @@ EnvironmentMapEffect::EnvironmentMapEffect(_In_ ID3D11Device* device)
 }
 
 
-// Move constructor.
-EnvironmentMapEffect::EnvironmentMapEffect(EnvironmentMapEffect&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-EnvironmentMapEffect& EnvironmentMapEffect::operator= (EnvironmentMapEffect&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-EnvironmentMapEffect::~EnvironmentMapEffect()
-{
-}
+EnvironmentMapEffect::EnvironmentMapEffect(EnvironmentMapEffect&&) noexcept = default;
+EnvironmentMapEffect& EnvironmentMapEffect::operator= (EnvironmentMapEffect&&) noexcept = default;
+EnvironmentMapEffect::~EnvironmentMapEffect() = default;
 
 
 // IEffect methods.

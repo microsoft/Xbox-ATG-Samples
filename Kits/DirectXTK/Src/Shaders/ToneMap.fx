@@ -9,8 +9,9 @@ sampler Sampler : register(s0);
 
 cbuffer Parameters : register(b0)
 {
-    float linearExposure : packoffset(c0.x);
-    float paperWhiteNits : packoffset(c0.y);
+    float linearExposure    : packoffset(c0.x);
+    float paperWhiteNits    : packoffset(c0.y);
+    float4x3 colorRotation  : packoffset(c1);
 };
 
 
@@ -28,7 +29,7 @@ VSInputTx VSQuad(uint vI : SV_VertexId)
     float2 texcoord = float2((vI << 1) & 2, vI & 2);
     vout.TexCoord = texcoord;
 
-    vout.Position = float4(texcoord.x * 2 - 1, -texcoord.y * 2  + 1, 0, 1);
+    vout.Position = float4(texcoord.x * 2 - 1, -texcoord.y * 2 + 1, 0, 1);
     return vout;
 }
 
@@ -116,7 +117,7 @@ float4 PSACESFilmic_SRGB(VSInputTx pin) : SV_Target0
 float3 HDR10(float3 color)
 {
     // Rotate from Rec.709 to Rec.2020 primaries
-    float3 rgb = mul(from709to2020, color);
+    float3 rgb = mul(color, (float3x3)colorRotation);
 
     // ST.2084 spec defines max nits as 10,000 nits
     float3 normalized = rgb * paperWhiteNits / 10000.f;

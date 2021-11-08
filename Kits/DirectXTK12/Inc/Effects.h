@@ -18,6 +18,7 @@
 #endif
 
 #include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <string>
 
@@ -42,13 +43,12 @@ namespace DirectX
         IEffect(const IEffect&) = delete;
         IEffect& operator=(const IEffect&) = delete;
 
-        IEffect(IEffect&&) = delete;
-        IEffect& operator=(IEffect&&) = delete;
-
         virtual void __cdecl Apply(_In_ ID3D12GraphicsCommandList* commandList) = 0;
 
     protected:
         IEffect() = default;
+        IEffect(IEffect&&) = default;
+        IEffect& operator=(IEffect&&) = default;
     };
 
 
@@ -61,9 +61,6 @@ namespace DirectX
         IEffectMatrices(const IEffectMatrices&) = delete;
         IEffectMatrices& operator=(const IEffectMatrices&) = delete;
 
-        IEffectMatrices(IEffectMatrices&&) = delete;
-        IEffectMatrices& operator=(IEffectMatrices&&) = delete;
-
         virtual void XM_CALLCONV SetWorld(FXMMATRIX value) = 0;
         virtual void XM_CALLCONV SetView(FXMMATRIX value) = 0;
         virtual void XM_CALLCONV SetProjection(FXMMATRIX value) = 0;
@@ -71,6 +68,8 @@ namespace DirectX
 
     protected:
         IEffectMatrices() = default;
+        IEffectMatrices(IEffectMatrices&&) = default;
+        IEffectMatrices& operator=(IEffectMatrices&&) = default;
     };
 
 
@@ -82,9 +81,6 @@ namespace DirectX
 
         IEffectLights(const IEffectLights&) = delete;
         IEffectLights& operator=(const IEffectLights&) = delete;
-
-        IEffectLights(IEffectLights&&) = delete;
-        IEffectLights& operator=(IEffectLights&&) = delete;
 
         virtual void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) = 0;
 
@@ -99,6 +95,8 @@ namespace DirectX
 
     protected:
         IEffectLights() = default;
+        IEffectLights(IEffectLights&&) = default;
+        IEffectLights& operator=(IEffectLights&&) = default;
     };
 
 
@@ -111,15 +109,14 @@ namespace DirectX
         IEffectFog(const IEffectFog&) = delete;
         IEffectFog& operator=(const IEffectFog&) = delete;
 
-        IEffectFog(IEffectFog&&) = delete;
-        IEffectFog& operator=(IEffectFog&&) = delete;
-
         virtual void __cdecl SetFogStart(float value) = 0;
         virtual void __cdecl SetFogEnd(float value) = 0;
         virtual void XM_CALLCONV SetFogColor(FXMVECTOR value) = 0;
 
     protected:
         IEffectFog() = default;
+        IEffectFog(IEffectFog&&) = default;
+        IEffectFog& operator=(IEffectFog&&) = default;
     };
 
 
@@ -132,9 +129,6 @@ namespace DirectX
         IEffectSkinning(const IEffectSkinning&) = delete;
         IEffectSkinning& operator=(const IEffectSkinning&) = delete;
 
-        IEffectSkinning(IEffectSkinning&&) = delete;
-        IEffectSkinning& operator=(IEffectSkinning&&) = delete;
-
         virtual void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) = 0;
         virtual void __cdecl ResetBoneTransforms() = 0;
 
@@ -142,6 +136,8 @@ namespace DirectX
 
     protected:
         IEffectSkinning() = default;
+        IEffectSkinning(IEffectSkinning&&) = default;
+        IEffectSkinning& operator=(IEffectSkinning&&) = default;
     };
 
 
@@ -154,6 +150,7 @@ namespace DirectX
         constexpr uint32_t PerPixelLighting    = 0x04 | Lighting; // per pixel lighting implies lighting enabled
         constexpr uint32_t VertexColor         = 0x08;
         constexpr uint32_t Texture             = 0x10;
+        constexpr uint32_t Instancing          = 0x20;
 
         constexpr uint32_t Specular            = 0x100; // enable optional specular/specularMap feature
         constexpr uint32_t Emissive            = 0x200; // enable optional emissive/emissiveMap feature
@@ -170,8 +167,9 @@ namespace DirectX
     {
     public:
         BasicEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
-        BasicEffect(BasicEffect&& moveFrom) noexcept;
-        BasicEffect& operator= (BasicEffect&& moveFrom) noexcept;
+
+        BasicEffect(BasicEffect&&) noexcept;
+        BasicEffect& operator= (BasicEffect&&) noexcept;
 
         BasicEffect(BasicEffect const&) = delete;
         BasicEffect& operator= (BasicEffect const&) = delete;
@@ -226,10 +224,12 @@ namespace DirectX
     class AlphaTestEffect : public IEffect, public IEffectMatrices, public IEffectFog
     {
     public:
-        AlphaTestEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
+        AlphaTestEffect(_In_ ID3D12Device* device, uint32_t effectFlags,
+            const EffectPipelineStateDescription& pipelineDescription,
             D3D12_COMPARISON_FUNC alphaFunction = D3D12_COMPARISON_FUNC_GREATER);
-        AlphaTestEffect(AlphaTestEffect&& moveFrom) noexcept;
-        AlphaTestEffect& operator= (AlphaTestEffect&& moveFrom) noexcept;
+
+        AlphaTestEffect(AlphaTestEffect&&) noexcept;
+        AlphaTestEffect& operator= (AlphaTestEffect&&) noexcept;
 
         AlphaTestEffect(AlphaTestEffect const&) = delete;
         AlphaTestEffect& operator= (AlphaTestEffect const&) = delete;
@@ -273,9 +273,11 @@ namespace DirectX
     class DualTextureEffect : public IEffect, public IEffectMatrices, public IEffectFog
     {
     public:
-        DualTextureEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
-        DualTextureEffect(DualTextureEffect&& moveFrom) noexcept;
-        DualTextureEffect& operator= (DualTextureEffect&& moveFrom) noexcept;
+        DualTextureEffect(_In_ ID3D12Device* device, uint32_t effectFlags,
+            const EffectPipelineStateDescription& pipelineDescription);
+
+        DualTextureEffect(DualTextureEffect&&) noexcept;
+        DualTextureEffect& operator= (DualTextureEffect&&) noexcept;
 
         DualTextureEffect(DualTextureEffect const&) = delete;
         DualTextureEffect& operator= (DualTextureEffect const&) = delete;
@@ -324,10 +326,12 @@ namespace DirectX
             Mapping_DualParabola,   // Dual-parabola environment map (requires Feature Level 10.0)
         };
 
-        EnvironmentMapEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
+        EnvironmentMapEffect(_In_ ID3D12Device* device, uint32_t effectFlags,
+            const EffectPipelineStateDescription& pipelineDescription,
             Mapping mapping = Mapping_Cube);
-        EnvironmentMapEffect(EnvironmentMapEffect&& moveFrom) noexcept;
-        EnvironmentMapEffect& operator= (EnvironmentMapEffect&& moveFrom) noexcept;
+
+        EnvironmentMapEffect(EnvironmentMapEffect&&) noexcept;
+        EnvironmentMapEffect& operator= (EnvironmentMapEffect&&) noexcept;
 
         EnvironmentMapEffect(EnvironmentMapEffect const&) = delete;
         EnvironmentMapEffect& operator= (EnvironmentMapEffect const&) = delete;
@@ -387,9 +391,11 @@ namespace DirectX
     class SkinnedEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog, public IEffectSkinning
     {
     public:
-        SkinnedEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
-        SkinnedEffect(SkinnedEffect&& moveFrom) noexcept;
-        SkinnedEffect& operator= (SkinnedEffect&& moveFrom) noexcept;
+        SkinnedEffect(_In_ ID3D12Device* device, uint32_t effectFlags,
+            const EffectPipelineStateDescription& pipelineDescription);
+
+        SkinnedEffect(SkinnedEffect&&) noexcept;
+        SkinnedEffect& operator= (SkinnedEffect&&) noexcept;
 
         SkinnedEffect(SkinnedEffect const&) = delete;
         SkinnedEffect& operator= (SkinnedEffect const&) = delete;
@@ -449,9 +455,12 @@ namespace DirectX
     class NormalMapEffect : public IEffect, public IEffectMatrices, public IEffectLights, public IEffectFog
     {
     public:
-        NormalMapEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
-        NormalMapEffect(NormalMapEffect&& moveFrom) noexcept;
-        NormalMapEffect& operator= (NormalMapEffect&& moveFrom) noexcept;
+        NormalMapEffect(_In_ ID3D12Device* device, uint32_t effectFlags,
+            const EffectPipelineStateDescription& pipelineDescription) :
+            NormalMapEffect(device, effectFlags, pipelineDescription, false) {}
+
+        NormalMapEffect(NormalMapEffect&&) noexcept;
+        NormalMapEffect& operator= (NormalMapEffect&&) noexcept;
 
         NormalMapEffect(NormalMapEffect const&) = delete;
         NormalMapEffect& operator= (NormalMapEffect const&) = delete;
@@ -496,11 +505,32 @@ namespace DirectX
         void __cdecl SetNormalTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
         void __cdecl SetSpecularTexture(D3D12_GPU_DESCRIPTOR_HANDLE srvDescriptor);
 
-    private:
+    protected:
         // Private implementation.
         class Impl;
 
         std::unique_ptr<Impl> pImpl;
+
+        NormalMapEffect(_In_ ID3D12Device* device, uint32_t effectFlags,
+            const EffectPipelineStateDescription& pipelineDescription, bool skinningEnabled);
+    };
+
+    class SkinnedNormalMapEffect : public NormalMapEffect, public IEffectSkinning
+    {
+    public:
+        SkinnedNormalMapEffect(_In_ ID3D12Device* device, uint32_t effectFlags,
+            const EffectPipelineStateDescription& pipelineDescription) :
+            NormalMapEffect(device, effectFlags, pipelineDescription, true) {}
+
+        SkinnedNormalMapEffect(SkinnedNormalMapEffect&&) = default;
+        SkinnedNormalMapEffect& operator= (SkinnedNormalMapEffect&&) = default;
+
+        SkinnedNormalMapEffect(SkinnedNormalMapEffect const&) = delete;
+        SkinnedNormalMapEffect& operator= (SkinnedNormalMapEffect const&) = delete;
+
+        // Animation settings.
+        void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
+        void __cdecl ResetBoneTransforms() override;
     };
 
 
@@ -509,9 +539,12 @@ namespace DirectX
     class PBREffect : public IEffect, public IEffectMatrices, public IEffectLights
     {
     public:
-        PBREffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription);
-        PBREffect(PBREffect&& moveFrom) noexcept;
-        PBREffect& operator= (PBREffect&& moveFrom) noexcept;
+        PBREffect(_In_ ID3D12Device* device, uint32_t effectFlags,
+            const EffectPipelineStateDescription& pipelineDescription) :
+            PBREffect(device, effectFlags, pipelineDescription, false) {}
+
+        PBREffect(PBREffect&&) noexcept;
+        PBREffect& operator= (PBREffect&&) noexcept;
 
         PBREffect(PBREffect const&) = delete;
         PBREffect& operator= (PBREffect const&) = delete;
@@ -562,15 +595,36 @@ namespace DirectX
         // Render target size, required for velocity buffer output.
         void __cdecl SetRenderTargetSizeInPixels(int width, int height);
 
-    private:
+    protected:
         // Private implementation.
         class Impl;
 
         std::unique_ptr<Impl> pImpl;
 
+        PBREffect(_In_ ID3D12Device* device, uint32_t effectFlags,
+            const EffectPipelineStateDescription& pipelineDescription, bool skinningEnabled);
+
         // Unsupported interface methods.
         void XM_CALLCONV SetAmbientLightColor(FXMVECTOR value) override;
         void XM_CALLCONV SetLightSpecularColor(int whichLight, FXMVECTOR value) override;
+    };
+
+    class SkinnedPBREffect : public PBREffect, public IEffectSkinning
+    {
+    public:
+        SkinnedPBREffect(_In_ ID3D12Device* device, uint32_t effectFlags,
+            const EffectPipelineStateDescription& pipelineDescription) :
+            PBREffect(device, effectFlags, pipelineDescription, true) {}
+
+        SkinnedPBREffect(SkinnedPBREffect&&) = default;
+        SkinnedPBREffect& operator= (SkinnedPBREffect&&) = default;
+
+        SkinnedPBREffect(SkinnedPBREffect const&) = delete;
+        SkinnedPBREffect& operator= (SkinnedPBREffect const&) = delete;
+
+        // Animation settings.
+        void __cdecl SetBoneTransforms(_In_reads_(count) XMMATRIX const* value, size_t count) override;
+        void __cdecl ResetBoneTransforms() override;
     };
 
 
@@ -587,10 +641,12 @@ namespace DirectX
             Mode_BiTangents,    // RGB bi-tangents
         };
 
-        DebugEffect(_In_ ID3D12Device* device, uint32_t effectFlags, const EffectPipelineStateDescription& pipelineDescription,
+        DebugEffect(_In_ ID3D12Device* device, uint32_t effectFlags,
+            const EffectPipelineStateDescription& pipelineDescription,
             Mode debugMode = Mode_Default);
-        DebugEffect(DebugEffect&& moveFrom) noexcept;
-        DebugEffect& operator= (DebugEffect&& moveFrom) noexcept;
+
+        DebugEffect(DebugEffect&&) noexcept;
+        DebugEffect& operator= (DebugEffect&&) noexcept;
 
         DebugEffect(DebugEffect const&) = delete;
         DebugEffect& operator= (DebugEffect const&) = delete;
@@ -628,13 +684,12 @@ namespace DirectX
         IEffectTextureFactory(const IEffectTextureFactory&) = delete;
         IEffectTextureFactory& operator=(const IEffectTextureFactory&) = delete;
 
-        IEffectTextureFactory(IEffectTextureFactory&&) = delete;
-        IEffectTextureFactory& operator=(IEffectTextureFactory&&) = delete;
-
         virtual size_t __cdecl CreateTexture(_In_z_ const wchar_t* name, int descriptorIndex) = 0;
 
     protected:
         IEffectTextureFactory() = default;
+        IEffectTextureFactory(IEffectTextureFactory&&) = default;
+        IEffectTextureFactory& operator=(IEffectTextureFactory&&) = default;
     };
 
 
@@ -653,8 +708,8 @@ namespace DirectX
             _In_ size_t numDescriptors,
             _In_ D3D12_DESCRIPTOR_HEAP_FLAGS descriptorHeapFlags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE) noexcept(false);
 
-        EffectTextureFactory(EffectTextureFactory&& moveFrom) noexcept;
-        EffectTextureFactory& operator= (EffectTextureFactory&& moveFrom) noexcept;
+        EffectTextureFactory(EffectTextureFactory&&) noexcept;
+        EffectTextureFactory& operator= (EffectTextureFactory&&) noexcept;
 
         EffectTextureFactory(EffectTextureFactory const&) = delete;
         EffectTextureFactory& operator= (EffectTextureFactory const&) = delete;
@@ -702,9 +757,6 @@ namespace DirectX
 
         IEffectFactory(const IEffectFactory&) = delete;
         IEffectFactory& operator=(const IEffectFactory&) = delete;
-
-        IEffectFactory(IEffectFactory&&) = delete;
-        IEffectFactory& operator=(IEffectFactory&&) = delete;
 
         struct EffectInfo
         {
@@ -759,6 +811,8 @@ namespace DirectX
 
     protected:
         IEffectFactory() = default;
+        IEffectFactory(IEffectFactory&&) = default;
+        IEffectFactory& operator=(IEffectFactory&&) = default;
     };
 
 
@@ -771,8 +825,8 @@ namespace DirectX
             _In_ ID3D12DescriptorHeap* textureDescriptors,
             _In_ ID3D12DescriptorHeap* samplerDescriptors);
 
-        EffectFactory(EffectFactory&& moveFrom) noexcept;
-        EffectFactory& operator= (EffectFactory&& moveFrom) noexcept;
+        EffectFactory(EffectFactory&&) noexcept;
+        EffectFactory& operator= (EffectFactory&&) noexcept;
 
         EffectFactory(EffectFactory const&) = delete;
         EffectFactory& operator= (EffectFactory const&) = delete;
@@ -799,6 +853,8 @@ namespace DirectX
 
         void __cdecl EnableFogging(bool enabled) noexcept;
 
+        void __cdecl EnableInstancing(bool enabled) noexcept;
+
     private:
         // Private implementation.
         class Impl;
@@ -816,8 +872,8 @@ namespace DirectX
             _In_ ID3D12DescriptorHeap* textureDescriptors,
             _In_ ID3D12DescriptorHeap* samplerDescriptors) noexcept(false);
 
-        PBREffectFactory(PBREffectFactory&& moveFrom) noexcept;
-        PBREffectFactory& operator= (PBREffectFactory&& moveFrom) noexcept;
+        PBREffectFactory(PBREffectFactory&&) noexcept;
+        PBREffectFactory& operator= (PBREffectFactory&&) noexcept;
 
         PBREffectFactory(PBREffectFactory const&) = delete;
         PBREffectFactory& operator= (PBREffectFactory const&) = delete;
@@ -837,6 +893,8 @@ namespace DirectX
         void __cdecl ReleaseCache();
 
         void __cdecl SetSharing(bool enabled) noexcept;
+
+        void __cdecl EnableInstancing(bool enabled) noexcept;
 
     private:
         // Private implementation.

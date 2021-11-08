@@ -62,7 +62,7 @@ public:
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
     D3D12_GPU_DESCRIPTOR_HANDLE textureSampler;
     
-    int GetPipelineStatePermutation(bool vertexColorEnabled) const noexcept;
+    int GetPipelineStatePermutation(uint32_t effectFlags) const noexcept;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
 };
@@ -72,45 +72,45 @@ public:
 namespace
 {
 #ifdef _GAMING_XBOX_SCARLETT
-    #include "Shaders/Compiled/XboxGamingScarlettAlphaTestEffect_VSAlphaTest.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettAlphaTestEffect_VSAlphaTestNoFog.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettAlphaTestEffect_VSAlphaTestVc.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettAlphaTestEffect_VSAlphaTestVcNoFog.inc"
+    #include "XboxGamingScarlettAlphaTestEffect_VSAlphaTest.inc"
+    #include "XboxGamingScarlettAlphaTestEffect_VSAlphaTestNoFog.inc"
+    #include "XboxGamingScarlettAlphaTestEffect_VSAlphaTestVc.inc"
+    #include "XboxGamingScarlettAlphaTestEffect_VSAlphaTestVcNoFog.inc"
 
-    #include "Shaders/Compiled/XboxGamingScarlettAlphaTestEffect_PSAlphaTestLtGt.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettAlphaTestEffect_PSAlphaTestLtGtNoFog.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettAlphaTestEffect_PSAlphaTestEqNe.inc"
-    #include "Shaders/Compiled/XboxGamingScarlettAlphaTestEffect_PSAlphaTestEqNeNoFog.inc"
+    #include "XboxGamingScarlettAlphaTestEffect_PSAlphaTestLtGt.inc"
+    #include "XboxGamingScarlettAlphaTestEffect_PSAlphaTestLtGtNoFog.inc"
+    #include "XboxGamingScarlettAlphaTestEffect_PSAlphaTestEqNe.inc"
+    #include "XboxGamingScarlettAlphaTestEffect_PSAlphaTestEqNeNoFog.inc"
 #elif defined(_GAMING_XBOX)
-    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_VSAlphaTest.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_VSAlphaTestNoFog.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_VSAlphaTestVc.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_VSAlphaTestVcNoFog.inc"
+    #include "XboxGamingXboxOneAlphaTestEffect_VSAlphaTest.inc"
+    #include "XboxGamingXboxOneAlphaTestEffect_VSAlphaTestNoFog.inc"
+    #include "XboxGamingXboxOneAlphaTestEffect_VSAlphaTestVc.inc"
+    #include "XboxGamingXboxOneAlphaTestEffect_VSAlphaTestVcNoFog.inc"
 
-    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_PSAlphaTestLtGt.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_PSAlphaTestLtGtNoFog.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_PSAlphaTestEqNe.inc"
-    #include "Shaders/Compiled/XboxGamingXboxOneAlphaTestEffect_PSAlphaTestEqNeNoFog.inc"
+    #include "XboxGamingXboxOneAlphaTestEffect_PSAlphaTestLtGt.inc"
+    #include "XboxGamingXboxOneAlphaTestEffect_PSAlphaTestLtGtNoFog.inc"
+    #include "XboxGamingXboxOneAlphaTestEffect_PSAlphaTestEqNe.inc"
+    #include "XboxGamingXboxOneAlphaTestEffect_PSAlphaTestEqNeNoFog.inc"
 #elif defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOneAlphaTestEffect_VSAlphaTest.inc"
-    #include "Shaders/Compiled/XboxOneAlphaTestEffect_VSAlphaTestNoFog.inc"
-    #include "Shaders/Compiled/XboxOneAlphaTestEffect_VSAlphaTestVc.inc"
-    #include "Shaders/Compiled/XboxOneAlphaTestEffect_VSAlphaTestVcNoFog.inc"
+    #include "XboxOneAlphaTestEffect_VSAlphaTest.inc"
+    #include "XboxOneAlphaTestEffect_VSAlphaTestNoFog.inc"
+    #include "XboxOneAlphaTestEffect_VSAlphaTestVc.inc"
+    #include "XboxOneAlphaTestEffect_VSAlphaTestVcNoFog.inc"
 
-    #include "Shaders/Compiled/XboxOneAlphaTestEffect_PSAlphaTestLtGt.inc"
-    #include "Shaders/Compiled/XboxOneAlphaTestEffect_PSAlphaTestLtGtNoFog.inc"
-    #include "Shaders/Compiled/XboxOneAlphaTestEffect_PSAlphaTestEqNe.inc"
-    #include "Shaders/Compiled/XboxOneAlphaTestEffect_PSAlphaTestEqNeNoFog.inc"
+    #include "XboxOneAlphaTestEffect_PSAlphaTestLtGt.inc"
+    #include "XboxOneAlphaTestEffect_PSAlphaTestLtGtNoFog.inc"
+    #include "XboxOneAlphaTestEffect_PSAlphaTestEqNe.inc"
+    #include "XboxOneAlphaTestEffect_PSAlphaTestEqNeNoFog.inc"
 #else
-    #include "Shaders/Compiled/AlphaTestEffect_VSAlphaTest.inc"
-    #include "Shaders/Compiled/AlphaTestEffect_VSAlphaTestNoFog.inc"
-    #include "Shaders/Compiled/AlphaTestEffect_VSAlphaTestVc.inc"
-    #include "Shaders/Compiled/AlphaTestEffect_VSAlphaTestVcNoFog.inc"
+    #include "AlphaTestEffect_VSAlphaTest.inc"
+    #include "AlphaTestEffect_VSAlphaTestNoFog.inc"
+    #include "AlphaTestEffect_VSAlphaTestVc.inc"
+    #include "AlphaTestEffect_VSAlphaTestVcNoFog.inc"
 
-    #include "Shaders/Compiled/AlphaTestEffect_PSAlphaTestLtGt.inc"
-    #include "Shaders/Compiled/AlphaTestEffect_PSAlphaTestLtGtNoFog.inc"
-    #include "Shaders/Compiled/AlphaTestEffect_PSAlphaTestEqNe.inc"
-    #include "Shaders/Compiled/AlphaTestEffect_PSAlphaTestEqNeNoFog.inc"
+    #include "AlphaTestEffect_PSAlphaTestLtGt.inc"
+    #include "AlphaTestEffect_PSAlphaTestLtGtNoFog.inc"
+    #include "AlphaTestEffect_PSAlphaTestEqNe.inc"
+    #include "AlphaTestEffect_PSAlphaTestEqNeNoFog.inc"
 #endif
 }
 
@@ -219,13 +219,17 @@ AlphaTestEffect::Impl::Impl(
     }
     else if (effectFlags & EffectFlags::Lighting)
     {
-        DebugTrace("ERROR: DualTextureEffect does not implement EffectFlags::Lighting\n");
+        DebugTrace("ERROR: AlphaTestEffect does not implement EffectFlags::Lighting\n");
         throw std::invalid_argument("Lighting effect flag is invalid");
+    }
+    else if (effectFlags & EffectFlags::Instancing)
+    {
+        DebugTrace("ERROR: AlphaTestEffect does not implement EffectFlags::Instancing\n");
+        throw std::invalid_argument("Instancing effect flag is invalid");
     }
 
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation(
-        (effectFlags & EffectFlags::VertexColor) != 0);
+    int sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < AlphaTestEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < AlphaTestEffectTraits::ShaderPermutationCount);
 
@@ -247,7 +251,7 @@ AlphaTestEffect::Impl::Impl(
 }
 
 
-int AlphaTestEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled) const noexcept
+int AlphaTestEffect::Impl::GetPipelineStatePermutation(uint32_t effectFlags) const noexcept
 {
     int permutation = 0;
 
@@ -258,7 +262,7 @@ int AlphaTestEffect::Impl::GetPipelineStatePermutation(bool vertexColorEnabled) 
     }
 
     // Support vertex coloring?
-    if (vertexColorEnabled)
+    if (effectFlags & EffectFlags::VertexColor)
     {
         permutation += 2;
     }
@@ -395,25 +399,9 @@ AlphaTestEffect::AlphaTestEffect(
 }
 
 
-// Move constructor.
-AlphaTestEffect::AlphaTestEffect(AlphaTestEffect&& moveFrom) noexcept
-    : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-AlphaTestEffect& AlphaTestEffect::operator= (AlphaTestEffect&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-AlphaTestEffect::~AlphaTestEffect()
-{
-}
+AlphaTestEffect::AlphaTestEffect(AlphaTestEffect&&) noexcept = default;
+AlphaTestEffect& AlphaTestEffect::operator= (AlphaTestEffect&&) noexcept = default;
+AlphaTestEffect::~AlphaTestEffect() = default;
 
 
 // IEffect methods

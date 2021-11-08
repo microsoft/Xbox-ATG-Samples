@@ -96,6 +96,7 @@
     <ClCompile Include="Src\Keyboard.cpp" />
     <ClCompile Include="Src\LinearAllocator.cpp" />
     <ClCompile Include="Src\Model.cpp" />
+    <ClCompile Include="Src\ModelLoadCMO.cpp" />
     <ClCompile Include="Src\ModelLoadSDKMESH.cpp" />
     <ClCompile Include="Src\ModelLoadVBO.cpp" />
     <ClCompile Include="Src\Mouse.cpp" />
@@ -219,10 +220,18 @@
     <None Include="Src\Shaders\Compiled\DebugEffect_VSDebug.pdb" />
     <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugBn.inc" />
     <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugBn.pdb" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugBnInst.inc" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugBnInst.pdb" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugInst.inc" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugInst.pdb" />
     <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugVc.inc" />
     <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugVc.pdb" />
     <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugVcBn.inc" />
     <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugVcBn.pdb" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugVcBnInst.inc" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugVcBnInst.pdb" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugVcInst.inc" />
+    <None Include="Src\Shaders\Compiled\DebugEffect_VSDebugVcInst.pdb" />
     <None Include="Src\Shaders\Compiled\DualTextureEffect_PSDualTexture.inc" />
     <None Include="Src\Shaders\Compiled\DualTextureEffect_PSDualTexture.pdb" />
     <None Include="Src\Shaders\Compiled\DualTextureEffect_PSDualTextureNoFog.inc" />
@@ -293,18 +302,42 @@
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTx.pdb" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxBn.inc" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxBn.pdb" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxBnInst.inc" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxBnInst.pdb" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxInst.inc" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxInst.pdb" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxNoSpec.inc" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxNoSpec.pdb" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxNoSpecBn.inc" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxNoSpecBn.pdb" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxNoSpecBnInst.inc" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxNoSpecBnInst.pdb" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxNoSpecInst.inc" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxNoSpecInst.pdb" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVc.inc" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVc.pdb" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcBn.inc" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcBn.pdb" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcBnInst.inc" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcBnInst.pdb" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcInst.inc" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcInst.pdb" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcNoSpec.inc" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcNoSpec.pdb" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcNoSpecBn.inc" />
     <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcNoSpecBn.pdb" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcNoSpecBnInst.inc" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcNoSpecBnInst.pdb" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcNoSpecInst.inc" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSNormalPixelLightingTxVcNoSpecInst.pdb" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSSkinnedPixelLightingTx.inc" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSSkinnedPixelLightingTx.pdb" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSSkinnedPixelLightingTxBn.inc" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSSkinnedPixelLightingTxBn.pdb" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSSkinnedPixelLightingTxNoSpec.inc" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSSkinnedPixelLightingTxNoSpec.pdb" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSSkinnedPixelLightingTxNoSpecBn.inc" />
+    <None Include="Src\Shaders\Compiled\NormalMapEffect_VSSkinnedPixelLightingTxNoSpecBn.pdb" />
     <None Include="Src\Shaders\Compiled\PBREffect_PSConstant.inc" />
     <None Include="Src\Shaders\Compiled\PBREffect_PSConstant.pdb" />
     <None Include="Src\Shaders\Compiled\PBREffect_PSTextured.inc" />
@@ -319,10 +352,18 @@
     <None Include="Src\Shaders\Compiled\PBREffect_VSConstant.pdb" />
     <None Include="Src\Shaders\Compiled\PBREffect_VSConstantBn.inc" />
     <None Include="Src\Shaders\Compiled\PBREffect_VSConstantBn.pdb" />
+    <None Include="Src\Shaders\Compiled\PBREffect_VSConstantBnInst.inc" />
+    <None Include="Src\Shaders\Compiled\PBREffect_VSConstantBnInst.pdb" />
+    <None Include="Src\Shaders\Compiled\PBREffect_VSConstantInst.inc" />
+    <None Include="Src\Shaders\Compiled\PBREffect_VSConstantInst.pdb" />
     <None Include="Src\Shaders\Compiled\PBREffect_VSConstantVelocity.inc" />
     <None Include="Src\Shaders\Compiled\PBREffect_VSConstantVelocity.pdb" />
     <None Include="Src\Shaders\Compiled\PBREffect_VSConstantVelocityBn.inc" />
     <None Include="Src\Shaders\Compiled\PBREffect_VSConstantVelocityBn.pdb" />
+    <None Include="Src\Shaders\Compiled\PBREffect_VSSkinned.inc" />
+    <None Include="Src\Shaders\Compiled\PBREffect_VSSkinned.pdb" />
+    <None Include="Src\Shaders\Compiled\PBREffect_VSSkinnedBn.inc" />
+    <None Include="Src\Shaders\Compiled\PBREffect_VSSkinnedBn.pdb" />
     <None Include="Src\Shaders\Compiled\PostProcess_PSBloomBlur.inc" />
     <None Include="Src\Shaders\Compiled\PostProcess_PSBloomBlur.pdb" />
     <None Include="Src\Shaders\Compiled\PostProcess_PSBloomCombine.inc" />
@@ -363,6 +404,10 @@
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingFourBones.pdb" />
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.inc" />
     <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingFourBonesBn.pdb" />
+    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingOneBone.inc" />
+    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingOneBone.pdb" />
+    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingOneBoneBn.inc" />
+    <None Include="Src\Shaders\Compiled\SkinnedEffect_VSSkinnedVertexLightingOneBoneBn.pdb" />
     <None Include="Src\Shaders\Compiled\SpriteEffect_SpritePixelShader.inc" />
     <None Include="Src\Shaders\Compiled\SpriteEffect_SpritePixelShader.pdb" />
     <None Include="Src\Shaders\Compiled\SpriteEffect_SpritePixelShaderHeap.inc" />
@@ -396,6 +441,7 @@
     <None Include="Src\Shaders\PBRCommon.fxh" />
     <None Include="Src\Shaders\PixelPacking_Velocity.hlsli" />
     <None Include="Src\Shaders\RootSig.fxh" />
+    <None Include="Src\Shaders\Skinning.fxh" />
     <None Include="Src\Shaders\SpriteEffect.fx" />
     <None Include="Src\Shaders\Structures.fxh" />
     <None Include="Src\Shaders\Utilities.fxh" />
@@ -524,7 +570,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN32_WINNT=0x0A00;_WIN7_PLATFORM_UPDATE;WIN32;_DEBUG;_LIB;_CRT_STDIO_ARBITRARY_WIDE_SPECIFIERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;$(ProjectDir)Src\Shaders\Compiled;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <SDLCheck>true</SDLCheck>
@@ -541,7 +587,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_WIN32_WINNT=0x0A00;_WIN7_PLATFORM_UPDATE;WIN32;_DEBUG;_LIB;_CRT_STDIO_ARBITRARY_WIDE_SPECIFIERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;$(ProjectDir)Src\Shaders\Compiled;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
@@ -559,7 +605,7 @@
       <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>_WIN32_WINNT=0x0A00;_WIN7_PLATFORM_UPDATE;WIN32;NDEBUG;_LIB;_CRT_STDIO_ARBITRARY_WIDE_SPECIFIERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;$(ProjectDir)Src\Shaders\Compiled;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <SDLCheck>true</SDLCheck>
@@ -578,7 +624,7 @@
       <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>_WIN32_WINNT=0x0A00;_WIN7_PLATFORM_UPDATE;WIN32;NDEBUG;_LIB;_CRT_STDIO_ARBITRARY_WIDE_SPECIFIERS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Inc;$(ProjectDir)Src;$(ProjectDir)Src\Shaders\Compiled;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <ProgramDataBaseFileName>$(IntDir)$(TargetName).pdb</ProgramDataBaseFileName>

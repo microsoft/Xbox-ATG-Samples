@@ -13,35 +13,35 @@
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 
-
-// Constant buffer layout. Must match the shader!
-struct DualTextureEffectConstants
+namespace
 {
-    XMVECTOR diffuseColor;
-    XMVECTOR fogColor;
-    XMVECTOR fogVector;
-    XMMATRIX worldViewProj;
-};
+    // Constant buffer layout. Must match the shader!
+    struct DualTextureEffectConstants
+    {
+        XMVECTOR diffuseColor;
+        XMVECTOR fogColor;
+        XMVECTOR fogVector;
+        XMMATRIX worldViewProj;
+    };
 
-static_assert((sizeof(DualTextureEffectConstants) % 16) == 0, "CB size not padded correctly");
+    static_assert((sizeof(DualTextureEffectConstants) % 16) == 0, "CB size not padded correctly");
 
+    // Traits type describes our characteristics to the EffectBase template.
+    struct DualTextureEffectTraits
+    {
+        using ConstantBufferType = DualTextureEffectConstants;
 
-// Traits type describes our characteristics to the EffectBase template.
-struct DualTextureEffectTraits
-{
-    using ConstantBufferType = DualTextureEffectConstants;
-
-    static constexpr int VertexShaderCount = 4;
-    static constexpr int PixelShaderCount = 2;
-    static constexpr int ShaderPermutationCount = 4;
-};
-
+        static constexpr int VertexShaderCount = 4;
+        static constexpr int PixelShaderCount = 2;
+        static constexpr int ShaderPermutationCount = 4;
+    };
+}
 
 // Internal DualTextureEffect implementation class.
 class DualTextureEffect::Impl : public EffectBase<DualTextureEffectTraits>
 {
 public:
-    Impl(_In_ ID3D11Device* device);
+    explicit Impl(_In_ ID3D11Device* device);
 
     bool vertexColorEnabled;
     
@@ -59,21 +59,21 @@ public:
 namespace
 {
 #if defined(_XBOX_ONE) && defined(_TITLE)
-    #include "Shaders/Compiled/XboxOneDualTextureEffect_VSDualTexture.inc"
-    #include "Shaders/Compiled/XboxOneDualTextureEffect_VSDualTextureNoFog.inc"
-    #include "Shaders/Compiled/XboxOneDualTextureEffect_VSDualTextureVc.inc"
-    #include "Shaders/Compiled/XboxOneDualTextureEffect_VSDualTextureVcNoFog.inc"
+    #include "XboxOneDualTextureEffect_VSDualTexture.inc"
+    #include "XboxOneDualTextureEffect_VSDualTextureNoFog.inc"
+    #include "XboxOneDualTextureEffect_VSDualTextureVc.inc"
+    #include "XboxOneDualTextureEffect_VSDualTextureVcNoFog.inc"
 
-    #include "Shaders/Compiled/XboxOneDualTextureEffect_PSDualTexture.inc"
-    #include "Shaders/Compiled/XboxOneDualTextureEffect_PSDualTextureNoFog.inc"
+    #include "XboxOneDualTextureEffect_PSDualTexture.inc"
+    #include "XboxOneDualTextureEffect_PSDualTextureNoFog.inc"
 #else
-    #include "Shaders/Compiled/DualTextureEffect_VSDualTexture.inc"
-    #include "Shaders/Compiled/DualTextureEffect_VSDualTextureNoFog.inc"
-    #include "Shaders/Compiled/DualTextureEffect_VSDualTextureVc.inc"
-    #include "Shaders/Compiled/DualTextureEffect_VSDualTextureVcNoFog.inc"
+    #include "DualTextureEffect_VSDualTexture.inc"
+    #include "DualTextureEffect_VSDualTextureNoFog.inc"
+    #include "DualTextureEffect_VSDualTextureVc.inc"
+    #include "DualTextureEffect_VSDualTextureVcNoFog.inc"
 
-    #include "Shaders/Compiled/DualTextureEffect_PSDualTexture.inc"
-    #include "Shaders/Compiled/DualTextureEffect_PSDualTextureNoFog.inc"
+    #include "DualTextureEffect_PSDualTexture.inc"
+    #include "DualTextureEffect_PSDualTextureNoFog.inc"
 #endif
 }
 
@@ -158,6 +158,8 @@ int DualTextureEffect::Impl::GetCurrentShaderPermutation() const noexcept
 // Sets our state onto the D3D device.
 void DualTextureEffect::Impl::Apply(_In_ ID3D11DeviceContext* deviceContext)
 {
+    assert(deviceContext != nullptr);
+
     // Compute derived parameter values.
     matrices.SetConstants(dirtyFlags, constants.worldViewProj);
 
@@ -186,25 +188,9 @@ DualTextureEffect::DualTextureEffect(_In_ ID3D11Device* device)
 }
 
 
-// Move constructor.
-DualTextureEffect::DualTextureEffect(DualTextureEffect&& moveFrom) noexcept
-  : pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-
-// Move assignment.
-DualTextureEffect& DualTextureEffect::operator= (DualTextureEffect&& moveFrom) noexcept
-{
-    pImpl = std::move(moveFrom.pImpl);
-    return *this;
-}
-
-
-// Public destructor.
-DualTextureEffect::~DualTextureEffect()
-{
-}
+DualTextureEffect::DualTextureEffect(DualTextureEffect&&) noexcept = default;
+DualTextureEffect& DualTextureEffect::operator= (DualTextureEffect&&) noexcept = default;
+DualTextureEffect::~DualTextureEffect() = default;
 
 
 // IEffect methods.

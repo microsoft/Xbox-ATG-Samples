@@ -31,12 +31,19 @@ cbuffer Parameters : register(b0)
     float4x4 WorldViewProj          : packoffset(c22);
 };
 
+cbuffer SkinningParameters : register(b1)
+{
+    float4x3 Bones[72];
+}
+
 
 #include "Structures.fxh"
 #include "Common.fxh"
 #include "RootSig.fxh"
 #include "Lighting.fxh"
 #include "Utilities.fxh"
+#include "Skinning.fxh"
+
 
 // Vertex shader: pixel lighting + texture.
 [RootSignature(NormalMapRS)]
@@ -83,6 +90,7 @@ VSOutputPixelLightingTx VSNormalPixelLightingTxNoSpecBn(VSInputNmTx vin)
     return VSNormalPixelLightingTxBn(vin);
 }
 
+
 // Vertex shader: pixel lighting + texture + vertex color.
 [RootSignature(NormalMapRS)]
 VSOutputPixelLightingTx VSNormalPixelLightingTxVc(VSInputNmTxVc vin)
@@ -104,6 +112,7 @@ VSOutputPixelLightingTx VSNormalPixelLightingTxVcNoSpec(VSInputNmTxVc vin)
 {
     return VSNormalPixelLightingTxVc(vin);
 }
+
 
 // Vertex shader: pixel lighting + texture + vertex color (biased normal).
 [RootSignature(NormalMapRS)]
@@ -129,21 +138,173 @@ VSOutputPixelLightingTx VSNormalPixelLightingTxVcNoSpecBn(VSInputNmTxVc vin)
     return VSNormalPixelLightingTxVcBn(vin);
 }
 
+
+// Vertex shader: pixel lighting + texture + instancing.
+[RootSignature(NormalMapRS)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxInst(VSInputNmTxInst vin)
+{
+    VSOutputPixelLightingTx vout;
+
+    CommonInstancing inst = ComputeCommonInstancing(vin.Position, vin.Normal, vin.Transform);
+
+    CommonVSOutputPixelLighting cout = ComputeCommonVSOutputPixelLighting(inst.Position, inst.Normal);
+    SetCommonVSOutputParamsPixelLighting;
+
+    vout.Diffuse = float4(1, 1, 1, DiffuseColor.a);
+    vout.TexCoord = vin.TexCoord;
+
+    return vout;
+}
+
+[RootSignature(NormalMapRSNoSpec)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxNoSpecInst(VSInputNmTxInst vin)
+{
+    return VSNormalPixelLightingTxInst(vin);
+}
+
+
+// Vertex shader: pixel lighting + texture + instancing (biased normal).
+[RootSignature(NormalMapRS)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxBnInst(VSInputNmTxInst vin)
+{
+    VSOutputPixelLightingTx vout;
+
+    float3 normal = BiasX2(vin.Normal);
+
+    CommonInstancing inst = ComputeCommonInstancing(vin.Position, normal, vin.Transform);
+
+    CommonVSOutputPixelLighting cout = ComputeCommonVSOutputPixelLighting(inst.Position, inst.Normal);
+    SetCommonVSOutputParamsPixelLighting;
+
+    vout.Diffuse = float4(1, 1, 1, DiffuseColor.a);
+    vout.TexCoord = vin.TexCoord;
+
+    return vout;
+}
+
+[RootSignature(NormalMapRSNoSpec)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxNoSpecBnInst(VSInputNmTxInst vin)
+{
+    return VSNormalPixelLightingTxBnInst(vin);
+}
+
+
+// Vertex shader: pixel lighting + texture + vertex color + instancing.
+[RootSignature(NormalMapRS)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxVcInst(VSInputNmTxVcInst vin)
+{
+    VSOutputPixelLightingTx vout;
+
+    CommonInstancing inst = ComputeCommonInstancing(vin.Position, vin.Normal, vin.Transform);
+
+    CommonVSOutputPixelLighting cout = ComputeCommonVSOutputPixelLighting(inst.Position, inst.Normal);
+    SetCommonVSOutputParamsPixelLighting;
+
+    vout.Diffuse.rgb = vin.Color.rgb;
+    vout.Diffuse.a = vin.Color.a * DiffuseColor.a;
+    vout.TexCoord = vin.TexCoord;
+
+    return vout;
+}
+
+[RootSignature(NormalMapRSNoSpec)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxVcNoSpecInst(VSInputNmTxVcInst vin)
+{
+    return VSNormalPixelLightingTxVcInst(vin);
+}
+
+
+// Vertex shader: pixel lighting + texture + vertex color + instancing (biased normal).
+[RootSignature(NormalMapRS)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxVcBnInst(VSInputNmTxVcInst vin)
+{
+    VSOutputPixelLightingTx vout;
+
+    float3 normal = BiasX2(vin.Normal);
+
+    CommonInstancing inst = ComputeCommonInstancing(vin.Position, normal, vin.Transform);
+
+    CommonVSOutputPixelLighting cout = ComputeCommonVSOutputPixelLighting(inst.Position, inst.Normal);
+    SetCommonVSOutputParamsPixelLighting;
+
+    vout.Diffuse.rgb = vin.Color.rgb;
+    vout.Diffuse.a = vin.Color.a * DiffuseColor.a;
+    vout.TexCoord = vin.TexCoord;
+
+    return vout;
+}
+
+[RootSignature(NormalMapRSNoSpec)]
+VSOutputPixelLightingTx VSNormalPixelLightingTxVcNoSpecBnInst(VSInputNmTxVcInst vin)
+{
+    return VSNormalPixelLightingTxVcBnInst(vin);
+}
+
+
+// Vertex shader: skinning (four bones) + pixel lighting + texture
+[RootSignature(NormalMapRS)]
+VSOutputPixelLightingTx VSSkinnedPixelLightingTx(VSInputNmTxWeights vin)
+{
+    VSOutputPixelLightingTx vout;
+
+    float3 normal = Skin(vin, vin.Normal, 4);
+
+    CommonVSOutputPixelLighting cout = ComputeCommonVSOutputPixelLighting(vin.Position, normal);
+    SetCommonVSOutputParamsPixelLighting;
+
+    vout.Diffuse = float4(1, 1, 1, DiffuseColor.a);
+    vout.TexCoord = vin.TexCoord;
+
+    return vout;
+}
+
+[RootSignature(NormalMapRSNoSpec)]
+VSOutputPixelLightingTx VSSkinnedPixelLightingTxNoSpec(VSInputNmTxWeights vin)
+{
+    return VSSkinnedPixelLightingTx(vin);
+}
+
+[RootSignature(NormalMapRS)]
+VSOutputPixelLightingTx VSSkinnedPixelLightingTxBn(VSInputNmTxWeights vin)
+{
+    VSOutputPixelLightingTx vout;
+
+    float3 normal = BiasX2(vin.Normal);
+
+    normal = Skin(vin, normal, 4);
+
+    CommonVSOutputPixelLighting cout = ComputeCommonVSOutputPixelLighting(vin.Position, normal);
+    SetCommonVSOutputParamsPixelLighting;
+
+    vout.Diffuse = float4(1, 1, 1, DiffuseColor.a);
+    vout.TexCoord = vin.TexCoord;
+
+    return vout;
+}
+
+[RootSignature(NormalMapRSNoSpec)]
+VSOutputPixelLightingTx VSSkinnedPixelLightingTxNoSpecBn(VSInputNmTxWeights vin)
+{
+    return VSSkinnedPixelLightingTxBn(vin);
+}
+
+
 // Pixel shader: pixel lighting + texture + no fog
 [RootSignature(NormalMapRS)]
 float4 PSNormalPixelLightingTxNoFog(PSInputPixelLightingTx pin) : SV_Target0
 {
+    float4 color = Texture.Sample(Sampler, pin.TexCoord) * pin.Diffuse;
+
     float3 eyeVector = normalize(EyePosition - pin.PositionWS.xyz);
+    float3 worldNormal = normalize(pin.NormalWS);
 
     // Before lighting, peturb the surface's normal by the one given in normal map.
     float3 localNormal = TwoChannelNormalX2(NormalTexture.Sample(Sampler, pin.TexCoord).xy);
-    float3 normal = PeturbNormal(localNormal, pin.PositionWS.xyz, pin.NormalWS, pin.TexCoord);
+    float3 normal = PeturbNormal(localNormal, pin.PositionWS.xyz, worldNormal, pin.TexCoord);
 
     // Do lighting
     ColorPair lightResult = ComputeLights(eyeVector, normal, 3);
 
-    // Get color from albedo texture
-    float4 color = Texture.Sample(Sampler, pin.TexCoord) * pin.Diffuse;
     color.rgb *= lightResult.Diffuse;
 
     // Apply specular, modulated by the intensity given in the specular map
@@ -152,22 +313,24 @@ float4 PSNormalPixelLightingTxNoFog(PSInputPixelLightingTx pin) : SV_Target0
 
     return color;
 }
+
 
 // Pixel shader: pixel lighting + texture
 [RootSignature(NormalMapRS)]
 float4 PSNormalPixelLightingTx(PSInputPixelLightingTx pin) : SV_Target0
 {
+    float4 color = Texture.Sample(Sampler, pin.TexCoord) * pin.Diffuse;
+
     float3 eyeVector = normalize(EyePosition - pin.PositionWS.xyz);
- 
+    float3 worldNormal = normalize(pin.NormalWS);
+
     // Before lighting, peturb the surface's normal by the one given in normal map.
     float3 localNormal = TwoChannelNormalX2(NormalTexture.Sample(Sampler, pin.TexCoord).xy);
-    float3 normal = PeturbNormal(localNormal, pin.PositionWS.xyz, pin.NormalWS, pin.TexCoord);
+    float3 normal = PeturbNormal(localNormal, pin.PositionWS.xyz, worldNormal, pin.TexCoord);
 
     // Do lighting
     ColorPair lightResult = ComputeLights(eyeVector, normal, 3);
 
-    // Get color from albedo texture
-    float4 color = Texture.Sample(Sampler, pin.TexCoord) * pin.Diffuse;
     color.rgb *= lightResult.Diffuse;
 
     // Apply specular, modulated by the intensity given in the specular map
@@ -175,53 +338,55 @@ float4 PSNormalPixelLightingTx(PSInputPixelLightingTx pin) : SV_Target0
     AddSpecular(color, lightResult.Specular * specIntensity);
 
     ApplyFog(color, pin.PositionWS.w);
+
     return color;
 }
 
 
-// Pixel shader: pixel lighting + texture + no fog + no specular
+// Pixel shader: pixel lighting + texture + no fog + no specular map
 [RootSignature(NormalMapRSNoSpec)]
 float4 PSNormalPixelLightingTxNoFogSpec(PSInputPixelLightingTx pin) : SV_Target0
 {
+    float4 color = Texture.Sample(Sampler, pin.TexCoord) * pin.Diffuse;
+
     float3 eyeVector = normalize(EyePosition - pin.PositionWS.xyz);
+    float3 worldNormal = normalize(pin.NormalWS);
 
     // Before lighting, peturb the surface's normal by the one given in normal map.
     float3 localNormal = TwoChannelNormalX2(NormalTexture.Sample(Sampler, pin.TexCoord).xy);
-    float3 normal = PeturbNormal(localNormal, pin.PositionWS.xyz, pin.NormalWS, pin.TexCoord);
+    float3 normal = PeturbNormal(localNormal, pin.PositionWS.xyz, worldNormal, pin.TexCoord);
 
     // Do lighting
     ColorPair lightResult = ComputeLights(eyeVector, normal, 3);
 
-    // Get color from albedo texture
-    float4 color = Texture.Sample(Sampler, pin.TexCoord) * pin.Diffuse;
     color.rgb *= lightResult.Diffuse;
 
-    // Apply specular
     AddSpecular(color, lightResult.Specular);
 
     return color;
 }
 
-// Pixel shader: pixel lighting + texture + no specular
+
+// Pixel shader: pixel lighting + texture + no specular map
 [RootSignature(NormalMapRSNoSpec)]
 float4 PSNormalPixelLightingTxNoSpec(PSInputPixelLightingTx pin) : SV_Target0
 {
+    float4 color = Texture.Sample(Sampler, pin.TexCoord) * pin.Diffuse;
+
     float3 eyeVector = normalize(EyePosition - pin.PositionWS.xyz);
+    float3 worldNormal = normalize(pin.NormalWS);
 
     // Before lighting, peturb the surface's normal by the one given in normal map.
     float3 localNormal = TwoChannelNormalX2(NormalTexture.Sample(Sampler, pin.TexCoord).xy);
-    float3 normal = PeturbNormal(localNormal, pin.PositionWS.xyz, pin.NormalWS, pin.TexCoord);
+    float3 normal = PeturbNormal(localNormal, pin.PositionWS.xyz, worldNormal, pin.TexCoord);
 
     // Do lighting
     ColorPair lightResult = ComputeLights(eyeVector, normal, 3);
 
-    // Get color from albedo texture
-    float4 color = Texture.Sample(Sampler, pin.TexCoord) * pin.Diffuse;
     color.rgb *= lightResult.Diffuse;
 
-    // Apply specular
     AddSpecular(color, lightResult.Specular);
-
     ApplyFog(color, pin.PositionWS.w);
+
     return color;
 }
