@@ -25,6 +25,7 @@
 #include <cstdint>
 #include <memory>
 #include <new>
+#include <tuple>
 
 #include "DirectXTex.h"
 
@@ -52,7 +53,7 @@ namespace
             {
                 FILE_DISPOSITION_INFO info = {};
                 info.DeleteFile = TRUE;
-                (void)SetFileInformationByHandle(m_handle, FileDispositionInfo, &info, sizeof(info));
+                std::ignore = SetFileInformationByHandle(m_handle, FileDispositionInfo, &info, sizeof(info));
             }
         }
 

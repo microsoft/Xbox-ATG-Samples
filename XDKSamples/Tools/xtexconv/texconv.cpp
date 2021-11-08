@@ -37,6 +37,7 @@
 #include <new>
 #include <set>
 #include <string>
+#include <tuple>
 
 #include <wrl\client.h>
 
@@ -140,10 +141,10 @@ namespace
         ROTATE_HDR10_TO_709,
         ROTATE_709_TO_2020,
         ROTATE_2020_TO_709,
-        ROTATE_P3_TO_HDR10,
-        ROTATE_P3_TO_2020,
-        ROTATE_709_TO_DISPLAY_P3,
-        ROTATE_DISPLAY_P3_TO_709,
+        ROTATE_P3D65_TO_HDR10,
+        ROTATE_P3D65_TO_2020,
+        ROTATE_709_TO_P3D65,
+        ROTATE_P3D65_TO_709,
     };
 
     static_assert(OPT_MAX <= 64, "dwOptions is a unsigned int bitfield");
@@ -420,14 +421,14 @@ namespace
 
     const SValue<uint32_t> g_pRotateColor[] =
     {
-        { L"709to2020", ROTATE_709_TO_2020 },
-        { L"2020to709", ROTATE_2020_TO_709 },
-        { L"709toHDR10", ROTATE_709_TO_HDR10 },
-        { L"HDR10to709", ROTATE_HDR10_TO_709 },
-        { L"P3to2020", ROTATE_P3_TO_2020 },
-        { L"P3toHDR10", ROTATE_P3_TO_HDR10 },
-        { L"709toDisplayP3", ROTATE_709_TO_DISPLAY_P3 },
-        { L"DisplayP3to709", ROTATE_DISPLAY_P3_TO_709 },
+        { L"709to2020",     ROTATE_709_TO_2020 },
+        { L"2020to709",     ROTATE_2020_TO_709 },
+        { L"709toHDR10",    ROTATE_709_TO_HDR10 },
+        { L"HDR10to709",    ROTATE_HDR10_TO_709 },
+        { L"P3D65to2020",   ROTATE_P3D65_TO_2020 },
+        { L"P3D65toHDR10",  ROTATE_P3D65_TO_HDR10 },
+        { L"709toP3D65",    ROTATE_709_TO_P3D65 },
+        { L"P3D65to709",    ROTATE_P3D65_TO_709 },
         { nullptr, 0 },
     };
 
@@ -445,22 +446,22 @@ namespace
 
     const SValue<uint32_t> g_pSaveFileTypes[] =   // valid formats to write to
     {
-        { L"BMP",   WIC_CODEC_BMP  },
-        { L"JPG",   WIC_CODEC_JPEG },
-        { L"JPEG",  WIC_CODEC_JPEG },
-        { L"PNG",   WIC_CODEC_PNG  },
-        { L"DDS",   CODEC_DDS      },
-        { L"TGA",   CODEC_TGA      },
-        { L"HDR",   CODEC_HDR      },
-        { L"TIF",   WIC_CODEC_TIFF },
-        { L"TIFF",  WIC_CODEC_TIFF },
-        { L"WDP",   WIC_CODEC_WMP  },
-        { L"HDP",   CODEC_HDP      },
-        { L"JXR",   CODEC_JXR      },
-        { L"PPM",   CODEC_PPM      },
-        { L"PFM",   CODEC_PFM      },
+        { L"bmp",   WIC_CODEC_BMP  },
+        { L"jpg",   WIC_CODEC_JPEG },
+        { L"jpeg",  WIC_CODEC_JPEG },
+        { L"png",   WIC_CODEC_PNG  },
+        { L"dds",   CODEC_DDS      },
+        { L"tga",   CODEC_TGA      },
+        { L"hdr",   CODEC_HDR      },
+        { L"tif",   WIC_CODEC_TIFF },
+        { L"tiff",  WIC_CODEC_TIFF },
+        { L"wdp",   WIC_CODEC_WMP  },
+        { L"hdp",   CODEC_HDP      },
+        { L"jxr",   CODEC_JXR      },
+        { L"ppm",   CODEC_PPM      },
+        { L"pfm",   CODEC_PFM      },
     #ifdef USE_OPENEXR
-        { L"EXR",   CODEC_EXR      },
+        { L"exr",   CODEC_EXR      },
     #endif
         { nullptr,  CODEC_DDS      }
     };
@@ -476,6 +477,7 @@ namespace
         { L"11.1", 16384 },
         { L"12.0", 16384 },
         { L"12.1", 16384 },
+        { L"12.2", 16384 },
         { nullptr, 0 },
     };
 }
@@ -1109,7 +1111,7 @@ namespace
             return false;
     }
 
-    void FitPowerOf2(size_t origx, size_t origy, size_t& targetx, size_t& targety, size_t maxsize)
+    void FitPowerOf2(size_t origx, size_t origy, _Inout_ size_t& targetx, _Inout_ size_t& targety, size_t maxsize)
     {
         float origAR = float(origx) / float(origy);
 
@@ -1190,6 +1192,7 @@ namespace
 
     const XMVECTORF32 c_MaxNitsFor2084 = { { { 10000.0f, 10000.0f, 10000.0f, 1.f } } };
 
+    // HDTV to UHDTV (Rec.709 color primaries into Rec.2020)
     const XMMATRIX c_from709to2020 =
     {
         0.6274040f, 0.0690970f, 0.0163916f, 0.f,
@@ -1198,6 +1201,7 @@ namespace
         0.f,        0.f,        0.f,        1.f
     };
 
+    // UHDTV to HDTV
     const XMMATRIX c_from2020to709 =
     {
         1.6604910f,  -0.1245505f, -0.0181508f, 0.f,
@@ -1206,8 +1210,8 @@ namespace
         0.f,          0.f,         0.f,        1.f
     };
 
-    // DCI-P3 https://en.wikipedia.org/wiki/DCI-P3
-    const XMMATRIX c_fromP3to2020 =
+    // DCI-P3-D65 https://en.wikipedia.org/wiki/DCI-P3 to UHDTV (DCI-P3-D65 color primaries into Rec.2020)
+    const XMMATRIX c_fromP3D65to2020 =
     {
         0.753845f, 0.0457456f, -0.00121055f, 0.f,
         0.198593f, 0.941777f,   0.0176041f,  0.f,
@@ -1215,8 +1219,8 @@ namespace
         0.f,       0.f,         0.f,         1.f
     };
 
-    // Display P3 (P3D65)
-    const XMMATRIX c_from709toDisplayP3 =
+    // HDTV to DCI-P3-D65 (a.k.a. Display P3 or P3D65)
+    const XMMATRIX c_from709toP3D65 =
     {
         0.822461969f, 0.033194199f, 0.017082631f, 0.f,
         0.1775380f,   0.9668058f,   0.0723974f,   0.f,
@@ -1224,7 +1228,8 @@ namespace
         0.f,          0.f,          0.f,          1.f
     };
 
-    const XMMATRIX c_fromDisplayP3to709 =
+    // DCI-P3-D65 to HDTV
+    const XMMATRIX c_fromP3D65to709 =
     {
         1.224940176f,  -0.042056955f, -0.019637555f, 0.f,
         -0.224940176f,  1.042056955f, -0.078636046f, 0.f,
@@ -1860,6 +1865,8 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                     return 1;
                 }
 
+                inFile.imbue(std::locale::classic());
+
                 ProcessFileList(inFile, conversion);
             }
             break;
@@ -1983,10 +1990,10 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
     }
 
     LARGE_INTEGER qpcFreq = {};
-    (void)QueryPerformanceFrequency(&qpcFreq);
+    std::ignore = QueryPerformanceFrequency(&qpcFreq);
 
     LARGE_INTEGER qpcStart = {};
-    (void)QueryPerformanceCounter(&qpcStart);
+    std::ignore = QueryPerformanceCounter(&qpcStart);
 
     // Convert images
     bool sizewarn = false;
@@ -2508,10 +2515,10 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
 
                     for (size_t j = 0; j < w; ++j)
                     {
-                        XMVECTOR pixel = XMVectorSelect(inPixels[j], g_XMZero, zc);
-                        pixel = XMVectorSelect(pixel, g_XMOne, oc);
-                        outPixels[j] = XMVectorSwizzle(pixel,
+                        XMVECTOR pixel = XMVectorSwizzle(inPixels[j],
                             swizzleElements[0], swizzleElements[1], swizzleElements[2], swizzleElements[3]);
+                        pixel = XMVectorSelect(pixel, g_XMZero, zc);
+                        outPixels[j] = XMVectorSelect(pixel, g_XMOne, oc);
                     }
                 }, *timage);
             if (FAILED(hr))
@@ -2540,7 +2547,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
         // --- Color rotation (if requested) -------------------------------------------
         if (dwRotateColor)
         {
-            if (dwRotateColor == ROTATE_HDR10_TO_709 || dwRotateColor == ROTATE_DISPLAY_P3_TO_709)
+            if (dwRotateColor == ROTATE_HDR10_TO_709 || dwRotateColor == ROTATE_P3D65_TO_709)
             {
                 std::unique_ptr<ScratchImage> timage(new (std::nothrow) ScratchImage);
                 if (!timage)
@@ -2689,7 +2696,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                     }, *timage);
                 break;
 
-            case ROTATE_P3_TO_HDR10:
+            case ROTATE_P3D65_TO_HDR10:
                 hr = TransformImage(image->GetImages(), image->GetImageCount(), image->GetMetadata(),
                     [&](XMVECTOR* outPixels, const XMVECTOR* inPixels, size_t w, size_t y)
                     {
@@ -2701,7 +2708,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                         {
                             XMVECTOR value = inPixels[j];
 
-                            XMVECTOR nvalue = XMVector3Transform(value, c_fromP3to2020);
+                            XMVECTOR nvalue = XMVector3Transform(value, c_fromP3D65to2020);
 
                             // Convert to ST.2084
                             nvalue = XMVectorDivide(XMVectorMultiply(nvalue, paperWhite), c_MaxNitsFor2084);
@@ -2722,7 +2729,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                     }, *timage);
                 break;
 
-            case ROTATE_P3_TO_2020:
+            case ROTATE_P3D65_TO_2020:
                 hr = TransformImage(image->GetImages(), image->GetImageCount(), image->GetMetadata(),
                     [&](XMVECTOR* outPixels, const XMVECTOR* inPixels, size_t w, size_t y)
                     {
@@ -2732,7 +2739,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                         {
                             XMVECTOR value = inPixels[j];
 
-                            XMVECTOR nvalue = XMVector3Transform(value, c_fromP3to2020);
+                            XMVECTOR nvalue = XMVector3Transform(value, c_fromP3D65to2020);
 
                             value = XMVectorSelect(value, nvalue, g_XMSelect1110);
 
@@ -2741,7 +2748,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                     }, *timage);
                 break;
 
-            case ROTATE_709_TO_DISPLAY_P3:
+            case ROTATE_709_TO_P3D65:
                 hr = TransformImage(image->GetImages(), image->GetImageCount(), image->GetMetadata(),
                     [&](XMVECTOR* outPixels, const XMVECTOR* inPixels, size_t w, size_t y)
                     {
@@ -2751,7 +2758,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                         {
                             XMVECTOR value = inPixels[j];
 
-                            XMVECTOR nvalue = XMVector3Transform(value, c_from709toDisplayP3);
+                            XMVECTOR nvalue = XMVector3Transform(value, c_from709toP3D65);
 
                             value = XMVectorSelect(value, nvalue, g_XMSelect1110);
 
@@ -2760,7 +2767,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                     }, *timage);
                 break;
 
-            case ROTATE_DISPLAY_P3_TO_709:
+            case ROTATE_P3D65_TO_709:
                 hr = TransformImage(image->GetImages(), image->GetImageCount(), image->GetMetadata(),
                     [&](XMVECTOR* outPixels, const XMVECTOR* inPixels, size_t w, size_t y)
                     {
@@ -2770,7 +2777,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                         {
                             XMVECTOR value = inPixels[j];
 
-                            XMVECTOR nvalue = XMVector3Transform(value, c_fromDisplayP3to709);
+                            XMVECTOR nvalue = XMVector3Transform(value, c_fromP3D65to709);
 
                             value = XMVectorSelect(value, nvalue, g_XMSelect1110);
 
@@ -3596,7 +3603,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
 
             if (dwOptions & (uint64_t(1) << OPT_TOLOWER))
             {
-                (void)_wcslwr_s(szDest);
+                std::ignore = _wcslwr_s(szDest);
             }
 
             if (wcslen(szDest) > _MAX_PATH)
@@ -3690,7 +3697,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                                 options.pstrName = const_cast<wchar_t*>(L"ImageQuality");
                                 varValues.vt = VT_R4;
                                 varValues.fltVal = (wicLossless) ? 1.f : wicQuality;
-                                (void)props->Write(1, &options, &varValues);
+                                std::ignore = props->Write(1, &options, &varValues);
                             }
                             break;
 
@@ -3710,7 +3717,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                                 varValues.vt = VT_R4;
                                 varValues.fltVal = wicQuality;
                             }
-                            (void)props->Write(1, &options, &varValues);
+                            std::ignore = props->Write(1, &options, &varValues);
                         }
                         break;
 
@@ -3732,7 +3739,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                                 varValues.vt = VT_R4;
                                 varValues.fltVal = wicQuality;
                             }
-                            (void)props->Write(1, &options, &varValues);
+                            std::ignore = props->Write(1, &options, &varValues);
                         }
                         break;
                         }
@@ -3768,7 +3775,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
     if (dwOptions & (uint64_t(1) << OPT_TIMING))
     {
         LARGE_INTEGER qpcEnd = {};
-        (void)QueryPerformanceCounter(&qpcEnd);
+        std::ignore = QueryPerformanceCounter(&qpcEnd);
 
         LONGLONG delta = qpcEnd.QuadPart - qpcStart.QuadPart;
         wprintf(L"\n Processing time: %f seconds\n", double(delta) / double(qpcFreq.QuadPart));

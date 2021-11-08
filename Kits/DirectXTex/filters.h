@@ -76,6 +76,8 @@ inline void _CreateLinearFilter(_In_ size_t source, _In_ size_t dest, _In_ bool 
         ptrdiff_t isrcB = ptrdiff_t(srcB);
         ptrdiff_t isrcA = isrcB - 1;
 
+        float weight = 1.0f + float(isrcB) - srcB;
+
         if (isrcA < 0)
         {
             isrcA = (wrap) ? (ptrdiff_t(source) - 1) : 0;
@@ -85,8 +87,6 @@ inline void _CreateLinearFilter(_In_ size_t source, _In_ size_t dest, _In_ bool 
         {
             isrcB = (wrap) ? 0 : (ptrdiff_t(source) - 1);
         }
-
-        float weight = 1.0f + float(isrcB) - srcB;
 
         auto& entry = lf[u];
         entry.u0 = size_t(isrcA);
@@ -240,11 +240,11 @@ namespace TriangleFilter
         TriangleRow() noexcept : remaining(0), next(nullptr) {}
     };
 
-    static const size_t TF_FILTER_SIZE = sizeof(Filter) - sizeof(FilterFrom);
-    static const size_t TF_FROM_SIZE = sizeof(FilterFrom) - sizeof(FilterTo);
-    static const size_t TF_TO_SIZE = sizeof(FilterTo);
+    constexpr size_t TF_FILTER_SIZE = sizeof(Filter) - sizeof(FilterFrom);
+    constexpr size_t TF_FROM_SIZE = sizeof(FilterFrom) - sizeof(FilterTo);
+    constexpr size_t TF_TO_SIZE = sizeof(FilterTo);
 
-    static const float TF_EPSILON = 0.00001f;
+    constexpr float TF_EPSILON = 0.00001f;
 
     inline HRESULT _Create(_In_ size_t source, _In_ size_t dest, _In_ bool wrap, _Inout_ std::unique_ptr<Filter>& tf) noexcept
     {
