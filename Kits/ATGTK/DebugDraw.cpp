@@ -184,7 +184,7 @@ void XM_CALLCONV DX::DrawRing(PrimitiveBatch<VertexPositionColor>* batch,
     FXMVECTOR minorAxis,
     GXMVECTOR color)
 {
-    static const size_t c_ringSegments = 32;
+    constexpr size_t c_ringSegments = 32;
 
     VertexPositionColor verts[c_ringSegments + 1];
 

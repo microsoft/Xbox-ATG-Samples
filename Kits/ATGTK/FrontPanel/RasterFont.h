@@ -18,7 +18,7 @@ namespace ATG
     template <typename STORAGE_UNIT_T>
     inline unsigned GetStorageSize(unsigned bitCount)
     {
-        static const size_t unitSize = sizeof(STORAGE_UNIT_T) * 8;
+        constexpr size_t unitSize = sizeof(STORAGE_UNIT_T) * 8;
         return unsigned(bitCount / unitSize + !!(bitCount % unitSize));
     }
 

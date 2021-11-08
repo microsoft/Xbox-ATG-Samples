@@ -659,7 +659,7 @@ ATG::Help::Help(const wchar_t* title, const wchar_t* description, const HelpButt
     bool dpadLabels = false;
     float dpadYOffset[4] = {0.f, 0.f, 0.f, 0.f};
 
-    static const float c_fontSize18 = 31.9218750f;
+    constexpr float c_fontSize18 = 31.9218750f;
 
     for (size_t j = 0; j < buttonCount; ++j)
     {

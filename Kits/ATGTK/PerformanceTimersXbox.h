@@ -21,7 +21,7 @@ namespace DX
     class CPUTimer
     {
     public:
-        static const size_t c_maxTimers = 8;
+        static constexpr size_t c_maxTimers = 8;
 
         CPUTimer();
 
@@ -66,10 +66,10 @@ namespace DX
     {
         typedef uint64_t Timestamp;
 
-        static const Timestamp c_invalidTimestamp = 0;
+        static constexpr Timestamp c_invalidTimestamp = 0;
 
     public:
-        static const size_t c_maxTimers = 8;
+        static constexpr size_t c_maxTimers = 8;
 
         GPUCommandListTimer() :
             m_currentFrame(0),
@@ -118,7 +118,7 @@ namespace DX
         void RestoreDevice(_In_ ID3D12Device* device, _In_ ID3D12CommandQueue* commandQueue);
 
     private:
-        static const size_t c_bufferCount = 3;
+        static constexpr size_t c_bufferCount = 3;
 
         unsigned m_currentFrame;
         struct Frame
@@ -158,10 +158,10 @@ namespace DX
     {
         typedef uint64_t Timestamp;
 
-        static const Timestamp c_invalidTimestamp = 0;
+        static constexpr Timestamp c_invalidTimestamp = 0;
 
     public:
-        static const size_t c_maxTimers = 8;
+        static constexpr size_t c_maxTimers = 8;
 
         GPUContextTimer() :
             m_currentFrame(0),
@@ -210,7 +210,7 @@ namespace DX
         void RestoreDevice(_In_ ID3D11DeviceX* device);
 
     private:
-        static const size_t c_bufferCount = 3;
+        static constexpr size_t c_bufferCount = 3;
 
         unsigned m_currentFrame;
         struct Frame

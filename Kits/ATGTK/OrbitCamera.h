@@ -30,8 +30,8 @@ namespace DX
     public:
         OrbitCamera();
 
-        OrbitCamera(OrbitCamera&& moveFrom);
-        OrbitCamera& operator= (OrbitCamera&& moveFrom);
+        OrbitCamera(OrbitCamera&&) noexcept;
+        OrbitCamera& operator= (OrbitCamera&&) noexcept;
 
         OrbitCamera(OrbitCamera const&) = delete;
         OrbitCamera& operator=(OrbitCamera const&) = delete;
@@ -96,13 +96,13 @@ namespace DX
         void SetFrameExtents(const DirectX::BoundingBox& box);
 
         // Behavior control flags
-        static const unsigned int c_FlagsDisableTranslation = 0x1;          // Disables all translation controls
-        static const unsigned int c_FlagsDisableRollZ = 0x2;                // Disable roll in Z
-        static const unsigned int c_FlagsArrowKeys_XZ = 0x4;                // WASD: Instead of translate X/Y, do translate in X/Z
-        static const unsigned int c_FlagsArrowKeysOrbit = 0x8;              // WASD: Orbit X/Y instead of translate, Q/E roll in Z
-        static const unsigned int c_FlagsDisableRadiusControl = 0x10;       // Disable radius controls
-        static const unsigned int c_FlagsDisableSensitivityControl = 0x20;  // Disable sensitivity controls
-        static const unsigned int c_FlagsDisableFrameExtentsReset = 0x40;   // Disable frame extents controls
+        static constexpr unsigned int c_FlagsDisableTranslation = 0x1;         // Disables all translation controls
+        static constexpr unsigned int c_FlagsDisableRollZ = 0x2;               // Disable roll in Z
+        static constexpr unsigned int c_FlagsArrowKeys_XZ = 0x4;               // WASD: Instead of translate X/Y, do translate in X/Z
+        static constexpr unsigned int c_FlagsArrowKeysOrbit = 0x8;             // WASD: Orbit X/Y instead of translate, Q/E roll in Z
+        static constexpr unsigned int c_FlagsDisableRadiusControl = 0x10;      // Disable radius controls
+        static constexpr unsigned int c_FlagsDisableSensitivityControl = 0x20; // Disable sensitivity controls
+        static constexpr unsigned int c_FlagsDisableFrameExtentsReset = 0x40;  // Disable frame extents controls
 
         void SetFlags(unsigned int flags);
 

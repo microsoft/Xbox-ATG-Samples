@@ -278,8 +278,8 @@ template<typename t_CommandList>
 void GPUCommandListTimer<t_CommandList>::RestoreDevice(_In_ ID3D12Device* /*device*/, _In_ ID3D12CommandQueue* /*commandQueue*/)
 {
     // Dma context requires 32-byte alignment for writebacks
-    static const uint32_t dmaWritebackAlignment = 32;
-    static const uint32_t alignmentPadding = dmaWritebackAlignment / sizeof(Timestamp);
+    constexpr uint32_t dmaWritebackAlignment = 32;
+    constexpr uint32_t alignmentPadding = dmaWritebackAlignment / sizeof(Timestamp);
     typedef uint64_t PaddedTimestamp[alignmentPadding];
 
     // One large page supports a total of 2048 timestamps, which is enough for 85 timers
@@ -364,7 +364,7 @@ void GPUCommandListTimer<t_CommandList>::Frame::ComputeFrame(_In_ t_CommandList*
 
         DebugWarnings(j, start, end);
 
-        static const double c_FrequencyInvMS = 1000.0 / double(D3D11X_XBOX_GPU_TIMESTAMP_FREQUENCY);
+        constexpr double c_FrequencyInvMS = 1000.0 / double(D3D11X_XBOX_GPU_TIMESTAMP_FREQUENCY);
         float value = float(double(end - start) * c_FrequencyInvMS);
         m_timing[j] = value;
         m_avg[j] = UpdateRunningAverage(m_avg[j], value);
@@ -493,8 +493,8 @@ template<typename t_Context>
 void GPUContextTimer<t_Context>::RestoreDevice(_In_ ID3D11DeviceX* /*device*/)
 {
     // Dma context requires 32-byte alignment for writebacks
-    static const uint32_t dmaWritebackAlignment = 32;
-    static const uint32_t alignmentPadding = dmaWritebackAlignment / sizeof(Timestamp);
+    constexpr uint32_t dmaWritebackAlignment = 32;
+    constexpr uint32_t alignmentPadding = dmaWritebackAlignment / sizeof(Timestamp);
     typedef __declspec(align(dmaWritebackAlignment)) uint64_t PaddedTimestamp[alignmentPadding];
 
     // One large page supports a total of 2048 timestamps, which is enough for 85 timers
@@ -579,7 +579,7 @@ void GPUContextTimer<t_Context>::Frame::ComputeFrame(_In_ t_Context* context)
 
         DebugWarnings(j, start, end);
 
-        static const double c_FrequencyInvMS = 1000.0 / double(D3D11X_XBOX_GPU_TIMESTAMP_FREQUENCY);
+        constexpr double c_FrequencyInvMS = 1000.0 / double(D3D11X_XBOX_GPU_TIMESTAMP_FREQUENCY);
         float value = float(double(end - start) * c_FrequencyInvMS);
         m_timing[j] = value;
         m_avg[j] = UpdateRunningAverage(m_avg[j], value);

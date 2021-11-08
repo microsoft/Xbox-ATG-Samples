@@ -551,23 +551,9 @@ OrbitCamera::OrbitCamera()
 	pImpl->Reset();
 }
 
-// Move constructor.
-OrbitCamera::OrbitCamera(OrbitCamera&& moveFrom)
-	: pImpl(std::move(moveFrom.pImpl))
-{
-}
-
-// Move assignment.
-OrbitCamera& OrbitCamera::operator= (OrbitCamera&& moveFrom)
-{
-	pImpl = std::move(moveFrom.pImpl);
-	return *this;
-}
-
-// Public destructor.
-OrbitCamera::~OrbitCamera()
-{
-}
+OrbitCamera::OrbitCamera(OrbitCamera&&) noexcept = default;
+OrbitCamera& OrbitCamera::operator= (OrbitCamera&&) noexcept = default;
+OrbitCamera::~OrbitCamera() = default;
 
 // Public methods.
 void OrbitCamera::Update(float elapsedTime, const GamePad::State& pad)
