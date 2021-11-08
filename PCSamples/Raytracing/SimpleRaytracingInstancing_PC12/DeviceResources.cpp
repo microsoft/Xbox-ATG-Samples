@@ -1,4 +1,4 @@
-﻿//
+//
 // DeviceResources.cpp - A wrapper for the Direct3D 12 device and swapchain
 //
 // This version has been modified to require DirectX Raytracing support
@@ -172,7 +172,9 @@ void DeviceResources::CreateDeviceResources()
         {
             D3D12_MESSAGE_ID_MAP_INVALID_NULLRANGE,
             D3D12_MESSAGE_ID_UNMAP_INVALID_NULLRANGE,
-            D3D12_MESSAGE_ID_EXECUTECOMMANDLISTS_WRONGSWAPCHAINBUFFERREFERENCE
+            // Workarounds for debug layer issues on hybrid-graphics systems
+            D3D12_MESSAGE_ID_EXECUTECOMMANDLISTS_WRONGSWAPCHAINBUFFERREFERENCE,
+            D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE,
         };
         D3D12_INFO_QUEUE_FILTER filter = {};
         filter.DenyList.NumIDs = _countof(hide);
