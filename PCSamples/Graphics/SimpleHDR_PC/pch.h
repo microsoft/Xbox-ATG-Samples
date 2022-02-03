@@ -50,6 +50,7 @@
 #include <exception>
 #include <memory>
 #include <stdexcept>
+#include <system_error>
 
 #include <stdio.h>
 

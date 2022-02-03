@@ -136,6 +136,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
 
+    case WM_DISPLAYCHANGE:
+        if (sample)
+        {
+            sample->OnDisplayChange();
+        }
+        break;
+
     case WM_MOVE:
         if (sample)
         {

@@ -781,6 +781,11 @@ void Sample::OnWindowMoved()
 {
 }
 
+void Sample::OnDisplayChange()
+{
+    m_deviceResources->UpdateColorSpace();
+}
+
 void Sample::OnWindowSizeChanged(int width, int height)
 {
     if (!m_deviceResources->WindowSizeChanged(width, height))
