@@ -42,6 +42,7 @@ public:
     void OnDeactivated();
     void OnSuspending();
     void OnResuming();
+    void OnDisplayChange();
     void OnWindowSizeChanged(int width, int height, DXGI_MODE_ROTATION rotation);
     void ValidateDevice();
 

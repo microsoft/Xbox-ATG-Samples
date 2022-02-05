@@ -779,6 +779,13 @@ void Sample::OnResuming()
 
 void Sample::OnWindowMoved()
 {
+    auto r = m_deviceResources->GetOutputSize();
+    m_deviceResources->WindowSizeChanged(r.right, r.bottom);
+}
+
+void Sample::OnDisplayChange()
+{
+    m_deviceResources->UpdateColorSpace();
 }
 
 void Sample::OnWindowSizeChanged(int width, int height)

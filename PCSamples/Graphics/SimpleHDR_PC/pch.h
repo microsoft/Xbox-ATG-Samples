@@ -9,9 +9,11 @@
 
 #pragma once
 
-#include <WinSDKVer.h>
+#include <winsdkver.h>
+#ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0601
-#include <SDKDDKVer.h>
+#endif
+#include <sdkddkver.h>
 
 // Use the C++ standard templated min/max
 #define NOMINMAX
@@ -31,7 +33,7 @@
 #define NOHELP
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include <Windows.h>
 
 #include <wrl/client.h>
 
@@ -47,11 +49,14 @@
 #include <DirectXColors.h>
 
 #include <algorithm>
+#include <cmath>
+#include <cstdint>
+#include <cstdio>
+#include <cwchar>
 #include <exception>
 #include <memory>
 #include <stdexcept>
-
-#include <stdio.h>
+#include <system_error>
 
 #ifdef _DEBUG
 #include <dxgidebug.h>

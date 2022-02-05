@@ -145,6 +145,11 @@ void Sample::OnResuming()
     m_timer.ResetElapsedTime();
 }
 
+void Sample::OnDisplayChange()
+{
+    m_deviceResources->UpdateColorSpace();
+}
+
 void Sample::OnWindowSizeChanged(int width, int height, DXGI_MODE_ROTATION rotation)
 {
     if (!m_deviceResources->WindowSizeChanged(width, height, rotation))

@@ -43,6 +43,7 @@ public:
     void OnDeactivated();
     void OnSuspending();
     void OnResuming();
+    void OnDisplayChange();
     void OnWindowSizeChanged(int width, int height, DXGI_MODE_ROTATION rotation);
     void ValidateDevice();
 
@@ -58,7 +59,7 @@ private:
 
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();
-    
+
     // Device resources.
     std::unique_ptr<DX::DeviceResources>        m_deviceResources;
 

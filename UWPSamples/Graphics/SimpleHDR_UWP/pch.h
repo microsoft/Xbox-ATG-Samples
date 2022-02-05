@@ -29,11 +29,15 @@
 #include <DirectXColors.h>
 
 #include <algorithm>
+#include <cmath>
+#include <cstdint>
+#include <cstdio>
+#include <cwchar>
 #include <exception>
 #include <memory>
 #include <stdexcept>
+#include <system_error>
 
-#include <stdio.h>
 #include <pix.h>
 
 #ifdef _DEBUG

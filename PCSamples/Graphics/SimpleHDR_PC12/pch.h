@@ -9,9 +9,11 @@
 
 #pragma once
 
-#include <WinSDKVer.h>
+#include <winsdkver.h>
+#ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0A00
-#include <SDKDDKVer.h>
+#endif
+#include <sdkddkver.h>
 
 // Use the C++ standard templated min/max
 #define NOMINMAX
@@ -31,7 +33,7 @@
 #define NOHELP
 
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include <Windows.h>
 
 #include <wrl/client.h>
 #include <wrl/event.h>
@@ -50,18 +52,23 @@
 #include "d3dx12.h"
 
 #include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include <cwchar>
 #include <exception>
 #include <memory>
 #include <stdexcept>
+#include <system_error>
 
 #ifdef _DEBUG
 #include <dxgidebug.h>
 #endif
 
-#include <stdio.h>
-
-// To use graphics and CPU markup events with the latest version of PIX, change this to include <pix3.h> 
-// then add the NuGet package WinPixEventRuntime to the project. 
+// To use graphics and CPU markup events with the latest version of PIX, change this to include <pix3.h>
+// then add the NuGet package WinPixEventRuntime to the project.
 #include <pix.h>
 
 #include "CommonStates.h"

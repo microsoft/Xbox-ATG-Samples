@@ -42,11 +42,16 @@
 
 
 #include <algorithm>
+#include <cmath>
+#include <cstddef>
+#include <cstdint>
+#include <cstdio>
+#include <cstring>
+#include <cwchar>
 #include <exception>
 #include <memory>
-#include <stdexcept>
+#include <system_error>
 
-#include <stdio.h>
 #include <pix.h>
 
 #include <ATGColors.h>
