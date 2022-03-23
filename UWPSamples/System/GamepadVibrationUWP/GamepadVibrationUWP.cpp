@@ -164,7 +164,7 @@ void Sample::ShutdownCurrentGamepad()
 
 void Sample::RefreshCachedGamepads()
 {
-    m_localCollection.clear();
+    m_localCollection->Clear();
     auto gamepads = Gamepad::Gamepads;
     for (auto gamepad : gamepads)
     {
