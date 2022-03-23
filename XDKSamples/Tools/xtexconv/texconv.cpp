@@ -20,8 +20,6 @@
 #define NOHELP
 #pragma warning(pop)
 
-#include <ShlObj.h>
-
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
@@ -47,7 +45,8 @@
 
 #include <wincodec.h>
 
-#pragma warning(disable : 4619 4616 26812)
+#pragma warning(disable : 4619 4616 4091 4838 26812)
+#include <ShlObj.h>
 
 #include "DirectXTex.h"
 #include "DirectXTexXbox.h"
@@ -524,7 +523,7 @@ namespace
 
     using ScopedFindHandle = std::unique_ptr<void, find_closer>;
 
-    inline static bool ispow2(size_t x)
+    constexpr static bool ispow2(size_t x)
     {
         return ((x != 0) && !(x & (x - 1)));
     }
@@ -816,7 +815,7 @@ namespace
     {
         while (pValue->name)
         {
-            size_t cchName = wcslen(pValue->name);
+            const size_t cchName = wcslen(pValue->name);
 
             if (cch + cchName + 2 >= 80)
             {
@@ -842,7 +841,7 @@ namespace
         wprintf(L"\n");
     }
 
-    _Success_(return != false)
+    _Success_(return)
         bool GetDXGIFactory(_Outptr_ IDXGIFactory1** pFactory)
     {
         if (!pFactory)
@@ -990,7 +989,7 @@ namespace
 
         LPWSTR errorText = nullptr;
 
-        DWORD result = FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_ALLOCATE_BUFFER,
+         const DWORD result = FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | FORMAT_MESSAGE_ALLOCATE_BUFFER,
             nullptr, static_cast<DWORD>(hr),
             MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), reinterpret_cast<LPWSTR>(&errorText), 0, nullptr);
 
@@ -1001,9 +1000,8 @@ namespace
             swprintf_s(desc, L": %ls", errorText);
 
             size_t len = wcslen(desc);
-            if (len >= 2)
+            if (len >= 1)
             {
-                desc[len - 2] = 0;
                 desc[len - 1] = 0;
             }
 
@@ -1014,7 +1012,7 @@ namespace
         return desc;
     }
 
-    _Success_(return != false)
+    _Success_(return)
         bool CreateDevice(int adapter, _Outptr_ ID3D11Device** pDevice)
     {
         if (!pDevice)
@@ -1035,7 +1033,7 @@ namespace
                 return false;
         }
 
-        D3D_FEATURE_LEVEL featureLevels[] =
+        const D3D_FEATURE_LEVEL featureLevels[] =
         {
             D3D_FEATURE_LEVEL_11_0,
             D3D_FEATURE_LEVEL_10_1,
@@ -1113,7 +1111,7 @@ namespace
 
     void FitPowerOf2(size_t origx, size_t origy, _Inout_ size_t& targetx, _Inout_ size_t& targety, size_t maxsize)
     {
-        float origAR = float(origx) / float(origy);
+        const float origAR = float(origx) / float(origy);
 
         if (origx > origy)
         {
@@ -1124,7 +1122,7 @@ namespace
             float bestScore = FLT_MAX;
             for (size_t y = maxsize; y > 0; y >>= 1)
             {
-                float score = fabsf((float(x) / float(y)) - origAR);
+                const float score = fabsf((float(x) / float(y)) - origAR);
                 if (score < bestScore)
                 {
                     bestScore = score;
@@ -1141,7 +1139,7 @@ namespace
             float bestScore = FLT_MAX;
             for (size_t x = maxsize; x > 0; x >>= 1)
             {
-                float score = fabsf((float(x) / float(y)) - origAR);
+                const float score = fabsf((float(x) / float(y)) - origAR);
                 if (score < bestScore)
                 {
                     bestScore = score;
@@ -1151,7 +1149,7 @@ namespace
         }
     }
 
-    size_t CountMips(_In_ size_t width, _In_ size_t height) noexcept
+    constexpr size_t CountMips(_In_ size_t width, _In_ size_t height) noexcept
     {
         size_t mipLevels = 1;
 
@@ -1169,7 +1167,7 @@ namespace
         return mipLevels;
     }
 
-    size_t CountMips3D(_In_ size_t width, _In_ size_t height, _In_ size_t depth) noexcept
+    constexpr size_t CountMips3D(_In_ size_t width, _In_ size_t height, _In_ size_t depth) noexcept
     {
         size_t mipLevels = 1;
 
@@ -1239,13 +1237,13 @@ namespace
 
     inline float LinearToST2084(float normalizedLinearValue)
     {
-        float ST2084 = pow((0.8359375f + 18.8515625f * pow(abs(normalizedLinearValue), 0.1593017578f)) / (1.0f + 18.6875f * pow(abs(normalizedLinearValue), 0.1593017578f)), 78.84375f);
+        const float ST2084 = pow((0.8359375f + 18.8515625f * pow(abs(normalizedLinearValue), 0.1593017578f)) / (1.0f + 18.6875f * pow(abs(normalizedLinearValue), 0.1593017578f)), 78.84375f);
         return ST2084;  // Don't clamp between [0..1], so we can still perform operations on scene values higher than 10,000 nits
     }
 
     inline float ST2084ToLinear(float ST2084)
     {
-        float normalizedLinear = pow(std::max(pow(abs(ST2084), 1.0f / 78.84375f) - 0.8359375f, 0.0f) / (18.8515625f - 18.6875f * pow(abs(ST2084), 1.0f / 78.84375f)), 1.0f / 0.1593017578f);
+        const float normalizedLinear = pow(std::max(pow(abs(ST2084), 1.0f / 78.84375f) - 0.8359375f, 0.0f) / (18.8515625f - 18.6875f * pow(abs(ST2084), 1.0f / 78.84375f)), 1.0f / 0.1593017578f);
         return normalizedLinear;
     }
 
@@ -1412,7 +1410,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             if (*pValue)
                 *pValue++ = 0;
 
-            uint64_t dwOption = LookupByName(pArg, g_pOptions);
+            const uint64_t dwOption = LookupByName(pArg, g_pOptions);
 
             if (!dwOption || (dwOptions & (uint64_t(1) << dwOption)))
             {
@@ -1942,7 +1940,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
         }
         else if (wcspbrk(pArg, L"?*") != nullptr)
         {
-            size_t count = conversion.size();
+            const size_t count = conversion.size();
             SearchForFiles(pArg, conversion, (dwOptions & (uint64_t(1) << OPT_RECURSIVE)) != 0, nullptr);
             if (conversion.size() <= count)
             {
@@ -2185,7 +2183,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
         {
             auto img = image->GetImage(0, 0, 0);
             assert(img);
-            size_t nimg = image->GetImageCount();
+            const size_t nimg = image->GetImageCount();
 
             std::unique_ptr<ScratchImage> timage(new (std::nothrow) ScratchImage);
             if (!timage)
@@ -2218,7 +2216,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             image.swap(timage);
         }
 
-        DXGI_FORMAT tformat = (format == DXGI_FORMAT_UNKNOWN) ? info.format : format;
+        const DXGI_FORMAT tformat = (format == DXGI_FORMAT_UNKNOWN) ? info.format : format;
 
         // --- Decompress --------------------------------------------------------------
         std::unique_ptr<ScratchImage> cimage;
@@ -2289,7 +2287,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
 
             auto img = image->GetImage(0, 0, 0);
             assert(img);
-            size_t nimg = image->GetImageCount();
+            const size_t nimg = image->GetImageCount();
 
             std::unique_ptr<ScratchImage> timage(new (std::nothrow) ScratchImage);
             if (!timage)
@@ -2347,7 +2345,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             {
                 auto img = image->GetImage(0, 0, 0);
                 assert(img);
-                size_t nimg = image->GetImageCount();
+                const size_t nimg = image->GetImageCount();
 
                 std::unique_ptr<ScratchImage> timage(new (std::nothrow) ScratchImage);
                 if (!timage)
@@ -2482,7 +2480,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
 
             if (tMips > 0)
             {
-                size_t maxMips = (info.depth > 1)
+                const size_t maxMips = (info.depth > 1)
                     ? CountMips3D(info.width, info.height, info.depth)
                     : CountMips(info.width, info.height);
 
@@ -2505,8 +2503,8 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                 return 1;
             }
 
-            XMVECTOR zc = XMVectorSelectControl(zeroElements[0], zeroElements[1], zeroElements[2], zeroElements[3]);
-            XMVECTOR oc = XMVectorSelectControl(oneElements[0], oneElements[1], oneElements[2], oneElements[3]);
+            const XMVECTOR zc = XMVectorSelectControl(zeroElements[0], zeroElements[1], zeroElements[2], zeroElements[3]);
+            const XMVECTOR oc = XMVectorSelectControl(oneElements[0], oneElements[1], oneElements[2], oneElements[3]);
 
             hr = TransformImage(image->GetImages(), image->GetImageCount(), image->GetMetadata(),
                 [&, zc, oc](XMVECTOR* outPixels, const XMVECTOR* inPixels, size_t w, size_t y)
@@ -2598,7 +2596,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                     {
                         UNREFERENCED_PARAMETER(y);
 
-                        XMVECTOR paperWhite = XMVectorReplicate(paperWhiteNits);
+                        const XMVECTOR paperWhite = XMVectorReplicate(paperWhiteNits);
 
                         for (size_t j = 0; j < w; ++j)
                         {
@@ -2635,7 +2633,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                         {
                             XMVECTOR value = inPixels[j];
 
-                            XMVECTOR nvalue = XMVector3Transform(value, c_from709to2020);
+                            const XMVECTOR nvalue = XMVector3Transform(value, c_from709to2020);
 
                             value = XMVectorSelect(value, nvalue, g_XMSelect1110);
 
@@ -2650,7 +2648,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                     {
                         UNREFERENCED_PARAMETER(y);
 
-                        XMVECTOR paperWhite = XMVectorReplicate(paperWhiteNits);
+                        const XMVECTOR paperWhite = XMVectorReplicate(paperWhiteNits);
 
                         for (size_t j = 0; j < w; ++j)
                         {
@@ -2687,7 +2685,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                         {
                             XMVECTOR value = inPixels[j];
 
-                            XMVECTOR nvalue = XMVector3Transform(value, c_from2020to709);
+                            const XMVECTOR nvalue = XMVector3Transform(value, c_from2020to709);
 
                             value = XMVectorSelect(value, nvalue, g_XMSelect1110);
 
@@ -2702,7 +2700,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                     {
                         UNREFERENCED_PARAMETER(y);
 
-                        XMVECTOR paperWhite = XMVectorReplicate(paperWhiteNits);
+                        const XMVECTOR paperWhite = XMVectorReplicate(paperWhiteNits);
 
                         for (size_t j = 0; j < w; ++j)
                         {
@@ -2739,7 +2737,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                         {
                             XMVECTOR value = inPixels[j];
 
-                            XMVECTOR nvalue = XMVector3Transform(value, c_fromP3D65to2020);
+                            const XMVECTOR nvalue = XMVector3Transform(value, c_fromP3D65to2020);
 
                             value = XMVectorSelect(value, nvalue, g_XMSelect1110);
 
@@ -2758,7 +2756,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                         {
                             XMVECTOR value = inPixels[j];
 
-                            XMVECTOR nvalue = XMVector3Transform(value, c_from709toP3D65);
+                            const XMVECTOR nvalue = XMVector3Transform(value, c_from709toP3D65);
 
                             value = XMVectorSelect(value, nvalue, g_XMSelect1110);
 
@@ -2777,7 +2775,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                         {
                             XMVECTOR value = inPixels[j];
 
-                            XMVECTOR nvalue = XMVector3Transform(value, c_fromP3D65to709);
+                            const XMVECTOR nvalue = XMVector3Transform(value, c_fromP3D65to709);
 
                             value = XMVectorSelect(value, nvalue, g_XMSelect1110);
 
@@ -2861,10 +2859,10 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                     {
                         XMVECTOR value = inPixels[j];
 
-                        XMVECTOR scale = XMVectorDivide(
+                        const XMVECTOR scale = XMVectorDivide(
                             XMVectorAdd(g_XMOne, XMVectorDivide(value, maxLum)),
                             XMVectorAdd(g_XMOne, value));
-                        XMVECTOR nvalue = XMVectorMultiply(value, scale);
+                        const XMVECTOR nvalue = XMVectorMultiply(value, scale);
 
                         value = XMVectorSelect(value, nvalue, g_XMSelect1110);
 
@@ -3060,9 +3058,9 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
 
                     for (size_t j = 0; j < w; ++j)
                     {
-                        XMVECTOR value = inPixels[j];
+                        const XMVECTOR value = inPixels[j];
 
-                        XMVECTOR inverty = XMVectorSubtract(g_XMOne, value);
+                        const XMVECTOR inverty = XMVectorSubtract(g_XMOne, value);
 
                         outPixels[j] = XMVectorSelect(value, inverty, s_selecty);
                     }
@@ -3111,7 +3109,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
 
                 for (size_t j = 0; j < w; ++j)
                 {
-                    XMVECTOR value = inPixels[j];
+                    const XMVECTOR value = inPixels[j];
 
                     XMVECTOR z;
                     if (isunorm)
@@ -3365,7 +3363,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
             {
                 auto img = image->GetImage(0, 0, 0);
                 assert(img);
-                size_t nimg = image->GetImageCount();
+                const size_t nimg = image->GetImageCount();
 
                 std::unique_ptr<ScratchImage> timage(new (std::nothrow) ScratchImage);
                 if (!timage)
@@ -3428,7 +3426,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
 
                 auto img = image->GetImage(0, 0, 0);
                 assert(img);
-                size_t nimg = image->GetImageCount();
+                const size_t nimg = image->GetImageCount();
 
                 std::unique_ptr<ScratchImage> timage(new (std::nothrow) ScratchImage);
                 if (!timage)
@@ -3549,7 +3547,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
         {
             auto img = image->GetImage(0, 0, 0);
             assert(img);
-            size_t nimg = image->GetImageCount();
+            const size_t nimg = image->GetImageCount();
 
             PrintInfo(info, (FileType == CODEC_DDS) && (dwOptions & (uint64_t(1) << OPT_USE_XBOX)));
             wprintf(L"\n");
@@ -3573,7 +3571,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                     continue;
                 }
 
-                auto err = static_cast<DWORD>(SHCreateDirectoryExW(nullptr, szPath, nullptr));
+                auto const err = static_cast<DWORD>(SHCreateDirectoryExW(nullptr, szPath, nullptr));
                 if (err != ERROR_SUCCESS && err != ERROR_ALREADY_EXISTS)
                 {
                     wprintf(L" directory creation FAILED (%08X%ls)\n",
@@ -3680,12 +3678,12 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
 
             default:
             {
-                WICCodecs codec = (FileType == CODEC_HDP || FileType == CODEC_JXR) ? WIC_CODEC_WMP : static_cast<WICCodecs>(FileType);
-                size_t nimages = (dwOptions & (uint64_t(1) << OPT_WIC_MULTIFRAME)) ? nimg : 1;
+                const WICCodecs codec = (FileType == CODEC_HDP || FileType == CODEC_JXR) ? WIC_CODEC_WMP : static_cast<WICCodecs>(FileType);
+                const size_t nimages = (dwOptions & (uint64_t(1) << OPT_WIC_MULTIFRAME)) ? nimg : 1;
                 hr = SaveToWICFile(img, nimages, WIC_FLAGS_NONE, GetWICCodec(codec), szDest, nullptr,
                     [&](IPropertyBag2* props)
                     {
-                        bool wicLossless = (dwOptions & (uint64_t(1) << OPT_WIC_LOSSLESS)) != 0;
+                        const bool wicLossless = (dwOptions & (uint64_t(1) << OPT_WIC_LOSSLESS)) != 0;
 
                         switch (FileType)
                         {
@@ -3777,7 +3775,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
         LARGE_INTEGER qpcEnd = {};
         std::ignore = QueryPerformanceCounter(&qpcEnd);
 
-        LONGLONG delta = qpcEnd.QuadPart - qpcStart.QuadPart;
+        const LONGLONG delta = qpcEnd.QuadPart - qpcStart.QuadPart;
         wprintf(L"\n Processing time: %f seconds\n", double(delta) / double(qpcFreq.QuadPart));
     }
 
