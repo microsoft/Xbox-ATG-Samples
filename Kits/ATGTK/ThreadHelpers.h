@@ -10,11 +10,12 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
-#include <memory>
-#include <map>
-#include <mutex>
-#include <vector>
 #include <exception>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <tuple>
+#include <vector>
 
 namespace DX
 {
@@ -40,6 +41,7 @@ namespace DX
     template<UINT TNameLength>
     inline void SetThreadName(HANDLE hThread, _In_z_ const char(&name)[TNameLength])
     {
+        // See https://docs.microsoft.com/en-us/visualstudio/debugger/how-to-set-a-thread-name-in-native-code
 #if defined(_XBOX_ONE) && defined(_TITLE)
         wchar_t wname[MAX_PATH];
         int result = MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, name, TNameLength, wname, MAX_PATH);
@@ -47,8 +49,14 @@ namespace DX
         {
             ::SetThreadName(hThread, wname);
         }
+#elif (_WIN32_WINNT >= _WIN32_WINNT_WIN10)
+        wchar_t wname[MAX_PATH] = {};
+        const int result = MultiByteToWideChar(CP_UTF8, 0, name, TNameLength, wname, MAX_PATH);
+        if (result > 0)
+        {
+            ::SetThreadDescription(hThread, wname);
+        }
 #else
-        // See https://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx
 #pragma pack(push,8)
         typedef struct tagTHREADNAME_INFO
         {
@@ -85,7 +93,7 @@ namespace DX
 
 #elif defined(WINAPI_FAMILY) && WINAPI_FAMILY == WINAPI_FAMILY_APP
             ULONG retsize = 0;
-            (void)GetSystemCpuSetInformation(nullptr, 0, &retsize, GetCurrentProcess(), 0);
+            std::ignore = GetSystemCpuSetInformation(nullptr, 0, &retsize, GetCurrentProcess(), 0);
 
             m_cpuSetsInformation.reset(new uint8_t[retsize]);
 
@@ -110,7 +118,7 @@ namespace DX
 #else
 
             unsigned long length = 0;
-            (void)GetLogicalProcessorInformation(nullptr, &length);
+            std::ignore = GetLogicalProcessorInformation(nullptr, &length);
 
             std::unique_ptr<uint8_t> buffer(new uint8_t[length]);
 
@@ -120,7 +128,7 @@ namespace DX
                 throw std::exception("GetLogicalProcessorInformation");
             }
 
-            size_t count = length / sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);
+            const size_t count = length / sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);
             for (size_t i = 0; i < count; ++i)
             {
                 if (procInfo[i].Relationship == RelationProcessorCore)
@@ -154,7 +162,7 @@ namespace DX
 
                 unsigned long physicalCore = m_coresCollection.at(iter->first)->CpuSet.Id;
 
-                (void)SetThreadSelectedCpuSets(hThread, &physicalCore, 1);
+                std::ignore = SetThreadSelectedCpuSets(hThread, &physicalCore, 1);
             }
 #else
             if (coreIndex < GetCoreCount())

@@ -209,7 +209,7 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 </table>
 
 <table>
- <tr>
+<tr>
   <td>ESRAM (XDK only)</td>
   <td><a href="XDKSamples/Graphics/SimpleESRAM">Simple DX11</a></td>
   <td><a href="XDKSamples/Graphics/SimpleESRAM12">Simple DX12</a></td>
@@ -237,15 +237,12 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
  <tr>
   <td>XDK</td>
   <td><a href="XDKSamples/System/AsynchronousIO">Async I/O</a></td>
+  <td><a href="XDKSamples/System/CoroutinesXDK">Coroutines</a>
   <td><a href="XDKSamples/System/CustomEventProvider">Custom Event Provider</a></td>
   <td><a href="XDKSamples/System/DataBreakpoints">Data Breakpoints</a></td>
   <td><a href="XDKSamples/System/GameDVR">Game DVR</a></td>
   <td><a href="XDKSamples/System/MemoryBanks">Memory Banks</a></td>
   <td><a href="XDKSamples/System/UserManagement">User Management</a></td>
- </tr>
- <tr>
-  <td>XDK (VS 2017 only)</td>
-  <td><a href="XDKSamples/System/CoroutinesXDK">Coroutines</a>
  </tr>
 </table>
 
@@ -379,15 +376,15 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 
 ### UWP apps
 * Windows 10 Anniversary Update (Version 1607) or later
-* Visual Studio 2017 ([15.8](https://walbourn.github.io/vs-2017-15-8-update/) or [15.9](https://walbourn.github.io/vs-2017-15-9-update/) update) with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, and *Windows 10 SDK ([10.0.17763.0](https://walbourn.github.io/windows-10-october-2018-update/))*.
+* Visual Studio 2017 ([15.9](https://walbourn.github.io/vs-2017-15-9-update/) update) with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, and *Windows 10 SDK ([10.0.17763.0](https://walbourn.github.io/windows-10-october-2018-update/))*.
 
 ### XDK apps
 * Xbox One Development Kit
 * Xbox One XDK (specific version requirements covered in each sample's readme)
-* Visual Studio 2015 or Visual Studio 2017 (_via upgrade in place_)
+* Visual Studio 2017 (15.9)
 
 ### PC apps
-* Visual Studio 2015 Update 3 -or- Visual Studio 2017 (_via upgrade in place_) with the *Desktop development with C++* workload and *Windows 8.1 SDK* component.
+* Visual Studio 2017 (15.9) with the *Desktop development with C++* workload and *Windows 8.1 SDK* component.
 * _DirectX 11:_ Windows 7 Service Pack 1 with the DirectX 11.1 Runtime via [KB2670838](http://support.microsoft.com/kb/2670838) or later.
 * _DirectX 12:_ Windows 10; requires the Windows 10 Anniversary Update SDK (14393) or later to build.
 * _DirectX Raytracing:_ Windows 10 October 2018 Update or later.

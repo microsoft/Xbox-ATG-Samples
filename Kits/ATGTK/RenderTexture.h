@@ -20,7 +20,7 @@ namespace DX
     class RenderTexture
     {
     public:
-        RenderTexture(DXGI_FORMAT format) noexcept;
+        explicit RenderTexture(DXGI_FORMAT format) noexcept;
 
         RenderTexture(RenderTexture&&) = default;
         RenderTexture& operator= (RenderTexture&&) = default;

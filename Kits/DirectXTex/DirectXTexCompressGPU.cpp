@@ -14,10 +14,11 @@
 #include "BCDirectCompute.h"
 
 using namespace DirectX;
+using namespace DirectX::Internal;
 
 namespace
 {
-    inline TEX_FILTER_FLAGS GetSRGBFlags(_In_ TEX_COMPRESS_FLAGS compress) noexcept
+    constexpr TEX_FILTER_FLAGS GetSRGBFlags(_In_ TEX_COMPRESS_FLAGS compress) noexcept
     {
         static_assert(TEX_FILTER_SRGB_IN == 0x1000000, "TEX_FILTER_SRGB flag values don't match TEX_FILTER_SRGB_MASK");
         static_assert(static_cast<int>(TEX_COMPRESS_SRGB_IN) == static_cast<int>(TEX_FILTER_SRGB_IN), "TEX_COMPRESS_SRGB* should match TEX_FILTER_SRGB*");
@@ -39,7 +40,7 @@ namespace
         if (!srcImage.pixels)
             return E_POINTER;
 
-        DXGI_FORMAT format = srgb ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM;
+        const DXGI_FORMAT format = srgb ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM;
 
         HRESULT hr = image.Initialize2D(format, srcImage.width, srcImage.height, 1, 1);
         if (FAILED(hr))
@@ -69,15 +70,15 @@ namespace
         const uint8_t *pSrc = srcImage.pixels;
         for (size_t h = 0; h < srcImage.height; ++h)
         {
-            if (!_LoadScanline(scanline.get(), srcImage.width, pSrc, srcImage.rowPitch, srcImage.format))
+            if (!LoadScanline(scanline.get(), srcImage.width, pSrc, srcImage.rowPitch, srcImage.format))
             {
                 image.Release();
                 return E_FAIL;
             }
 
-            _ConvertScanline(scanline.get(), srcImage.width, format, srcImage.format, filter);
+            ConvertScanline(scanline.get(), srcImage.width, format, srcImage.format, filter);
 
-            if (!_StoreScanline(pDest, img->rowPitch, format, scanline.get(), srcImage.width))
+            if (!StoreScanline(pDest, img->rowPitch, format, scanline.get(), srcImage.width))
             {
                 image.Release();
                 return E_FAIL;
@@ -123,13 +124,13 @@ namespace
         const uint8_t *pSrc = srcImage.pixels;
         for (size_t h = 0; h < srcImage.height; ++h)
         {
-            if (!_LoadScanline(reinterpret_cast<XMVECTOR*>(pDest), srcImage.width, pSrc, srcImage.rowPitch, srcImage.format))
+            if (!LoadScanline(reinterpret_cast<XMVECTOR*>(pDest), srcImage.width, pSrc, srcImage.rowPitch, srcImage.format))
             {
                 image.Release();
                 return E_FAIL;
             }
 
-            _ConvertScanline(reinterpret_cast<XMVECTOR*>(pDest), srcImage.width, DXGI_FORMAT_R32G32B32A32_FLOAT, srcImage.format, filter);
+            ConvertScanline(reinterpret_cast<XMVECTOR*>(pDest), srcImage.width, DXGI_FORMAT_R32G32B32A32_FLOAT, srcImage.format, filter);
 
             pSrc += srcImage.rowPitch;
             pDest += img->rowPitch;
@@ -153,7 +154,7 @@ namespace
 
         assert(srcImage.pixels && destImage.pixels);
 
-        DXGI_FORMAT format = gpubc->GetSourceFormat();
+        const DXGI_FORMAT format = gpubc->GetSourceFormat();
 
         if (srcImage.format == format)
         {
@@ -166,7 +167,7 @@ namespace
             ScratchImage image;
             HRESULT hr = E_UNEXPECTED;
 
-            auto srgb = GetSRGBFlags(compress);
+            auto const srgb = GetSRGBFlags(compress);
 
             switch (format)
             {
@@ -325,7 +326,7 @@ HRESULT DirectX::Compress(
 
             for (size_t item = 0; item < metadata.arraySize; ++item)
             {
-                size_t index = metadata.ComputeIndex(level, item, 0);
+                const size_t index = metadata.ComputeIndex(level, item, 0);
                 if (index >= nimages)
                 {
                     cImages.Release();
@@ -376,7 +377,7 @@ HRESULT DirectX::Compress(
 
             for (size_t slice = 0; slice < d; ++slice)
             {
-                size_t index = metadata.ComputeIndex(level, 0, slice);
+                const size_t index = metadata.ComputeIndex(level, 0, slice);
                 if (index >= nimages)
                 {
                     cImages.Release();

@@ -6,7 +6,7 @@ http://go.microsoft.com/fwlink/?LinkId=248926
 
 Copyright (c) Microsoft Corporation.
 
-**November 8, 2021**
+**February 28, 2022**
 
 This package contains DirectXTex, a shared source library for reading and writing ``.DDS`` files, and performing various texture content processing operations including resizing, format conversion, mip-map generation, block compression for Direct3D runtime texture resources, and height-map to normal-map conversion. This library makes use of the Windows Image Component (WIC) APIs. It also includes ``.TGA`` and ``.HDR`` readers and writers since these image file formats are commonly used for texture content processing pipelines, but are not currently supported by a built-in WIC codec.
 
@@ -65,7 +65,7 @@ Documentation is available on the [GitHub wiki](https://github.com/Microsoft/Dir
 
 ## Notices
 
-All content and source code for this package are subject to the terms of the [MIT License](http://opensource.org/licenses/MIT).
+All content and source code for this package are subject to the terms of the [MIT License](https://github.com/microsoft/DirectXTex/blob/main/LICENSE).
 
 For the latest version of DirectXTex, bug reports, etc. please visit the project site on [GitHub](https://github.com/microsoft/DirectXTex).
 

@@ -61,7 +61,7 @@ public:
 
     D3D12_GPU_DESCRIPTOR_HANDLE texture;
     D3D12_GPU_DESCRIPTOR_HANDLE textureSampler;
-    
+
     int GetPipelineStatePermutation(uint32_t effectFlags) const noexcept;
 
     void Apply(_In_ ID3D12GraphicsCommandList* commandList);
@@ -132,7 +132,7 @@ const int EffectBase<AlphaTestEffectTraits>::VertexShaderIndices[] =
     1,      // lt/gt, no fog
     2,      // lt/gt, vertex color
     3,      // lt/gt, vertex color, no fog
-    
+
     0,      // eq/ne
     1,      // eq/ne, no fog
     2,      // eq/ne, vertex color
@@ -157,7 +157,7 @@ const int EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[] =
     1,      // lt/gt, no fog
     0,      // lt/gt, vertex color
     1,      // lt/gt, vertex color, no fog
-    
+
     2,      // eq/ne
     3,      // eq/ne, no fog
     2,      // eq/ne, vertex color
@@ -188,14 +188,14 @@ AlphaTestEffect::Impl::Impl(
 
     // Create root signature.
     {
-        D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
-            D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
+        ENUM_FLAGS_CONSTEXPR D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+            D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
+            | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS;
 
-        CD3DX12_DESCRIPTOR_RANGE textureRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-        CD3DX12_DESCRIPTOR_RANGE textureSamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
+        const CD3DX12_DESCRIPTOR_RANGE textureRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+        const CD3DX12_DESCRIPTOR_RANGE textureSamplerRange(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
 
         CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount] = {};
         rootParameters[RootParameterIndex::TextureSRV].InitAsDescriptorTable(1, &textureRange, D3D12_SHADER_VISIBILITY_PIXEL);
@@ -229,14 +229,14 @@ AlphaTestEffect::Impl::Impl(
     }
 
     // Create pipeline state.
-    int sp = GetPipelineStatePermutation(effectFlags);
+    const int sp = GetPipelineStatePermutation(effectFlags);
     assert(sp >= 0 && sp < AlphaTestEffectTraits::ShaderPermutationCount);
     _Analysis_assume_(sp >= 0 && sp < AlphaTestEffectTraits::ShaderPermutationCount);
 
-    int vi = EffectBase<AlphaTestEffectTraits>::VertexShaderIndices[sp];
+    const int vi = EffectBase<AlphaTestEffectTraits>::VertexShaderIndices[sp];
     assert(vi >= 0 && vi < AlphaTestEffectTraits::VertexShaderCount);
     _Analysis_assume_(vi >= 0 && vi < AlphaTestEffectTraits::VertexShaderCount);
-    int pi = EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[sp];
+    const int pi = EffectBase<AlphaTestEffectTraits>::PixelShaderIndices[sp];
     assert(pi >= 0 && pi < AlphaTestEffectTraits::PixelShaderCount);
     _Analysis_assume_(pi >= 0 && pi < AlphaTestEffectTraits::PixelShaderCount);
 
@@ -283,7 +283,7 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 {
     // Compute derived parameter values.
     matrices.SetConstants(dirtyFlags, constants.worldViewProj);
-    fog.SetConstants(dirtyFlags, matrices.worldView, constants.fogVector);            
+    fog.SetConstants(dirtyFlags, matrices.worldView, constants.fogVector);
     color.SetConstants(dirtyFlags, constants.diffuseColor);
 
     UpdateConstants();
@@ -292,10 +292,10 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
     if (dirtyFlags & EffectDirtyFlags::AlphaTest)
     {
         // Convert reference alpha from 8 bit integer to 0-1 float format.
-        auto reference = static_cast<float>(referenceAlpha) / 255.0f;
-                
+        auto const reference = static_cast<float>(referenceAlpha) / 255.0f;
+
         // Comparison tolerance of half the 8 bit integer precision.
-        const float threshold = 0.5f / 255.0f;
+        constexpr float threshold = 0.5f / 255.0f;
 
         // What to do if the alpha comparison passes or fails. Positive accepts the pixel, negative clips it.
         static const XMVECTORF32 selectIfTrue  = { { {  1, -1 } } };
@@ -362,7 +362,7 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D12GraphicsCommandList* commandList)
 
         // x = compareTo, y = threshold, zw = resultSelector.
         constants.alphaTest = XMVectorPermute<0, 1, 4, 5>(XMVectorSet(compareTo, threshold, 0, 0), resultSelector);
-                
+
         dirtyFlags &= ~EffectDirtyFlags::AlphaTest;
         dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
     }

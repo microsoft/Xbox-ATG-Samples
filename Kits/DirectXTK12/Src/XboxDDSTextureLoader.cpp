@@ -85,10 +85,9 @@ namespace
         }
 
         // open the file
-        ScopedHandle hFile(safe_handle(CreateFile2(fileName,
-            GENERIC_READ,
-            FILE_SHARE_READ,
-            OPEN_EXISTING,
+        ScopedHandle hFile(safe_handle(CreateFile2(
+            fileName,
+            GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING,
             nullptr)));
 
         if (!hFile)
@@ -570,7 +569,7 @@ HRESULT Xbox::CreateDDSTextureFromMemory(
 
 //--------------------------------------------------------------------------------------
 _Use_decl_annotations_
-HRESULT Xbox::CreateDDSTextureFromFile( 
+HRESULT Xbox::CreateDDSTextureFromFile(
     ID3D12Device* d3dDevice,
     const wchar_t* fileName,
     ID3D12Resource** texture,

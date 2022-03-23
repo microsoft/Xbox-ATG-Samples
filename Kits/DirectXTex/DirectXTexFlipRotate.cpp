@@ -12,6 +12,7 @@
 #include "DirectXTexP.h"
 
 using namespace DirectX;
+using namespace DirectX::Internal;
 using Microsoft::WRL::ComPtr;
 
 namespace
@@ -100,7 +101,7 @@ namespace
         assert(srcImage.format == destImage.format);
 
         ScratchImage temp;
-        HRESULT hr = _ConvertToR16G16B16A16(srcImage, temp);
+        HRESULT hr = ConvertToR16G16B16A16(srcImage, temp);
         if (FAILED(hr))
             return hr;
 
@@ -123,7 +124,7 @@ namespace
 
         temp.Release();
 
-        hr = _ConvertFromR16G16B16A16(*tdest, destImage);
+        hr = ConvertFromR16G16B16A16(*tdest, destImage);
         if (FAILED(hr))
             return hr;
 
@@ -142,7 +143,7 @@ namespace
         assert(srcImage.format == destImage.format);
 
         ScratchImage temp;
-        HRESULT hr = _ConvertToR32G32B32A32(srcImage, temp);
+        HRESULT hr = ConvertToR32G32B32A32(srcImage, temp);
         if (FAILED(hr))
             return hr;
 
@@ -165,7 +166,7 @@ namespace
 
         temp.Release();
 
-        hr = _ConvertFromR32G32B32A32(*tdest, destImage);
+        hr = ConvertFromR32G32B32A32(*tdest, destImage);
         if (FAILED(hr))
             return hr;
 
@@ -210,7 +211,7 @@ HRESULT DirectX::FlipRotate(
     static_assert(static_cast<int>(TEX_FR_FLIP_VERTICAL) == static_cast<int>(WICBitmapTransformFlipVertical), "TEX_FR_FLIP_VERTICAL no longer matches WIC");
 
     // Only supports 90, 180, 270, or no rotation flags... not a combination of rotation flags
-    int rotateMode = static_cast<int>(flags & (TEX_FR_ROTATE0 | TEX_FR_ROTATE90 | TEX_FR_ROTATE180 | TEX_FR_ROTATE270));
+    const int rotateMode = static_cast<int>(flags & (TEX_FR_ROTATE0 | TEX_FR_ROTATE90 | TEX_FR_ROTATE180 | TEX_FR_ROTATE270));
 
     switch (rotateMode)
     {
@@ -245,7 +246,7 @@ HRESULT DirectX::FlipRotate(
     }
 
     WICPixelFormatGUID pfGUID;
-    if (_DXGIToWIC(srcImage.format, pfGUID))
+    if (DXGIToWIC(srcImage.format, pfGUID))
     {
         // Case 1: Source format is supported by Windows Imaging Component
         hr = PerformFlipRotateUsingWIC(srcImage, flags, pfGUID, *rimage);
@@ -253,7 +254,7 @@ HRESULT DirectX::FlipRotate(
     else
     {
         // Case 2: Source format is not supported by WIC, so we have to convert, flip/rotate, and convert back
-        uint64_t expandedSize = uint64_t(srcImage.width) * uint64_t(srcImage.height) * sizeof(float) * 4;
+        const uint64_t expandedSize = uint64_t(srcImage.width) * uint64_t(srcImage.height) * sizeof(float) * 4;
         if (expandedSize > UINT32_MAX)
         {
             // Image is too large for float32, so have to use float16 instead
@@ -303,7 +304,7 @@ HRESULT DirectX::FlipRotate(
     static_assert(static_cast<int>(TEX_FR_FLIP_VERTICAL) == static_cast<int>(WICBitmapTransformFlipVertical), "TEX_FR_FLIP_VERTICAL no longer matches WIC");
 
     // Only supports 90, 180, 270, or no rotation flags... not a combination of rotation flags
-    int rotateMode = static_cast<int>(flags & (TEX_FR_ROTATE0 | TEX_FR_ROTATE90 | TEX_FR_ROTATE180 | TEX_FR_ROTATE270));
+    const int rotateMode = static_cast<int>(flags & (TEX_FR_ROTATE0 | TEX_FR_ROTATE90 | TEX_FR_ROTATE180 | TEX_FR_ROTATE270));
 
     switch (rotateMode)
     {
@@ -345,7 +346,7 @@ HRESULT DirectX::FlipRotate(
     }
 
     WICPixelFormatGUID pfGUID;
-    bool wicpf = _DXGIToWIC(metadata.format, pfGUID);
+    const bool wicpf = DXGIToWIC(metadata.format, pfGUID);
 
     for (size_t index = 0; index < nimages; ++index)
     {
@@ -387,7 +388,7 @@ HRESULT DirectX::FlipRotate(
         else
         {
             // Case 2: Source format is not supported by WIC, so we have to convert, flip/rotate, and convert back
-            uint64_t expandedSize = uint64_t(src.width) * uint64_t(src.height) * sizeof(float) * 4;
+            const uint64_t expandedSize = uint64_t(src.width) * uint64_t(src.height) * sizeof(float) * 4;
             if (expandedSize > UINT32_MAX)
             {
                 // Image is too large for float32, so have to use float16 instead

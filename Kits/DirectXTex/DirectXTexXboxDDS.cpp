@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: DirectXTexXboxDDS.cpp
 //
-// DirectXTex Auxillary functions for saving "XBOX" Xbox One variants of DDS files
+// DirectXTex Auxillary functions for saving "XBOX" Xbox variants of DDS files
 //
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
@@ -80,7 +80,7 @@ namespace
         }
 
         // DDS files always start with the same magic number ("DDS ")
-        uint32_t dwMagicNumber = *reinterpret_cast<const uint32_t*>(pSource);
+        auto const dwMagicNumber = *reinterpret_cast<const uint32_t*>(pSource);
         if (dwMagicNumber != DDS_MAGIC)
         {
             return E_FAIL;
@@ -463,7 +463,7 @@ HRESULT Xbox::GetMetadataFromDDSFile(
     }
 
     // Read the header in (including extended header if present)
-    uint8_t header[XBOX_HEADER_SIZE];
+    uint8_t header[XBOX_HEADER_SIZE] = {};
 
     DWORD bytesRead = 0;
     if (!ReadFile(hFile.get(), header, XBOX_HEADER_SIZE, &bytesRead, nullptr))
@@ -527,7 +527,7 @@ HRESULT Xbox::LoadFromDDSMemory(
     }
 
     // Copy tiled data
-    size_t remaining = size - XBOX_HEADER_SIZE;
+    const size_t remaining = size - XBOX_HEADER_SIZE;
 
     if (remaining < dataSize)
     {
@@ -595,7 +595,7 @@ HRESULT Xbox::LoadFromDDSFile(
     }
 
     // Read the header in (including extended header if present)
-    uint8_t header[XBOX_HEADER_SIZE];
+    uint8_t header[XBOX_HEADER_SIZE] = {};
 
     DWORD bytesRead = 0;
     if (!ReadFile(hFile.get(), header, XBOX_HEADER_SIZE, &bytesRead, nullptr))
@@ -622,7 +622,7 @@ HRESULT Xbox::LoadFromDDSFile(
     }
 
     // Read tiled data
-    DWORD remaining = fileInfo.EndOfFile.LowPart - XBOX_HEADER_SIZE;
+    const DWORD remaining = fileInfo.EndOfFile.LowPart - XBOX_HEADER_SIZE;
     if (remaining == 0)
         return E_FAIL;
 
@@ -677,7 +677,7 @@ HRESULT Xbox::SaveToDDSMemory(const XboxImage& xbox, Blob& blob)
     }
 
     // Copy tiled data
-    size_t remaining = blob.GetBufferSize() - XBOX_HEADER_SIZE;
+    const size_t remaining = blob.GetBufferSize() - XBOX_HEADER_SIZE;
     pDestination += XBOX_HEADER_SIZE;
 
     if (!remaining)
@@ -708,7 +708,7 @@ HRESULT Xbox::SaveToDDSFile(const XboxImage& xbox, const wchar_t* szFile)
         return E_INVALIDARG;
 
     // Create DDS Header
-    uint8_t header[XBOX_HEADER_SIZE];
+    uint8_t header[XBOX_HEADER_SIZE] = {};
     HRESULT hr = EncodeDDSHeader(xbox, header, XBOX_HEADER_SIZE);
     if (FAILED(hr))
         return hr;

@@ -79,12 +79,12 @@ void TextConsole::Render()
 
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    float lineSpacing = m_font->GetLineSpacing();
+    const float lineSpacing = m_font->GetLineSpacing();
 
-    float x = float(m_layout.left);
-    float y = float(m_layout.top);
+    const float x = float(m_layout.left);
+    const float y = float(m_layout.top);
 
-    XMVECTOR foregroundColor = XMLoadFloat4(&m_foregroundColor);
+    const XMVECTOR foregroundColor = XMLoadFloat4(&m_foregroundColor);
 
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
     m_batch->Begin(commandList);
@@ -96,11 +96,11 @@ void TextConsole::Render()
 
     for (unsigned int line = 0; line < m_rows; ++line)
     {
-        XMFLOAT2 pos(x, y + lineSpacing * float(line));
+        const XMFLOAT2 pos(x, y + lineSpacing * float(line));
 
         if (*(m_lines[textLine].m_text))
         {
-            XMVECTOR lineColor = XMLoadFloat4(&m_lines[textLine].m_textColor);
+            const XMVECTOR lineColor = XMLoadFloat4(&m_lines[textLine].m_textColor);
             m_font->DrawString(m_batch.get(), m_lines[textLine].m_text, pos, XMColorEqual(lineColor, Line::s_defaultColor) ? foregroundColor : lineColor);
         }
 
@@ -201,7 +201,7 @@ void TextConsole::FormatImpl(CXMVECTOR color, const wchar_t* strFormat, va_list 
 {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    auto len = size_t(_vscwprintf(strFormat, args) + 1);
+    auto const len = size_t(_vscwprintf(strFormat, args) + 1);
 
     if (m_tempBuffer.size() < len)
         m_tempBuffer.resize(len);
@@ -228,10 +228,10 @@ void TextConsole::SetWindow(const RECT& layout)
 
     assert(m_font != nullptr);
 
-    float lineSpacing = m_font->GetLineSpacing();
+    const float lineSpacing = m_font->GetLineSpacing();
     unsigned int rows = std::max<unsigned int>(1, static_cast<unsigned int>(float(layout.bottom - layout.top) / lineSpacing));
 
-    RECT fontLayout = m_font->MeasureDrawBounds(L"X", XMFLOAT2(0, 0));
+    const RECT fontLayout = m_font->MeasureDrawBounds(L"X", XMFLOAT2(0, 0));
     unsigned int columns = std::max<unsigned int>(1, static_cast<unsigned int>(float(layout.right - layout.left) / float(fontLayout.right - fontLayout.left)));
 
     auto buffer = std::make_unique<wchar_t[]>((columns + 1) * rows);
@@ -245,8 +245,8 @@ void TextConsole::SetWindow(const RECT& layout)
 
     if (m_lines)
     {
-        unsigned int c = std::min<unsigned int>(columns, m_columns);
-        unsigned int r = std::min<unsigned int>(rows, m_rows);
+        const unsigned int c = std::min<unsigned int>(columns, m_columns);
+        const unsigned int r = std::min<unsigned int>(rows, m_rows);
 
         for (unsigned int line = 0; line < r; ++line)
         {
@@ -342,7 +342,7 @@ void TextConsole::ProcessString(FXMVECTOR color, const wchar_t* str)
 
     m_lines[m_currentLine].SetColor(color);
 
-    float width = float(m_layout.right - m_layout.left);
+    const float width = float(m_layout.right - m_layout.left);
 
     for (const wchar_t* ch = str; *ch != 0; ++ch)
     {
@@ -363,7 +363,7 @@ void TextConsole::ProcessString(FXMVECTOR color, const wchar_t* str)
         {
             m_lines[m_currentLine].m_text[m_currentColumn] = *ch;
 
-            auto fontSize = m_font->MeasureString(m_lines[m_currentLine].m_text);
+            auto const fontSize = m_font->MeasureString(m_lines[m_currentLine].m_text);
             if (XMVectorGetX(fontSize) > width)
             {
                 m_lines[m_currentLine].m_text[m_currentColumn] = L'\0';
@@ -474,8 +474,8 @@ void TextConsoleImage::SetWindow(const RECT& fullscreen, bool useSafeRect)
         TextConsole::SetWindow(fullscreen);
     }
 
-    auto width = UINT(std::max<LONG>(fullscreen.right - fullscreen.left, 1));
-    auto height = UINT(std::max<LONG>(fullscreen.bottom - fullscreen.top, 1));
+    auto const width = UINT(std::max<LONG>(fullscreen.right - fullscreen.left, 1));
+    auto const height = UINT(std::max<LONG>(fullscreen.bottom - fullscreen.top, 1));
 
 #if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
     D3D12_VIEWPORT vp = { 0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height),
@@ -519,7 +519,7 @@ void TextConsoleImage::RestoreDevice(
         DX::ThrowIfFailed(CreateWICTextureFromFile(device, upload, image, m_background.ReleaseAndGetAddressOf()));
     }
 
-    auto desc = m_background->GetDesc();
+    auto const desc = m_background->GetDesc();
     if (desc.Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE2D)
     {
         throw std::runtime_error("Only supports 2D images");

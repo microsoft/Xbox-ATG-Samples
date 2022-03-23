@@ -27,8 +27,8 @@ namespace ATG
 
         FrontPanelDisplay(_In_ IXboxFrontPanelControl *frontPanelControl);
 
-        FrontPanelDisplay(FrontPanelDisplay &&moveFrom) = default;
-        FrontPanelDisplay& operator=(FrontPanelDisplay &&moveFrom) = default;
+        FrontPanelDisplay(FrontPanelDisplay &&) = default;
+        FrontPanelDisplay& operator=(FrontPanelDisplay &&) = default;
 
         FrontPanelDisplay(FrontPanelDisplay const&) = delete;
         FrontPanelDisplay& operator=(FrontPanelDisplay const&) = delete;

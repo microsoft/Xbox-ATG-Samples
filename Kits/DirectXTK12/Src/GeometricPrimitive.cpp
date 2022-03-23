@@ -41,7 +41,7 @@ public:
         D3D12_RESOURCE_STATES stateAfterIB);
 
     void DrawInstanced(_In_ ID3D12GraphicsCommandList* commandList, uint32_t instanceCount, uint32_t startInstanceLocation) const;
-    
+
     UINT                        mIndexCount;
     SharedGraphicsResource      mIndexBuffer;
     SharedGraphicsResource      mVertexBuffer;
@@ -69,7 +69,7 @@ void GeometricPrimitive::Impl::Initialize(
     if (sizeInBytes > uint64_t(D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
         throw std::invalid_argument("VB too large for DirectX 12");
 
-    auto vertSizeBytes = static_cast<size_t>(sizeInBytes);
+    auto const vertSizeBytes = static_cast<size_t>(sizeInBytes);
 
     mVertexBuffer = GraphicsMemory::Get(device).Allocate(vertSizeBytes);
 
@@ -81,7 +81,7 @@ void GeometricPrimitive::Impl::Initialize(
     if (sizeInBytes > uint64_t(D3D12_REQ_RESOURCE_SIZE_IN_MEGABYTES_EXPRESSION_A_TERM * 1024u * 1024u))
         throw std::invalid_argument("IB too large for DirectX 12");
 
-    auto indSizeBytes = static_cast<size_t>(sizeInBytes);
+    auto const indSizeBytes = static_cast<size_t>(sizeInBytes);
 
     mIndexBuffer = GraphicsMemory::Get(device).Allocate(indSizeBytes);
 
@@ -108,14 +108,14 @@ void GeometricPrimitive::Impl::LoadStaticBuffers(
     ID3D12Device* device,
     ResourceUploadBatch& resourceUploadBatch)
 {
-    CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
+    const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
     // Convert dynamic VB to static VB
     if (!mStaticVertexBuffer)
     {
         assert(mVertexBuffer);
 
-        auto desc = CD3DX12_RESOURCE_DESC::Buffer(mVertexBuffer.Size());
+        auto const desc = CD3DX12_RESOURCE_DESC::Buffer(mVertexBuffer.Size());
 
         ThrowIfFailed(device->CreateCommittedResource(
             &heapProperties,
@@ -144,7 +144,7 @@ void GeometricPrimitive::Impl::LoadStaticBuffers(
     {
         assert(mIndexBuffer);
 
-        auto desc = CD3DX12_RESOURCE_DESC::Buffer(mIndexBuffer.Size());
+        auto const desc = CD3DX12_RESOURCE_DESC::Buffer(mIndexBuffer.Size());
 
         ThrowIfFailed(device->CreateCommittedResource(
             &heapProperties,
@@ -468,7 +468,7 @@ void GeometricPrimitive::CreateCone(
     VertexCollection& vertices,
     IndexCollection& indices,
     float diameter,
-    float height, 
+    float height,
     size_t tessellation,
     bool rhcoords)
 {
@@ -487,7 +487,7 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateTorus(
     size_t tessellation,
     bool rhcoords,
     _In_opt_ ID3D12Device* device)
-{	
+{
     // Create the primitive object.
     std::unique_ptr<GeometricPrimitive> primitive(new GeometricPrimitive());
 
@@ -685,7 +685,7 @@ std::unique_ptr<GeometricPrimitive> GeometricPrimitive::CreateCustom(
     if (indices.size() % 3)
         throw std::invalid_argument("Expected triangular faces");
 
-    size_t nVerts = vertices.size();
+    const size_t nVerts = vertices.size();
     if (nVerts >= USHRT_MAX)
         throw std::invalid_argument("Too many vertices for 16-bit index buffer");
 

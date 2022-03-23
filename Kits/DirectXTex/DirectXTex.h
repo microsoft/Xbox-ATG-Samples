@@ -598,7 +598,7 @@ namespace DirectX
         // Resize the image to width x height. Defaults to Fant filtering.
         // Note for a complex resize, the result will always have mipLevels == 1
 
-    const float TEX_THRESHOLD_DEFAULT = 0.5f;
+    constexpr float TEX_THRESHOLD_DEFAULT = 0.5f;
         // Default value for alpha threshold used when converting to 1-bit alpha
 
     HRESULT __cdecl Convert(
@@ -826,6 +826,13 @@ namespace DirectX
     IWICImagingFactory* __cdecl GetWICFactory(bool& iswic2) noexcept;
     void __cdecl SetWICFactory(_In_opt_ IWICImagingFactory* pWIC) noexcept;
 #endif
+
+    //---------------------------------------------------------------------------------
+    // DDS helper functions
+    HRESULT __cdecl EncodeDDSHeader(
+        _In_ const TexMetadata& metadata, DDS_FLAGS flags,
+        _Out_writes_bytes_to_opt_(maxsize, required) void* pDestination, _In_ size_t maxsize,
+        _Out_ size_t& required) noexcept;
 
     //---------------------------------------------------------------------------------
     // Direct3D 11 functions

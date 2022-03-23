@@ -29,7 +29,7 @@ static const float3x3 from2020to709 =
     { -0.0181508f, -0.1005789f, 1.1187297f }
 };
 
-// Color rotation matrix to rotate DCI-P3 color primaries into Rec.2020
+// Color rotation matrix to rotate P3-D65 color primaries into Rec.2020
 static const float3x3 fromP3to2020 =
 {
     { 0.753845f, 0.198593f, 0.047562f },
@@ -37,7 +37,7 @@ static const float3x3 fromP3to2020 =
     { -0.00121055f, 0.0176041f, 0.983607f }
 };
 
-// Rotation matrix describing a custom color space which is bigger than Rec.709, but a little smaller than P3
+// Rotation matrix describing a custom color space which is bigger than Rec.709, but a little smaller than P3-D65
 // This enhances colors, especially in the SDR range, by being a little more saturated. This can be used instead
 // of from709to2020.
 static const float3x3 fromExpanded709to2020 =

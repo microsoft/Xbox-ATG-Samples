@@ -10,6 +10,7 @@
 
 #include <cassert>
 #include <cstdio>
+#include <tuple>
 
 #include <wrl/client.h>
 
@@ -18,10 +19,7 @@ namespace DX
     class auto_delete_file
     {
     public:
-        auto_delete_file(HANDLE hFile) : m_handle(hFile) {}
-
-        auto_delete_file(const auto_delete_file&) = delete;
-        auto_delete_file& operator=(const auto_delete_file&) = delete;
+        auto_delete_file(HANDLE hFile) noexcept : m_handle(hFile) {}
 
         ~auto_delete_file()
         {
@@ -29,22 +27,17 @@ namespace DX
             {
                 FILE_DISPOSITION_INFO info = {};
                 info.DeleteFile = TRUE;
-                BOOL b = true;
-                b = SetFileInformationByHandle(m_handle, FileDispositionInfo, &info, static_cast<DWORD>(sizeof(info)));
-#ifdef _DEBUG
-                if (!b)
-                {
-                    DWORD error = GetLastError();
-                    wchar_t buff[128] = {};
-                    swprintf_s(buff, L"ERROR: SetFileInformationByHandle failed (0x%08X)\n", error);
-                    OutputDebugStringW(buff);
-                }
-#endif
-                assert(b);
+                std::ignore = SetFileInformationByHandle(m_handle, FileDispositionInfo, &info, sizeof(info));
             }
         }
 
-        void clear() { m_handle = 0; }
+        auto_delete_file(const auto_delete_file&) = delete;
+        auto_delete_file& operator=(const auto_delete_file&) = delete;
+
+        auto_delete_file(const auto_delete_file&&) = delete;
+        auto_delete_file& operator=(const auto_delete_file&&) = delete;
+
+        void clear() noexcept { m_handle = nullptr; }
 
     private:
         HANDLE m_handle;
@@ -54,10 +47,7 @@ namespace DX
     class auto_delete_file_wic
     {
     public:
-        auto_delete_file_wic(Microsoft::WRL::ComPtr<IWICStream>& hFile, LPCWSTR szFile) :  m_filename(szFile), m_handle(hFile) {}
-
-        auto_delete_file_wic(const auto_delete_file_wic&) = delete;
-        auto_delete_file_wic& operator=(const auto_delete_file_wic&) = delete;
+        auto_delete_file_wic(Microsoft::WRL::ComPtr<IWICStream>& hFile, LPCWSTR szFile) noexcept :  m_filename(szFile), m_handle(hFile) {}
 
         ~auto_delete_file_wic()
         {
@@ -68,7 +58,13 @@ namespace DX
             }
         }
 
-        void clear() { m_filename = 0; }
+        auto_delete_file_wic(const auto_delete_file_wic&) = delete;
+        auto_delete_file_wic& operator=(const auto_delete_file_wic&) = delete;
+
+        auto_delete_file_wic(const auto_delete_file_wic&&) = delete;
+        auto_delete_file_wic& operator=(const auto_delete_file_wic&&) = delete;
+
+        void clear() noexcept { m_filename = nullptr; }
 
     private:
         LPCWSTR m_filename;

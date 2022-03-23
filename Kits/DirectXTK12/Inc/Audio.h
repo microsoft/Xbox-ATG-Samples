@@ -333,6 +333,7 @@ namespace DirectX
         bool __cdecl IsPrepared() const noexcept;
         bool __cdecl IsInUse() const noexcept;
         bool __cdecl IsStreamingBank() const noexcept;
+        bool __cdecl IsAdvancedFormat() const noexcept;
 
         size_t __cdecl GetSampleSizeInBytes(unsigned int index) const noexcept;
         // Returns size of wave audio data
@@ -478,10 +479,10 @@ namespace DirectX
 
         void XM_CALLCONV SetOrientationFromQuaternion(FXMVECTOR quat) noexcept
         {
-            XMVECTOR forward = XMVector3Rotate(g_XMIdentityR2, quat);
+            const XMVECTOR forward = XMVector3Rotate(g_XMIdentityR2, quat);
             XMStoreFloat3(reinterpret_cast<XMFLOAT3*>(&OrientFront), forward);
 
-            XMVECTOR up = XMVector3Rotate(g_XMIdentityR1, quat);
+            const XMVECTOR up = XMVector3Rotate(g_XMIdentityR1, quat);
             XMStoreFloat3(reinterpret_cast<XMFLOAT3*>(&OrientTop), up);
         }
 
@@ -490,10 +491,10 @@ namespace DirectX
         {
             if (dt > 0.f)
             {
-                XMVECTOR lastPos = XMLoadFloat3(reinterpret_cast<const XMFLOAT3*>(&Position));
+                const XMVECTOR lastPos = XMLoadFloat3(reinterpret_cast<const XMFLOAT3*>(&Position));
 
                 XMVECTOR vDelta = XMVectorSubtract(newPos, lastPos);
-                XMVECTOR vt = XMVectorReplicate(dt);
+                const XMVECTOR vt = XMVectorReplicate(dt);
                 XMVECTOR v = XMVectorDivide(vDelta, vt);
                 XMStoreFloat3(reinterpret_cast<XMFLOAT3*>(&Velocity), v);
 
@@ -572,10 +573,10 @@ namespace DirectX
 
         void XM_CALLCONV SetOrientationFromQuaternion(FXMVECTOR quat) noexcept
         {
-            XMVECTOR forward = XMVector3Rotate(g_XMIdentityR2, quat);
+            const XMVECTOR forward = XMVector3Rotate(g_XMIdentityR2, quat);
             XMStoreFloat3(reinterpret_cast<XMFLOAT3*>(&OrientFront), forward);
 
-            XMVECTOR up = XMVector3Rotate(g_XMIdentityR1, quat);
+            const XMVECTOR up = XMVector3Rotate(g_XMIdentityR1, quat);
             XMStoreFloat3(reinterpret_cast<XMFLOAT3*>(&OrientTop), up);
         }
 
@@ -584,10 +585,10 @@ namespace DirectX
         {
             if (dt > 0.f)
             {
-                XMVECTOR lastPos = XMLoadFloat3(reinterpret_cast<const XMFLOAT3*>(&Position));
+                const XMVECTOR lastPos = XMLoadFloat3(reinterpret_cast<const XMFLOAT3*>(&Position));
 
                 XMVECTOR vDelta = XMVectorSubtract(newPos, lastPos);
-                XMVECTOR vt = XMVectorReplicate(dt);
+                const XMVECTOR vt = XMVectorReplicate(dt);
                 XMVECTOR v = XMVectorDivide(vDelta, vt);
                 XMStoreFloat3(reinterpret_cast<XMFLOAT3*>(&Velocity), v);
 

@@ -181,7 +181,7 @@ namespace DirectX
             assert(pShaderByteCode != nullptr && pByteCodeLength != nullptr);
             assert(permutation >= 0 && permutation < Traits::ShaderPermutationCount);
             _Analysis_assume_(permutation >= 0 && permutation < Traits::ShaderPermutationCount);
-            int shaderIndex = VertexShaderIndices[permutation];
+            const int shaderIndex = VertexShaderIndices[permutation];
             assert(shaderIndex >= 0 && shaderIndex < Traits::VertexShaderCount);
             _Analysis_assume_(shaderIndex >= 0 && shaderIndex < Traits::VertexShaderCount);
 
@@ -218,7 +218,7 @@ namespace DirectX
             if (dirtyFlags & EffectDirtyFlags::ConstantBuffer)
             {
                 mConstantBuffer.SetData(deviceContext, constants);
-     
+
                 dirtyFlags &= ~EffectDirtyFlags::ConstantBuffer;
             }
 
@@ -259,7 +259,7 @@ namespace DirectX
                 mPixelShaders{}
             { }
 
-        
+
             // Gets or lazily creates the specified vertex shader permutation.
             ID3D11VertexShader* GetVertexShader(int permutation)
             {

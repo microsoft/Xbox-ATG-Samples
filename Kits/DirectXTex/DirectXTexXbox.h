@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: DirectXTexXbox.h
 //
-// DirectXTex Auxillary functions for Xbox One texture processing
+// DirectXTex Auxillary functions for Xbox texture processing
 //
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
@@ -37,12 +37,12 @@ namespace Xbox
 {
 #if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
     using XboxTileMode = XG_SWIZZLE_MODE;
-    const XboxTileMode c_XboxTileModeInvalid = XG_SWIZZLE_MODE_INVALID;
-    const XboxTileMode c_XboxTileModeLinear = XG_SWIZZLE_MODE_LINEAR;
+    constexpr XboxTileMode c_XboxTileModeInvalid = XG_SWIZZLE_MODE_INVALID;
+    constexpr XboxTileMode c_XboxTileModeLinear = XG_SWIZZLE_MODE_LINEAR;
 #else
     using XboxTileMode = XG_TILE_MODE;
     constexpr XboxTileMode c_XboxTileModeInvalid = XG_TILE_MODE_INVALID;
-    const XboxTileMode c_XboxTileModeLinear = XG_TILE_MODE_LINEAR;
+    constexpr XboxTileMode c_XboxTileModeLinear = XG_TILE_MODE_LINEAR;
 #endif
 
     class XboxImage
@@ -101,7 +101,7 @@ namespace Xbox
     HRESULT SaveToDDSFile(_In_ const XboxImage& xbox, _In_z_ const wchar_t* szFile);
 
     //---------------------------------------------------------------------------------
-    // Xbox One Texture Tiling / Detiling (requires XG DLL to be present at runtime)
+    // Xbox Texture Tiling / Detiling (requires XG DLL to be present at runtime)
 
     HRESULT Tile(_In_ const DirectX::Image& srcImage, _Out_ XboxImage& xbox, _In_ XboxTileMode mode = c_XboxTileModeInvalid);
     HRESULT Tile(
@@ -140,4 +140,4 @@ namespace Xbox
 
 #endif
 
-}; // namespace
+} // namespace

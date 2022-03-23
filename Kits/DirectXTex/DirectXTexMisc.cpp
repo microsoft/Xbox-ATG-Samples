@@ -12,6 +12,7 @@
 #include "DirectXTexP.h"
 
 using namespace DirectX;
+using namespace DirectX::Internal;
 
 #ifdef __GNUC__
 #pragma GCC diagnostic push
@@ -101,11 +102,11 @@ namespace
         for (size_t h = 0; h < image1.height; ++h)
         {
             XMVECTOR* ptr1 = scanline.get();
-            if (!_LoadScanline(ptr1, width, pSrc1, rowPitch1, image1.format))
+            if (!LoadScanline(ptr1, width, pSrc1, rowPitch1, image1.format))
                 return E_FAIL;
 
             XMVECTOR* ptr2 = scanline.get() + width;
-            if (!_LoadScanline(ptr2, width, pSrc2, rowPitch2, image2.format))
+            if (!LoadScanline(ptr2, width, pSrc2, rowPitch2, image2.format))
                 return E_FAIL;
 
             for (size_t i = 0; i < width; ++i)
@@ -157,8 +158,8 @@ namespace
         }
 
         // MSE = sum[ (I1 - I2)^2 ] / w*h
-        XMVECTOR d = XMVectorReplicate(float(image1.width * image1.height));
-        XMVECTOR v = XMVectorDivide(acc, d);
+        const XMVECTOR d = XMVectorReplicate(float(image1.width * image1.height));
+        const XMVECTOR v = XMVectorDivide(acc, d);
         if (mseV)
         {
             XMStoreFloat4(reinterpret_cast<XMFLOAT4*>(mseV), v);
@@ -177,7 +178,7 @@ namespace
     //-------------------------------------------------------------------------------------
     HRESULT EvaluateImage_(
         const Image& image,
-        std::function<void __cdecl(_In_reads_(width) const XMVECTOR* pixels, size_t width, size_t y)>& pixelFunc)
+        const std::function<void __cdecl(_In_reads_(width) const XMVECTOR* pixels, size_t width, size_t y)>& pixelFunc)
     {
         if (!pixelFunc)
             return E_INVALIDARG;
@@ -198,7 +199,7 @@ namespace
 
         for (size_t h = 0; h < image.height; ++h)
         {
-            if (!_LoadScanline(scanline.get(), width, pSrc, rowPitch, image.format))
+            if (!LoadScanline(scanline.get(), width, pSrc, rowPitch, image.format))
                 return E_FAIL;
 
             pixelFunc(scanline.get(), width, h);
@@ -213,7 +214,7 @@ namespace
     //-------------------------------------------------------------------------------------
     HRESULT TransformImage_(
         const Image& srcImage,
-        std::function<void __cdecl(_Out_writes_(width) XMVECTOR* outPixels, _In_reads_(width) const XMVECTOR* inPixels, size_t width, size_t y)>& pixelFunc,
+        const std::function<void __cdecl(_Out_writes_(width) XMVECTOR* outPixels, _In_reads_(width) const XMVECTOR* inPixels, size_t width, size_t y)>& pixelFunc,
         const Image& destImage)
     {
         if (!pixelFunc)
@@ -242,7 +243,7 @@ namespace
 
         for (size_t h = 0; h < srcImage.height; ++h)
         {
-            if (!_LoadScanline(sScanline, width, pSrc, spitch, srcImage.format))
+            if (!LoadScanline(sScanline, width, pSrc, spitch, srcImage.format))
                 return E_FAIL;
 
 #ifdef _DEBUG
@@ -251,7 +252,7 @@ namespace
 
             pixelFunc(dScanline, sScanline, width, h);
 
-            if (!_StoreScanline(pDest, destImage.rowPitch, destImage.format, dScanline, width))
+            if (!StoreScanline(pDest, destImage.rowPitch, destImage.format, dScanline, width))
                 return E_FAIL;
 
             pSrc += spitch;
@@ -364,12 +365,12 @@ HRESULT DirectX::CopyRectangle(
         if (((pSrc + copyS) > pEndSrc) || ((pDest + copyD) > pEndDest))
             return E_FAIL;
 
-        if (!_LoadScanline(scanline.get(), srcRect.w, pSrc, copyS, srcImage.format))
+        if (!LoadScanline(scanline.get(), srcRect.w, pSrc, copyS, srcImage.format))
             return E_FAIL;
 
-        _ConvertScanline(scanline.get(), srcRect.w, dstImage.format, srcImage.format, filter);
+        ConvertScanline(scanline.get(), srcRect.w, dstImage.format, srcImage.format, filter);
 
-        if (!_StoreScanline(pDest, copyD, dstImage.format, scanline.get(), srcRect.w))
+        if (!StoreScanline(pDest, copyD, dstImage.format, scanline.get(), srcRect.w))
             return E_FAIL;
 
         pSrc += srcImage.rowPitch;

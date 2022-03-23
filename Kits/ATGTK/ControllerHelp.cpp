@@ -200,17 +200,17 @@ struct ATG::Help::CalloutBox
 #endif
         }
 
-        SpriteFont* spriteFont = help.m_spriteFonts[font].get();
+        const SpriteFont* spriteFont = help.m_spriteFonts[font].get();
 
         // Draw callout text
-        LONG anchorXOffset = 20;  // space between callout line and label/text
-        LONG preLabelXOffset = 6;  // space between a pre-label and text
+        constexpr LONG anchorXOffset = 20;  // space between callout line and label/text
+        constexpr LONG preLabelXOffset = 6; // space between a pre-label and text
 
         if (labelPre)
         {
             // Some labels have a pre-text before the text such as the A,B,X,Y, and DPAD buttons
-            Vector2 textSize = spriteFont->MeasureString(text);
-            Vector2 labelPreSize = spriteFont->MeasureString(labelPre);
+            const Vector2 textSize = spriteFont->MeasureString(text);
+            const Vector2 labelPreSize = spriteFont->MeasureString(labelPre);
 
             if (Alignment::TO_RIGHT == align)
             {
@@ -238,14 +238,14 @@ struct ATG::Help::CalloutBox
             {
                 if (label)
                 {
-                    Vector2 labelSize = help.m_spriteFonts[font]->MeasureString(label);
+                    const Vector2 labelSize = help.m_spriteFonts[font]->MeasureString(label);
                     spriteFont->DrawString(batch, label, Vector2((anchor.x - anchorXOffset) - labelSize.x,
                         (anchor.y - (labelSize.y / 2))), labelForeground);
                 }
 
                 if (text)
                 {
-                    Vector2 textSize = help.m_spriteFonts[font]->MeasureString(text);
+                    const Vector2 textSize = help.m_spriteFonts[font]->MeasureString(text);
                     spriteFont->DrawString(batch, text, Vector2((anchor.x - anchorXOffset) - textSize.x,
                         ((anchor.y) + (textSize.y / 3))), foreground);
                 }
@@ -254,14 +254,14 @@ struct ATG::Help::CalloutBox
             {
                 if (label)
                 {
-                    Vector2 labelSize = help.m_spriteFonts[font]->MeasureString(label);
+                    const Vector2 labelSize = help.m_spriteFonts[font]->MeasureString(label);
                     spriteFont->DrawString(batch, label, Vector2((anchor.x + anchorXOffset),
                         (anchor.y - (labelSize.y / 2))), labelForeground);
                 }
 
                 if (text)
                 {
-                    Vector2 textSize = help.m_spriteFonts[font]->MeasureString(text);
+                    const Vector2 textSize = help.m_spriteFonts[font]->MeasureString(text);
                     spriteFont->DrawString(batch, text, Vector2((anchor.x + anchorXOffset),
                         ((anchor.y) + (textSize.y / 3))), foreground);
                 }
@@ -270,7 +270,7 @@ struct ATG::Help::CalloutBox
             {
                 if (text)
                 {
-                    Vector2 textSize = help.m_spriteFonts[font]->MeasureString(text);
+                    const Vector2 textSize = help.m_spriteFonts[font]->MeasureString(text);
                     spriteFont->DrawString(batch, text, Vector2((anchor.x - (textSize.x / 2)),
                         ((anchor.y) - (textSize.y / 2))), foreground);
                 }
@@ -283,7 +283,7 @@ struct ATG::Help::CalloutBox
         // draw callout lines
         if (type == CalloutType::LINE_TO_ANCHOR)
         {
-            XMVECTOR color = labelForeground;
+            const XMVECTOR color = labelForeground;
 
             if (midpointLine.x > 0) // two lines
             {
@@ -630,7 +630,13 @@ const ATG::Help::CalloutBox ATG::Help::CalloutBox::s_CalloutTemplates[] =
 
 _Use_decl_annotations_
 ATG::Help::Help(const wchar_t* title, const wchar_t* description, const HelpButtonAssignment* buttons, size_t buttonCount, bool linearColors) :
+#if defined(__d3d12_h__) || defined(__d3d12_x_h__) || defined(__XBOX_D3D12_X__)
+    m_circleTexSize{},
+    m_gamepadTexSize{},
+    m_backgroundTexSize{},
+#endif
     m_linearColors(linearColors),
+    m_screenSize{},
     m_calloutCount(0),
     m_callouts(nullptr)
 {
@@ -716,6 +722,10 @@ ATG::Help::Help(const wchar_t* title, const wchar_t* description, const HelpButt
 
     for (size_t j = 0; j < buttonCount; ++j)
     {
+        if (index >= m_calloutCount)
+        {
+            throw std::out_of_range("Not enough callouts");
+        }
         CalloutBox::Create(m_callouts[index++], buttons[j].buttonText, buttons[j].id, m_linearColors);
 
         // DPAD buttons should appear in the order of UP, DOWN, LEFT, RIGHT.  In the event that not all buttons
@@ -795,7 +805,7 @@ void ATG::Help::Render(ID3D12GraphicsCommandList* commandList)
 
     m_spriteBatch->End();
 
-    XMMATRIX proj = XMMatrixOrthographicOffCenterRH(0.f, 1920.f, 1080.f, 0.f, 0.f, 1.f);
+    const XMMATRIX proj = XMMatrixOrthographicOffCenterRH(0.f, 1920.f, 1080.f, 0.f, 0.f, 1.f);
     m_lineEffect->SetProjection(proj);
     
     m_lineEffect->Apply(commandList);
@@ -895,7 +905,7 @@ void ATG::Help::RestoreDevice(ID3D12Device* device, ResourceUploadBatch& uploadB
         CommonStates::DepthNone, CommonStates::CullNone, rtState, D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE);
     m_lineEffect = std::make_unique<BasicEffect>(device, EffectFlags::VertexColor, fxPsoDesc);
 
-    DDS_LOADER_FLAGS loadFlags = m_linearColors ? DDS_LOADER_FORCE_SRGB : DDS_LOADER_DEFAULT;
+    const DDS_LOADER_FLAGS loadFlags = m_linearColors ? DDS_LOADER_FORCE_SRGB : DDS_LOADER_DEFAULT;
 
 #if !defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP)
     wchar_t buff[MAX_PATH];
