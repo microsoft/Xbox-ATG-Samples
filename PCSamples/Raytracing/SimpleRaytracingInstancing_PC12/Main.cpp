@@ -230,6 +230,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, unsigned int message, WPARAM wParam, LPARAM 
         PostQuitMessage(0);
         break;
 
+    case WM_ACTIVATE:
     case WM_INPUT:
     case WM_MOUSEMOVE:
     case WM_LBUTTONDOWN:
@@ -283,6 +284,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, unsigned int message, WPARAM wParam, LPARAM 
         }
         Keyboard::ProcessMessage(message, wParam, lParam);
         break;
+
+    case WM_MOUSEACTIVATE:
+        // When you click activate the window, we want Mouse to ignore it.
+        return MA_ACTIVATEANDEAT;
 
     case WM_MENUCHAR:
         // A menu is active and the user presses a key that does not correspond
