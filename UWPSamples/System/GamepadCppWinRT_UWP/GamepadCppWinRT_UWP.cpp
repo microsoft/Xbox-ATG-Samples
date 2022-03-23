@@ -22,7 +22,6 @@ using Microsoft::WRL::ComPtr;
 
 Sample::Sample() noexcept(false) :
     m_currentGamepad(nullptr),
-    m_currentGamepadNeedsRefresh(false),
     m_leftTrigger(0),
     m_rightTrigger(0),
     m_leftStickX(0),
@@ -46,13 +45,15 @@ void Sample::Initialize(::IUnknown* window, int width, int height, DXGI_MODE_ROT
     m_deviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
 
+    m_currentGamepadNeedsRefresh = false;
+
+    // Register these before querying initial list to avoid 'race condition' with enumeration.
+    Gamepad::GamepadAdded({ this, &Sample::OnGamepadAdded });
+    Gamepad::GamepadRemoved({ this, &Sample::OnGamepadRemoved });    
+
     RefreshCachedGamepads();
 
-    Gamepad::GamepadAdded({ this, &Sample::OnGamepadAdded });
-    Gamepad::GamepadRemoved({ this, &Sample::OnGamepadRemoved });
-    
     m_currentGamepad = GetLastGamepad();
-    m_currentGamepadNeedsRefresh = false;
 
     // UWP on Xbox One triggers a back request whenever the B button is pressed
     // which can result in the app being suspended if unhandled
@@ -66,22 +67,21 @@ void Sample::Initialize(::IUnknown* window, int width, int height, DXGI_MODE_ROT
     });
 }
 
-void Sample::OnGamepadAdded(winrt::Windows::Foundation::IInspectable const &, Gamepad const & args)
+void Sample::OnGamepadAdded(winrt::Windows::Foundation::IInspectable const &, Gamepad const &)
 {
-    m_localCollection.push_back(args);
     m_currentGamepadNeedsRefresh = true;
 }
 
-void Sample::OnGamepadRemoved(winrt::Windows::Foundation::IInspectable const &, Gamepad const & /*args*/)
+void Sample::OnGamepadRemoved(winrt::Windows::Foundation::IInspectable const &, Gamepad const &)
 {
-    RefreshCachedGamepads();
+    m_currentGamepadNeedsRefresh = true;
 }
 
 void Sample::RefreshCachedGamepads()
 {
     m_localCollection.clear();
     auto gamepads = Gamepad::Gamepads();
-    for (auto gamepad : gamepads)
+    for (auto const& gamepad : gamepads)
     {
         m_localCollection.push_back(gamepad);
     }
@@ -118,12 +118,13 @@ void Sample::Update(DX::StepTimer const&)
 
     if (m_currentGamepadNeedsRefresh)
     {
+        m_currentGamepadNeedsRefresh = false;
+        RefreshCachedGamepads();
         auto mostRecentGamepad = GetLastGamepad();
         if (m_currentGamepad != mostRecentGamepad)
         {
             m_currentGamepad = mostRecentGamepad;
         }
-        m_currentGamepadNeedsRefresh = false;
     }
 
     if (m_currentGamepad == nullptr)
