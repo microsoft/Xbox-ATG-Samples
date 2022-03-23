@@ -73,7 +73,7 @@ private:
     winrt::Windows::Gaming::Input::GamepadReading       m_reading;
     const winrt::Windows::Gaming::Input::Gamepad*       m_currentGamepad;
 
-    bool                    m_currentGamepadNeedsRefresh;
+    std::atomic<bool>       m_currentGamepadNeedsRefresh;
     std::wstring            m_buttonString;
     double                  m_leftTrigger;
     double                  m_rightTrigger;

@@ -1,4 +1,4 @@
-﻿//--------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 // pch.h
 //
 // Header for standard system include files.
@@ -20,6 +20,7 @@
 #include <DirectXColors.h>
 
 #include <algorithm>
+#include <atomic>
 #include <exception>
 #include <memory>
 #include <stdexcept>

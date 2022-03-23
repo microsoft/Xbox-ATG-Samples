@@ -77,7 +77,6 @@ namespace
 }
 
 Sample::Sample() noexcept(false) :
-	m_currentGamepadNeedsRefresh(false),
 	m_connected(false),
 	m_leftMotorSpeed(0),
 	m_leftTriggerLevel(0),
@@ -119,30 +118,22 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
 
     m_localCollection = ref new Vector<Gamepad^>();
 
-    auto gamepads = Gamepad::Gamepads;
-    for (auto gamepad : gamepads)
-    {
-        m_localCollection->Append(gamepad);
-    }
+    m_currentGamepadNeedsRefresh = false;
 
-    Gamepad::GamepadAdded += ref new EventHandler<Gamepad^ >([=](Platform::Object^, Gamepad^ args)
+    // Register these before querying initial list to avoid 'race condition' with enumeration.
+    Gamepad::GamepadAdded += ref new EventHandler<Gamepad^ >([=](Platform::Object^, Gamepad^)
     {
-        m_localCollection->Append(args);
         m_currentGamepadNeedsRefresh = true;
     });
 
-    Gamepad::GamepadRemoved += ref new EventHandler<Gamepad^ >([=](Platform::Object^, Gamepad^ args)
+    Gamepad::GamepadRemoved += ref new EventHandler<Gamepad^ >([=](Platform::Object^, Gamepad^)
     {
-        unsigned int index;
-        if (m_localCollection->IndexOf(args, &index))
-        {
-            m_localCollection->RemoveAt(index);
-            m_currentGamepadNeedsRefresh = true;
-        }
+        m_currentGamepadNeedsRefresh = true;
     });
 
+    RefreshCachedGamepads();
+
     m_currentGamepad = GetLastGamepad();
-    m_currentGamepadNeedsRefresh = false;
 
     QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER *>(&m_frequency));
 }
@@ -168,6 +159,16 @@ void Sample::ShutdownCurrentGamepad()
     {
         GamepadVibration vibration = {};
         m_currentGamepad->Vibration = vibration;
+    }
+}
+
+void Sample::RefreshCachedGamepads()
+{
+    m_localCollection.clear();
+    auto gamepads = Gamepad::Gamepads;
+    for (auto gamepad : gamepads)
+    {
+        m_localCollection->Append(gamepad);
     }
 }
 
@@ -275,6 +276,8 @@ void Sample::Update(DX::StepTimer const&)
 
     if (m_currentGamepadNeedsRefresh)
     {
+        m_currentGamepadNeedsRefresh = false;
+        RefreshCachedGamepads();
         auto mostRecentGamepad = GetLastGamepad();
         if (m_currentGamepad != mostRecentGamepad)
         {
@@ -282,7 +285,6 @@ void Sample::Update(DX::StepTimer const&)
             m_currentGamepad = mostRecentGamepad;
             InitializeCurrentGamepad();
         }
-        m_currentGamepadNeedsRefresh = false;
     }
 
     if (m_currentGamepad == nullptr)

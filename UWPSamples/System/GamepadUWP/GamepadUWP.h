@@ -59,6 +59,8 @@ private:
     void CreateDeviceDependentResources();
     void CreateWindowSizeDependentResources();
 
+    void RefreshCachedGamepads();
+
     // Render objects.
     std::unique_ptr<DirectX::SpriteBatch>   m_spriteBatch;
     std::unique_ptr<DirectX::SpriteFont>    m_font;
@@ -70,7 +72,7 @@ private:
     Windows::Gaming::Input::GamepadReading      m_reading;
     Windows::Gaming::Input::Gamepad^            m_currentGamepad;
 
-    bool                    m_currentGamepadNeedsRefresh;
+    std::atomic<bool>       m_currentGamepadNeedsRefresh;
     std::wstring            m_buttonString;
     double                  m_leftTrigger;
     double                  m_rightTrigger;

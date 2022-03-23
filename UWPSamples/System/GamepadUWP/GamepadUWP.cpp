@@ -22,7 +22,6 @@ using namespace Platform::Collections;
 using Microsoft::WRL::ComPtr;
 
 Sample::Sample() noexcept(false) :
-    m_currentGamepadNeedsRefresh(false),
     m_leftTrigger(0),
     m_rightTrigger(0),
     m_leftStickX(0),
@@ -46,32 +45,23 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
     m_deviceResources->CreateWindowSizeDependentResources();
     CreateWindowSizeDependentResources();
 
+    m_currentGamepadNeedsRefresh = false;
     m_localCollection = ref new Vector<Gamepad^>();
 
-    auto gamepads = Gamepad::Gamepads;
-    for (auto gamepad : gamepads)
+    // Register these before querying initial list to avoid 'race condition' with enumeration.
+    Gamepad::GamepadAdded += ref new EventHandler<Gamepad^ >([=](Platform::Object^, Gamepad^)
     {
-        m_localCollection->Append(gamepad);
-    }
-
-    Gamepad::GamepadAdded += ref new EventHandler<Gamepad^ >([=](Platform::Object^, Gamepad^ args)
-    {
-        m_localCollection->Append(args);
         m_currentGamepadNeedsRefresh = true;
     });
 
-    Gamepad::GamepadRemoved += ref new EventHandler<Gamepad^ >([=](Platform::Object^, Gamepad^ args)
+    Gamepad::GamepadRemoved += ref new EventHandler<Gamepad^ >([=](Platform::Object^, Gamepad^)
     {
-        unsigned int index;
-        if (m_localCollection->IndexOf(args, &index))
-        {
-            m_localCollection->RemoveAt(index);
-            m_currentGamepadNeedsRefresh = true;
-        }
+        m_currentGamepadNeedsRefresh = true;
     });
 
+    RefreshCachedGamepads();
+
     m_currentGamepad = GetLastGamepad();
-    m_currentGamepadNeedsRefresh = false;
 
     // UWP on Xbox One triggers a back request whenever the B button is pressed
     // which can result in the app being suspended if unhandled
@@ -83,6 +73,16 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
     {
         args->Handled = true;
     });
+}
+
+void Sample::RefreshCachedGamepads()
+{
+    m_localCollection.clear();
+    auto gamepads = Gamepad::Gamepads;
+    for (auto gamepad : gamepads)
+    {
+        m_localCollection->Append(gamepad);
+    }
 }
 
 #pragma region Frame Update
@@ -116,12 +116,13 @@ void Sample::Update(DX::StepTimer const&)
 
     if (m_currentGamepadNeedsRefresh)
     {
+        m_currentGamepadNeedsRefresh = false;
+        RefreshCachedGamepads();
         auto mostRecentGamepad = GetLastGamepad();
         if (m_currentGamepad != mostRecentGamepad)
         {
             m_currentGamepad = mostRecentGamepad;
         }
-        m_currentGamepadNeedsRefresh = false;
     }
 
     if (m_currentGamepad == nullptr)

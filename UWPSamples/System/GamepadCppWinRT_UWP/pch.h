@@ -1,4 +1,4 @@
-﻿//--------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 // pch.h
 //
 // Header for standard system include files.
@@ -19,6 +19,7 @@
 #include <DirectXColors.h>
 
 #include <algorithm>
+#include <atomic>
 #include <exception>
 #include <future>
 #include <memory>
@@ -45,6 +46,7 @@
 #include <winrt/Windows.UI.ViewManagement.h>
 #include <winrt/Windows.System.h>
 #include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Graphics.Display.h>
 
 namespace DX
