@@ -21,7 +21,7 @@
     <Keyword>Win32Proj</Keyword>
     <ApplicationEnvironment>title</ApplicationEnvironment>
     <!-- - - - -->
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <TargetRuntime>Native</TargetRuntime>
     <AppxBundle>Never</AppxBundle>
@@ -29,7 +29,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Durango'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
@@ -38,7 +38,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
@@ -47,7 +47,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <EmbedManifest>false</EmbedManifest>
@@ -225,7 +225,7 @@
     <None Include="Readme.docx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Kits\DirectXTK\DirectXTK_XboxOneXDK_2015.vcxproj">
+    <ProjectReference Include="..\..\..\Kits\DirectXTK\DirectXTK_XboxOneXDK_2017.vcxproj">
       <Project>{4fdfdccd-ee2e-415c-b458-1e8fdb0d85f2}</Project>
     </ProjectReference>
   </ItemGroup>

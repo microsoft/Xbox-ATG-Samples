@@ -27,7 +27,7 @@ void XM_CALLCONV IEffectMatrices::SetMatrices(FXMMATRIX world, CXMMATRIX view, C
 // Constructor initializes default matrix values.
 EffectMatrices::EffectMatrices() noexcept
 {
-    XMMATRIX id = XMMatrixIdentity();
+    const XMMATRIX id = XMMatrixIdentity();
     world = id;
     view = id;
     projection = id;
@@ -44,7 +44,7 @@ void EffectMatrices::SetConstants(int& dirtyFlags, XMMATRIX& worldViewProjConsta
         worldView = XMMatrixMultiply(world, view);
 
         worldViewProjConstant = XMMatrixTranspose(XMMatrixMultiply(worldView, projection));
-                
+
         dirtyFlags &= ~EffectDirtyFlags::WorldViewProj;
         dirtyFlags |= EffectDirtyFlags::ConstantBuffer;
     }
@@ -81,13 +81,14 @@ void XM_CALLCONV EffectFog::SetConstants(int& dirtyFlags, FXMMATRIX worldView, X
                 // Z value, then scale and offset according to the fog start/end distances.
                 // Because we only care about the Z component, the shader can do all this
                 // with a single dot product, using only the Z row of the world+view matrix.
-        
+
                 // _13, _23, _33, _43
-                XMVECTOR worldViewZ = XMVectorMergeXY(XMVectorMergeZW(worldView.r[0], worldView.r[2]),
-                                                      XMVectorMergeZW(worldView.r[1], worldView.r[3]));
+                const XMVECTOR worldViewZ = XMVectorMergeXY(
+                    XMVectorMergeZW(worldView.r[0], worldView.r[2]),
+                    XMVectorMergeZW(worldView.r[1], worldView.r[3]));
 
                 // 0, 0, 0, fogStart
-                XMVECTOR wOffset = XMVectorSwizzle<1, 2, 3, 0>(XMLoadFloat(&start));
+                const XMVECTOR wOffset = XMVectorSwizzle<1, 2, 3, 0>(XMLoadFloat(&start));
 
                 // (worldViewZ + wOffset) / (start - end);
                 fogVectorConstant = XMVectorDivide(XMVectorAdd(worldViewZ, wOffset), XMVectorReplicate(start - end));
@@ -124,7 +125,7 @@ void EffectColor::SetConstants(_Inout_ int& dirtyFlags, _Inout_ XMVECTOR& diffus
 {
     if (dirtyFlags & EffectDirtyFlags::MaterialColor)
     {
-        XMVECTOR alphaVector = XMVectorReplicate(alpha);
+        const XMVECTOR alphaVector = XMVectorReplicate(alpha);
 
         // xyz = diffuse * alpha, w = alpha.
         diffuseColorConstant = XMVectorSelect(alphaVector, XMVectorMultiply(diffuseColor, alphaVector), g_XMSelect1110);
@@ -161,7 +162,7 @@ _Use_decl_annotations_ void EffectLights::InitializeConstants(XMVECTOR& specular
 {
     static const XMVECTORF32 defaultSpecular = { { { 1, 1, 1, 16 } } };
     static const XMVECTORF32 defaultLightDirection = { { { 0, -1, 0, 0 } } };
-    
+
     specularColorAndPowerConstant = defaultSpecular;
 
     for (int i = 0; i < MaxDirectionalLights; i++)
@@ -188,7 +189,7 @@ _Use_decl_annotations_ void EffectLights::SetConstants(int& dirtyFlags, EffectMa
         {
             worldConstant = XMMatrixTranspose(matrices.world);
 
-            XMMATRIX worldInverse = XMMatrixInverse(nullptr, matrices.world);
+            const XMMATRIX worldInverse = XMMatrixInverse(nullptr, matrices.world);
 
             worldInverseTransposeConstant[0] = worldInverse.r[0];
             worldInverseTransposeConstant[1] = worldInverse.r[1];
@@ -202,7 +203,7 @@ _Use_decl_annotations_ void EffectLights::SetConstants(int& dirtyFlags, EffectMa
         if (dirtyFlags & EffectDirtyFlags::EyePosition)
         {
             XMMATRIX viewInverse = XMMatrixInverse(nullptr, matrices.view);
-        
+
             eyePositionConstant = viewInverse.r[3];
 
             dirtyFlags &= ~EffectDirtyFlags::EyePosition;
@@ -234,7 +235,7 @@ _Use_decl_annotations_ void EffectLights::SetConstants(int& dirtyFlags, EffectMa
     if (dirtyFlags & EffectDirtyFlags::MaterialColor)
     {
         XMVECTOR diffuse = diffuseColor;
-        XMVECTOR alphaVector = XMVectorReplicate(alpha);
+        const XMVECTOR alphaVector = XMVectorReplicate(alpha);
 
         if (lightingEnabled)
         {
@@ -302,7 +303,7 @@ int XM_CALLCONV EffectLights::SetLightDiffuseColor(int whichLight, FXMVECTOR val
     if (lightEnabled[whichLight])
     {
         lightDiffuseConstant[whichLight] = value;
-        
+
         return EffectDirtyFlags::ConstantBuffer;
     }
 
@@ -326,7 +327,7 @@ int XM_CALLCONV EffectLights::SetLightSpecularColor(int whichLight, FXMVECTOR va
 
         return EffectDirtyFlags::ConstantBuffer;
     }
-    
+
     return 0;
 }
 

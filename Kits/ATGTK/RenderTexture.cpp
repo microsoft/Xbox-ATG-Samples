@@ -55,7 +55,7 @@ void RenderTexture::SetDevice(_In_ ID3D12Device* device, D3D12_CPU_DESCRIPTOR_HA
             throw std::runtime_error("CheckFeatureSupport");
         }
 
-        UINT required = D3D12_FORMAT_SUPPORT1_TEXTURE2D | D3D12_FORMAT_SUPPORT1_RENDER_TARGET;
+        const UINT required = D3D12_FORMAT_SUPPORT1_TEXTURE2D | D3D12_FORMAT_SUPPORT1_RENDER_TARGET;
         if ((formatSupport.Support1 & required) != required)
         {
 #ifdef _DEBUG
@@ -93,9 +93,9 @@ void RenderTexture::SizeResources(size_t width, size_t height)
 
     m_width = m_height = 0;
 
-    auto heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+    auto const heapProperties = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 
-    D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Tex2D(m_format,
+    const D3D12_RESOURCE_DESC desc = CD3DX12_RESOURCE_DESC::Tex2D(m_format,
         static_cast<UINT64>(width),
         static_cast<UINT>(height),
         1, 1, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET);
@@ -173,7 +173,7 @@ void RenderTexture::SetDevice(_In_ ID3D11Device* device)
             throw std::runtime_error("CheckFormatSupport");
         }
 
-        UINT32 required = D3D11_FORMAT_SUPPORT_TEXTURE2D | D3D11_FORMAT_SUPPORT_RENDER_TARGET;
+        constexpr UINT32 required = D3D11_FORMAT_SUPPORT_TEXTURE2D | D3D11_FORMAT_SUPPORT_RENDER_TARGET;
         if ((formatSupport & required) != required)
         {
 #ifdef _DEBUG
@@ -290,8 +290,8 @@ void RenderTexture::EndScene(_In_ ID3D11DeviceContextX* context)
 void RenderTexture::SetWindow(const RECT& output)
 {
     // Determine the render target size in pixels.
-    auto width = size_t(std::max<LONG>(output.right - output.left, 1));
-    auto height = size_t(std::max<LONG>(output.bottom - output.top, 1));
+    auto const width = size_t(std::max<LONG>(output.right - output.left, 1));
+    auto const height = size_t(std::max<LONG>(output.bottom - output.top, 1));
 
     SizeResources(width, height);
 }

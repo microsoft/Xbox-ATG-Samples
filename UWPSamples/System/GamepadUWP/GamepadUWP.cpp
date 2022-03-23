@@ -77,7 +77,7 @@ void Sample::Initialize(IUnknown* window, int width, int height, DXGI_MODE_ROTAT
 
 void Sample::RefreshCachedGamepads()
 {
-    m_localCollection.clear();
+    m_localCollection->Clear();
     auto gamepads = Gamepad::Gamepads;
     for (auto gamepad : gamepads)
     {

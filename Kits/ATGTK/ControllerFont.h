@@ -33,20 +33,26 @@ namespace DX
         LeftShoulder = L'-',
     };
 
-    inline void XM_CALLCONV DrawControllerString(_In_ DirectX::SpriteBatch* spriteBatch, _In_ DirectX::SpriteFont* textFont, _In_ DirectX::SpriteFont* butnFont,
-        _In_z_ wchar_t const* text, DirectX::XMFLOAT2 const& position, DirectX::FXMVECTOR color = DirectX::Colors::White, float scale = 1)
+    inline void XM_CALLCONV DrawControllerString(
+        _In_ DirectX::SpriteBatch* spriteBatch,
+        _In_ const DirectX::SpriteFont* textFont,
+        _In_ const DirectX::SpriteFont* butnFont,
+        _In_z_ wchar_t const* text,
+        DirectX::XMFLOAT2 const& position,
+        DirectX::FXMVECTOR color = DirectX::Colors::White,
+        float scale = 1)
     {
         using namespace DirectX;
 
-        size_t textLen = wcslen(text);
+        const size_t textLen = wcslen(text);
         if (textLen >= 4096)
         {
             throw std::out_of_range("String is too long");
         }
 
-        float buttonHeight = butnFont->GetLineSpacing();
-        float buttonScale = (textFont->GetLineSpacing() * scale) / buttonHeight;
-        float offsetY = buttonScale / 2.f;
+        const float buttonHeight = butnFont->GetLineSpacing();
+        const float buttonScale = (textFont->GetLineSpacing() * scale) / buttonHeight;
+        const float offsetY = buttonScale / 2.f;
 
         size_t j = 0;
         wchar_t strBuffer[4096] = {};
@@ -124,8 +130,8 @@ namespace DX
 
                     if (*button)
                     {
-                        float bsize = XMVectorGetX(butnFont->MeasureString(button));
-                        float offsetX = (bsize * buttonScale / 2.f);
+                        const float bsize = XMVectorGetX(butnFont->MeasureString(button));
+                        const float offsetX = (bsize * buttonScale / 2.f);
 
                         outPos.x += offsetX;
                         outPos.y -= offsetY;
@@ -184,20 +190,24 @@ namespace DX
         }
     }
 
-    inline RECT XM_CALLCONV MeasureControllerDrawBounds(_In_ DirectX::SpriteFont* textFont, _In_ DirectX::SpriteFont* butnFont,
-        _In_z_ wchar_t const* text, DirectX::XMFLOAT2 const& position, float scale = 1)
+    inline RECT XM_CALLCONV MeasureControllerDrawBounds(
+        _In_ const DirectX::SpriteFont* textFont,
+        _In_ const DirectX::SpriteFont* butnFont,
+        _In_z_ wchar_t const* text,
+        DirectX::XMFLOAT2 const& position,
+        float scale = 1)
     {
         using namespace DirectX;
 
-        size_t textLen = wcslen(text);
+        const size_t textLen = wcslen(text);
         if (textLen >= 4096)
         {
             throw std::out_of_range("String is too long");
         }
 
-        float buttonHeight = butnFont->GetLineSpacing();
-        float buttonScale = (textFont->GetLineSpacing() * scale) / buttonHeight;
-        float offsetY = buttonScale / 2.f;
+        const float buttonHeight = butnFont->GetLineSpacing();
+        const float buttonScale = (textFont->GetLineSpacing() * scale) / buttonHeight;
+        const float offsetY = buttonScale / 2.f;
 
         size_t j = 0;
         wchar_t strBuffer[4096] = {};
@@ -276,8 +286,8 @@ namespace DX
 
                     if (*button)
                     {
-                        float bsize = XMVectorGetX(butnFont->MeasureString(button));
-                        float offsetX = (bsize * buttonScale / 2.f);
+                        const float bsize = XMVectorGetX(butnFont->MeasureString(button));
+                        const float offsetX = (bsize * buttonScale / 2.f);
 
                         if (outPos.x < float(result.left))
                             result.left = long(outPos.x);

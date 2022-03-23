@@ -258,8 +258,8 @@ namespace ATG
     class RasterFontHeader
     {
     public:
-        static const uint16_t CURRENT_MAJOR_VERSION = 0;
-        static const uint16_t CURRENT_MINOR_VERSION = 1;
+        static constexpr uint16_t CURRENT_MAJOR_VERSION = 0;
+        static constexpr uint16_t CURRENT_MINOR_VERSION = 1;
 
         RasterFontHeader();
 

@@ -398,7 +398,7 @@ namespace DirectX
 
         template<typename... TForwardArgs> void Draw(_In_ ID3D12GraphicsCommandList* commandList, TForwardArgs&&... args) const
         {
-            DrawOpaque(commandList, std::forward<TForwardArgs>(args)...);
+            DrawOpaque(commandList, args...);
             DrawAlpha(commandList, std::forward<TForwardArgs>(args)...);
         }
 
@@ -429,7 +429,7 @@ namespace DirectX
 
         template<typename... TForwardArgs> void DrawSkinned(_In_ ID3D12GraphicsCommandList* commandList, TForwardArgs&&... args) const
         {
-            DrawSkinnedOpaque(commandList, std::forward<TForwardArgs>(args)...);
+            DrawSkinnedOpaque(commandList, args...);
             DrawSkinnedAlpha(commandList, std::forward<TForwardArgs>(args)...);
         }
 
@@ -527,7 +527,7 @@ namespace DirectX
             if (materialIndex >= materials.size())
                 return handle;
 
-            int textureIndex = materials[materialIndex].diffuseTextureIndex;
+            const int textureIndex = materials[materialIndex].diffuseTextureIndex;
             if (textureIndex == -1)
                 return handle;
 

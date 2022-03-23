@@ -24,8 +24,8 @@ namespace ATG
     public:
         FrontPanelInput(_In_ IXboxFrontPanelControl *frontPanelControl);
 
-        FrontPanelInput(FrontPanelInput &&moveFrom);
-        FrontPanelInput& operator=(FrontPanelInput &&moveFrom);
+        FrontPanelInput(FrontPanelInput &&) noexcept;
+        FrontPanelInput& operator=(FrontPanelInput &&) noexcept;
 
         FrontPanelInput(FrontPanelInput const&) = delete;
         FrontPanelInput& operator=(FrontPanelInput const&) = delete;
@@ -71,7 +71,7 @@ namespace ATG
                 UP = 0,         // Button is up
                 HELD = 1,       // Button is held down
                 RELEASED = 2,   // Button was just released
-                PRESSED = 3,    // Buton was just pressed
+                PRESSED = 3,    // Button was just pressed
             };
 
             ButtonState button1;

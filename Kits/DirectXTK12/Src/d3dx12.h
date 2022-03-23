@@ -76,7 +76,7 @@ struct CD3DX12_VIEWPORT : public D3D12_VIEWPORT
         FLOAT minDepth = D3D12_MIN_DEPTH,
         FLOAT maxDepth = D3D12_MAX_DEPTH ) noexcept
     {
-        auto Desc = pResource->GetDesc();
+        const auto Desc = pResource->GetDesc();
         const UINT64 SubresourceWidth = Desc.Width >> mipSlice;
         const UINT64 SubresourceHeight = Desc.Height >> mipSlice;
         switch (Desc.Dimension)
@@ -812,7 +812,7 @@ struct CD3DX12_SUBRESOURCE_FOOTPRINT : public D3D12_SUBRESOURCE_FOOTPRINT
         Format = resDesc.Format;
         Width = UINT( resDesc.Width );
         Height = resDesc.Height;
-        Depth = (resDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE3D ? resDesc.DepthOrArraySize : 1);
+        Depth = (resDesc.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE3D ? resDesc.DepthOrArraySize : 1u);
         RowPitch = rowPitch;
     }
 };
@@ -1684,7 +1684,7 @@ struct CD3DX12_GPU_DESCRIPTOR_HANDLE : public D3D12_GPU_DESCRIPTOR_HANDLE
 };
 
 //------------------------------------------------------------------------------------------------
-inline constexpr UINT D3D12CalcSubresource( UINT MipSlice, UINT ArraySlice, UINT PlaneSlice, UINT MipLevels, UINT ArraySize ) noexcept
+constexpr UINT D3D12CalcSubresource( UINT MipSlice, UINT ArraySlice, UINT PlaneSlice, UINT MipLevels, UINT ArraySize ) noexcept
 {
     return MipSlice + ArraySlice * MipLevels + PlaneSlice * MipLevels * ArraySize;
 }
@@ -1800,13 +1800,13 @@ struct CD3DX12_RESOURCE_DESC : public D3D12_RESOURCE_DESC
             mipLevels, format, 1, 0, layout, flags );
     }
     inline UINT16 Depth() const noexcept
-    { return (Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE3D ? DepthOrArraySize : 1); }
+    { return (Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE3D ? DepthOrArraySize : 1u); }
     inline UINT16 ArraySize() const noexcept
-    { return (Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE3D ? DepthOrArraySize : 1); }
+    { return (Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE3D ? DepthOrArraySize : 1u); }
     inline UINT8 PlaneCount(_In_ ID3D12Device* pDevice) const noexcept
     { return D3D12GetFormatPlaneCount(pDevice, Format); }
     inline UINT Subresources(_In_ ID3D12Device* pDevice) const noexcept
-    { return MipLevels * ArraySize() * PlaneCount(pDevice); }
+    { return static_cast<UINT>(MipLevels) * ArraySize() * PlaneCount(pDevice); }
     inline UINT CalcSubresource(UINT MipSlice, UINT ArraySlice, UINT PlaneSlice) noexcept
     { return D3D12CalcSubresource(MipSlice, ArraySlice, PlaneSlice, MipLevels, ArraySize()); }
 };
@@ -1836,6 +1836,20 @@ struct CD3DX12_RESOURCE_DESC1 : public D3D12_RESOURCE_DESC1
     explicit CD3DX12_RESOURCE_DESC1( const D3D12_RESOURCE_DESC1& o ) noexcept :
         D3D12_RESOURCE_DESC1( o )
     {}
+    explicit CD3DX12_RESOURCE_DESC1( const D3D12_RESOURCE_DESC& o ) noexcept
+    {
+        Dimension = o.Dimension;
+        Alignment = o.Alignment;
+        Width = o.Width;
+        Height = o.Height;
+        DepthOrArraySize = o.DepthOrArraySize;
+        MipLevels = o.MipLevels;
+        Format = o.Format;
+        SampleDesc = o.SampleDesc;
+        Layout = o.Layout;
+        Flags = o.Flags;
+        SamplerFeedbackMipRegion = {};
+    }
     CD3DX12_RESOURCE_DESC1(
         D3D12_RESOURCE_DIMENSION dimension,
         UINT64 alignment,
@@ -1927,13 +1941,13 @@ struct CD3DX12_RESOURCE_DESC1 : public D3D12_RESOURCE_DESC1
             mipLevels, format, 1, 0, layout, flags, 0, 0, 0 );
     }
     inline UINT16 Depth() const noexcept
-    { return (Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE3D ? DepthOrArraySize : 1); }
+    { return (Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE3D ? DepthOrArraySize : 1u); }
     inline UINT16 ArraySize() const noexcept
-    { return (Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE3D ? DepthOrArraySize : 1); }
+    { return (Dimension != D3D12_RESOURCE_DIMENSION_TEXTURE3D ? DepthOrArraySize : 1u); }
     inline UINT8 PlaneCount(_In_ ID3D12Device* pDevice) const noexcept
     { return D3D12GetFormatPlaneCount(pDevice, Format); }
     inline UINT Subresources(_In_ ID3D12Device* pDevice) const noexcept
-    { return MipLevels * ArraySize() * PlaneCount(pDevice); }
+    { return static_cast<UINT>(MipLevels) * ArraySize() * PlaneCount(pDevice); }
     inline UINT CalcSubresource(UINT MipSlice, UINT ArraySlice, UINT PlaneSlice) noexcept
     { return D3D12CalcSubresource(MipSlice, ArraySlice, PlaneSlice, MipLevels, ArraySize()); }
 };
@@ -2037,7 +2051,7 @@ inline UINT64 GetRequiredIntermediateSize(
     _In_range_(0,D3D12_REQ_SUBRESOURCES) UINT FirstSubresource,
     _In_range_(0,D3D12_REQ_SUBRESOURCES-FirstSubresource) UINT NumSubresources) noexcept
 {
-    auto Desc = pDestinationResource->GetDesc();
+    const auto Desc = pDestinationResource->GetDesc();
     UINT64 RequiredSize = 0;
 
     ID3D12Device* pDevice = nullptr;
@@ -2063,8 +2077,8 @@ inline UINT64 UpdateSubresources(
     _In_reads_(NumSubresources) const D3D12_SUBRESOURCE_DATA* pSrcData) noexcept
 {
     // Minor validation
-    auto IntermediateDesc = pIntermediate->GetDesc();
-    auto DestinationDesc = pDestinationResource->GetDesc();
+    const auto IntermediateDesc = pIntermediate->GetDesc();
+    const auto DestinationDesc = pDestinationResource->GetDesc();
     if (IntermediateDesc.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER ||
         IntermediateDesc.Width < RequiredSize + pLayouts[0].Offset ||
         RequiredSize > SIZE_T(-1) ||
@@ -2122,8 +2136,8 @@ inline UINT64 UpdateSubresources(
     _In_reads_(NumSubresources) const D3D12_SUBRESOURCE_INFO* pSrcData) noexcept
 {
     // Minor validation
-    auto IntermediateDesc = pIntermediate->GetDesc();
-    auto DestinationDesc = pDestinationResource->GetDesc();
+    const auto IntermediateDesc = pIntermediate->GetDesc();
+    const auto DestinationDesc = pDestinationResource->GetDesc();
     if (IntermediateDesc.Dimension != D3D12_RESOURCE_DIMENSION_BUFFER ||
         IntermediateDesc.Width < RequiredSize + pLayouts[0].Offset ||
         RequiredSize > SIZE_T(-1) ||
@@ -2177,7 +2191,7 @@ inline UINT64 UpdateSubresources(
     _In_reads_(NumSubresources) const D3D12_SUBRESOURCE_DATA* pSrcData) noexcept
 {
     UINT64 RequiredSize = 0;
-    auto MemToAlloc = static_cast<UINT64>(sizeof(D3D12_PLACED_SUBRESOURCE_FOOTPRINT) + sizeof(UINT) + sizeof(UINT64)) * NumSubresources;
+    const auto MemToAlloc = static_cast<UINT64>(sizeof(D3D12_PLACED_SUBRESOURCE_FOOTPRINT) + sizeof(UINT) + sizeof(UINT64)) * NumSubresources;
     if (MemToAlloc > SIZE_MAX)
     {
        return 0;
@@ -2191,13 +2205,13 @@ inline UINT64 UpdateSubresources(
     auto pRowSizesInBytes = reinterpret_cast<UINT64*>(pLayouts + NumSubresources);
     auto pNumRows = reinterpret_cast<UINT*>(pRowSizesInBytes + NumSubresources);
 
-    auto Desc = pDestinationResource->GetDesc();
+    const auto Desc = pDestinationResource->GetDesc();
     ID3D12Device* pDevice = nullptr;
     pDestinationResource->GetDevice(IID_ID3D12Device, reinterpret_cast<void**>(&pDevice));
     pDevice->GetCopyableFootprints(&Desc, FirstSubresource, NumSubresources, IntermediateOffset, pLayouts, pNumRows, pRowSizesInBytes, &RequiredSize);
     pDevice->Release();
 
-    UINT64 Result = UpdateSubresources(pCmdList, pDestinationResource, pIntermediate, FirstSubresource, NumSubresources, RequiredSize, pLayouts, pNumRows, pRowSizesInBytes, pSrcData);
+    const UINT64 Result = UpdateSubresources(pCmdList, pDestinationResource, pIntermediate, FirstSubresource, NumSubresources, RequiredSize, pLayouts, pNumRows, pRowSizesInBytes, pSrcData);
     HeapFree(GetProcessHeap(), 0, pMem);
     return Result;
 }
@@ -2212,10 +2226,10 @@ inline UINT64 UpdateSubresources(
     _In_range_(0,D3D12_REQ_SUBRESOURCES) UINT FirstSubresource,
     _In_range_(0,D3D12_REQ_SUBRESOURCES-FirstSubresource) UINT NumSubresources,
     _In_ const void* pResourceData,
-    _In_reads_(NumSubresources) D3D12_SUBRESOURCE_INFO* pSrcData) noexcept
+    _In_reads_(NumSubresources) const D3D12_SUBRESOURCE_INFO* pSrcData) noexcept
 {
     UINT64 RequiredSize = 0;
-    auto MemToAlloc = static_cast<UINT64>(sizeof(D3D12_PLACED_SUBRESOURCE_FOOTPRINT) + sizeof(UINT) + sizeof(UINT64)) * NumSubresources;
+    const auto MemToAlloc = static_cast<UINT64>(sizeof(D3D12_PLACED_SUBRESOURCE_FOOTPRINT) + sizeof(UINT) + sizeof(UINT64)) * NumSubresources;
     if (MemToAlloc > SIZE_MAX)
     {
         return 0;
@@ -2225,17 +2239,17 @@ inline UINT64 UpdateSubresources(
     {
         return 0;
     }
-    auto pLayouts = reinterpret_cast<D3D12_PLACED_SUBRESOURCE_FOOTPRINT*>(pMem);
+    auto pLayouts = static_cast<D3D12_PLACED_SUBRESOURCE_FOOTPRINT*>(pMem);
     auto pRowSizesInBytes = reinterpret_cast<UINT64*>(pLayouts + NumSubresources);
     auto pNumRows = reinterpret_cast<UINT*>(pRowSizesInBytes + NumSubresources);
 
-    auto Desc = pDestinationResource->GetDesc();
+    const auto Desc = pDestinationResource->GetDesc();
     ID3D12Device* pDevice = nullptr;
     pDestinationResource->GetDevice(IID_ID3D12Device, reinterpret_cast<void**>(&pDevice));
     pDevice->GetCopyableFootprints(&Desc, FirstSubresource, NumSubresources, IntermediateOffset, pLayouts, pNumRows, pRowSizesInBytes, &RequiredSize);
     pDevice->Release();
 
-    UINT64 Result = UpdateSubresources(pCmdList, pDestinationResource, pIntermediate, FirstSubresource, NumSubresources, RequiredSize, pLayouts, pNumRows, pRowSizesInBytes, pResourceData, pSrcData);
+    const UINT64 Result = UpdateSubresources(pCmdList, pDestinationResource, pIntermediate, FirstSubresource, NumSubresources, RequiredSize, pLayouts, pNumRows, pRowSizesInBytes, pResourceData, pSrcData);
     HeapFree(GetProcessHeap(), 0, pMem);
     return Result;
 }
@@ -2257,7 +2271,7 @@ inline UINT64 UpdateSubresources(
     UINT NumRows[MaxSubresources];
     UINT64 RowSizesInBytes[MaxSubresources];
 
-    auto Desc = pDestinationResource->GetDesc();
+    const auto Desc = pDestinationResource->GetDesc();
     ID3D12Device* pDevice = nullptr;
     pDestinationResource->GetDevice(IID_ID3D12Device, reinterpret_cast<void**>(&pDevice));
     pDevice->GetCopyableFootprints(&Desc, FirstSubresource, NumSubresources, IntermediateOffset, Layouts, NumRows, RowSizesInBytes, &RequiredSize);
@@ -2277,14 +2291,14 @@ inline UINT64 UpdateSubresources(
     _In_range_(0,MaxSubresources) UINT FirstSubresource,
     _In_range_(1,MaxSubresources-FirstSubresource) UINT NumSubresources,
     _In_ const void* pResourceData,
-    _In_reads_(NumSubresources) D3D12_SUBRESOURCE_INFO* pSrcData) noexcept
+    _In_reads_(NumSubresources) const D3D12_SUBRESOURCE_INFO* pSrcData) noexcept
 {
     UINT64 RequiredSize = 0;
     D3D12_PLACED_SUBRESOURCE_FOOTPRINT Layouts[MaxSubresources];
     UINT NumRows[MaxSubresources];
     UINT64 RowSizesInBytes[MaxSubresources];
 
-    auto Desc = pDestinationResource->GetDesc();
+    const auto Desc = pDestinationResource->GetDesc();
     ID3D12Device* pDevice = nullptr;
     pDestinationResource->GetDevice(IID_ID3D12Device, reinterpret_cast<void**>(&pDevice));
     pDevice->GetCopyableFootprints(&Desc, FirstSubresource, NumSubresources, IntermediateOffset, Layouts, NumRows, RowSizesInBytes, &RequiredSize);
@@ -2294,7 +2308,7 @@ inline UINT64 UpdateSubresources(
 }
 
 //------------------------------------------------------------------------------------------------
-inline constexpr bool D3D12IsLayoutOpaque( D3D12_TEXTURE_LAYOUT Layout ) noexcept
+constexpr bool D3D12IsLayoutOpaque( D3D12_TEXTURE_LAYOUT Layout ) noexcept
 { return Layout == D3D12_TEXTURE_LAYOUT_UNKNOWN || Layout == D3D12_TEXTURE_LAYOUT_64KB_UNDEFINED_SWIZZLE; }
 
 //------------------------------------------------------------------------------------------------
@@ -3312,16 +3326,16 @@ inline bool operator==( const D3D12_RENDER_PASS_DEPTH_STENCIL_DESC &a, const D3D
 // Helper classes for creating new style state objects out of an arbitrary set of subobjects.
 // Uses STL
 //
-// Start by instantiating CD3DX12_STATE_OBJECT_DESC (see it's public methods).
+// Start by instantiating CD3DX12_STATE_OBJECT_DESC (see its public methods).
 // One of its methods is CreateSubobject(), which has a comment showing a couple of options for
 // defining subobjects using the helper classes for each subobject (CD3DX12_DXIL_LIBRARY_SUBOBJECT
-// etc.). The subobject helpers each have methods specific to the subobject for configuring it's
+// etc.). The subobject helpers each have methods specific to the subobject for configuring its
 // contents.
 //
 //================================================================================================
 #include <list>
-#include <vector>
 #include <string>
+#include <vector>
 #include <memory>
 #include <wrl/client.h>
 
@@ -3345,7 +3359,7 @@ public:
         m_SubobjectArray.clear();
         m_SubobjectArray.reserve(m_Desc.NumSubobjects);
         // Flatten subobjects into an array (each flattened subobject still has a
-        // member that's a pointer to it's desc that's not flattened)
+        // member that's a pointer to its desc that's not flattened)
         for (auto Iter = m_SubobjectList.begin();
             Iter != m_SubobjectList.end(); Iter++)
         {
@@ -3394,7 +3408,7 @@ public:
     // variables instead, passing the state object desc that should point to it into the helper
     // constructor (or call mySubobjectHelper.AddToStateObject(Collection1)).
     // In this alternative scenario, the user must keep the subobject alive as long as the state
-    // object it is associated with is alive, else it's pointer references will be stale.
+    // object it is associated with is alive, else its pointer references will be stale.
     // e.g.
     //
     //    CD3DX12_STATE_OBJECT_DESC RaytracingState2(D3D12_STATE_OBJECT_TYPE_RAYTRACING_PIPELINE);
@@ -3825,7 +3839,7 @@ private:
     }
     void* Data() noexcept override { return &m_Desc; }
     D3D12_HIT_GROUP_DESC m_Desc;
-    static const UINT m_NumStrings = 4;
+    static constexpr UINT m_NumStrings = 4;
     CD3DX12_STATE_OBJECT_DESC::StringContainer
         m_Strings[m_NumStrings]; // one string for every entrypoint name
 };

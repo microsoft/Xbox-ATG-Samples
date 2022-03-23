@@ -75,7 +75,7 @@ namespace
     #include "XboxOneDebugEffect_PSRGBNormals.inc"
     #include "XboxOneDebugEffect_PSRGBTangents.inc"
     #include "XboxOneDebugEffect_PSRGBBiTangents.inc"
-#else    
+#else
     #include "DebugEffect_VSDebug.inc"
     #include "DebugEffect_VSDebugInst.inc"
 
@@ -98,7 +98,7 @@ namespace
 
 template<>
 const ShaderBytecode EffectBase<DebugEffectTraits>::VertexShaderBytecode[] =
-{    
+{
     { DebugEffect_VSDebug,         sizeof(DebugEffect_VSDebug)         },
     { DebugEffect_VSDebugVc,       sizeof(DebugEffect_VSDebugVc)       },
     { DebugEffect_VSDebugBn,       sizeof(DebugEffect_VSDebugBn)       },
@@ -112,7 +112,7 @@ const ShaderBytecode EffectBase<DebugEffectTraits>::VertexShaderBytecode[] =
 
 template<>
 const int EffectBase<DebugEffectTraits>::VertexShaderIndices[] =
-{    
+{
     0,      // default
     0,      // normals
     0,      // tangents
@@ -167,7 +167,7 @@ const ShaderBytecode EffectBase<DebugEffectTraits>::PixelShaderBytecode[] =
 
 template<>
 const int EffectBase<DebugEffectTraits>::PixelShaderIndices[] =
-{    
+{
     0,      // default
     1,      // normals
     2,      // tangents
@@ -279,7 +279,7 @@ void DebugEffect::Impl::Apply(_In_ ID3D11DeviceContext* deviceContext)
     {
         constants.world = XMMatrixTranspose(matrices.world);
 
-        XMMATRIX worldInverse = XMMatrixInverse(nullptr, matrices.world);
+        const XMMATRIX worldInverse = XMMatrixInverse(nullptr, matrices.world);
 
         constants.worldInverseTranspose[0] = worldInverse.r[0];
         constants.worldInverseTranspose[1] = worldInverse.r[1];

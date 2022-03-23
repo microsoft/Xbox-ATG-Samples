@@ -8,10 +8,11 @@
 //--------------------------------------------------------------------------------------
 
 #include "pch.h"
-#include "DirectXHelpers.h"
-#include "PlatformHelpers.h"
 #include "ResourceUploadBatch.h"
+
+#include "DirectXHelpers.h"
 #include "LoaderHelpers.h"
+#include "PlatformHelpers.h"
 
 using namespace DirectX;
 using Microsoft::WRL::ComPtr;
@@ -229,22 +230,22 @@ namespace
         static ComPtr<ID3D12RootSignature> CreateGenMipsRootSignature(
             _In_ ID3D12Device* device)
         {
-            D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
-                D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS |
-                D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS |
-                D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS |
-                D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS |
-                D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS;
+            ENUM_FLAGS_CONSTEXPR D3D12_ROOT_SIGNATURE_FLAGS rootSignatureFlags =
+                D3D12_ROOT_SIGNATURE_FLAG_DENY_VERTEX_SHADER_ROOT_ACCESS
+                | D3D12_ROOT_SIGNATURE_FLAG_DENY_DOMAIN_SHADER_ROOT_ACCESS
+                | D3D12_ROOT_SIGNATURE_FLAG_DENY_GEOMETRY_SHADER_ROOT_ACCESS
+                | D3D12_ROOT_SIGNATURE_FLAG_DENY_HULL_SHADER_ROOT_ACCESS
+                | D3D12_ROOT_SIGNATURE_FLAG_DENY_PIXEL_SHADER_ROOT_ACCESS;
 
-            CD3DX12_STATIC_SAMPLER_DESC sampler(
+            const CD3DX12_STATIC_SAMPLER_DESC sampler(
                 0, // register
                 D3D12_FILTER_MIN_MAG_LINEAR_MIP_POINT,
                 D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
                 D3D12_TEXTURE_ADDRESS_MODE_CLAMP,
                 D3D12_TEXTURE_ADDRESS_MODE_CLAMP);
 
-            CD3DX12_DESCRIPTOR_RANGE sourceDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
-            CD3DX12_DESCRIPTOR_RANGE targetDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0);
+            const CD3DX12_DESCRIPTOR_RANGE sourceDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
+            const CD3DX12_DESCRIPTOR_RANGE targetDescriptorRange(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0);
 
             CD3DX12_ROOT_PARAMETER rootParameters[RootParameterIndex::RootParameterCount] = {};
             rootParameters[RootParameterIndex::Constants].InitAsConstants(Num32BitConstants, 0);
@@ -347,13 +348,13 @@ public:
         if (!mInBeginEndBlock)
             throw std::logic_error("Can't call Upload on a closed ResourceUploadBatch.");
 
-        UINT64 uploadSize = GetRequiredIntermediateSize(
+        const UINT64 uploadSize = GetRequiredIntermediateSize(
             resource,
             subresourceIndexStart,
             numSubresources);
 
-        CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
-        CD3DX12_RESOURCE_DESC resDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadSize);
+        const CD3DX12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
+        auto const resDesc = CD3DX12_RESOURCE_DESC::Buffer(uploadSize);
 
         // Create a temporary buffer
         ComPtr<ID3D12Resource> scratchResource = nullptr;
@@ -417,7 +418,7 @@ public:
 
         if (desc.MipLevels == 1)
         {
-            // Nothing to do 
+            // Nothing to do
             return;
         }
         if (desc.MipLevels == 0)
@@ -433,7 +434,7 @@ public:
             throw std::runtime_error("GenerateMips only supports 2D textures of array size 1");
         }
 
-        bool uavCompat = FormatIsUAVCompatible(mDevice.Get(), mTypedUAVLoadAdditionalFormats, desc.Format);
+        const bool uavCompat = FormatIsUAVCompatible(mDevice.Get(), mTypedUAVLoadAdditionalFormats, desc.Format);
 
         if (!uavCompat && !FormatIsSRGB(desc.Format) && !FormatIsBGR(desc.Format))
         {
@@ -447,7 +448,7 @@ public:
         }
 
         // If the texture's format doesn't support UAVs we'll have to copy it to a texture that does first.
-        // This is true of BGRA or sRGB textures, for example. 
+        // This is true of BGRA or sRGB textures, for example.
         if (uavCompat)
         {
             GenerateMips_UnorderedAccessPath(resource);
@@ -556,7 +557,7 @@ public:
         std::future<void> future = std::async(std::launch::async, [uploadBatch]()
         {
             // Wait on the GPU-complete notification
-            DWORD wr = WaitForSingleObject(uploadBatch->GpuCompleteEvent.get(), INFINITE);
+            const DWORD wr = WaitForSingleObject(uploadBatch->GpuCompleteEvent.get(), INFINITE);
             if (wr != WAIT_OBJECT_0)
             {
                 if (wr == WAIT_FAILED)
@@ -624,7 +625,7 @@ private:
         const auto desc = resource->GetDesc();
         assert(!FormatIsBGR(desc.Format) && !FormatIsSRGB(desc.Format));
 
-        CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
+        const CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
         assert(mCommandType != D3D12_COMMAND_LIST_TYPE_COPY);
         const D3D12_RESOURCE_STATES originalState = (mCommandType == D3D12_COMMAND_LIST_TYPE_COMPUTE)
@@ -651,8 +652,8 @@ private:
             // Copy the top mip of resource to staging
             TransitionResource(mList.Get(), resource, originalState, D3D12_RESOURCE_STATE_COPY_SOURCE);
 
-            CD3DX12_TEXTURE_COPY_LOCATION src(resource, 0);
-            CD3DX12_TEXTURE_COPY_LOCATION dst(staging.Get(), 0);
+            const CD3DX12_TEXTURE_COPY_LOCATION src(resource, 0);
+            const CD3DX12_TEXTURE_COPY_LOCATION dst(staging.Get(), 0);
             mList->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
 
             TransitionResource(mList.Get(), staging.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
@@ -675,7 +676,7 @@ private:
 
         SetDebugObjectName(descriptorHeap.Get(), L"ResourceUploadBatch");
 
-        auto descriptorSize = static_cast<int>(mDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
+        auto const descriptorSize = static_cast<int>(mDevice->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV));
 
         // Create the top-level SRV
         CD3DX12_CPU_DESCRIPTOR_HANDLE handleIt(descriptorHeap->GetCPUDescriptorHandleForHeapStart());
@@ -813,7 +814,7 @@ private:
         mTrackedObjects.push_back(resource);
         mTrackedObjects.push_back(descriptorHeap);
     }
-    
+
     // Resource is not UAV compatible
     void GenerateMips_TexturePath(
         _In_ ID3D12Resource* resource)
@@ -825,7 +826,7 @@ private:
         copyDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         copyDesc.Flags |= D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
 
-        CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
+        const CD3DX12_HEAP_PROPERTIES heapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
         // Create a resource with the same description, but without SRGB, and with UAV flags
         ComPtr<ID3D12Resource> resourceCopy;
@@ -846,12 +847,12 @@ private:
         // Copy the top mip of resource data
         TransitionResource(mList.Get(), resource, originalState, D3D12_RESOURCE_STATE_COPY_SOURCE);
 
-        CD3DX12_TEXTURE_COPY_LOCATION src(resource, 0);
-        CD3DX12_TEXTURE_COPY_LOCATION dst(resourceCopy.Get(), 0);
+        const CD3DX12_TEXTURE_COPY_LOCATION src(resource, 0);
+        const CD3DX12_TEXTURE_COPY_LOCATION dst(resourceCopy.Get(), 0);
         mList->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
 
         TransitionResource(mList.Get(), resourceCopy.Get(), D3D12_RESOURCE_STATE_COPY_DEST, originalState);
-        
+
         // Generate the mips
         GenerateMips_UnorderedAccessPath(resourceCopy.Get());
 
@@ -895,7 +896,7 @@ private:
 #endif
 
         D3D12_HEAP_DESC heapDesc = {};
-        auto allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &copyDesc);
+        auto const allocInfo = mDevice->GetResourceAllocationInfo(0, 1, &copyDesc);
         heapDesc.SizeInBytes = allocInfo.SizeInBytes;
         heapDesc.Flags = D3D12_HEAP_FLAG_ALLOW_ONLY_NON_RT_DS_TEXTURES;
         heapDesc.Properties.Type = D3D12_HEAP_TYPE_DEFAULT;
@@ -950,8 +951,8 @@ private:
 
         mList->ResourceBarrier(2, aliasBarrier);
 
-        CD3DX12_TEXTURE_COPY_LOCATION src(resource, 0);
-        CD3DX12_TEXTURE_COPY_LOCATION dst(aliasCopy.Get(), 0);
+        const CD3DX12_TEXTURE_COPY_LOCATION src(resource, 0);
+        const CD3DX12_TEXTURE_COPY_LOCATION dst(aliasCopy.Get(), 0);
         mList->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
 
         // Generate the mips

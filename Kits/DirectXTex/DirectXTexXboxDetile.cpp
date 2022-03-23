@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------------------
 // File: DirectXTexXboxDetile.cpp
 //
-// DirectXTex Auxillary functions for converting from Xbox One tiled to linear
+// DirectXTex Auxillary functions for converting from Xbox tiled to linear
 //
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
@@ -12,6 +12,7 @@
 
 using Microsoft::WRL::ComPtr;
 using namespace DirectX;
+using namespace DirectX::Internal;
 using namespace Xbox;
 
 namespace
@@ -22,7 +23,7 @@ namespace
         uint32_t level,
         _In_ XGTextureAddressComputer* computer,
         const XG_RESOURCE_LAYOUT& layout,
-        _In_reads_(nimages) const Image** result,
+        _In_reads_(nimages) const Image* const * result,
         size_t nimages,
         size_t bpp,
         size_t w,
@@ -47,10 +48,10 @@ namespace
             for (size_t x = 0; x < w; ++x)
             {
 #if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
-                UINT64 element = (packed) ? (x >> 1) : x;
-                size_t offset = computer->GetTexelElementOffsetBytes(0, level, element, 0, item, 0, nullptr);
+                const UINT64 element = (packed) ? (x >> 1) : x;
+                const size_t offset = computer->GetTexelElementOffsetBytes(0, level, element, 0, item, 0, nullptr);
 #else
-                size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, 0, item, 0);
+                const size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, 0, item, 0);
 #endif
                 if (offset == size_t(-1))
                     return E_FAIL;
@@ -77,7 +78,7 @@ namespace
         uint32_t level,
         _In_ XGTextureAddressComputer* computer,
         const XG_RESOURCE_LAYOUT& layout,
-        _In_reads_(nimages) const Image** result,
+        _In_reads_(nimages) const Image* const * result,
         size_t nimages,
         size_t bpp,
         size_t w,
@@ -107,10 +108,10 @@ namespace
                 for (size_t x = 0; x < w; ++x)
                 {
 #if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
-                    UINT64 element = (packed) ? (x >> 1) : x;
-                    size_t offset = computer->GetTexelElementOffsetBytes(0, level, element, y, item, 0, nullptr);
+                    const UINT64 element = (packed) ? (x >> 1) : x;
+                    const size_t offset = computer->GetTexelElementOffsetBytes(0, level, element, y, item, 0, nullptr);
 #else
-                    size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, item, 0);
+                    const size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, item, 0);
 #endif
                     if (offset == size_t(-1))
                         return E_FAIL;
@@ -163,10 +164,10 @@ namespace
                 for (size_t x = 0; x < w; ++x)
                 {
 #if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
-                    UINT64 element = (packed) ? (x >> 1) : x;
-                    size_t offset = computer->GetTexelElementOffsetBytes(0, level, element, y, z, 0, nullptr);
+                    const UINT64 element = (packed) ? (x >> 1) : x;
+                    const size_t offset = computer->GetTexelElementOffsetBytes(0, level, element, y, z, 0, nullptr);
 #else
-                    size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, z, 0);
+                    const size_t offset = computer->GetTexelElementOffsetBytes(0, level, x, y, z, 0);
 #endif
                     if (offset == size_t(-1))
                         return E_FAIL;
@@ -211,7 +212,7 @@ namespace
 
         assert(layout.Planes == 1);
 
-        DXGI_FORMAT format = result[0]->format;
+        const DXGI_FORMAT format = result[0]->format;
 
         assert(format == xbox.GetMetadata().format);
 
@@ -225,11 +226,11 @@ namespace
 
         if (IsPacked(format))
         {
-            size_t bpp = (BitsPerPixel(format) + 7) / 8;
+            const size_t bpp = (BitsPerPixel(format) + 7) / 8;
 
             // XG (XboxOne) incorrectly returns 2 instead of 4 here for layout.Plane[0].BytesPerElement
 
-            size_t w = result[0]->width;
+            const size_t w = result[0]->width;
             assert(((w + 1) / 2) == layout.Plane[0].MipLayout[level].WidthElements);
 
             return DetileByElement1D(xbox, level, computer, layout, result, nimages, bpp, w, true);
@@ -237,10 +238,10 @@ namespace
         else if (byelement)
         {
             //--- Typeless is done with per-element copy ----------------------------------
-            size_t bpp = (BitsPerPixel(format) + 7) / 8;
+            const size_t bpp = (BitsPerPixel(format) + 7) / 8;
             assert(bpp == layout.Plane[0].BytesPerElement);
 
-            size_t w = result[0]->width;
+            const size_t w = result[0]->width;
             assert(w == layout.Plane[0].MipLayout[level].WidthElements);
 
             return DetileByElement1D(xbox, level, computer, layout, result, nimages, bpp, w, false);
@@ -250,7 +251,7 @@ namespace
             //--- Standard format handling ------------------------------------------------
             auto& mip = layout.Plane[0].MipLayout[level];
 
-            UINT32 tiledPixels = mip.PitchPixels * mip.PaddedDepthOrArraySize;
+            const UINT32 tiledPixels = mip.PitchPixels * mip.PaddedDepthOrArraySize;
 
             auto scanline = make_AlignedArrayXMVECTOR(tiledPixels + result[0]->width);
 
@@ -266,7 +267,7 @@ namespace
             if ((xbox.GetSize() - mip.OffsetBytes) < mip.SizeBytes)
                 return E_FAIL;
 
-            if (!_LoadScanline(tiled, tiledPixels, xbox.GetPointer() + mip.OffsetBytes, mip.SizeBytes, xbox.GetMetadata().format))
+            if (!LoadScanline(tiled, tiledPixels, xbox.GetPointer() + mip.OffsetBytes, mip.SizeBytes, xbox.GetMetadata().format))
                 return E_FAIL;
 
             // Perform detiling
@@ -300,7 +301,7 @@ namespace
                     target[x] = tiled[offset];
                 }
 
-                if (!_StoreScanline(img->pixels, img->rowPitch, img->format, target, img->width))
+                if (!StoreScanline(img->pixels, img->rowPitch, img->format, target, img->width))
                     return E_FAIL;
             }
         }
@@ -330,7 +331,7 @@ namespace
 
         assert(layout.Planes == 1);
 
-        DXGI_FORMAT format = result[0]->format;
+        const DXGI_FORMAT format = result[0]->format;
 
         assert(format == xbox.GetMetadata().format);
 
@@ -343,10 +344,10 @@ namespace
         if (IsCompressed(format))
         {
             //--- BC formats use per-block copy -------------------------------------------
-            size_t nbw = std::max<size_t>(1, (result[0]->width + 3) / 4);
-            size_t nbh = std::max<size_t>(1, (result[0]->height + 3) / 4);
+            const size_t nbw = std::max<size_t>(1, (result[0]->width + 3) / 4);
+            const size_t nbh = std::max<size_t>(1, (result[0]->height + 3) / 4);
 
-            size_t bpb = (format == DXGI_FORMAT_BC1_TYPELESS
+            const size_t bpb = (format == DXGI_FORMAT_BC1_TYPELESS
                 || format == DXGI_FORMAT_BC1_UNORM
                 || format == DXGI_FORMAT_BC1_UNORM_SRGB
                 || format == DXGI_FORMAT_BC4_TYPELESS
@@ -361,12 +362,12 @@ namespace
         }
         else if (IsPacked(format))
         {
-            size_t bpp = (BitsPerPixel(format) + 7) / 8;
+            const size_t bpp = (BitsPerPixel(format) + 7) / 8;
 
             // XG (XboxOne) incorrectly returns 2 instead of 4 here for layout.Plane[0].BytesPerElement
 
-            size_t w = result[0]->width;
-            size_t h = result[0]->height;
+            const size_t w = result[0]->width;
+            const size_t h = result[0]->height;
             assert(((w + 1) / 2) == layout.Plane[0].MipLayout[level].WidthElements);
             assert(h == layout.Plane[0].MipLayout[level].HeightElements);
 
@@ -375,11 +376,11 @@ namespace
         else if (byelement)
         {
             //--- Typeless is done with per-element copy ----------------------------------
-            size_t bpp = (BitsPerPixel(format) + 7) / 8;
+            const size_t bpp = (BitsPerPixel(format) + 7) / 8;
             assert(bpp == layout.Plane[0].BytesPerElement);
 
-            size_t w = result[0]->width;
-            size_t h = result[0]->height;
+            const size_t w = result[0]->width;
+            const size_t h = result[0]->height;
 
             assert(w == layout.Plane[0].MipLayout[level].WidthElements);
             assert(h == layout.Plane[0].MipLayout[level].HeightElements);
@@ -407,7 +408,7 @@ namespace
             if ((xbox.GetSize() - mip.OffsetBytes) < mip.SizeBytes)
                 return E_FAIL;
 
-            if (!_LoadScanline(tiled, tiledPixels, xbox.GetPointer() + mip.OffsetBytes, mip.SizeBytes, xbox.GetMetadata().format))
+            if (!LoadScanline(tiled, tiledPixels, xbox.GetPointer() + mip.OffsetBytes, mip.SizeBytes, xbox.GetMetadata().format))
                 return E_FAIL;
 
             // Perform detiling
@@ -444,7 +445,7 @@ namespace
                         target[x] = tiled[offset];
                     }
 
-                    if (!_StoreScanline(dptr, img->rowPitch, img->format, target, img->width))
+                    if (!StoreScanline(dptr, img->rowPitch, img->format, target, img->width))
                         return E_FAIL;
 
                     dptr += img->rowPitch;
@@ -474,18 +475,19 @@ namespace
 
         assert(layout.Planes == 1);
 
-        bool byelement = IsTypeless(result.format);
 #if defined(_GAMING_XBOX_SCARLETT) || defined(_USE_SCARLETT)
-        byelement = true;
+        const bool byelement = true;
+#else
+        const bool byelement = IsTypeless(result.format);
 #endif
 
         if (IsCompressed(result.format))
         {
             //--- BC formats use per-block copy -------------------------------------------
-            size_t nbw = std::max<size_t>(1, (result.width + 3) / 4);
-            size_t nbh = std::max<size_t>(1, (result.height + 3) / 4);
+            const size_t nbw = std::max<size_t>(1, (result.width + 3) / 4);
+            const size_t nbh = std::max<size_t>(1, (result.height + 3) / 4);
 
-            size_t bpb = (result.format == DXGI_FORMAT_BC1_TYPELESS
+            const size_t bpb = (result.format == DXGI_FORMAT_BC1_TYPELESS
                 || result.format == DXGI_FORMAT_BC1_UNORM
                 || result.format == DXGI_FORMAT_BC1_UNORM_SRGB
                 || result.format == DXGI_FORMAT_BC4_TYPELESS
@@ -500,7 +502,7 @@ namespace
         }
         else if (IsPacked(result.format))
         {
-            size_t bpp = (BitsPerPixel(result.format) + 7) / 8;
+            const size_t bpp = (BitsPerPixel(result.format) + 7) / 8;
 
             // XG (XboxOne) incorrectly returns 2 instead of 4 here for layout.Plane[0].BytesPerElement
 
@@ -512,7 +514,7 @@ namespace
         else if (byelement)
         {
             //--- Typeless is done with per-element copy ----------------------------------
-            size_t bpp = (BitsPerPixel(result.format) + 7) / 8;
+            const size_t bpp = (BitsPerPixel(result.format) + 7) / 8;
             assert(bpp == layout.Plane[0].BytesPerElement);
 
             assert(result.width == layout.Plane[0].MipLayout[level].WidthElements);
@@ -555,7 +557,7 @@ namespace
                     if ((rptr + mip.PitchBytes) > endPtr)
                         return E_FAIL;
 
-                    if (!_LoadScanline(uptr, mip.PitchPixels, rptr, mip.PitchBytes, xbox.GetMetadata().format))
+                    if (!LoadScanline(uptr, mip.PitchPixels, rptr, mip.PitchBytes, xbox.GetMetadata().format))
                         return E_FAIL;
 
                     rptr += mip.PitchBytes;
@@ -593,7 +595,7 @@ namespace
                         target[x] = tiled[offset];
                     }
 
-                    if (!_StoreScanline(rptr, result.rowPitch, result.format, target, result.width))
+                    if (!StoreScanline(rptr, result.rowPitch, result.format, target, result.width))
                         return E_FAIL;
 
                     rptr += result.rowPitch;

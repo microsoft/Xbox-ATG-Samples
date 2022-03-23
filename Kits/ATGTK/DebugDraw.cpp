@@ -49,7 +49,7 @@ namespace
         VertexPositionColor verts[8];
         for (size_t i = 0; i < 8; ++i)
         {
-            XMVECTOR v = XMVector3Transform(s_verts[i], matWorld);
+            const XMVECTOR v = XMVector3Transform(s_verts[i], matWorld);
             XMStoreFloat3(&verts[i].position, v);
             XMStoreFloat4(&verts[i].color, color);
         }
@@ -62,13 +62,13 @@ void XM_CALLCONV DX::Draw(PrimitiveBatch<VertexPositionColor>* batch,
     const BoundingSphere& sphere,
     FXMVECTOR color)
 {
-    XMVECTOR origin = XMLoadFloat3(&sphere.Center);
+    const XMVECTOR origin = XMLoadFloat3(&sphere.Center);
 
     const float radius = sphere.Radius;
 
-    XMVECTOR xaxis = XMVectorScale(g_XMIdentityR0, radius);
-    XMVECTOR yaxis = XMVectorScale(g_XMIdentityR1, radius);
-    XMVECTOR zaxis = XMVectorScale(g_XMIdentityR2, radius);
+    const XMVECTOR xaxis = XMVectorScale(g_XMIdentityR0, radius);
+    const XMVECTOR yaxis = XMVectorScale(g_XMIdentityR1, radius);
+    const XMVECTOR zaxis = XMVectorScale(g_XMIdentityR2, radius);
 
     DrawRing(batch, origin, xaxis, zaxis, color);
     DrawRing(batch, origin, xaxis, yaxis, color);
@@ -80,7 +80,7 @@ void XM_CALLCONV DX::Draw(PrimitiveBatch<VertexPositionColor>* batch,
     FXMVECTOR color)
 {
     XMMATRIX matWorld = XMMatrixScaling(box.Extents.x, box.Extents.y, box.Extents.z);
-    XMVECTOR position = XMLoadFloat3(&box.Center);
+    const XMVECTOR position = XMLoadFloat3(&box.Center);
     matWorld.r[3] = XMVectorSelect(matWorld.r[3], position, g_XMSelect1110);
 
     DrawCube(batch, matWorld, color);
@@ -91,9 +91,9 @@ void XM_CALLCONV DX::Draw(PrimitiveBatch<VertexPositionColor>* batch,
     FXMVECTOR color)
 {
     XMMATRIX matWorld = XMMatrixRotationQuaternion(XMLoadFloat4(&obb.Orientation));
-    XMMATRIX matScale = XMMatrixScaling(obb.Extents.x, obb.Extents.y, obb.Extents.z);
+    const XMMATRIX matScale = XMMatrixScaling(obb.Extents.x, obb.Extents.y, obb.Extents.z);
     matWorld = XMMatrixMultiply(matScale, matWorld);
-    XMVECTOR position = XMLoadFloat3(&obb.Center);
+    const XMVECTOR position = XMLoadFloat3(&obb.Center);
     matWorld.r[3] = XMVectorSelect(matWorld.r[3], position, g_XMSelect1110);
 
     DrawCube(batch, matWorld, color);
@@ -160,8 +160,8 @@ void XM_CALLCONV DX::DrawGrid(PrimitiveBatch<VertexPositionColor>* batch,
         XMVECTOR scale = XMVectorScale(xAxis, percent);
         scale = XMVectorAdd(scale, origin);
 
-        VertexPositionColor v1(XMVectorSubtract(scale, yAxis), color);
-        VertexPositionColor v2(XMVectorAdd(scale, yAxis), color);
+        const VertexPositionColor v1(XMVectorSubtract(scale, yAxis), color);
+        const VertexPositionColor v2(XMVectorAdd(scale, yAxis), color);
         batch->DrawLine(v1, v2);
     }
 
@@ -172,8 +172,8 @@ void XM_CALLCONV DX::DrawGrid(PrimitiveBatch<VertexPositionColor>* batch,
         XMVECTOR scale = XMVectorScale(yAxis, percent);
         scale = XMVectorAdd(scale, origin);
 
-        VertexPositionColor v1(XMVectorSubtract(scale, xAxis), color);
-        VertexPositionColor v2(XMVectorAdd(scale, xAxis), color);
+        const VertexPositionColor v1(XMVectorSubtract(scale, xAxis), color);
+        const VertexPositionColor v2(XMVectorAdd(scale, xAxis), color);
         batch->DrawLine(v1, v2);
     }
 }
@@ -188,12 +188,12 @@ void XM_CALLCONV DX::DrawRing(PrimitiveBatch<VertexPositionColor>* batch,
 
     VertexPositionColor verts[c_ringSegments + 1];
 
-    FLOAT fAngleDelta = XM_2PI / float(c_ringSegments);
+    constexpr float fAngleDelta = XM_2PI / float(c_ringSegments);
     // Instead of calling cos/sin for each segment we calculate
     // the sign of the angle delta and then incrementally calculate sin
     // and cosine from then on.
-    XMVECTOR cosDelta = XMVectorReplicate(cosf(fAngleDelta));
-    XMVECTOR sinDelta = XMVectorReplicate(sinf(fAngleDelta));
+    const XMVECTOR cosDelta = XMVectorReplicate(cosf(fAngleDelta));
+    const XMVECTOR sinDelta = XMVectorReplicate(sinf(fAngleDelta));
     XMVECTOR incrementalSin = XMVectorZero();
     static const XMVECTORF32 s_initialCos =
     {
@@ -207,8 +207,8 @@ void XM_CALLCONV DX::DrawRing(PrimitiveBatch<VertexPositionColor>* batch,
         XMStoreFloat3(&verts[i].position, pos);
         XMStoreFloat4(&verts[i].color, color);
         // Standard formula to rotate a vector.
-        XMVECTOR newCos = XMVectorSubtract(XMVectorMultiply(incrementalCos, cosDelta), XMVectorMultiply(incrementalSin, sinDelta));
-        XMVECTOR newSin = XMVectorAdd(XMVectorMultiply(incrementalCos, sinDelta), XMVectorMultiply(incrementalSin, cosDelta));
+        const XMVECTOR newCos = XMVectorSubtract(XMVectorMultiply(incrementalCos, cosDelta), XMVectorMultiply(incrementalSin, sinDelta));
+        const XMVECTOR newSin = XMVectorAdd(XMVectorMultiply(incrementalCos, sinDelta), XMVectorMultiply(incrementalSin, cosDelta));
         incrementalCos = newCos;
         incrementalSin = newSin;
     }

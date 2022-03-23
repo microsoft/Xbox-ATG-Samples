@@ -91,7 +91,7 @@ namespace DX
             else
             {
                 // If we are not UTF16, we have to convert...
-                int cch = ::MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<LPCSTR>(data.get()), -1, nullptr, 0);
+                const int cch = ::MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<LPCSTR>(data.get()), -1, nullptr, 0);
 
                 if (cch <= 0)
                 {
@@ -100,7 +100,7 @@ namespace DX
 
                 m_data.reset(new wchar_t[size_t(cch)]);
 
-                int result = ::MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<LPCSTR>(data.get()), -1, m_data.get(), cch);
+                const int result = ::MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<LPCSTR>(data.get()), -1, m_data.get(), cch);
 
                 if (result <= 0)
                 {
@@ -207,7 +207,7 @@ namespace DX
                 return false;
 
             wchar_t* dest = str;
-            wchar_t* edest = str + maxstr;
+            const wchar_t* edest = str + maxstr;
 
             for (const wchar_t* ptr = m_currentChar; ; )
             {

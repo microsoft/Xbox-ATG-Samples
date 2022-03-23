@@ -84,7 +84,7 @@ namespace DX
                     auto adpcmFmt = reinterpret_cast<const ADPCMWAVEFORMAT*>(wfx);
 
                     uint64_t duration = uint64_t(audioBytes / adpcmFmt->wfx.nBlockAlign) * adpcmFmt->wSamplesPerBlock;
-                    unsigned int partial = audioBytes % adpcmFmt->wfx.nBlockAlign;
+                    const unsigned int partial = audioBytes % adpcmFmt->wfx.nBlockAlign;
                     if (partial)
                     {
                         if (partial >= (7u * adpcmFmt->wfx.nChannels))
@@ -128,7 +128,7 @@ namespace DX
             if (!wfx || !wfx->nSamplesPerSec)
                 return 0;
 
-            uint64_t samples = GetSampleDuration();
+            const uint64_t samples = GetSampleDuration();
             return static_cast<size_t>((samples * 1000) / wfx->nSamplesPerSec);
         }
     };

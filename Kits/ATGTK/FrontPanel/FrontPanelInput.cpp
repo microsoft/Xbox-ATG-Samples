@@ -100,28 +100,9 @@ FrontPanelInput::FrontPanelInput(_In_ IXboxFrontPanelControl * frontPanelControl
 {
 }
 
-// Move constructor.
-FrontPanelInput::FrontPanelInput(FrontPanelInput && moveFrom)
-    : pImpl(std::move(moveFrom.pImpl))
-{
-    pImpl->mOwner = this;
-    pImpl->mFrontPanelControl = moveFrom.pImpl->mFrontPanelControl;
-    moveFrom.pImpl->mFrontPanelControl = nullptr;
-}
-
-// Move assignment.
-FrontPanelInput & FrontPanelInput::operator=(FrontPanelInput && moveFrom)
-{
-    pImpl = std::move(moveFrom.pImpl);
-    pImpl->mOwner = this;
-    pImpl->mFrontPanelControl = moveFrom.pImpl->mFrontPanelControl;
-    moveFrom.pImpl->mFrontPanelControl = nullptr;
-    return *this;
-}
-
-FrontPanelInput::~FrontPanelInput()
-{
-}
+FrontPanelInput::FrontPanelInput(FrontPanelInput&&) noexcept = default;
+FrontPanelInput& FrontPanelInput::operator=(FrontPanelInput&&) noexcept = default;
+FrontPanelInput::~FrontPanelInput() = default;
 
 FrontPanelInput::State FrontPanelInput::GetState()
 {

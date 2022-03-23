@@ -21,7 +21,7 @@
     <Keyword>Win32Proj</Keyword>
     <ApplicationEnvironment>title</ApplicationEnvironment>
     <!-- - - - -->
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <TargetRuntime>Native</TargetRuntime>
     <ProjectName>SimplePBRXbox12</ProjectName>
@@ -30,7 +30,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Durango'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
@@ -39,7 +39,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Durango'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
@@ -48,7 +48,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Durango'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
     <EmbedManifest>false</EmbedManifest>
@@ -209,7 +209,7 @@
     <Image Include="Assets\WideLogoXDK.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Kits\DirectXTK12\DirectXTK_XboxOneXDK_2015.vcxproj">
+    <ProjectReference Include="..\..\..\Kits\DirectXTK12\DirectXTK_XboxOneXDK_2017.vcxproj">
       <Project>{0ee6c863-556c-4815-8bff-a5a0b25a948f}</Project>
     </ProjectReference>
   </ItemGroup>

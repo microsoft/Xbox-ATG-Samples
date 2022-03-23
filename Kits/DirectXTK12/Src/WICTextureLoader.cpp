@@ -86,25 +86,25 @@ namespace
 
         { GUID_WICPixelFormatBlackWhite,            GUID_WICPixelFormat8bppGray }, // DXGI_FORMAT_R8_UNORM
 
-        { GUID_WICPixelFormat1bppIndexed,           GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM 
-        { GUID_WICPixelFormat2bppIndexed,           GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM 
-        { GUID_WICPixelFormat4bppIndexed,           GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM 
-        { GUID_WICPixelFormat8bppIndexed,           GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM 
+        { GUID_WICPixelFormat1bppIndexed,           GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM
+        { GUID_WICPixelFormat2bppIndexed,           GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM
+        { GUID_WICPixelFormat4bppIndexed,           GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM
+        { GUID_WICPixelFormat8bppIndexed,           GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM
 
-        { GUID_WICPixelFormat2bppGray,              GUID_WICPixelFormat8bppGray }, // DXGI_FORMAT_R8_UNORM 
-        { GUID_WICPixelFormat4bppGray,              GUID_WICPixelFormat8bppGray }, // DXGI_FORMAT_R8_UNORM 
+        { GUID_WICPixelFormat2bppGray,              GUID_WICPixelFormat8bppGray }, // DXGI_FORMAT_R8_UNORM
+        { GUID_WICPixelFormat4bppGray,              GUID_WICPixelFormat8bppGray }, // DXGI_FORMAT_R8_UNORM
 
-        { GUID_WICPixelFormat16bppGrayFixedPoint,   GUID_WICPixelFormat16bppGrayHalf }, // DXGI_FORMAT_R16_FLOAT 
-        { GUID_WICPixelFormat32bppGrayFixedPoint,   GUID_WICPixelFormat32bppGrayFloat }, // DXGI_FORMAT_R32_FLOAT 
+        { GUID_WICPixelFormat16bppGrayFixedPoint,   GUID_WICPixelFormat16bppGrayHalf }, // DXGI_FORMAT_R16_FLOAT
+        { GUID_WICPixelFormat32bppGrayFixedPoint,   GUID_WICPixelFormat32bppGrayFloat }, // DXGI_FORMAT_R32_FLOAT
 
         { GUID_WICPixelFormat16bppBGR555,           GUID_WICPixelFormat16bppBGRA5551 }, // DXGI_FORMAT_B5G5R5A1_UNORM
 
         { GUID_WICPixelFormat32bppBGR101010,        GUID_WICPixelFormat32bppRGBA1010102 }, // DXGI_FORMAT_R10G10B10A2_UNORM
 
-        { GUID_WICPixelFormat24bppBGR,              GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM 
-        { GUID_WICPixelFormat24bppRGB,              GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM 
-        { GUID_WICPixelFormat32bppPBGRA,            GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM 
-        { GUID_WICPixelFormat32bppPRGBA,            GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM 
+        { GUID_WICPixelFormat24bppBGR,              GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM
+        { GUID_WICPixelFormat24bppRGB,              GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM
+        { GUID_WICPixelFormat32bppPBGRA,            GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM
+        { GUID_WICPixelFormat32bppPRGBA,            GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM
 
         { GUID_WICPixelFormat48bppRGB,              GUID_WICPixelFormat64bppRGBA }, // DXGI_FORMAT_R16G16B16A16_UNORM
         { GUID_WICPixelFormat48bppBGR,              GUID_WICPixelFormat64bppRGBA }, // DXGI_FORMAT_R16G16B16A16_UNORM
@@ -112,19 +112,19 @@ namespace
         { GUID_WICPixelFormat64bppPRGBA,            GUID_WICPixelFormat64bppRGBA }, // DXGI_FORMAT_R16G16B16A16_UNORM
         { GUID_WICPixelFormat64bppPBGRA,            GUID_WICPixelFormat64bppRGBA }, // DXGI_FORMAT_R16G16B16A16_UNORM
 
-        { GUID_WICPixelFormat48bppRGBFixedPoint,    GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT 
-        { GUID_WICPixelFormat48bppBGRFixedPoint,    GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT 
-        { GUID_WICPixelFormat64bppRGBAFixedPoint,   GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT 
-        { GUID_WICPixelFormat64bppBGRAFixedPoint,   GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT 
-        { GUID_WICPixelFormat64bppRGBFixedPoint,    GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT 
-        { GUID_WICPixelFormat64bppRGBHalf,          GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT 
-        { GUID_WICPixelFormat48bppRGBHalf,          GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT 
+        { GUID_WICPixelFormat48bppRGBFixedPoint,    GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT
+        { GUID_WICPixelFormat48bppBGRFixedPoint,    GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT
+        { GUID_WICPixelFormat64bppRGBAFixedPoint,   GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT
+        { GUID_WICPixelFormat64bppBGRAFixedPoint,   GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT
+        { GUID_WICPixelFormat64bppRGBFixedPoint,    GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT
+        { GUID_WICPixelFormat64bppRGBHalf,          GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT
+        { GUID_WICPixelFormat48bppRGBHalf,          GUID_WICPixelFormat64bppRGBAHalf }, // DXGI_FORMAT_R16G16B16A16_FLOAT
 
-        { GUID_WICPixelFormat128bppPRGBAFloat,      GUID_WICPixelFormat128bppRGBAFloat }, // DXGI_FORMAT_R32G32B32A32_FLOAT 
-        { GUID_WICPixelFormat128bppRGBFloat,        GUID_WICPixelFormat128bppRGBAFloat }, // DXGI_FORMAT_R32G32B32A32_FLOAT 
-        { GUID_WICPixelFormat128bppRGBAFixedPoint,  GUID_WICPixelFormat128bppRGBAFloat }, // DXGI_FORMAT_R32G32B32A32_FLOAT 
-        { GUID_WICPixelFormat128bppRGBFixedPoint,   GUID_WICPixelFormat128bppRGBAFloat }, // DXGI_FORMAT_R32G32B32A32_FLOAT 
-        { GUID_WICPixelFormat32bppRGBE,             GUID_WICPixelFormat128bppRGBAFloat }, // DXGI_FORMAT_R32G32B32A32_FLOAT 
+        { GUID_WICPixelFormat128bppPRGBAFloat,      GUID_WICPixelFormat128bppRGBAFloat }, // DXGI_FORMAT_R32G32B32A32_FLOAT
+        { GUID_WICPixelFormat128bppRGBFloat,        GUID_WICPixelFormat128bppRGBAFloat }, // DXGI_FORMAT_R32G32B32A32_FLOAT
+        { GUID_WICPixelFormat128bppRGBAFixedPoint,  GUID_WICPixelFormat128bppRGBAFloat }, // DXGI_FORMAT_R32G32B32A32_FLOAT
+        { GUID_WICPixelFormat128bppRGBFixedPoint,   GUID_WICPixelFormat128bppRGBAFloat }, // DXGI_FORMAT_R32G32B32A32_FLOAT
+        { GUID_WICPixelFormat32bppRGBE,             GUID_WICPixelFormat128bppRGBAFloat }, // DXGI_FORMAT_R32G32B32A32_FLOAT
 
         { GUID_WICPixelFormat32bppCMYK,             GUID_WICPixelFormat32bppRGBA }, // DXGI_FORMAT_R8G8B8A8_UNORM
         { GUID_WICPixelFormat64bppCMYK,             GUID_WICPixelFormat64bppRGBA }, // DXGI_FORMAT_R16G16B16A16_UNORM
@@ -154,32 +154,36 @@ namespace
 //--------------------------------------------------------------------------------------
 namespace DirectX
 {
-    IWICImagingFactory2* _GetWIC() noexcept;
-        // Also used by ScreenGrab
-
-    IWICImagingFactory2* _GetWIC() noexcept
+    namespace Internal
     {
-        static INIT_ONCE s_initOnce = INIT_ONCE_STATIC_INIT;
-
-        IWICImagingFactory2* factory = nullptr;
-        if (!InitOnceExecuteOnce(
-            &s_initOnce,
-            InitializeWICFactory,
-            nullptr,
-            reinterpret_cast<LPVOID*>(&factory)))
-        {
-            return nullptr;
-        }
-
-        return factory;
+        IWICImagingFactory2* GetWIC() noexcept;
+        // Also used by ScreenGrab
     }
-} // namespace DirectX
+}
 
+IWICImagingFactory2* DirectX::Internal::GetWIC() noexcept
+{
+    static INIT_ONCE s_initOnce = INIT_ONCE_STATIC_INIT;
+
+    IWICImagingFactory2* factory = nullptr;
+    if (!InitOnceExecuteOnce(
+        &s_initOnce,
+        InitializeWICFactory,
+        nullptr,
+        reinterpret_cast<LPVOID*>(&factory)))
+    {
+        return nullptr;
+    }
+
+    return factory;
+}
+
+using namespace Internal;
 
 namespace
 {
     //---------------------------------------------------------------------------------
-    DXGI_FORMAT _WICToDXGI(const GUID& guid) noexcept
+    DXGI_FORMAT WICToDXGI(const GUID& guid) noexcept
     {
         for (size_t i = 0; i < std::size(g_WICFormats); ++i)
         {
@@ -191,9 +195,9 @@ namespace
     }
 
     //---------------------------------------------------------------------------------
-    size_t _WICBitsPerPixel(REFGUID targetGuid) noexcept
+    size_t WICBitsPerPixel(REFGUID targetGuid) noexcept
     {
-        auto pWIC = _GetWIC();
+        auto pWIC = GetWIC();
         if (!pWIC)
             return 0;
 
@@ -252,7 +256,7 @@ namespace
         }
         else if (width > maxsize || height > maxsize)
         {
-            float ar = static_cast<float>(height) / static_cast<float>(width);
+            const float ar = static_cast<float>(height) / static_cast<float>(width);
             if (width > height)
             {
                 twidth = static_cast<UINT>(maxsize);
@@ -283,7 +287,7 @@ namespace
 
         size_t bpp = 0;
 
-        DXGI_FORMAT format = _WICToDXGI(pixelFormat);
+        DXGI_FORMAT format = WICToDXGI(pixelFormat);
         if (format == DXGI_FORMAT_UNKNOWN)
         {
             for (size_t i = 0; i < std::size(g_WICConvert); ++i)
@@ -292,9 +296,9 @@ namespace
                 {
                     memcpy_s(&convertGUID, sizeof(WICPixelFormatGUID), &g_WICConvert[i].target, sizeof(GUID));
 
-                    format = _WICToDXGI(g_WICConvert[i].target);
+                    format = WICToDXGI(g_WICConvert[i].target);
                     assert(format != DXGI_FORMAT_UNKNOWN);
-                    bpp = _WICBitsPerPixel(convertGUID);
+                    bpp = WICBitsPerPixel(convertGUID);
                     break;
                 }
             }
@@ -310,7 +314,7 @@ namespace
         }
         else
         {
-            bpp = _WICBitsPerPixel(pixelFormat);
+            bpp = WICBitsPerPixel(pixelFormat);
         }
 
         if (loadFlags & WIC_LOADER_FORCE_RGBA32)
@@ -401,14 +405,14 @@ namespace
         }
 
         // Allocate memory for decoded image
-        uint64_t rowBytes = (uint64_t(twidth) * uint64_t(bpp) + 7u) / 8u;
-        uint64_t numBytes = rowBytes * uint64_t(theight);
+        const uint64_t rowBytes = (uint64_t(twidth) * uint64_t(bpp) + 7u) / 8u;
+        const uint64_t numBytes = rowBytes * uint64_t(theight);
 
         if (rowBytes > UINT32_MAX || numBytes > UINT32_MAX)
             return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
 
-        auto rowPitch = static_cast<size_t>(rowBytes);
-        auto imageSize = static_cast<size_t>(numBytes);
+        auto const rowPitch = static_cast<size_t>(rowBytes);
+        auto const imageSize = static_cast<size_t>(numBytes);
 
         decodedData.reset(new (std::nothrow) uint8_t[imageSize]);
         if (!decodedData)
@@ -427,7 +431,7 @@ namespace
         else if (twidth != width || theight != height)
         {
             // Resize
-            auto pWIC = _GetWIC();
+            auto pWIC = GetWIC();
             if (!pWIC)
                 return E_NOINTERFACE;
 
@@ -478,7 +482,7 @@ namespace
         else
         {
             // Format conversion but no resize
-            auto pWIC = _GetWIC();
+            auto pWIC = GetWIC();
             if (!pWIC)
                 return E_NOINTERFACE;
 
@@ -504,7 +508,7 @@ namespace
         }
 
         // Count the number of mips
-        uint32_t mipCount = (loadFlags & (WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_MIP_RESERVE))
+        const uint32_t mipCount = (loadFlags & (WIC_LOADER_MIP_AUTOGEN | WIC_LOADER_MIP_RESERVE))
             ? LoaderHelpers::CountMips(twidth, theight) : 1u;
 
         // Create texture
@@ -519,7 +523,7 @@ namespace
         desc.Flags = resFlags;
         desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 
-        CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
+        const CD3DX12_HEAP_PROPERTIES defaultHeapProperties(D3D12_HEAP_TYPE_DEFAULT);
 
         ID3D12Resource* tex = nullptr;
         hr = d3dDevice->CreateCommittedResource(
@@ -578,14 +582,14 @@ namespace
         if (FAILED(frame->GetPixelFormat(&pixelFormat)))
             return DXGI_FORMAT_UNKNOWN;
 
-        DXGI_FORMAT format = _WICToDXGI(pixelFormat);
+        const DXGI_FORMAT format = WICToDXGI(pixelFormat);
         if (format == DXGI_FORMAT_UNKNOWN)
         {
             for (size_t i = 0; i < std::size(g_WICConvert); ++i)
             {
                 if (memcmp(&g_WICConvert[i].source, &pixelFormat, sizeof(WICPixelFormatGUID)) == 0)
                 {
-                    return _WICToDXGI(g_WICConvert[i].target);
+                    return WICToDXGI(g_WICConvert[i].target);
                 }
             }
         }
@@ -667,7 +671,7 @@ HRESULT DirectX::LoadWICTextureFromMemoryEx(
     if (wicDataSize > UINT32_MAX)
         return HRESULT_FROM_WIN32(ERROR_FILE_TOO_LARGE);
 
-    auto pWIC = _GetWIC();
+    auto pWIC = GetWIC();
     if (!pWIC)
         return E_NOINTERFACE;
 
@@ -730,7 +734,7 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx(
     if (wicDataSize > UINT32_MAX)
         return HRESULT_FROM_WIN32(ERROR_FILE_TOO_LARGE);
 
-    auto pWIC = _GetWIC();
+    auto pWIC = GetWIC();
     if (!pWIC)
         return E_NOINTERFACE;
 
@@ -757,7 +761,7 @@ HRESULT DirectX::CreateWICTextureFromMemoryEx(
 
     if (loadFlags & WIC_LOADER_MIP_AUTOGEN)
     {
-        DXGI_FORMAT fmt = GetPixelFormat(frame.Get());
+        const DXGI_FORMAT fmt = GetPixelFormat(frame.Get());
         if (!resourceUpload.IsSupportedForGenerateMips(fmt))
         {
             DebugTrace("WARNING: Autogen of mips ignored (device doesn't support this format (%d) or trying to use a copy queue)\n", static_cast<int>(fmt));
@@ -861,7 +865,7 @@ HRESULT DirectX::LoadWICTextureFromFileEx(
     if (!d3dDevice || !fileName || !texture)
         return E_INVALIDARG;
 
-    auto pWIC = _GetWIC();
+    auto pWIC = GetWIC();
     if (!pWIC)
         return E_NOINTERFACE;
 
@@ -910,7 +914,7 @@ HRESULT DirectX::CreateWICTextureFromFileEx(
     if (!d3dDevice || !fileName || !texture)
         return E_INVALIDARG;
 
-    auto pWIC = _GetWIC();
+    auto pWIC = GetWIC();
     if (!pWIC)
         return E_NOINTERFACE;
 
@@ -931,7 +935,7 @@ HRESULT DirectX::CreateWICTextureFromFileEx(
 
     if (loadFlags & WIC_LOADER_MIP_AUTOGEN)
     {
-        DXGI_FORMAT fmt = GetPixelFormat(frame.Get());
+        const DXGI_FORMAT fmt = GetPixelFormat(frame.Get());
         if (!resourceUpload.IsSupportedForGenerateMips(fmt))
         {
             DebugTrace("WARNING: Autogen of mips ignored (device doesn't support this format (%d) or trying to use a copy queue)\n", static_cast<int>(fmt));
