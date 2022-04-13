@@ -14,7 +14,7 @@ description: "This sample shows how the Media Foundation Source Reader can be us
 
 # MP4Reader
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Graphics/MP4Reader/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Graphics/MP4Reader/Readme.docx).
 
 ## Privacy statement
 

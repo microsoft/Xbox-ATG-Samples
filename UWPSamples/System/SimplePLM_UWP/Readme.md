@@ -14,7 +14,7 @@ description: "This sample shows the behavior of the Process Lifetime Management 
 
 # SimplePLM_UWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/System/SimplePLM_UWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/System/SimplePLM_UWP/Readme.docx).
 
 ## Privacy statement
 

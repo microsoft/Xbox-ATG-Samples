@@ -14,7 +14,7 @@ description: "RasterFontViewer is a tool for viewing .rasterfont files created u
 
 # RasterFontViewer
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Tools/RasterFontViewer/readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Tools/RasterFontViewer/readme.docx).
 
 ## Privacy statement
 

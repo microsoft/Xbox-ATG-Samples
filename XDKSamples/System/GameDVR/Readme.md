@@ -14,7 +14,7 @@ description: "This sample demonstrates how to asynchronously record new and quer
 
 # GameDVR
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/GameDVR/ReadMe.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/GameDVR/ReadMe.docx).
 
 ## Privacy statement
 

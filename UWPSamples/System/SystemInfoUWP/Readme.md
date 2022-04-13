@@ -14,7 +14,7 @@ description: "This sample demonstrates a number of Universal Windows Platform (U
 
 # SystemInfoUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/System/SystemInfoUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/System/SystemInfoUWP/Readme.docx).
 
 ## Privacy statement
 

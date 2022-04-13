@@ -14,7 +14,7 @@ description: "This sample demonstrates how to use LampArray to create RGB lighti
 
 # LampArrayXDK
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/LampArrayXDK/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/LampArrayXDK/Readme.docx).
 
 ## Privacy statement
 

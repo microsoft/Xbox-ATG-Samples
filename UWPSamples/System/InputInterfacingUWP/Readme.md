@@ -14,7 +14,7 @@ description: "This sample demonstrates how to effectively interface and read inp
 
 # InputInterfacingUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/System/InputInterfacingUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/System/InputInterfacingUWP/Readme.docx).
 
 ## Privacy statement
 

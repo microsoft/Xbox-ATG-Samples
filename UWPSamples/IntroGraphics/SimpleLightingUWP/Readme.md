@@ -14,7 +14,7 @@ description: "This sample demonstrates how to create a static Direct3D 11 vertex
 
 # SimpleLightingUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/IntroGraphics/SimpleLightingUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/IntroGraphics/SimpleLightingUWP/Readme.docx).
 
 ## Privacy statement
 

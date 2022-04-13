@@ -14,7 +14,7 @@ description: "This sample demonstrates the basics of utilizing ESRAM with Direct
 
 # SimpleESRAM
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Graphics/SimpleESRAM/ReadMe.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Graphics/SimpleESRAM/ReadMe.docx).
 
 ## Privacy statement
 

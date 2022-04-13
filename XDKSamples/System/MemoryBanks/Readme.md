@@ -14,7 +14,7 @@ description: "This sample demonstrates several different methods available for m
 
 # MemoryBanks
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/MemoryBanks/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/MemoryBanks/Readme.docx).
 
 ## Privacy statement
 

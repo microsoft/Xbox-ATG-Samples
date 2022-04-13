@@ -14,7 +14,7 @@ description: "This sample demonstrates how use ISpatialAudioClient to playback b
 
 # AdvancedSpatialSoundsUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/Audio/AdvancedSpatialSoundsUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/Audio/AdvancedSpatialSoundsUWP/Readme.docx).
 
 ## Privacy statement
 

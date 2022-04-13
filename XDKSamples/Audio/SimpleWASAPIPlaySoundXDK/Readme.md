@@ -14,7 +14,7 @@ description: "This sample demonstrates how to play setup and play a simple sound
 
 # SimpleWASAPIPlaySoundXDK
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Audio/SimpleWASAPIPlaySoundXDK/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Audio/SimpleWASAPIPlaySoundXDK/Readme.docx).
 
 ## Privacy statement
 

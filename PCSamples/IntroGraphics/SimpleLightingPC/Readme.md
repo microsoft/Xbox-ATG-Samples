@@ -14,7 +14,7 @@ description: "This sample demonstrates how to create a static Direct3D 11 vertex
 
 # SimpleLightingPC
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/PCSamples/IntroGraphics/SimpleLightingPC/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/PCSamples/IntroGraphics/SimpleLightingPC/Readme.docx).
 
 ## Privacy statement
 

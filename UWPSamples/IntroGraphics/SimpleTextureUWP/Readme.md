@@ -14,7 +14,7 @@ description: "This sample demonstrates how to render a simple textured quad usin
 
 # SimpleTextureUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/IntroGraphics/SimpleTextureUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/IntroGraphics/SimpleTextureUWP/Readme.docx).
 
 ## Privacy statement
 

@@ -14,7 +14,7 @@ description: "This sample demonstrates how to implement mouse controls in Xbox a
 
 # MouseCursorXDK
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/MouseCursorXDK/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/MouseCursorXDK/Readme.docx).
 
 ## Privacy statement
 

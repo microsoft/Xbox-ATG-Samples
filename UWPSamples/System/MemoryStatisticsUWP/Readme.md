@@ -14,7 +14,7 @@ description: "This sample demonstrates querying memory usage at runtime in your 
 
 # MemoryStatisticsUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/System/MemoryStatisticsUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/System/MemoryStatisticsUWP/Readme.docx).
 
 ## Privacy statement
 

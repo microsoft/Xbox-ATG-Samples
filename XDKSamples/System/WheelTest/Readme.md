@@ -14,7 +14,7 @@ description: "This sample demonstrates how to implement support for wheels with 
 
 # WheelTest
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/WheelTest/ReadMe.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/WheelTest/ReadMe.docx).
 
 ## Privacy statement
 

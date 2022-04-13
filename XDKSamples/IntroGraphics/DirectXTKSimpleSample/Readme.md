@@ -14,7 +14,7 @@ description: "The SimpleSample demo shows how to link to the DirectX Tool Kit fo
 
 # DirectXTKSimpleSample
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/IntroGraphics/DirectXTKSimpleSample/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/IntroGraphics/DirectXTKSimpleSample/Readme.docx).
 
 ## Privacy statement
 

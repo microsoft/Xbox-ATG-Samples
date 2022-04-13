@@ -14,7 +14,7 @@ description: "This sample demonstrates how to stream a wav file using XAudio2 in
 
 # SimplePlaySoundStreamUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/Audio/SimplePlaySoundStreamUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/Audio/SimplePlaySoundStreamUWP/Readme.docx).
 
 ## Privacy statement
 

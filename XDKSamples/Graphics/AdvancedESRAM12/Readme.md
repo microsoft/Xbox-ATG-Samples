@@ -14,7 +14,7 @@ description: "This sample demonstrates the use of advanced DirectX 12.x memory f
 
 # AdvancedESRAM12
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Graphics/AdvancedESRAM12/ReadMe.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Graphics/AdvancedESRAM12/ReadMe.docx).
 
 ## Privacy statement
 

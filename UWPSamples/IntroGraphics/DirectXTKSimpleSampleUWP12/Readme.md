@@ -14,7 +14,7 @@ description: "The SimpleSample demo shows how to link to the DirectX Tool Kit fo
 
 # DirectXTKSimpleSampleUWP12
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/IntroGraphics/DirectXTKSimpleSampleUWP12/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/IntroGraphics/DirectXTKSimpleSampleUWP12/Readme.docx).
 
 ## Privacy statement
 

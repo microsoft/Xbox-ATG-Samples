@@ -14,7 +14,7 @@ description: "This sample demonstrates how to read inputs from a flightstick on 
 
 # FlightStick
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/FlightStick/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/FlightStick/Readme.docx).
 
 ## Privacy statement
 

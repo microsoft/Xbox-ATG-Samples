@@ -14,7 +14,7 @@ description: "This sample demonstrates the three major patterns for performing a
 
 # AsynchronousIO
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/AsynchronousIO/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/AsynchronousIO/Readme.docx).
 
 ## Privacy statement
 

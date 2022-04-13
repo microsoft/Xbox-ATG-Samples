@@ -14,7 +14,7 @@ description: "FrontPanelDolphin demonstrates how to use the GPU to render to the
 
 # FrontPanelDolphin
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/FrontPanelDolphin/readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/FrontPanelDolphin/readme.docx).
 
 ## Privacy statement
 

@@ -14,7 +14,7 @@ description: "This sample demonstrates various options for generating and handli
 
 # HLSLSymbols
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Graphics/HLSLSymbols/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Graphics/HLSLSymbols/Readme.docx).
 
 ## Privacy statement
 

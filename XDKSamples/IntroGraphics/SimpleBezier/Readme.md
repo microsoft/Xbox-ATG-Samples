@@ -14,7 +14,7 @@ description: "This sample demonstrates how to create hull and domain shaders to 
 
 # SimpleBezier
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/IntroGraphics/SimpleBezier/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/IntroGraphics/SimpleBezier/Readme.docx).
 
 ## Privacy statement
 

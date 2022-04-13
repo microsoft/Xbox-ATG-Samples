@@ -14,7 +14,7 @@ description: "This sample demonstrates the use of coroutines in an Xbox One titl
 
 # CoroutinesXDK
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/CoroutinesXDK/readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/CoroutinesXDK/readme.docx).
 
 ## Privacy statement
 

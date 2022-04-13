@@ -14,7 +14,7 @@ description: "This sample demonstrates a number of Xbox One APIs for querying sy
 
 # SystemInfo
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/SystemInfo/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/SystemInfo/Readme.docx).
 
 ## Privacy statement
 

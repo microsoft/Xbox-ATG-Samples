@@ -14,7 +14,7 @@ description: "This sample demonstrates how to read inputs from a gamepad on the 
 
 # GamepadCppWinRT
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/GamepadCppWinRT/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/GamepadCppWinRT/Readme.docx).
 
 ## Privacy statement
 

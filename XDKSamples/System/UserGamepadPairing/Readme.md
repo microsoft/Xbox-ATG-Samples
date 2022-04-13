@@ -14,7 +14,7 @@ description: "This sample demonstrates how to implement user to gamepad pairing 
 
 # UserGamepadPairing
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/UserGamepadPairing/ReadMe.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/UserGamepadPairing/ReadMe.docx).
 
 ## Privacy statement
 

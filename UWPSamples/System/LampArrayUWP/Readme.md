@@ -14,7 +14,7 @@ description: "This sample demonstrates how to use LampArray to create RGB lighti
 
 # LampArrayUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/System/LampArrayUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/System/LampArrayUWP/Readme.docx).
 
 ## Privacy statement
 

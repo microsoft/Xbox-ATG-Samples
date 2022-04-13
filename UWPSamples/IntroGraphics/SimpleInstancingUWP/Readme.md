@@ -14,7 +14,7 @@ description: "This sample demonstrates how to use instancing with the Direct3D 1
 
 # SimpleInstancingUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/IntroGraphics/SimpleInstancingUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/IntroGraphics/SimpleInstancingUWP/Readme.docx).
 
 ## Privacy statement
 

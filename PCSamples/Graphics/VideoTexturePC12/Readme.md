@@ -14,7 +14,7 @@ description: "This sample demonstrates using the Media Foundation APIs on Window
 
 # VideoTexturePC12
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/PCSamples/Graphics/VideoTexturePC12/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/PCSamples/Graphics/VideoTexturePC12/Readme.docx).
 
 ## Privacy statement
 

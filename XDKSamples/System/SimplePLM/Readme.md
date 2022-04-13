@@ -14,7 +14,7 @@ description: "This sample shows the behavior of the Process Lifetime Management 
 
 # SimplePLM
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/SimplePLM/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/SimplePLM/Readme.docx).
 
 ## Privacy statement
 

@@ -14,7 +14,7 @@ description: "The FrontPanelText sample demonstrates how to use the CPU to draw 
 
 # FrontPanelText
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/FrontPanelText/readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/FrontPanelText/readme.docx).
 
 ## Privacy statement
 

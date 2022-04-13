@@ -14,7 +14,7 @@ description: "This sample demonstrates how use ISpatialAudioClient to playback b
 
 # AdvancedSpatialSoundsXDK
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Audio/AdvancedSpatialSoundsXDK/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Audio/AdvancedSpatialSoundsXDK/Readme.docx).
 
 ## Privacy statement
 

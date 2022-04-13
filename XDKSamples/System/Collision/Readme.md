@@ -14,7 +14,7 @@ description: "This sample demonstrates DirectXMath's collision types for simple 
 
 # Collision
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/Collision/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/Collision/Readme.docx).
 
 ## Privacy statement
 

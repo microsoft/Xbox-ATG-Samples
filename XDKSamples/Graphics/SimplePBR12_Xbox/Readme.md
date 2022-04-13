@@ -14,7 +14,7 @@ description: "This sample demonstrates physically based rendering (PBR) on Xbox 
 
 # SimplePBR12_Xbox
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Graphics/SimplePBR12_Xbox/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Graphics/SimplePBR12_Xbox/Readme.docx).
 
 ## Privacy statement
 

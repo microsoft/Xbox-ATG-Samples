@@ -14,7 +14,7 @@ description: "This sample demonstrates how to play setup and play a simple sound
 
 # SimpleWASAPIPlaySoundUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/Audio/SimpleWASAPIPlaySoundUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/Audio/SimpleWASAPIPlaySoundUWP/Readme.docx).
 
 ## Privacy statement
 

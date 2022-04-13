@@ -14,7 +14,7 @@ description: "This sample demonstrates how to use the hardware LZ compression an
 
 # SimpleDmaDecompression
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Graphics/SimpleDmaDecompression/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Graphics/SimpleDmaDecompression/Readme.docx).
 
 ## Privacy statement
 

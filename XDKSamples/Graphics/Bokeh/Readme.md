@@ -14,7 +14,7 @@ description: "This sample demonstrates how to create a depth of field effect usi
 
 # Bokeh
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Graphics/Bokeh/ReadMe.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Graphics/Bokeh/ReadMe.docx).
 
 ## Privacy statement
 

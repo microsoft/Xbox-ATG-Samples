@@ -14,7 +14,7 @@ description: "This sample demonstrates how to create a static Direct3D 12 vertex
 
 # SimpleTriangleUWP12
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/IntroGraphics/SimpleTriangleUWP12/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/IntroGraphics/SimpleTriangleUWP12/Readme.docx).
 
 ## Privacy statement
 

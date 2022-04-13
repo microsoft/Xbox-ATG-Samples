@@ -14,7 +14,7 @@ description: "This sample demonstrates how to render a simple textured quad usin
 
 # SimpleTexturePC12
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/PCSamples/IntroGraphics/SimpleTexturePC12/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/PCSamples/IntroGraphics/SimpleTexturePC12/Readme.docx).
 
 ## Privacy statement
 

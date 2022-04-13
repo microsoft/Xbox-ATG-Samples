@@ -14,7 +14,7 @@ description: "This sample demonstrates how to use vibration with a gamepad on an
 
 # GamepadVibration
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/GamepadVibration/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/GamepadVibration/Readme.docx).
 
 ## Privacy statement
 

@@ -14,7 +14,7 @@ description: "This sample demonstrates how to yield the CPU rather than stalling
 
 # AsyncPresent
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Graphics/AsyncPresent/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Graphics/AsyncPresent/Readme.docx).
 
 ## Privacy statement
 

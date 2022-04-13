@@ -14,7 +14,7 @@ description: "This sample demonstrates how to use instancing with the Direct3D 1
 
 # SimpleInstancing
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/IntroGraphics/SimpleInstancing/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/IntroGraphics/SimpleInstancing/Readme.docx).
 
 ## Privacy statement
 

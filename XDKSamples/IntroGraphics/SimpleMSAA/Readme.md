@@ -14,7 +14,7 @@ description: "This sample implements an MSAA render target and depth/stencil buf
 
 # SimpleMSAA
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/IntroGraphics/SimpleMSAA/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/IntroGraphics/SimpleMSAA/Readme.docx).
 
 ## Privacy statement
 

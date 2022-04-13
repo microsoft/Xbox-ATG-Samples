@@ -14,7 +14,7 @@ description: "This sample demonstrates how to create hull and domain shaders to 
 
 # SimpleBezierUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/IntroGraphics/SimpleBezierUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/IntroGraphics/SimpleBezierUWP/Readme.docx).
 
 ## Privacy statement
 

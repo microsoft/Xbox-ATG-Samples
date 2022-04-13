@@ -14,7 +14,7 @@ description: "This sample demonstrates how to create hull and domain shaders to 
 
 # SimpleBezierPC
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/PCSamples/IntroGraphics/SimpleBezierPC/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/PCSamples/IntroGraphics/SimpleBezierPC/Readme.docx).
 
 ## Privacy statement
 

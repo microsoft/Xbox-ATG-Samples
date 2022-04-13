@@ -14,7 +14,7 @@ description: "This sample demonstrates how to localize package manifest as well 
 
 # NLSAndLocalization
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/NLSAndLocalization/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/NLSAndLocalization/Readme.docx).
 
 ## Privacy statement
 

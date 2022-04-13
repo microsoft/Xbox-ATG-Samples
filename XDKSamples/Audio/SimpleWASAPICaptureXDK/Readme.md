@@ -14,7 +14,7 @@ description: "This sample demonstrates how to capture audio using WASAPI on Xbox
 
 # SimpleWASAPICaptureXDK
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Audio/SimpleWASAPICaptureXDK/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Audio/SimpleWASAPICaptureXDK/Readme.docx).
 
 ## Privacy statement
 

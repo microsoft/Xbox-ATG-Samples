@@ -14,7 +14,7 @@ description: "This sample demonstrates how use XAudio2 and X3DAudio to playback 
 
 # SimplePlay3DSoundXDK
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Audio/SimplePlay3DSoundXDK/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Audio/SimplePlay3DSoundXDK/Readme.docx).
 
 ## Privacy statement
 

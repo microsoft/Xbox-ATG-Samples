@@ -14,7 +14,7 @@ description: "This sample demonstrates using the CPU Sets APIs to ascertain info
 
 # CPUSets
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/System/CPUSets/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/System/CPUSets/Readme.docx).
 
 ## Privacy statement
 

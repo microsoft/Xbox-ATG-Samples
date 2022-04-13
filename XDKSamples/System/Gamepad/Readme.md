@@ -14,7 +14,7 @@ description: "This sample demonstrates how to read inputs from a gamepad on the 
 
 # Gamepad
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/Gamepad/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/Gamepad/Readme.docx).
 
 ## Privacy statement
 

@@ -14,7 +14,7 @@ description: "This sample demonstrates how to use the SymbolResolve APIs to reso
 
 # SymbolProxyClient
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Tools/SymbolProxyClient/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Tools/SymbolProxyClient/Readme.docx).
 
 ## Privacy statement
 

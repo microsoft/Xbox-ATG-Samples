@@ -14,7 +14,7 @@ description: "This sample demonstrates how to implement user to gamepad pairing 
 
 # UserGamepadPairingUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/System/UserGamepadPairingUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/System/UserGamepadPairingUWP/Readme.docx).
 
 ## Privacy statement
 

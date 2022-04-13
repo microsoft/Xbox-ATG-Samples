@@ -14,7 +14,7 @@ description: "Switch a UHD TV into HDR mode and render a HDR scene with values h
 
 # SimpleHDR_PC12
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/PCSamples/Graphics/SimpleHDR_PC12/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/PCSamples/Graphics/SimpleHDR_PC12/Readme.docx).
 
 ## Privacy statement
 

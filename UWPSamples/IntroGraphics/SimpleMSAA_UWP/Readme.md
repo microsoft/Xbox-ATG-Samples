@@ -14,7 +14,7 @@ description: "This sample implements an MSAA render target and depth/stencil buf
 
 # SimpleMSAA_UWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/IntroGraphics/SimpleMSAA_UWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/IntroGraphics/SimpleMSAA_UWP/Readme.docx).
 
 ## Privacy statement
 

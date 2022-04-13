@@ -14,7 +14,7 @@ description: "This sample demonstrates how to read inputs from a gamepad using R
 
 # RawGameControllerUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/System/RawGameControllerUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/System/RawGameControllerUWP/Readme.docx).
 
 ## Privacy statement
 

@@ -14,7 +14,7 @@ description: "This sample demonstrates how to capture audio using WASAPI in a Un
 
 # SimpleWASAPICaptureUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/Audio/SimpleWASAPICaptureUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/Audio/SimpleWASAPICaptureUWP/Readme.docx).
 
 ## Privacy statement
 

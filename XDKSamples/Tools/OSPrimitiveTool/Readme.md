@@ -14,7 +14,7 @@ description: "This tool was used to generate the numbers contained in the Costs 
 
 # OSPrimitiveTool
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Tools/OSPrimitiveTool/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Tools/OSPrimitiveTool/Readme.docx).
 
 ## Privacy statement
 

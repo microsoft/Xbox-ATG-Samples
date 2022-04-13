@@ -14,7 +14,7 @@ description: "This sample demonstrates how to render a simple textured quad usin
 
 # SimpleTriangleCppWinRT_UWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/IntroGraphics/SimpleTriangleCppWinRT_UWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/IntroGraphics/SimpleTriangleCppWinRT_UWP/Readme.docx).
 
 ## Privacy statement
 

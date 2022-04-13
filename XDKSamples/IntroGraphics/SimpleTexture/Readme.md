@@ -14,7 +14,7 @@ description: "This sample demonstrates how to render a simple textured quad usin
 
 # SimpleTexture
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/IntroGraphics/SimpleTexture/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/IntroGraphics/SimpleTexture/Readme.docx).
 
 ## Privacy statement
 

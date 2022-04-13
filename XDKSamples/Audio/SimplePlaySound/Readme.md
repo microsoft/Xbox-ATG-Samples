@@ -14,7 +14,7 @@ description: "This sample demonstrates how to play a wav file using XAudio2 on t
 
 # SimplePlaySound
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Audio/SimplePlaySound/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Audio/SimplePlaySound/Readme.docx).
 
 ## Privacy statement
 

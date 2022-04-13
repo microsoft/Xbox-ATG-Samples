@@ -14,7 +14,7 @@ description: "These samples show the behavior of extended execution and the even
 
 # ExtendedExecutionUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/System/ExtendedExecutionUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/System/ExtendedExecutionUWP/Readme.docx).
 
 ## Privacy statement
 

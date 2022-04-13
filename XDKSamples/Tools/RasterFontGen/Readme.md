@@ -14,7 +14,7 @@ description: "RasterFontGen is a tool for creating 'rasterized' TrueType fonts f
 
 # RasterFontGen
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Tools/RasterFontGen/readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Tools/RasterFontGen/readme.docx).
 
 ## Privacy statement
 

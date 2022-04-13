@@ -14,7 +14,7 @@ description: "SimpleCompute shows how to use DirectCompute (i.e. Direct3D Comput
 
 # SimpleComputePC
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/PCSamples/IntroGraphics/SimpleComputePC/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/PCSamples/IntroGraphics/SimpleComputePC/Readme.docx).
 
 ## Privacy statement
 

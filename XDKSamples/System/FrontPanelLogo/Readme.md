@@ -14,7 +14,7 @@ description: "This sample provides some starting code to help you render an imag
 
 # FrontPanelLogo
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/FrontPanelLogo/readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/FrontPanelLogo/readme.docx).
 
 ## Privacy statement
 

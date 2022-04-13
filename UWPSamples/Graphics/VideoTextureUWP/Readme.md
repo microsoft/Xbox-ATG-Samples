@@ -14,7 +14,7 @@ description: "This sample demonstrates using the Media Foundation APIs on Window
 
 # VideoTextureUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/Graphics/VideoTextureUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/Graphics/VideoTextureUWP/Readme.docx).
 
 ## Privacy statement
 

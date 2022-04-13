@@ -14,7 +14,7 @@ description: "This sample demonstrates how to read inputs from a gamepad in a Un
 
 # GamepadCppWinRT_UWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/System/GamepadCppWinRT_UWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/System/GamepadCppWinRT_UWP/Readme.docx).
 
 ## Privacy statement
 

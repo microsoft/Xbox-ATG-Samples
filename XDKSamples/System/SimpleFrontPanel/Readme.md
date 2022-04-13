@@ -14,7 +14,7 @@ description: "The SimpleFrontPanel sample demonstrates the IXboxFrontPanel API c
 
 # SimpleFrontPanel
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/SimpleFrontPanel/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/SimpleFrontPanel/Readme.docx).
 
 ## Privacy statement
 

@@ -14,7 +14,7 @@ description: "This sample demonstrates how to set up DirectX Raytracing (DXR) an
 
 # SimpleRaytracingTriangle_PC12
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/PCSamples/Raytracing/SimpleRaytracingTriangle_PC12/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/PCSamples/Raytracing/SimpleRaytracingTriangle_PC12/Readme.docx).
 
 ## Privacy statement
 

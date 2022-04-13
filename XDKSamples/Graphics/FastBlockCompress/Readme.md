@@ -14,7 +14,7 @@ description: "This sample demonstrates how you can use DirectCompute to perform 
 
 # FastBlockCompress
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Graphics/FastBlockCompress/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Graphics/FastBlockCompress/Readme.docx).
 
 ## Privacy statement
 

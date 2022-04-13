@@ -14,7 +14,7 @@ description: "This sample demonstrates the Cloud Error Message (CEM) service. Th
 
 # errorlookup
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/Tools/errorlookup/README.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/Tools/errorlookup/README.docx).
 
 ## Privacy statement
 

@@ -14,7 +14,7 @@ description: "FrontPanelGame is the classic “snake game” implemented complet
 
 # FrontPanelGame
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/FrontPanelGame/readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/FrontPanelGame/readme.docx).
 
 ## Privacy statement
 

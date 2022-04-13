@@ -14,7 +14,7 @@ description: "This sample demonstrates how to use custom ETW event providers on 
 
 # CustomEventProvider
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/CustomEventProvider/ReadMe.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/CustomEventProvider/ReadMe.docx).
 
 ## Privacy statement
 

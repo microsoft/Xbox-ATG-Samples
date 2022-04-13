@@ -14,7 +14,7 @@ description: "DumpTool runs in the same OS partition as the Xbox One Title and g
 
 # DumpTool
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Tools/DumpTool/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Tools/DumpTool/Readme.docx).
 
 ## Privacy statement
 

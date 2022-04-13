@@ -14,7 +14,7 @@ description: "This sample follows the User and Controller events that are receiv
 
 # UserManagement
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/UserManagement/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/UserManagement/Readme.docx).
 
 ## Privacy statement
 

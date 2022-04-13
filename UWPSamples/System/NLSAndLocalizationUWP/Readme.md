@@ -14,7 +14,7 @@ description: "This sample demonstrates how to localize package manifest as well 
 
 # NLSAndLocalizationUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/System/NLSAndLocalizationUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/System/NLSAndLocalizationUWP/Readme.docx).
 
 ## Privacy statement
 

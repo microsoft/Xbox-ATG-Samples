@@ -14,7 +14,7 @@ description: "FrontPanelDemo combines several samples into one executable and th
 
 # FrontPanelDemo
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/FrontPanelDemo/readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/FrontPanelDemo/readme.docx).
 
 ## Privacy statement
 

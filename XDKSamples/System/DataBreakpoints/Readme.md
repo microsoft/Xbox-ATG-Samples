@@ -14,7 +14,7 @@ description: "This sample shows how to create hardware data breakpoints that are
 
 # DataBreakpoints
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/DataBreakpoints/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/DataBreakpoints/Readme.docx).
 
 ## Privacy statement
 

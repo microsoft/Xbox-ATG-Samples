@@ -14,7 +14,7 @@ description: "SimpleCompute shows how to use DirectCompute (i.e. Direct3D Comput
 
 # SimpleComputeUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/IntroGraphics/SimpleComputeUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/IntroGraphics/SimpleComputeUWP/Readme.docx).
 
 ## Privacy statement
 

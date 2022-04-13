@@ -14,7 +14,7 @@ description: "This sample demonstrates how to implement support for arcade stick
 
 # ArcadeStick
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/System/ArcadeStick/ReadMe.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/System/ArcadeStick/ReadMe.docx).
 
 ## Privacy statement
 

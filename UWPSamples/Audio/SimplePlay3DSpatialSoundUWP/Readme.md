@@ -14,7 +14,7 @@ description: "This sample demonstrates how use ISpatialAudioClient to playback p
 
 # SimplePlay3DSpatialSoundUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/Audio/SimplePlay3DSpatialSoundUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/Audio/SimplePlay3DSpatialSoundUWP/Readme.docx).
 
 ## Privacy statement
 

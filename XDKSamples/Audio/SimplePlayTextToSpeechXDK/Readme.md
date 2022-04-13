@@ -14,7 +14,7 @@ description: "This sample demonstrates how to play a text to speech audio using 
 
 # SimplePlayTextToSpeechXDK
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/XDKSamples/Audio/SimplePlayTextToSpeechXDK/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/XDKSamples/Audio/SimplePlayTextToSpeechXDK/Readme.docx).
 
 ## Privacy statement
 

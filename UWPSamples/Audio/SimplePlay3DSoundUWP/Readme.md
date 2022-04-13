@@ -14,7 +14,7 @@ description: "This sample demonstrates how use XAudio2 and X3DAudio to playback 
 
 # SimplePlay3DSoundUWP
 
-For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/master/UWPSamples/Audio/SimplePlay3DSoundUWP/Readme.docx).
+For more information see this [Word document](https://github.com/microsoft/Xbox-ATG-Samples/blob/main/UWPSamples/Audio/SimplePlay3DSoundUWP/Readme.docx).
 
 ## Privacy statement
 
