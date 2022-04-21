@@ -376,7 +376,7 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 
 ### UWP apps
 * Windows 10 Anniversary Update (Version 1607) or later
-* Visual Studio 2017 ([15.9](https://walbourn.github.io/vs-2017-15-9-update/) update) with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, and *Windows 10 SDK ([10.0.17763.0](https://walbourn.github.io/windows-10-october-2018-update/))*.
+* Visual Studio 2017 ([15.9](https://walbourn.github.io/vs-2017-15-9-update/) update) with the *Universal Windows Platform development* workload, the *C++ Universal Windows Platform tools* component, and *Windows 10 SDK ([10.0.19041.0](https://walbourn.github.io/windows-10-may-2020-update-sdk/))*.
 
 ### XDK apps
 * Xbox One Development Kit
@@ -384,10 +384,14 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 * Visual Studio 2017 (15.9)
 
 ### PC apps
-* Visual Studio 2017 (15.9) with the *Desktop development with C++* workload and *Windows 8.1 SDK* component.
+* Visual Studio 2017 (15.9) with the *Desktop development with C++* workload and *Windows 10 SDK ([10.0.19041.0](https://walbourn.github.io/windows-10-may-2020-update-sdk/))*.
 * _DirectX 11:_ Windows 7 Service Pack 1 with the DirectX 11.1 Runtime via [KB2670838](http://support.microsoft.com/kb/2670838) or later.
-* _DirectX 12:_ Windows 10; requires the Windows 10 Anniversary Update SDK (14393) or later to build.
+* _DirectX 12:_ Windows 10 or Windows 11.
 * _DirectX Raytracing:_ Windows 10 October 2018 Update or later.
+
+### VS 2019 / VS 2022
+
+VS 2019 or VS 2022 can also be used with the required workload and components installed via *Retarget solution* for PC and UWP samples. The legacy Xbox One XDK does not support VS 2019 or later.
 
 ## Privacy Statement
 

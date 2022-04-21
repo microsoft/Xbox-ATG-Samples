@@ -14,7 +14,7 @@
     <RootNamespace>SimpleBezier</RootNamespace>
     <ProjectGuid>{ccc0a548-5727-4bed-85a0-02da550208ca}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
     <ProjectName>SimpleBezierPC</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

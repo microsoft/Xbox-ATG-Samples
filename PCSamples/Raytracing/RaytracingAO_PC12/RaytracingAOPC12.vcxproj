@@ -14,7 +14,7 @@
     <RootNamespace>RaytracingAOPC12</RootNamespace>
     <ProjectGuid>{237251BF-9496-4F10-A4D5-1E7F0FE1EC6D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
     <ProjectName>RaytracingAO_PC12</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
