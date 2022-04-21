@@ -81,7 +81,7 @@ namespace
 }
 
 
-#if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_GAMES)
+#ifdef USING_GAMEINPUT
 
 #include <GameInput.h>
 
@@ -386,15 +386,26 @@ private:
 
 GamePad::Impl* GamePad::Impl::s_gamePad = nullptr;
 
+void GamePad::RegisterEvents(HANDLE ctrlChanged) noexcept
+{
+    pImpl->mCtrlChanged = (!ctrlChanged) ? INVALID_HANDLE_VALUE : ctrlChanged;
+}
 
-#elif (_WIN32_WINNT >= _WIN32_WINNT_WIN10) && !defined(_GAMING_DESKTOP)
+_Success_(return)
+bool GamePad::GetDevice(int player, _Outptr_ IGameInputDevice * *device) noexcept
+{
+    return pImpl->GetDevice(player, device);
+}
+
+
+#elif defined(USING_WINDOWS_GAMING_INPUT)
 
 //======================================================================================
 // Windows::Gaming::Input (Windows 10)
 //======================================================================================
 
 #pragma warning(push)
-#pragma warning(disable : 4471 5204)
+#pragma warning(disable : 4471 5204 5256)
 #include <windows.gaming.input.h>
 #pragma warning(pop)
 
@@ -802,11 +813,17 @@ private:
 
 GamePad::Impl* GamePad::Impl::s_gamePad = nullptr;
 
+void GamePad::RegisterEvents(HANDLE ctrlChanged, HANDLE userChanged) noexcept
+{
+    pImpl->mCtrlChanged = (!ctrlChanged) ? INVALID_HANDLE_VALUE : ctrlChanged;
+    pImpl->mUserChanged = (!userChanged) ? INVALID_HANDLE_VALUE : userChanged;
+}
+
 
 #elif defined(_XBOX_ONE)
 
 //======================================================================================
-// Windows::Xbox::Input (Xbox One)
+// Windows::Xbox::Input (Xbox One XDK)
 //======================================================================================
 
 #include <Windows.Xbox.Input.h>
@@ -1062,7 +1079,6 @@ public:
                     }
                 }
 
-            #if _XDK_VER >= 0x42ED07E4 /* XDK Edition 180400 */
                 ComPtr<IController3> ctrl3;
                 hr = mGamePad[player].As(&ctrl3);
                 if (SUCCEEDED(hr) && ctrl3)
@@ -1073,7 +1089,6 @@ public:
                     if (FAILED(ctrl3->get_HardwareProductId(&caps.pid)))
                         caps.pid = 0;
                 }
-            #endif
 
                 return;
             }
@@ -1226,6 +1241,13 @@ private:
 };
 
 GamePad::Impl* GamePad::Impl::s_gamePad = nullptr;
+
+void GamePad::RegisterEvents(HANDLE ctrlChanged, HANDLE userChanged) noexcept
+{
+    pImpl->mCtrlChanged = (!ctrlChanged) ? INVALID_HANDLE_VALUE : ctrlChanged;
+    pImpl->mUserChanged = (!userChanged) ? INVALID_HANDLE_VALUE : userChanged;
+}
+
 
 #else
 
@@ -1643,26 +1665,6 @@ void GamePad::Resume() noexcept
 }
 
 
-#if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_GAMES)
-void GamePad::RegisterEvents(HANDLE ctrlChanged) noexcept
-{
-    pImpl->mCtrlChanged = (!ctrlChanged) ? INVALID_HANDLE_VALUE : ctrlChanged;
-}
-
-_Success_(return)
-bool GamePad::GetDevice(int player, _Outptr_ IGameInputDevice** device) noexcept
-{
-    return pImpl->GetDevice(player, device);
-}
-#elif ((_WIN32_WINNT >= _WIN32_WINNT_WIN10) && !defined(_GAMING_DESKTOP)) || defined(_XBOX_ONE)
-void GamePad::RegisterEvents(HANDLE ctrlChanged, HANDLE userChanged) noexcept
-{
-    pImpl->mCtrlChanged = (!ctrlChanged) ? INVALID_HANDLE_VALUE : ctrlChanged;
-    pImpl->mUserChanged = (!userChanged) ? INVALID_HANDLE_VALUE : userChanged;
-}
-#endif
-
-
 GamePad& GamePad::Get()
 {
     if (!Impl::s_gamePad || !Impl::s_gamePad->mOwner)
@@ -1679,27 +1681,31 @@ GamePad& GamePad::Get()
 
 #define UPDATE_BUTTON_STATE(field) field = static_cast<ButtonState>( ( !!state.buttons.field ) | ( ( !!state.buttons.field ^ !!lastState.buttons.field ) << 1 ) );
 
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wextra-semi-stmt"
+#endif
+
 void GamePad::ButtonStateTracker::Update(const GamePad::State& state) noexcept
 {
-    UPDATE_BUTTON_STATE(a)
+    UPDATE_BUTTON_STATE(a);
 
     assert((!state.buttons.a && !lastState.buttons.a) == (a == UP));
     assert((state.buttons.a && lastState.buttons.a) == (a == HELD));
     assert((!state.buttons.a && lastState.buttons.a) == (a == RELEASED));
     assert((state.buttons.a && !lastState.buttons.a) == (a == PRESSED));
 
-    UPDATE_BUTTON_STATE(b)
-    UPDATE_BUTTON_STATE(x)
-    UPDATE_BUTTON_STATE(y)
+    UPDATE_BUTTON_STATE(b);
+    UPDATE_BUTTON_STATE(x);
+    UPDATE_BUTTON_STATE(y);
 
-    UPDATE_BUTTON_STATE(leftStick)
-    UPDATE_BUTTON_STATE(rightStick)
+    UPDATE_BUTTON_STATE(leftStick);
+    UPDATE_BUTTON_STATE(rightStick);
 
-    UPDATE_BUTTON_STATE(leftShoulder)
-    UPDATE_BUTTON_STATE(rightShoulder)
+    UPDATE_BUTTON_STATE(leftShoulder);
+    UPDATE_BUTTON_STATE(rightShoulder);
 
-    UPDATE_BUTTON_STATE(back)
-    UPDATE_BUTTON_STATE(start)
+    UPDATE_BUTTON_STATE(back);
+    UPDATE_BUTTON_STATE(start);
 
     dpadUp = static_cast<ButtonState>((!!state.dpad.up) | ((!!state.dpad.up ^ !!lastState.dpad.up) << 1));
     dpadDown = static_cast<ButtonState>((!!state.dpad.down) | ((!!state.dpad.down ^ !!lastState.dpad.down) << 1));

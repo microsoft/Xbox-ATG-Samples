@@ -17,6 +17,7 @@
 #include <atomic>
 #include <exception>
 #include <stdexcept>
+#include <tuple>
 
 using namespace DirectX;
 using namespace DX;
@@ -158,7 +159,7 @@ public:
     {
         if (m_memory)
         {
-            (void)VirtualFree(m_memory, m_size, MEM_RELEASE);
+            std::ignore = VirtualFree(m_memory, m_size, MEM_RELEASE);
             m_memory = nullptr;
         }
     }

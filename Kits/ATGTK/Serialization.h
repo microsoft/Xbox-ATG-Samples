@@ -806,7 +806,7 @@ namespace ATG
             {
             }
 
-            ClassVisitorAction(ClassVisitorAction<TB> &&rhs)
+            ClassVisitorAction(ClassVisitorAction<TB> &&rhs) noexcept
                 : m_impl(std::move(rhs.m_impl))
             {
             }
@@ -1587,7 +1587,7 @@ namespace ATG
                 [](SerializationHeader &header, IVisitor&)
             {
                 uint32_t flags = static_cast<uint32_t>(header.m_flags);
-                const uint32_t isCurrentVersion = static_cast<uint32_t>(SerializationHeader::SerializationFlags::is_current_version);
+                constexpr uint32_t isCurrentVersion = static_cast<uint32_t>(SerializationHeader::SerializationFlags::is_current_version);
 
                 if (header.m_verString == SERIALIZATION_CURRENT_VERSION_STRING)
                 {
@@ -1612,7 +1612,7 @@ namespace ATG
             {
                 // Consume the byte-order-mark from the visitor and then adjust the flags accordingly
                 uint32_t flags = static_cast<uint32_t>(header.m_flags);
-                const uint32_t isHostEndianFlag = static_cast<uint32_t>(SerializationHeader::SerializationFlags::is_host_endian);
+                constexpr uint32_t isHostEndianFlag = static_cast<uint32_t>(SerializationHeader::SerializationFlags::is_host_endian);
                 switch (BOM)
                 {
                 case 0xFEFF:
@@ -1650,8 +1650,8 @@ namespace ATG
 
         bool CheckFlag(SerializationFlags flag) const
         {
-            uint32_t flagVal = static_cast<uint32_t>(flag);
-            uint32_t flagsVal = static_cast<uint32_t>(m_flags);
+            const uint32_t flagVal = static_cast<uint32_t>(flag);
+            const uint32_t flagsVal = static_cast<uint32_t>(m_flags);
 
             return ((flagsVal & flagVal) == flagVal);
         }

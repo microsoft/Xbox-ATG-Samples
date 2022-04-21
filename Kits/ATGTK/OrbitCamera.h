@@ -61,7 +61,7 @@ namespace DX
         //        Hold Right Mouse Button: Translate X/Y (Shift Translates Z)
         //                   Scroll wheel: Increase/decrease orbit radius
         //
-        void Update(float elapsedTime, DirectX::Mouse& mouse, DirectX::Keyboard& kb);
+        void Update(float elapsedTime, DirectX::Mouse& mouse, const DirectX::Keyboard& kb);
 
         // Reset camera to default view
         void Reset();

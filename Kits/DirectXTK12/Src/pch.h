@@ -118,8 +118,8 @@
 #elif defined(_XBOX_ONE) && defined(_TITLE)
 #include <xdk.h>
 
-#if _XDK_VER < 0x295A044C /* XDK Edition 160200 */
-#error DirectX Tool Kit for Direct3D 12 requires the February 2016 XDK or later
+#if _XDK_VER < 0x42ED07E4 /* XDK Edition 180400  */
+#error DirectX Tool Kit for Direct3D 12 requires the April 2018 XDK or later
 #endif
 
 #include <d3d12_x.h>
@@ -162,7 +162,7 @@
 
 #if (defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)) || (defined(_XBOX_ONE) && defined(_TITLE))
 #pragma warning(push)
-#pragma warning(disable: 4471 5204)
+#pragma warning(disable: 4471 5204 5256)
 #include <Windows.UI.Core.h>
 #pragma warning(pop)
 #endif

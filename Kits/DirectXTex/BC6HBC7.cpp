@@ -1193,8 +1193,8 @@ namespace
         const float *pD = (3 == cSteps) ? pD3 : pD4;
 
         // Find Min and Max points, as starting point
-        HDRColorA X(1.0f, 1.0f, 1.0f, 0.0f);
-        HDRColorA Y(0.0f, 0.0f, 0.0f, 0.0f);
+        HDRColorA X(FLT_MAX, FLT_MAX, FLT_MAX, 0.0f);
+        HDRColorA Y(-FLT_MAX, -FLT_MAX, -FLT_MAX, 0.0f);
 
         for (size_t iPoint = 0; iPoint < cPixels; iPoint++)
         {

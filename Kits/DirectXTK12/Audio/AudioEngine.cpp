@@ -257,6 +257,10 @@ static_assert(static_cast<unsigned int>(std::size(gReverbPresets)) == Reverb_MAX
 
 #define SAFE_DESTROY_VOICE(voice) if ( voice ) { voice->DestroyVoice(); voice = nullptr; }
 
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wextra-semi-stmt"
+#endif
+
 // Internal object implementation class.
 class AudioEngine::Impl
 {
@@ -451,7 +455,7 @@ HRESULT AudioEngine::Impl::Reset(const WAVEFORMATEX* wfx, const wchar_t* deviceI
     hr = mMasterVoice->GetChannelMask(&dwChannelMask);
     if (FAILED(hr))
     {
-        SAFE_DESTROY_VOICE(mMasterVoice)
+        SAFE_DESTROY_VOICE(mMasterVoice);
         xaudio2.Reset();
         return hr;
     }
@@ -471,7 +475,7 @@ HRESULT AudioEngine::Impl::Reset(const WAVEFORMATEX* wfx, const wchar_t* deviceI
         hr = mMasterVoice->SetVolume(mMasterVolume);
         if (FAILED(hr))
         {
-            SAFE_DESTROY_VOICE(mMasterVoice)
+            SAFE_DESTROY_VOICE(mMasterVoice);
             xaudio2.Reset();
             return hr;
         }
@@ -489,7 +493,7 @@ HRESULT AudioEngine::Impl::Reset(const WAVEFORMATEX* wfx, const wchar_t* deviceI
         hr = CreateFX(__uuidof(FXMasteringLimiter), mVolumeLimiter.ReleaseAndGetAddressOf(), &params, sizeof(params));
         if (FAILED(hr))
         {
-            SAFE_DESTROY_VOICE(mMasterVoice)
+            SAFE_DESTROY_VOICE(mMasterVoice);
             xaudio2.Reset();
             return hr;
         }
@@ -503,7 +507,7 @@ HRESULT AudioEngine::Impl::Reset(const WAVEFORMATEX* wfx, const wchar_t* deviceI
         hr = mMasterVoice->SetEffectChain(&chain);
         if (FAILED(hr))
         {
-            SAFE_DESTROY_VOICE(mMasterVoice)
+            SAFE_DESTROY_VOICE(mMasterVoice);
             mVolumeLimiter.Reset();
             xaudio2.Reset();
             return hr;
@@ -520,7 +524,7 @@ HRESULT AudioEngine::Impl::Reset(const WAVEFORMATEX* wfx, const wchar_t* deviceI
         hr = XAudio2CreateReverb(mReverbEffect.ReleaseAndGetAddressOf(), 0u);
         if (FAILED(hr))
         {
-            SAFE_DESTROY_VOICE(mMasterVoice)
+            SAFE_DESTROY_VOICE(mMasterVoice);
             mVolumeLimiter.Reset();
             xaudio2.Reset();
             return hr;
@@ -536,7 +540,7 @@ HRESULT AudioEngine::Impl::Reset(const WAVEFORMATEX* wfx, const wchar_t* deviceI
             nullptr, &effectChain);
         if (FAILED(hr))
         {
-            SAFE_DESTROY_VOICE(mMasterVoice)
+            SAFE_DESTROY_VOICE(mMasterVoice);
             mReverbEffect.Reset();
             mVolumeLimiter.Reset();
             xaudio2.Reset();
@@ -548,8 +552,8 @@ HRESULT AudioEngine::Impl::Reset(const WAVEFORMATEX* wfx, const wchar_t* deviceI
         hr = mReverbVoice->SetEffectParameters(0, &native, sizeof(XAUDIO2FX_REVERB_PARAMETERS));
         if (FAILED(hr))
         {
-            SAFE_DESTROY_VOICE(mReverbVoice)
-            SAFE_DESTROY_VOICE(mMasterVoice)
+            SAFE_DESTROY_VOICE(mReverbVoice);
+            SAFE_DESTROY_VOICE(mMasterVoice);
             mReverbEffect.Reset();
             mVolumeLimiter.Reset();
             xaudio2.Reset();
@@ -567,8 +571,8 @@ HRESULT AudioEngine::Impl::Reset(const WAVEFORMATEX* wfx, const wchar_t* deviceI
     hr = X3DAudioInitialize(masterChannelMask, SPEEDOFSOUND, mX3DAudio);
     if (FAILED(hr))
     {
-        SAFE_DESTROY_VOICE(mReverbVoice)
-        SAFE_DESTROY_VOICE(mMasterVoice)
+        SAFE_DESTROY_VOICE(mReverbVoice);
+        SAFE_DESTROY_VOICE(mMasterVoice);
         mReverbEffect.Reset();
         mVolumeLimiter.Reset();
         xaudio2.Reset();
@@ -612,8 +616,8 @@ void AudioEngine::Impl::SetSilentMode()
 
     mVoiceInstances = 0;
 
-    SAFE_DESTROY_VOICE(mReverbVoice)
-    SAFE_DESTROY_VOICE(mMasterVoice)
+    SAFE_DESTROY_VOICE(mReverbVoice);
+    SAFE_DESTROY_VOICE(mMasterVoice);
 
     mReverbEffect.Reset();
     mVolumeLimiter.Reset();
@@ -651,8 +655,8 @@ void AudioEngine::Impl::Shutdown() noexcept
 
         mVoiceInstances = 0;
 
-        SAFE_DESTROY_VOICE(mReverbVoice)
-        SAFE_DESTROY_VOICE(mMasterVoice)
+        SAFE_DESTROY_VOICE(mReverbVoice);
+        SAFE_DESTROY_VOICE(mMasterVoice);
 
         mReverbEffect.Reset();
         mVolumeLimiter.Reset();
@@ -1427,8 +1431,11 @@ X3DAUDIO_HANDLE& AudioEngine::Get3DHandle() const noexcept
 #elif (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
 #pragma comment(lib,"runtimeobject.lib")
 #pragma warning(push)
-#pragma warning(disable: 4471 5204)
-#include <windows.devices.enumeration.h>
+#pragma warning(disable: 4471 5204 5256)
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wnonportable-system-include-path"
+#endif
+#include <Windows.Devices.Enumeration.h>
 #pragma warning(pop)
 #include <wrl.h>
 #endif
