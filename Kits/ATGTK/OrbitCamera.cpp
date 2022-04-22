@@ -13,6 +13,7 @@
 #include "Mouse.h"
 #include "SimpleMath.h"
 
+#include <tuple>
 #include <utility>
 
 using namespace DirectX;
@@ -52,7 +53,7 @@ namespace
             using namespace DirectX;
             if (m_drag)
             {
-                XMVECTOR curr = ScreenToVector(float(x), float(y));
+                const XMVECTOR curr = ScreenToVector(float(x), float(y));
 
                 m_qnow = XMQuaternionMultiply(m_qdown, QuatFromBallPoints(m_downPoint, curr));
                 m_qnow = XMQuaternionNormalize(m_qnow);
@@ -93,11 +94,11 @@ namespace
             float y = (screeny - m_height / 2.f) / (m_radius * m_height / 2.f);
 
             float z = 0.0f;
-            float mag = x * x + y * y;
+            const float mag = x * x + y * y;
 
             if (mag > 1.0f)
             {
-                float scale = 1.0f / sqrtf(mag);
+                const float scale = 1.0f / sqrtf(mag);
                 x *= scale;
                 y *= scale;
             }
@@ -110,8 +111,8 @@ namespace
         static DirectX::XMVECTOR QuatFromBallPoints(DirectX::FXMVECTOR vFrom, DirectX::FXMVECTOR vTo)
         {
             using namespace DirectX;
-            XMVECTOR dot = XMVector3Dot(vFrom, vTo);
-            XMVECTOR vPart = XMVector3Cross(vFrom, vTo);
+            const XMVECTOR dot = XMVector3Dot(vFrom, vTo);
+            const XMVECTOR vPart = XMVector3Cross(vFrom, vTo);
             return XMVectorSelect(dot, vPart, g_XMSelect1110);
         }
     };
@@ -157,9 +158,9 @@ public:
     {
         using namespace DirectX::SimpleMath;
 
-        float handed = (m_lhcoords) ? 1.f : -1.f;
+        const float handed = (m_lhcoords) ? 1.f : -1.f;
 
-        Matrix im = XMMatrixInverse(nullptr, GetView());
+        const Matrix im = XMMatrixInverse(nullptr, GetView());
 
         if (!(m_flags & c_FlagsDisableTranslation))
         {
@@ -190,8 +191,8 @@ public:
 
                 m_focus = XMVectorAdd(m_focus, XMVectorScale(move, elapsedTime * m_sensitivity));
 
-                Vector3 minBound = m_bounds.Center - m_bounds.Extents;
-                Vector3 maxBound = m_bounds.Center + m_bounds.Extents;
+                const Vector3 minBound = m_bounds.Center - m_bounds.Extents;
+                const Vector3 maxBound = m_bounds.Center + m_bounds.Extents;
                 m_focus = XMVectorMax(minBound, XMVectorMin(maxBound, m_focus));
 
                 m_viewDirty = true;
@@ -232,7 +233,7 @@ public:
             m_sensitivity = m_defaultSensitivity;
 
 #ifdef _DEBUG
-            (void)GetView();
+            std::ignore = GetView();
 
             char buff[128] = {};
             Vector4 tmp = m_cameraPosition;
@@ -273,16 +274,16 @@ public:
         }
     }
 
-    void Update(float elapsedTime, Mouse& mouse, Keyboard& kb)
+    void Update(float elapsedTime, Mouse& mouse, const Keyboard& kb)
     {
         using namespace DirectX::SimpleMath;
 
-        float handed = (m_lhcoords) ? 1.f : -1.f;
+        const float handed = (m_lhcoords) ? 1.f : -1.f;
 
-        Matrix im = XMMatrixInverse(nullptr, GetView());
+        const Matrix im = XMMatrixInverse(nullptr, GetView());
 
-        auto mstate = mouse.GetState();
-        auto kbstate = kb.GetState();
+        auto const mstate = mouse.GetState();
+        auto const kbstate = kb.GetState();
 
         if ((mstate.positionMode != Mouse::MODE_RELATIVE) && !m_arcBall.IsDragging())
         {
@@ -375,8 +376,8 @@ public:
 
                     m_focus = XMVectorAdd(m_focus, XMVectorScale(move, elapsedTime));
 
-                    Vector3 minBound = m_bounds.Center - m_bounds.Extents;
-                    Vector3 maxBound = m_bounds.Center + m_bounds.Extents;
+                    const Vector3 minBound = m_bounds.Center - m_bounds.Extents;
+                    const Vector3 maxBound = m_bounds.Center + m_bounds.Extents;
                     m_focus = XMVectorMax(minBound, XMVectorMin(maxBound, m_focus));
 
                     m_viewDirty = true;
@@ -415,8 +416,8 @@ public:
 
                 m_focus = XMVectorAdd(m_focus, XMVectorScale(delta, elapsedTime * m_sensitivity));
 
-                Vector3 minBound = m_bounds.Center - m_bounds.Extents;
-                Vector3 maxBound = m_bounds.Center + m_bounds.Extents;
+                const Vector3 minBound = m_bounds.Center - m_bounds.Extents;
+                const Vector3 maxBound = m_bounds.Center + m_bounds.Extents;
                 m_focus = XMVectorMax(minBound, XMVectorMin(maxBound, m_focus));
 
                 m_viewDirty = true;
@@ -507,8 +508,8 @@ public:
     {
         m_viewDirty = false;
 
-        XMVECTOR dir = XMVector3Rotate((m_lhcoords) ? g_XMNegIdentityR2 : g_XMIdentityR2, m_cameraRotation);
-        XMVECTOR up = XMVector3Rotate(g_XMIdentityR1, m_cameraRotation);
+        const XMVECTOR dir = XMVector3Rotate((m_lhcoords) ? g_XMNegIdentityR2 : g_XMIdentityR2, m_cameraRotation);
+        const XMVECTOR up = XMVector3Rotate(g_XMIdentityR1, m_cameraRotation);
 
         m_cameraPosition = XMVectorAdd(m_focus, XMVectorScale(dir, m_radius));
 
@@ -528,7 +529,7 @@ public:
     {
         m_projDirty = false;
 
-        float aspectRatio = (m_height > 0.f) ? (float(m_width) / float(m_height)) : 1.f;
+        const float aspectRatio = (m_height > 0.f) ? (float(m_width) / float(m_height)) : 1.f;
 
         if (m_lhcoords)
         {
@@ -551,9 +552,11 @@ OrbitCamera::OrbitCamera()
     pImpl->Reset();
 }
 
+
 OrbitCamera::OrbitCamera(OrbitCamera&&) noexcept = default;
 OrbitCamera& OrbitCamera::operator= (OrbitCamera&&) noexcept = default;
 OrbitCamera::~OrbitCamera() = default;
+
 
 // Public methods.
 void OrbitCamera::Update(float elapsedTime, const GamePad::State& pad)
@@ -561,7 +564,7 @@ void OrbitCamera::Update(float elapsedTime, const GamePad::State& pad)
     pImpl->Update(elapsedTime, pad);
 }
 
-void OrbitCamera::Update(float elapsedTime, Mouse& mouse, Keyboard& kb)
+void OrbitCamera::Update(float elapsedTime, Mouse& mouse, const Keyboard& kb)
 {
     pImpl->Update(elapsedTime, mouse, kb);
 }
@@ -696,7 +699,7 @@ XMVECTOR OrbitCamera::GetPosition() const
 {
     if (pImpl->m_viewDirty)
     {
-        (void)pImpl->GetView();
+        std::ignore = pImpl->GetView();
     }
     return pImpl->m_cameraPosition;
 }

@@ -380,7 +380,7 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 
 ### XDK apps
 * Xbox One Development Kit
-* Xbox One XDK (specific version requirements covered in each sample's readme)
+* Xbox One XDK April 2018 - July 2018.
 * Visual Studio 2017 (15.9)
 
 ### PC apps

@@ -1921,7 +1921,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                     { nullptr,     0 },
                 };
 
-                uint32_t mode = LookupByName(pValue, s_pXGModes);
+                const uint32_t mode = LookupByName(pValue, s_pXGModes);
                 if (!mode)
                 {
                     printf("Invalid value specified with -xgmode (%ls)\n", pValue);
