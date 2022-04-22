@@ -19,6 +19,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <tuple>
 
 //
 // Requires the OpenEXR library <http://www.openexr.com/> and ZLIB <http://www.zlib.net>
@@ -41,7 +42,7 @@
 #endif
 
 #pragma warning(push)
-#pragma warning(disable : 4244 4996 26439 26495)
+#pragma warning(disable : 4244 4996 26439 26495 26496 26812)
 #include <ImfRgbaFile.h>
 #include <ImfIO.h>
 #pragma warning(pop)
@@ -59,19 +60,22 @@ using PackedVector::XMHALF4;
 #ifdef WIN32
 namespace
 {
-    struct handle_closer { void operator()(HANDLE h) { assert(h != INVALID_HANDLE_VALUE); if (h) CloseHandle(h); } };
+    struct handle_closer { void operator()(HANDLE h) noexcept { assert(h != INVALID_HANDLE_VALUE); if (h) CloseHandle(h); } };
 
     using ScopedHandle = std::unique_ptr<void, handle_closer>;
 
-    inline HANDLE safe_handle(HANDLE h) { return (h == INVALID_HANDLE_VALUE) ? nullptr : h; }
+    inline HANDLE safe_handle(HANDLE h) noexcept { return (h == INVALID_HANDLE_VALUE) ? nullptr : h; }
 
     class auto_delete_file
     {
     public:
-        auto_delete_file(HANDLE hFile) : m_handle(hFile) {}
+        auto_delete_file(HANDLE hFile) noexcept : m_handle(hFile) {}
 
         auto_delete_file(const auto_delete_file&) = delete;
         auto_delete_file& operator=(const auto_delete_file&) = delete;
+
+        auto_delete_file(auto_delete_file&&) = delete;
+        auto_delete_file& operator=(auto_delete_file&&) = delete;
 
         ~auto_delete_file()
         {
@@ -79,11 +83,11 @@ namespace
             {
                 FILE_DISPOSITION_INFO info = {};
                 info.DeleteFile = TRUE;
-                (void)SetFileInformationByHandle(m_handle, FileDispositionInfo, &info, sizeof(info));
+                std::ignore = SetFileInformationByHandle(m_handle, FileDispositionInfo, &info, sizeof(info));
             }
         }
 
-        void clear() { m_handle = nullptr; }
+        void clear() noexcept { m_handle = nullptr; }
 
     private:
         HANDLE m_handle;
@@ -97,7 +101,7 @@ namespace
     class com_exception : public std::exception
     {
     public:
-        com_exception(HRESULT hr) : result(hr) {}
+        com_exception(HRESULT hr) noexcept : result(hr) {}
 
         const char* what() const noexcept override
         {
@@ -106,7 +110,7 @@ namespace
             return s_str;
         }
 
-        HRESULT hr() const { return result; }
+        HRESULT get_result() const noexcept { return result; }
 
     private:
         HRESULT result;
@@ -135,6 +139,9 @@ namespace
 
         InputStream(const InputStream&) = delete;
         InputStream& operator = (const InputStream&) = delete;
+
+        InputStream(InputStream&&) = delete;
+        InputStream& operator=(InputStream&&) = delete;
 
         bool read(char c[], int n) override
         {
@@ -193,6 +200,9 @@ namespace
 
         OutputStream(const OutputStream&) = delete;
         OutputStream& operator = (const OutputStream&) = delete;
+
+        OutputStream(OutputStream&&) = delete;
+        OutputStream& operator=(OutputStream&&) = delete;
 
         void write(const char c[], int n) override
         {
@@ -253,10 +263,17 @@ HRESULT DirectX::GetMetadataFromEXRFile(const wchar_t* szFile, TexMetadata& meta
     }
 
 #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
-    ScopedHandle hFile(safe_handle(CreateFile2(szFile, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, nullptr)));
+    ScopedHandle hFile(safe_handle(CreateFile2(
+        szFile,
+        GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING,
+        nullptr)));
 #else
-    ScopedHandle hFile(safe_handle(CreateFileW(szFile, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
-        FILE_FLAG_SEQUENTIAL_SCAN, nullptr)));
+    ScopedHandle hFile(safe_handle(CreateFileW(
+        szFile,
+        GENERIC_READ, FILE_SHARE_READ,
+        nullptr,
+        OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN,
+        nullptr)));
 #endif
     if (!hFile)
     {
@@ -299,7 +316,7 @@ HRESULT DirectX::GetMetadataFromEXRFile(const wchar_t* szFile, TexMetadata& meta
 #ifdef _DEBUG
         OutputDebugStringA(exc.what());
 #endif
-        hr = exc.hr();
+        hr = exc.get_result();
     }
 #endif
 #if defined(WIN32) && defined(_DEBUG)
@@ -348,10 +365,17 @@ HRESULT DirectX::LoadFromEXRFile(const wchar_t* szFile, TexMetadata* metadata, S
     }
 
 #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
-    ScopedHandle hFile(safe_handle(CreateFile2(szFile, GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, nullptr)));
+    ScopedHandle hFile(safe_handle(CreateFile2(
+        szFile,
+        GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING,
+        nullptr)));
 #else
-    ScopedHandle hFile(safe_handle(CreateFileW(szFile, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
-        FILE_FLAG_SEQUENTIAL_SCAN, nullptr)));
+    ScopedHandle hFile(safe_handle(CreateFileW(
+        szFile,
+        GENERIC_READ, FILE_SHARE_READ,
+        nullptr,
+        OPEN_EXISTING, FILE_FLAG_SEQUENTIAL_SCAN,
+        nullptr)));
 #endif
     if (!hFile)
     {
@@ -374,7 +398,7 @@ HRESULT DirectX::LoadFromEXRFile(const wchar_t* szFile, TexMetadata* metadata, S
         Imf::RgbaInputFile file(fileName.c_str());
 #endif
 
-        auto dw = file.dataWindow();
+        auto const dw = file.dataWindow();
 
         const int width = dw.max.x - dw.min.x + 1;
         const int height = dw.max.y - dw.min.y + 1;
@@ -405,7 +429,7 @@ HRESULT DirectX::LoadFromEXRFile(const wchar_t* szFile, TexMetadata* metadata, S
 #ifdef _DEBUG
         OutputDebugStringA(exc.what());
 #endif
-        hr = exc.hr();
+        hr = exc.get_result();
     }
 #endif
 #if defined(WIN32) && defined(_DEBUG)
@@ -473,9 +497,17 @@ HRESULT DirectX::SaveToEXRFile(const Image& image, const wchar_t* szFile)
     }
     // Create file and write header
 #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8)
-    ScopedHandle hFile(safe_handle(CreateFile2(szFile, GENERIC_WRITE, 0, CREATE_ALWAYS, nullptr)));
+    ScopedHandle hFile(safe_handle(CreateFile2(
+        szFile,
+        GENERIC_WRITE, 0, CREATE_ALWAYS,
+        nullptr)));
 #else
-    ScopedHandle hFile(safe_handle(CreateFileW(szFile, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr)));
+    ScopedHandle hFile(safe_handle(CreateFileW(
+        szFile,
+        GENERIC_WRITE, 0,
+        nullptr,
+        CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL,
+        nullptr)));
 #endif
     if (!hFile)
     {
@@ -510,7 +542,7 @@ HRESULT DirectX::SaveToEXRFile(const Image& image, const wchar_t* szFile)
         }
         else
         {
-            uint64_t bytes = image.width * image.height;
+            const uint64_t bytes = image.width * image.height;
 
             if (bytes > UINT32_MAX)
             {
@@ -572,7 +604,7 @@ HRESULT DirectX::SaveToEXRFile(const Image& image, const wchar_t* szFile)
 #ifdef _DEBUG
         OutputDebugStringA(exc.what());
 #endif
-        hr = exc.hr();
+        hr = exc.get_result();
     }
 #endif
 #if defined(WIN32) && defined(_DEBUG)

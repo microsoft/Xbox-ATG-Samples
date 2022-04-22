@@ -7,6 +7,8 @@
 // Licensed under the MIT License.
 //--------------------------------------------------------------------------------------
 
+#pragma once
+
 #include "DirectXTex.h"
 
 
@@ -21,4 +23,4 @@ namespace DirectX
         _Out_opt_ TexMetadata* metadata, _Out_ ScratchImage& image);
 
     HRESULT __cdecl SaveToEXRFile(_In_ const Image& image, _In_z_ const wchar_t* szFile);
-};
+}
