@@ -68,8 +68,8 @@ public:
             }
             wchar_t fname[_MAX_FNAME] = {};
             wchar_t ext[_MAX_EXT] = {};
-            (void)_wsplitpath_s(exeName, nullptr, 0, nullptr, 0, fname, _MAX_FNAME, ext, _MAX_EXT);
-            (void)_wmakepath_s(exeName, nullptr, nullptr, fname, ext); // keep only the filename + extension
+            std::ignore = _wsplitpath_s(exeName, nullptr, 0, nullptr, 0, fname, _MAX_FNAME, ext, _MAX_EXT);
+            std::ignore = _wmakepath_s(exeName, nullptr, nullptr, fname, ext); // keep only the filename + extension
 
             ATG::EventWriteSampleLoaded(exeName);
         }

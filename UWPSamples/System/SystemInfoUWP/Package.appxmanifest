@@ -47,7 +47,7 @@
   <Capabilities>
     <Capability Name="internetClient" />
 
-<!-- For Xbox One, you can remove this rescap after setting the app type to 'Game' in DevHome for this package -->
+<!-- For Xbox, you can remove this rescap after setting the app type to 'Game' in DevHome for this package -->
     <rescap:Capability Name="expandedResources" />
   </Capabilities>
 </Package>

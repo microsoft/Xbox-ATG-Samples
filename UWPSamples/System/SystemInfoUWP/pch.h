@@ -1,4 +1,4 @@
-﻿//--------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------
 // pch.h
 //
 // Header for standard system include files.
@@ -27,12 +27,13 @@
 #include <DirectXColors.h>
 
 #include <algorithm>
+#include <cstdio>
 #include <exception>
 #include <memory>
 #include <stdexcept>
 #include <set>
+#include <tuple>
 
-#include <stdio.h>
 #include <pix.h>
 
 #ifdef _DEBUG
@@ -41,6 +42,10 @@
 
 #if defined(NTDDI_WIN10_RS3) && (NTDDI_VERSION >= NTDDI_WIN10_RS3)
 #include "Gamingdeviceinformation.h"
+#endif
+
+#if defined(NTDDI_WIN10_RS3) && (NTDDI_VERSION >= NTDDI_WIN10_RS3)
+#include <expandedresources.h>
 #endif
 
 #include "DDSTextureLoader.h"
