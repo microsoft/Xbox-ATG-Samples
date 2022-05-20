@@ -383,6 +383,8 @@ void Sample::Render()
         {
             y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"GetGamingDeviceModelInformation", mid, y, ATG::Colors::LightGrey, m_scale);
 
+            bool gamingapis = false;
+
             #if defined(NTDDI_WIN10_RS3) && (NTDDI_VERSION >= NTDDI_WIN10_RS3)
 
             // Requires the linker settings to include /DELAYLOAD:api-ms-win-gaming-deviceinformation-l1-1-0.dll
@@ -395,6 +397,8 @@ void Sample::Render()
                 "GetGamingDeviceModelInformation",
                 0))
             {
+                gamingapis = true;
+
                 GAMING_DEVICE_MODEL_INFORMATION info = {};
                 GetGamingDeviceModelInformation(&info);
 
@@ -419,16 +423,53 @@ void Sample::Render()
                     case GAMING_DEVICE_DEVICE_ID_XBOX_ONE_S: wcscat_s(buff, L" (Xbox One S)"); break;
                     case GAMING_DEVICE_DEVICE_ID_XBOX_ONE_X: wcscat_s(buff, L" (Xbox One X)"); break;
                     case GAMING_DEVICE_DEVICE_ID_XBOX_ONE_X_DEVKIT: wcscat_s(buff, L" (Xbox One X Dev Kit)"); break;
+
+                    #ifndef NTDDI_WIN10_NI
+                    #pragma warning(disable : 4063)
+                    #define GAMING_DEVICE_DEVICE_ID_XBOX_SERIES_S static_cast<GAMING_DEVICE_DEVICE_ID>(0x1D27FABB)
+                    #define GAMING_DEVICE_DEVICE_ID_XBOX_SERIES_X static_cast<GAMING_DEVICE_DEVICE_ID>(0x2F7A3DFF)
+                    #define GAMING_DEVICE_DEVICE_ID_XBOX_SERIES_X_DEVKIT static_cast<GAMING_DEVICE_DEVICE_ID>(0xDE8A5661)
+                    #endif
+
+                    case GAMING_DEVICE_DEVICE_ID_XBOX_SERIES_S: wcscat_s(buff, L" (Xbox Series S)"); break;
+                    case GAMING_DEVICE_DEVICE_ID_XBOX_SERIES_X: wcscat_s(buff, L" (Xbox Series X)"); break;
+                    case GAMING_DEVICE_DEVICE_ID_XBOX_SERIES_X_DEVKIT: wcscat_s(buff, L" (Xbox Series X|S Dev Kit)"); break;
                     }
                 }
 
                 DrawStringLeft(m_batch.get(), m_smallFont.get(), L"DeviceId", left, y, m_scale);
                 y += DrawStringRight(m_batch.get(), m_smallFont.get(), buff, right, y, m_scale);
             }
-            else
-            #endif
+
+            // Requires the linker settings to include /DELAYLOAD:api-ms-win-gaming-expandedresources-l1-1-0.dll
+            //
+            // Note: You can avoid the need for delay loading if you require 10.0.16299 as your minimum OS version
+            //       and/or you restrict your package to the Xbox device family
+            //
+            // For PC, "Game Mode" is deprecated as of Windows 10 Version 1803. It's still used for UWP on Xbox.
+
+            if (QueryOptionalDelayLoadedAPI(reinterpret_cast<HMODULE>(&__ImageBase),
+                "api-ms-win-gaming-expandedresources-l1-1-0.dll",
+                "HasExpandedResources",
+                0))
             {
-                y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"This API requires Windows 10 (16299) or later", mid, y, ATG::Colors::Orange, m_scale);
+                gamingapis = true;
+
+                BOOL expandedResources = FALSE;
+                if SUCCEEDED(HasExpandedResources(&expandedResources))
+                {
+                    y += m_smallFont->GetLineSpacing() * m_scale;
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Game Mode", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), expandedResources ? L"Enabled" : L"Disabled", right, y, m_scale);
+                }
+            }
+
+            #endif
+
+            if (!gamingapis)
+            {
+                y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"These APIs require Windows 10 (16299) or later", mid, y, ATG::Colors::Orange, m_scale);
             }
         }
         break;
@@ -439,47 +480,62 @@ void Sample::Render()
 
             using namespace Windows::Foundation::Metadata;
 
-            // https://docs.microsoft.com/en-us/uwp/extension-sdks/windows-universal-sdk
-
-            bool isfoundation2 = ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 2, 0);
-            bool isfoundation3 = ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 3, 0);
-            bool isuniversal2 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2, 0);
-            bool isuniversal3 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3, 0);
-            bool isuniversal4 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4, 0);
-            bool isuniversal5 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5, 0);
-            bool isuniversal6 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 6, 0);
-            bool isuniversal7 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7, 0);
-            bool isuniversal8 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 8, 0);
-            bool isphone = ApiInformation::IsApiContractPresent("Windows.Phone.PhoneContract", 1, 0);
-            bool isstore2 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 2, 0);
-            bool isstore3 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 3, 0);
-            bool isstore4 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 4, 0);
-            bool xliveStorage = ApiInformation::IsApiContractPresent("Windows.Gaming.XboxLive.StorageApiContract", 1, 0);
-            bool xliveSecure = ApiInformation::IsApiContractPresent("Windows.Networking.XboxLive.XboxLiveSecureSocketsContract", 1, 0);
+            const bool isfoundation2 = ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 2, 0);
+            const bool isfoundation3 = ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 3, 0);
+            const bool isfoundation4 = ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 4, 0);
+            const bool isuniversal2 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 2, 0);
+            const bool isuniversal3 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 3, 0);
+            const bool isuniversal4 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 4, 0);
+            const bool isuniversal5 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 5, 0);
+            const bool isuniversal6 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 6, 0);
+            const bool isuniversal7 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7, 0);
+            const bool isuniversal8 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 8, 0);
+            const bool isuniversal9 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 9, 0);
+            const bool isuniversal10 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 10, 0);
+            const bool isuniversal11 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 11, 0);
+            const bool isuniversal12 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 12, 0);
+            const bool isuniversal13 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 13, 0);
+            const bool isuniversal14 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 14, 0);
+            const bool isphone = ApiInformation::IsApiContractPresent("Windows.Phone.PhoneContract", 1, 0);
+            const bool isstore2 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 2, 0);
+            const bool isstore3 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 3, 0);
+            const bool isstore4 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 4, 0);
+            const bool xliveStorage = ApiInformation::IsApiContractPresent("Windows.Gaming.XboxLive.StorageApiContract", 1, 0);
+            const bool xliveSecure = ApiInformation::IsApiContractPresent("Windows.Networking.XboxLive.XboxLiveSecureSocketsContract", 1, 0);
 
             assert(ApiInformation::IsApiContractPresent("Windows.Foundation.FoundationContract", 1, 0));
             wchar_t contracts[256] = L"1.0";
             if (isfoundation2) { wcscat_s(contracts, L", 2.0"); }
             if (isfoundation3) { wcscat_s(contracts, L", 3.0"); }
+            if (isfoundation4) { wcscat_s(contracts, L", 4.0"); }
 
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"FoundationContract", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), contracts, right, y, m_scale);
 
             assert(ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 1, 0));
             wcscpy_s(contracts, L"1.0");
-            if (isuniversal2) { wcscat_s(contracts, L", 2.0"); }
-            if (isuniversal3) { wcscat_s(contracts, L", 3.0"); }
-            if (isuniversal4) { wcscat_s(contracts, L", 4.0"); }
-            if (isuniversal5) { wcscat_s(contracts, L", 5.0"); }
-            if (isuniversal6) { wcscat_s(contracts, L", 6.0"); }
-            if (isuniversal7) { wcscat_s(contracts, L", 7.0"); }
-            if (isuniversal8) { wcscat_s(contracts, L", 8.0"); }
+            if (isuniversal14) { wcscat_s(contracts, L" - 14.0"); }
+            else if(isuniversal13) { wcscat_s(contracts, L"- 13.0"); }
+            else if (isuniversal12) { wcscat_s(contracts, L"- 12.0"); }
+            else if (isuniversal11) { wcscat_s(contracts, L"- 11.0"); }
+            else if (isuniversal10) { wcscat_s(contracts, L"- 10.0"); }
+            else
+            {
+                if (isuniversal2) { wcscat_s(contracts, L", 2.0"); }
+                if (isuniversal3) { wcscat_s(contracts, L", 3.0"); }
+                if (isuniversal4) { wcscat_s(contracts, L", 4.0"); }
+                if (isuniversal5) { wcscat_s(contracts, L", 5.0"); }
+                if (isuniversal6) { wcscat_s(contracts, L", 6.0"); }
+                if (isuniversal7) { wcscat_s(contracts, L", 7.0"); }
+                if (isuniversal8) { wcscat_s(contracts, L", 8.0"); }
+                if (isuniversal9) { wcscat_s(contracts, L", 9.0"); }
+            }
 
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UniversalApiContract", left, y, m_scale);
             y += DrawStringRight(m_batch.get(), m_smallFont.get(), contracts, right, y, m_scale);
 
             DrawStringLeft(m_batch.get(), m_smallFont.get(), L"PhoneContract", left, y, m_scale);
-            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isphone ? L"1.0" : L"", right, y, m_scale);
+            y += DrawStringRight(m_batch.get(), m_smallFont.get(), isphone ? L"1.0" : L"n/a", right, y, m_scale);
 
             assert(ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 1, 0));
             wcscpy_s(contracts, L"1.0");
@@ -503,7 +559,7 @@ void Sample::Render()
             y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"GetSystemCpuSetInformation", mid, y, ATG::Colors::LightGrey, m_scale);
 
             ULONG retsize = 0;
-            (void)GetSystemCpuSetInformation(nullptr, 0, &retsize, GetCurrentProcess(), 0);
+            std::ignore = GetSystemCpuSetInformation(nullptr, 0, &retsize, GetCurrentProcess(), 0);
 
             std::unique_ptr<uint8_t[]> data(new uint8_t[retsize]);
             if (GetSystemCpuSetInformation(
