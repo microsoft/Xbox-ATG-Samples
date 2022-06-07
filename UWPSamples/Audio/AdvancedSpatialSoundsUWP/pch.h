@@ -44,6 +44,8 @@
 #include "PrimitiveBatch.h"
 #include "VertexTypes.h"
 #include "DDSTextureLoader.h"
+#include "LoopbackCapture.h"
+
 
 namespace DX
 {

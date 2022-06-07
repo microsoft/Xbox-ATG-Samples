@@ -104,6 +104,8 @@ public:
     SRWLOCK                                 SRWLock;
 
 private:
+    void StartLoopBack();
+    void StopLoopBack();
 
 	void Update(DX::StepTimer const& timer);
 
@@ -150,4 +152,6 @@ private:
 	DirectX::Keyboard::KeyboardStateTracker m_keyboardButtons;
 
     bool                                    m_ctrlConnected;
+
+    CLoopbackCapture _loopBack;
 };

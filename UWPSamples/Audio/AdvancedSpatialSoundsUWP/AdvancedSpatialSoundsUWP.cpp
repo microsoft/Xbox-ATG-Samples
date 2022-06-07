@@ -428,6 +428,17 @@ void XM_CALLCONV Sample::DrawSound(float x, float y, float z, FXMVECTOR color)
     PIXEndEvent(context);
 }
 
+void Sample::StartLoopBack()
+{
+    _loopBack.Initialize(10);
+    _loopBack.Start();
+}
+
+void Sample::StopLoopBack()
+{
+    _loopBack._isCaptureActive = false;
+    _loopBack.~CLoopbackCapture();
+}
 
 //--------------------------------------------------------------------------------------
 // Name: DrawListener()
@@ -553,6 +564,7 @@ void Sample::Update(DX::StepTimer const&)
                 m_playingSound = true;
                 m_workThread = CreateThreadpoolWork(SpatialWorkCallback, this, nullptr);
                 SubmitThreadpoolWork(m_workThread);
+                StartLoopBack();
             }
             else
             {
@@ -561,6 +573,7 @@ void Sample::Update(DX::StepTimer const&)
                 WaitForThreadpoolWorkCallbacks(m_workThread, FALSE);
                 CloseThreadpoolWork(m_workThread);
                 m_workThread = nullptr;
+                StopLoopBack();
                 while (m_pointSounds.size() > 0)
                 {
                     m_pointSounds.pop_back();
