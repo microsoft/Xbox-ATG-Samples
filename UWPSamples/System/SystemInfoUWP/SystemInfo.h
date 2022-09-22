@@ -99,6 +99,8 @@ private:
         DIRECT3D12_OPT1,
         DIRECT3D12_OPT2,
         DIRECT3D12_OPT3,
+        DIRECT3D12_OPT4,
+        DIRECT3D12_OPT5,
         MAX,
     };
 

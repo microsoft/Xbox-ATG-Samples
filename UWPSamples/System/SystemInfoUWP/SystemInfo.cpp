@@ -389,7 +389,7 @@ void Sample::Render()
 
             // Requires the linker settings to include /DELAYLOAD:api-ms-win-gaming-deviceinformation-l1-1-0.dll
             //
-            // Note: You can avoid the need for delay loading if you require 10.0.16299 as your minimum OS version
+            // Note: You can avoid the need for delay loading if you require 10.0.16299 or later as your minimum OS version
             //       and/or you restrict your package to the Xbox device family
 
             if (QueryOptionalDelayLoadedAPI(reinterpret_cast<HMODULE>(&__ImageBase),
@@ -496,6 +496,7 @@ void Sample::Render()
             const bool isuniversal12 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 12, 0);
             const bool isuniversal13 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 13, 0);
             const bool isuniversal14 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 14, 0);
+            const bool isuniversal15 = ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 15, 0);
             const bool isphone = ApiInformation::IsApiContractPresent("Windows.Phone.PhoneContract", 1, 0);
             const bool isstore2 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 2, 0);
             const bool isstore3 = ApiInformation::IsApiContractPresent("Windows.Services.Store.StoreContract", 3, 0);
@@ -514,8 +515,9 @@ void Sample::Render()
 
             assert(ApiInformation::IsApiContractPresent("Windows.Foundation.UniversalApiContract", 1, 0));
             wcscpy_s(contracts, L"1.0");
-            if (isuniversal14) { wcscat_s(contracts, L" - 14.0"); }
-            else if(isuniversal13) { wcscat_s(contracts, L"- 13.0"); }
+            if (isuniversal15) { wcscat_s(contracts, L" - 15.0"); }
+            else if (isuniversal14) { wcscat_s(contracts, L" - 14.0"); }
+            else if (isuniversal13) { wcscat_s(contracts, L"- 13.0"); }
             else if (isuniversal12) { wcscat_s(contracts, L"- 12.0"); }
             else if (isuniversal11) { wcscat_s(contracts, L"- 11.0"); }
             else if (isuniversal10) { wcscat_s(contracts, L"- 10.0"); }
@@ -1256,7 +1258,7 @@ void Sample::Render()
 
     case InfoPage::DIRECT3D12_OPT1:
         {
-            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 12 Optional Features", mid, y, ATG::Colors::LightGrey, m_scale);
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 12 Optional Features (1 of 5)", mid, y, ATG::Colors::LightGrey, m_scale);
 
             auto device = m_deviceResources->GetD3DDevice12();
 
@@ -1375,7 +1377,7 @@ void Sample::Render()
 
     case InfoPage::DIRECT3D12_OPT2:
         {
-            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 12 Optional Features (continued)", mid, y, ATG::Colors::LightGrey, m_scale);
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 12 Optional Features (2 of 5)", mid, y, ATG::Colors::LightGrey, m_scale);
 
             auto device = m_deviceResources->GetD3DDevice12();
 
@@ -1506,7 +1508,7 @@ void Sample::Render()
 
     case InfoPage::DIRECT3D12_OPT3:
         {
-            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 12 Optional Features (continued)", mid, y, ATG::Colors::LightGrey, m_scale);
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 12 Optional Features (3 of 5)", mid, y, ATG::Colors::LightGrey, m_scale);
 
             auto device = m_deviceResources->GetD3DDevice12();
 
@@ -1593,6 +1595,159 @@ void Sample::Render()
                 if (!found)
                 {
                     y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"Requires Windows 10 May 2019 Update or later", mid, y, ATG::Colors::Orange, m_scale);
+                }
+            }
+        }
+        break;
+
+    case InfoPage::DIRECT3D12_OPT4:
+        {
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 12 Optional Features (4 of 5)", mid, y, ATG::Colors::LightGrey, m_scale);
+
+            auto device = m_deviceResources->GetD3DDevice12();
+
+            if (!device)
+            {
+                y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"Not supported", mid, y, ATG::Colors::Orange, m_scale);
+            }
+            else
+            {
+                bool found = false;
+
+                #if defined(NTDDI_WIN10_FE)
+                // Optional Direct3D 12 features for Windows 11
+                D3D12_FEATURE_DATA_D3D12_OPTIONS8 d3d12opts8 = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS8, &d3d12opts8, sizeof(d3d12opts8))))
+                {
+                    found = true;
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UnalignedBlockTexturesSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts8.UnalignedBlockTexturesSupported ? L"true" : L"false", right, y, m_scale);
+                }
+
+                D3D12_FEATURE_DATA_D3D12_OPTIONS9 d3d12opts9 = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS9, &d3d12opts9, sizeof(d3d12opts9))))
+                {
+                    found = true;
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"MS PipelineStatsSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts9.MeshShaderPipelineStatsSupported ? L"true" : L"false", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"MS FullRange RTArrayIndex", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts9.MeshShaderSupportsFullRangeRenderTargetArrayIndex ? L"true" : L"false", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"AtomicInt64 OnTypedResource", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts9.AtomicInt64OnTypedResourceSupported ? L"true" : L"false", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"AtomicInt64 OnGroupShared", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts9.AtomicInt64OnGroupSharedSupported ? L"true" : L"false", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"Derivatives in MS & AS", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts9.DerivativesInMeshAndAmplificationShadersSupported ? L"true" : L"false", right, y, m_scale);
+
+                    const wchar_t* wavemma = L"Unknown";
+                    switch (d3d12opts9.WaveMMATier)
+                    {
+                    case D3D12_WAVE_MMA_TIER_NOT_SUPPORTED: wavemma = L"Not Supported"; break;
+                    case D3D12_WAVE_MMA_TIER_1_0: wavemma = L"Tier 1.0"; break;
+                    }
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"WaveMMATier", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), wavemma, right, y, m_scale);
+                }
+                #endif
+
+                #if defined(NTDDI_WIN10_CO)
+                // Optional Direct3D 12 features for Windows 11
+                D3D12_FEATURE_DATA_D3D12_OPTIONS10 d3d12opts10 = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS10, &d3d12opts10, sizeof(d3d12opts10))))
+                {
+                    found = true;
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"VRS SumCombinerSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts10.VariableRateShadingSumCombinerSupported ? L"true" : L"false", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"MS PerPrimitive VRS", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts10.MeshShaderPerPrimitiveShadingRateSupported ? L"true" : L"false", right, y, m_scale);
+                }
+
+                D3D12_FEATURE_DATA_D3D12_OPTIONS11 d3d12opts11 = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS11, &d3d12opts11, sizeof(d3d12opts11))))
+                {
+                    found = true;
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"AtomicInt64 OnDescriptorHeapResource", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts11.AtomicInt64OnDescriptorHeapResourceSupported ? L"true" : L"false", right, y, m_scale);
+                }
+                #endif
+
+                if (!found)
+                {
+                    y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"Requires Windows 11", mid, y, ATG::Colors::Orange, m_scale);
+                }
+            }
+        }
+        break;
+
+    case InfoPage::DIRECT3D12_OPT5:
+        {
+            y += DrawStringCenter(m_batch.get(), m_largeFont.get(), L"Direct3D 12 Optional Features (5 of 5)", mid, y, ATG::Colors::LightGrey, m_scale);
+
+            auto device = m_deviceResources->GetD3DDevice12();
+
+            if (!device)
+            {
+                y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"Not supported", mid, y, ATG::Colors::Orange, m_scale);
+            }
+            else
+            {
+                bool found = false;
+
+                #if defined(NTDDI_WIN10_NI)
+                // Optional Direct3D 12 features for Windows 11, Version 22H2
+                D3D12_FEATURE_DATA_D3D12_OPTIONS12 d3d12opts12 = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS12, &d3d12opts12, sizeof(d3d12opts12))))
+                {
+                    found = true;
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"MS Stats Includes Culled Primitives", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts12.MSPrimitivesPipelineStatisticIncludesCulledPrimitives ? L"true" : L"false", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"EnhancedBarriersSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts12.EnhancedBarriersSupported ? L"true" : L"false", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"RelaxedFormatCastingSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts12.RelaxedFormatCastingSupported ? L"true" : L"false", right, y, m_scale);
+                }
+
+                D3D12_FEATURE_DATA_D3D12_OPTIONS13 d3d12opts13 = {};
+                if (SUCCEEDED(device->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS13, &d3d12opts13, sizeof(d3d12opts13))))
+                {
+                    found = true;
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UnrestrictedBufferTextureCopyPitchSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts13.UnrestrictedBufferTextureCopyPitchSupported ? L"true" : L"false", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"UnrestrictedVertexElementAlignmentSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts13.UnrestrictedVertexElementAlignmentSupported ? L"true" : L"false", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"InvertedViewportHeightFlipsYSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts13.InvertedViewportHeightFlipsYSupported ? L"true" : L"false", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"InvertedViewportDepthFlipsZSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts13.InvertedViewportDepthFlipsZSupported ? L"true" : L"false", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"TextureCopyBetweenDimensionsSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts13.TextureCopyBetweenDimensionsSupported ? L"true" : L"false", right, y, m_scale);
+
+                    DrawStringLeft(m_batch.get(), m_smallFont.get(), L"AlphaBlendFactorSupported", left, y, m_scale);
+                    y += DrawStringRight(m_batch.get(), m_smallFont.get(), d3d12opts13.AlphaBlendFactorSupported  ? L"true" : L"false", right, y, m_scale);
+                }
+                #endif
+
+                if (!found)
+                {
+                    y += DrawStringCenter(m_batch.get(), m_smallFont.get(), L"Requires Windows 11, Version 22H2", mid, y, ATG::Colors::Orange, m_scale);
                 }
             }
         }
