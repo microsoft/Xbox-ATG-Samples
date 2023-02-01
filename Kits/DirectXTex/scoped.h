@@ -15,7 +15,7 @@
 #include <memory>
 #include <tuple>
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <cstdlib>
 
 struct aligned_deleter { void operator()(void* p) noexcept { free(p); } };
@@ -29,7 +29,7 @@ inline ScopedAlignedArrayFloat make_AlignedArrayFloat(uint64_t count)
     if (size > static_cast<uint64_t>(UINT32_MAX))
         return nullptr;
 
-    auto ptr = aligned_alloc(16, static_cast<size_t>(size)      );
+    auto ptr = aligned_alloc(16, static_cast<size_t>(size));
     return ScopedAlignedArrayFloat(static_cast<float*>(ptr));
 }
 

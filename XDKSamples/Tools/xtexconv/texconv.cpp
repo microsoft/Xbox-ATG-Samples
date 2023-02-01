@@ -20,11 +20,14 @@
 #define NOHELP
 #pragma warning(pop)
 
+#include <ShlObj.h>
+
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <cwchar>
 #include <cwctype>
 #include <fstream>
@@ -46,7 +49,6 @@
 #include <wincodec.h>
 
 #pragma warning(disable : 4619 4616 4091 4838 26812)
-#include <ShlObj.h>
 
 #include "DirectXTex.h"
 #include "DirectXTexXbox.h"
@@ -788,16 +790,16 @@ namespace
         switch (info.GetAlphaMode())
         {
         case TEX_ALPHA_MODE_OPAQUE:
-            wprintf(L" \x0e0:Opaque");
+            wprintf(L" \x03B1:Opaque");
             break;
         case TEX_ALPHA_MODE_PREMULTIPLIED:
-            wprintf(L" \x0e0:PM");
+            wprintf(L" \x03B1:PM");
             break;
         case TEX_ALPHA_MODE_STRAIGHT:
-            wprintf(L" \x0e0:NonPM");
+            wprintf(L" \x03B1:NonPM");
             break;
         case TEX_ALPHA_MODE_CUSTOM:
-            wprintf(L" \x0e0:Custom");
+            wprintf(L" \x03B1:Custom");
             break;
         case TEX_ALPHA_MODE_UNKNOWN:
             break;
@@ -871,81 +873,97 @@ namespace
     {
         PrintLogo();
 
-        wprintf(L"Usage: texconv <options> <files>\n\n");
-        wprintf(L"   -r                  wildcard filename search is recursive\n");
-        wprintf(L"     -r:flatten        flatten the directory structure (default)\n");
-        wprintf(L"     -r:keep           keep the directory structure\n");
-        wprintf(L"   -flist <filename>   use text file with a list of input files (one per line)\n");
-        wprintf(L"\n   -w <n>              width\n");
-        wprintf(L"   -h <n>              height\n");
-        wprintf(L"   -m <n>              miplevels\n");
-        wprintf(L"   -f <format>         format\n");
-        wprintf(L"\n   -if <filter>        image filtering\n");
-        wprintf(L"   -srgb{i|o}          sRGB {input, output}\n");
-        wprintf(L"\n   -px <string>        name prefix\n");
-        wprintf(L"   -sx <string>        name suffix\n");
-        wprintf(L"   -o <directory>      output directory\n");
-        wprintf(L"   -l                  force output filename to lower case\n");
-        wprintf(L"   -y                  overwrite existing output file (if any)\n");
-        wprintf(L"   -ft <filetype>      output file type\n");
-        wprintf(L"\n   -hflip              horizonal flip of source image\n");
-        wprintf(L"   -vflip              vertical flip of source image\n");
-        wprintf(L"\n   -sepalpha           resize/generate mips alpha channel separately\n");
-        wprintf(L"                       from color channels\n");
-        wprintf(L"   -keepcoverage <ref> Preserve alpha coverage in mips for alpha test ref\n");
-        wprintf(L"\n   -nowic              Force non-WIC filtering\n");
-        wprintf(L"   -wrap, -mirror      texture addressing mode (wrap, mirror, or clamp)\n");
-        wprintf(L"   -pmalpha            convert final texture to use premultiplied alpha\n");
-        wprintf(L"   -alpha              convert premultiplied alpha to straight alpha\n");
-        wprintf(
+        static const wchar_t* const s_usage =
+            L"Usage: texconv <options> <files>\n"
+            L"\n"
+            L"   -r                  wildcard filename search is recursive\n"
+            L"     -r:flatten        flatten the directory structure (default)\n"
+            L"     -r:keep           keep the directory structure\n"
+            L"   -flist <filename>   use text file with a list of input files (one per line)\n"
+            L"\n"
+            L"   -w <n>              width\n"
+            L"   -h <n>              height\n"
+            L"   -m <n>              miplevels\n"
+            L"   -f <format>         format\n"
+            L"\n"
+            L"   -if <filter>        image filtering\n"
+            L"   -srgb{i|o}          sRGB {input, output}\n"
+            L"\n"
+            L"   -px <string>        name prefix\n"
+            L"   -sx <string>        name suffix\n"
+            L"   -o <directory>      output directory\n"
+            L"   -l                  force output filename to lower case\n"
+            L"   -y                  overwrite existing output file (if any)\n"
+            L"   -ft <filetype>      output file type\n"
+            L"\n"
+            L"  -hflip              horizonal flip of source image\n"
+            L"   -vflip              vertical flip of source image\n"
+            L"\n"
+            L"   -sepalpha           resize/generate mips alpha channel separately\n"
+            L"                       from color channels\n"
+            L"   -keepcoverage <ref> Preserve alpha coverage in mips for alpha test ref\n"
+            L"\n"
+            L"   -nowic              Force non-WIC filtering\n"
+            L"   -wrap, -mirror      texture addressing mode (wrap, mirror, or clamp)\n"
+            L"   -pmalpha            convert final texture to use premultiplied alpha\n"
+            L"   -alpha              convert premultiplied alpha to straight alpha\n"
             L"   -at <threshold>     Alpha threshold used for BC1, RGBA5551, and WIC\n"
-            L"                       (defaults to 0.5)\n");
-        wprintf(L"\n   -fl <feature-level> Set maximum feature level target (defaults to 11.0)\n");
-        wprintf(L"   -pow2               resize to fit a power-of-2, respecting aspect ratio\n");
-        wprintf(
-            L"\n   -nmap <options>     converts height-map to normal-map\n"
+            L"                       (defaults to 0.5)\n"
+            L"\n"
+            L"   -fl <feature-level> Set maximum feature level target (defaults to 11.0)\n"
+            L"   -pow2               resize to fit a power-of-2, respecting aspect ratio\n"
+            L"\n"
+            L"   -nmap <options>     converts height-map to normal-map\n"
             L"                       options must be one or more of\n"
-            L"                          r, g, b, a, l, m, u, v, i, o\n");
-        wprintf(L"   -nmapamp <weight>   normal map amplitude (defaults to 1.0)\n");
-        wprintf(L"\n                       (DDS input only)\n");
-        wprintf(L"   -t{u|f}             TYPELESS format is treated as UNORM or FLOAT\n");
-        wprintf(L"   -dword              Use DWORD instead of BYTE alignment\n");
-        wprintf(L"   -badtails           Fix for older DXTn with bad mipchain tails\n");
-        wprintf(L"   -fixbc4x4           Fix for odd-sized BC files that Direct3D can't load\n");
-        wprintf(L"   -xlum               expand legacy L8, L16, and A8P8 formats\n");
-        wprintf(L"\n                       (DDS output only)\n");
-        wprintf(L"   -dx10               Force use of 'DX10' extended header\n");
-        wprintf(L"   -dx9                Force use of legacy DX9 header\n");
-        wprintf(L"   -xbox               Tile and use 'XBOX' variant of DDS\n");
-        wprintf(L"   -xgmode <mode>      Tile using provided memory layout mode\n");
-        wprintf(L"\n                       (TGA output only)\n");
-        wprintf(L"   -tga20              Write file including TGA 2.0 extension area\n");
-        wprintf(L"\n                       (BMP, PNG, JPG, TIF, WDP output only)\n");
-        wprintf(L"   -wicq <quality>     When writing images with WIC use quality (0.0 to 1.0)\n");
-        wprintf(L"   -wiclossless        When writing images with WIC use lossless mode\n");
-        wprintf(L"   -wicmulti           When writing images with WIC encode multiframe images\n");
-        wprintf(L"\n   -nologo             suppress copyright message\n");
-        wprintf(L"   -timing             Display elapsed processing time\n\n");
+            L"                          r, g, b, a, l, m, u, v, i, o\n"
+            L"   -nmapamp <weight>   normal map amplitude (defaults to 1.0)\n"
+            L"\n"
+            L"                       (DDS input only)\n"
+            L"   -t{u|f}             TYPELESS format is treated as UNORM or FLOAT\n"
+            L"   -dword              Use DWORD instead of BYTE alignment\n"
+            L"   -badtails           Fix for older DXTn with bad mipchain tails\n"
+            L"   -fixbc4x4           Fix for odd-sized BC files that Direct3D can't load\n"
+            L"   -xlum               expand legacy L8, L16, and A8P8 formats\n"
+            L"\n"
+            L"                       (DDS output only)\n"
+            L"   -dx10               Force use of 'DX10' extended header\n"
+            L"   -dx9                Force use of legacy DX9 header\n"
+            L"   -xbox               Tile and use 'XBOX' variant of DDS\n"
+            L"   -xgmode <mode>      Tile using provided memory layout mode\n"
+            L"\n"
+            L"                       (TGA output only)\n"
+            L"   -tga20              Write file including TGA 2.0 extension area\n"
+            L"\n"
+            L"                       (BMP, PNG, JPG, TIF, WDP output only)\n"
+            L"   -wicq <quality>     When writing images with WIC use quality (0.0 to 1.0)\n"
+            L"   -wiclossless        When writing images with WIC use lossless mode\n"
+            L"   -wicmulti           When writing images with WIC encode multiframe images\n"
+            L"\n"
+            L"   -nologo             suppress copyright message\n"
+            L"   -timing             Display elapsed processing time\n"
+            L"\n"
 #ifdef _OPENMP
-        wprintf(L"   -singleproc         Do not use multi-threaded compression\n");
+            L"   -singleproc         Do not use multi-threaded compression\n"
 #endif
-        wprintf(L"   -gpu <adapter>      Select GPU for DirectCompute-based codecs (0 is default)\n");
-        wprintf(L"   -nogpu              Do not use DirectCompute-based codecs\n");
-        wprintf(
-            L"\n   -bc <options>       Sets options for BC compression\n"
+            L"   -gpu <adapter>      Select GPU for DirectCompute-based codecs (0 is default)\n"
+            L"   -nogpu              Do not use DirectCompute-based codecs\n"
+            L"\n"
+            L"   -bc <options>       Sets options for BC compression\n"
             L"                       options must be one or more of\n"
-            L"                          d, u, q, x\n");
-        wprintf(
+            L"                          d, u, q, x\n"
             L"   -aw <weight>        BC7 GPU compressor weighting for alpha error metric\n"
-            L"                       (defaults to 1.0)\n");
-        wprintf(L"\n   -c <hex-RGB>        colorkey (a.k.a. chromakey) transparency\n");
-        wprintf(L"   -rotatecolor <rot>  rotates color primaries and/or applies a curve\n");
-        wprintf(L"   -nits <value>       paper-white value in nits to use for HDR10 (def: 200.0)\n");
-        wprintf(L"   -tonemap            Apply a tonemap operator based on maximum luminance\n");
-        wprintf(L"   -x2bias             Enable *2 - 1 conversion cases for unorm/pos-only-float\n");
-        wprintf(L"   -inverty            Invert Y (i.e. green) channel values\n");
-        wprintf(L"   -reconstructz       Rebuild Z (blue) channel assuming X/Y are normals\n");
-        wprintf(L"   -swizzle <rgba>     Swizzle image channels using HLSL-style mask\n");
+            L"                       (defaults to 1.0)\n"
+            L"\n"
+            L"   -c <hex-RGB>        colorkey (a.k.a. chromakey) transparency\n"
+            L"   -rotatecolor <rot>  rotates color primaries and/or applies a curve\n"
+            L"   -nits <value>       paper-white value in nits to use for HDR10 (def: 200.0)\n"
+            L"   -tonemap            Apply a tonemap operator based on maximum luminance\n"
+            L"   -x2bias             Enable *2 - 1 conversion cases for unorm/pos-only-float\n"
+            L"   -inverty            Invert Y (i.e. green) channel values\n"
+            L"   -reconstructz       Rebuild Z (blue) channel assuming X/Y are normals\n"
+            L"   -swizzle <rgba>     Swizzle image channels using HLSL-style mask\n";
+
+        wprintf(L"%ls", s_usage);
 
         wprintf(L"\n   <format>: ");
         PrintList(13, g_pFormats);
@@ -2097,7 +2115,9 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
         }
         else if (_wcsicmp(ext, L".tga") == 0)
         {
-            hr = LoadFromTGAFile(pConv->szSrc, TGA_FLAGS_NONE, &info, *image);
+            TGA_FLAGS tgaFlags = (IsBGR(format)) ? TGA_FLAGS_BGR : TGA_FLAGS_NONE;
+
+            hr = LoadFromTGAFile(pConv->szSrc, tgaFlags, &info, *image);
             if (FAILED(hr))
             {
                 wprintf(L" FAILED (%08X%ls)\n", static_cast<unsigned int>(hr), GetErrorDesc(hr));
@@ -2909,7 +2929,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                 {
                 case DXGI_FORMAT_BC4_SNORM:
                 case DXGI_FORMAT_BC5_SNORM:
-                    nmfmt = DXGI_FORMAT_R8G8B8A8_SNORM;
+                    nmfmt = (BitsPerColor(info.format) > 8) ? DXGI_FORMAT_R16G16B16A16_SNORM : DXGI_FORMAT_R8G8B8A8_SNORM;
                     break;
 
                 case DXGI_FORMAT_BC6H_SF16:
@@ -2918,7 +2938,7 @@ int __cdecl wmain(_In_ int argc, _In_z_count_(argc) wchar_t* argv[])
                     break;
 
                 default:
-                    nmfmt = DXGI_FORMAT_R8G8B8A8_UNORM;
+                    nmfmt = (BitsPerColor(info.format) > 8) ? DXGI_FORMAT_R16G16B16A16_UNORM : DXGI_FORMAT_R8G8B8A8_UNORM;
                     break;
                 }
             }

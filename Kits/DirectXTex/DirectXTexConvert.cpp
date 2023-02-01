@@ -69,7 +69,8 @@ namespace
             {
                 Exponent--;
                 Mantissa <<= 1;
-            } while ((Mantissa & 0x80) == 0);
+            }
+            while ((Mantissa & 0x80) == 0);
 
             Mantissa &= 0x7F;
         }
@@ -135,7 +136,8 @@ namespace
             {
                 Exponent--;
                 Mantissa <<= 1;
-            } while ((Mantissa & 0x40) == 0);
+            }
+            while ((Mantissa & 0x40) == 0);
 
             Mantissa &= 0x3F;
         }
@@ -190,9 +192,9 @@ namespace
 #endif
 
     const XMVECTORF32 g_Grayscale = { { { 0.2125f, 0.7154f, 0.0721f, 0.0f } } };
-    const XMVECTORF32 g_HalfMin   = { { { -65504.f, -65504.f, -65504.f, -65504.f } } };
-    const XMVECTORF32 g_HalfMax   = { { { 65504.f, 65504.f, 65504.f, 65504.f } } };
-    const XMVECTORF32 g_8BitBias  = { { { 0.5f / 255.f, 0.5f / 255.f, 0.5f / 255.f, 0.5f / 255.f } } };
+    const XMVECTORF32 g_HalfMin = { { { -65504.f, -65504.f, -65504.f, -65504.f } } };
+    const XMVECTORF32 g_HalfMax = { { { 65504.f, 65504.f, 65504.f, 65504.f } } };
+    const XMVECTORF32 g_8BitBias = { { { 0.5f / 255.f, 0.5f / 255.f, 0.5f / 255.f, 0.5f / 255.f } } };
 }
 
 //-------------------------------------------------------------------------------------
@@ -776,11 +778,11 @@ _Use_decl_annotations_ bool DirectX::Internal::LoadScanline(
     switch (static_cast<int>(format))
     {
     case DXGI_FORMAT_R32G32B32A32_FLOAT:
-    {
-        const size_t msize = (size > (sizeof(XMVECTOR)*count)) ? (sizeof(XMVECTOR)*count) : size;
-        memcpy(dPtr, pSource, msize);
-    }
-    return true;
+        {
+            const size_t msize = (size > (sizeof(XMVECTOR)*count)) ? (sizeof(XMVECTOR)*count) : size;
+            memcpy(dPtr, pSource, msize);
+        }
+        return true;
 
     case DXGI_FORMAT_R32G32B32A32_UINT:
         LOAD_SCANLINE(XMUINT4, XMLoadUInt4)
@@ -822,6 +824,24 @@ _Use_decl_annotations_ bool DirectX::Internal::LoadScanline(
         LOAD_SCANLINE2(XMINT2, XMLoadSInt2, g_XMIdentityR3)
 
     case DXGI_FORMAT_D32_FLOAT_S8X24_UINT:
+            {
+                constexpr size_t psize = sizeof(float) + sizeof(uint32_t);
+                if (size >= psize)
+                {
+                    auto sPtr = static_cast<const float*>(pSource);
+                    for (size_t icount = 0; icount < (size - psize + 1); icount += psize)
+                    {
+                        auto ps8 = reinterpret_cast<const uint8_t*>(&sPtr[1]);
+                        if (dPtr >= ePtr) break;
+                        *(dPtr++) = XMVectorSet(sPtr[0], static_cast<float>(*ps8), 0.f, 1.f);
+                        sPtr += 2;
+                    }
+                    return true;
+                }
+            }
+            return false;
+
+    case DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS:
         {
             constexpr size_t psize = sizeof(float) + sizeof(uint32_t);
             if (size >= psize)
@@ -829,9 +849,8 @@ _Use_decl_annotations_ bool DirectX::Internal::LoadScanline(
                 auto sPtr = static_cast<const float*>(pSource);
                 for (size_t icount = 0; icount < (size - psize + 1); icount += psize)
                 {
-                    auto ps8 = reinterpret_cast<const uint8_t*>(&sPtr[1]);
                     if (dPtr >= ePtr) break;
-                    *(dPtr++) = XMVectorSet(sPtr[0], static_cast<float>(*ps8), 0.f, 1.f);
+                    *(dPtr++) = XMVectorSet(sPtr[0], 0.f /* typeless component assumed zero */, 0.f, 1.f);
                     sPtr += 2;
                 }
                 return true;
@@ -839,40 +858,23 @@ _Use_decl_annotations_ bool DirectX::Internal::LoadScanline(
         }
         return false;
 
-    case DXGI_FORMAT_R32_FLOAT_X8X24_TYPELESS:
-    {
-        constexpr size_t psize = sizeof(float) + sizeof(uint32_t);
-        if (size >= psize)
-        {
-            auto sPtr = static_cast<const float*>(pSource);
-            for (size_t icount = 0; icount < (size - psize + 1); icount += psize)
-            {
-                if (dPtr >= ePtr) break;
-                *(dPtr++) = XMVectorSet(sPtr[0], 0.f /* typeless component assumed zero */, 0.f, 1.f);
-                sPtr += 2;
-            }
-            return true;
-        }
-    }
-    return false;
-
     case DXGI_FORMAT_X32_TYPELESS_G8X24_UINT:
-    {
-        constexpr size_t psize = sizeof(float) + sizeof(uint32_t);
-        if (size >= psize)
         {
-            auto sPtr = static_cast<const float*>(pSource);
-            for (size_t icount = 0; icount < (size - psize + 1); icount += psize)
+            constexpr size_t psize = sizeof(float) + sizeof(uint32_t);
+            if (size >= psize)
             {
-                auto pg8 = reinterpret_cast<const uint8_t*>(&sPtr[1]);
-                if (dPtr >= ePtr) break;
-                *(dPtr++) = XMVectorSet(0.f /* typeless component assumed zero */, static_cast<float>(*pg8), 0.f, 1.f);
-                sPtr += 2;
+                auto sPtr = static_cast<const float*>(pSource);
+                for (size_t icount = 0; icount < (size - psize + 1); icount += psize)
+                {
+                    auto pg8 = reinterpret_cast<const uint8_t*>(&sPtr[1]);
+                    if (dPtr >= ePtr) break;
+                    *(dPtr++) = XMVectorSet(0.f /* typeless component assumed zero */, static_cast<float>(*pg8), 0.f, 1.f);
+                    sPtr += 2;
+                }
+                return true;
             }
-            return true;
         }
-    }
-    return false;
+        return false;
 
     case DXGI_FORMAT_R10G10B10A2_UNORM:
         LOAD_SCANLINE(XMUDECN4, XMLoadUDecN4)
@@ -1687,26 +1689,26 @@ bool DirectX::Internal::StoreScanline(
         STORE_SCANLINE(XMINT2, XMStoreSInt2)
 
     case DXGI_FORMAT_D32_FLOAT_S8X24_UINT:
-        {
-            constexpr size_t psize = sizeof(float) + sizeof(uint32_t);
-            if (size >= psize)
             {
-                auto dPtr = static_cast<float*>(pDestination);
-                for (size_t icount = 0; icount < (size - psize + 1); icount += psize)
+                constexpr size_t psize = sizeof(float) + sizeof(uint32_t);
+                if (size >= psize)
                 {
-                    if (sPtr >= ePtr) break;
-                    XMFLOAT4 f;
-                    XMStoreFloat4(&f, *sPtr++);
-                    dPtr[0] = f.x;
-                    auto ps8 = reinterpret_cast<uint8_t*>(&dPtr[1]);
-                    ps8[0] = static_cast<uint8_t>(std::min<float>(255.f, std::max<float>(0.f, f.y)));
-                    ps8[1] = ps8[2] = ps8[3] = 0;
-                    dPtr += 2;
+                    auto dPtr = static_cast<float*>(pDestination);
+                    for (size_t icount = 0; icount < (size - psize + 1); icount += psize)
+                    {
+                        if (sPtr >= ePtr) break;
+                        XMFLOAT4 f;
+                        XMStoreFloat4(&f, *sPtr++);
+                        dPtr[0] = f.x;
+                        auto ps8 = reinterpret_cast<uint8_t*>(&dPtr[1]);
+                        ps8[0] = static_cast<uint8_t>(std::min<float>(255.f, std::max<float>(0.f, f.y)));
+                        ps8[1] = ps8[2] = ps8[3] = 0;
+                        dPtr += 2;
+                    }
+                    return true;
                 }
-                return true;
             }
-        }
-        return false;
+            return false;
 
     case DXGI_FORMAT_R10G10B10A2_UNORM:
         STORE_SCANLINE(XMUDECN4, XMStoreUDecN4)
@@ -2066,7 +2068,11 @@ bool DirectX::Internal::StoreScanline(
             {
                 if (sPtr >= ePtr) break;
                 XMVECTOR v = XMVectorSwizzle<2, 1, 0, 3>(*sPtr++);
+#if defined(_M_ARM) || defined(_M_ARM64) || defined(_M_HYBRID_X86_ARM64) || defined(_M_ARM64EC) || __arm__ || __aarch64__
+                v = XMVectorMultiplyAdd(v, s_Scale, g_XMOneHalf);
+#else
                 v = XMVectorMultiply(v, s_Scale);
+#endif
                 XMStoreU565(dPtr++, v);
             }
             return true;
@@ -2077,12 +2083,19 @@ bool DirectX::Internal::StoreScanline(
         if (size >= sizeof(XMU555))
         {
             static const XMVECTORF32 s_Scale = { { { 31.f, 31.f, 31.f, 1.f } } };
+#if defined(_M_ARM) || defined(_M_ARM64) || defined(_M_HYBRID_X86_ARM64) || defined(_M_ARM64EC) || __arm__ || __aarch64__
+            static const XMVECTORF32 s_OneHalfXYZ = { { { 0.5f, 0.5f, 0.5f, 0.f } } };
+#endif
             XMU555 * __restrict dPtr = static_cast<XMU555*>(pDestination);
             for (size_t icount = 0; icount < (size - sizeof(XMU555) + 1); icount += sizeof(XMU555))
             {
                 if (sPtr >= ePtr) break;
                 XMVECTOR v = XMVectorSwizzle<2, 1, 0, 3>(*sPtr++);
+#if defined(_M_ARM) || defined(_M_ARM64) || defined(_M_HYBRID_X86_ARM64) || defined(_M_ARM64EC) || __arm__ || __aarch64__
+                v = XMVectorMultiplyAdd(v, s_Scale, s_OneHalfXYZ);
+#else
                 v = XMVectorMultiply(v, s_Scale);
+#endif
                 XMStoreU555(dPtr, v);
                 dPtr->w = (XMVectorGetW(v) > threshold) ? 1u : 0u;
                 ++dPtr;
@@ -2240,14 +2253,10 @@ bool DirectX::Internal::StoreScanline(
                 const int u0 = ((-38 * rgb1.x - 74 * rgb1.y + 112 * rgb1.z + 128) >> 8) + 128;
                 const int v0 = ((112 * rgb1.x - 94 * rgb1.y - 18 * rgb1.z + 128) >> 8) + 128;
 
-                XMUBYTEN4 rgb2;
+                XMUBYTEN4 rgb2 = {};
                 if (sPtr < ePtr)
                 {
                     XMStoreUByteN4(&rgb2, *sPtr++);
-                }
-                else
-                {
-                    rgb2.x = rgb2.y = rgb2.z = rgb2.w = 0;
                 }
 
                 const int y1 = ((66 * rgb2.x + 129 * rgb2.y + 25 * rgb2.z + 128) >> 8) + 16;
@@ -2285,14 +2294,10 @@ bool DirectX::Internal::StoreScanline(
                 const int u0 = static_cast<int>((-9683 * r - 19017 * g + 28700 * b + 32768) >> 16) + 512;
                 const int v0 = static_cast<int>((28700 * r - 24033 * g - 4667 * b + 32768) >> 16) + 512;
 
-                XMUDECN4 rgb2;
+                XMUDECN4 rgb2 = {};
                 if (sPtr < ePtr)
                 {
                     XMStoreUDecN4(&rgb2, *sPtr++);
-                }
-                else
-                {
-                    rgb2.x = rgb2.y = rgb2.z = rgb2.w = 0;
                 }
 
                 r = rgb2.x;
@@ -2333,14 +2338,10 @@ bool DirectX::Internal::StoreScanline(
                 const int u0 = static_cast<int>((-9674 * r - 18998 * g + 28672 * b + 32768) >> 16) + 32768;
                 const int v0 = static_cast<int>((28672 * r - 24010 * g - 4662 * b + 32768) >> 16) + 32768;
 
-                XMUSHORTN4 rgb2;
+                XMUSHORTN4 rgb2 = {};
                 if (sPtr < ePtr)
                 {
                     XMStoreUShortN4(&rgb2, *sPtr++);
-                }
-                else
-                {
-                    rgb2.x = rgb2.y = rgb2.z = rgb2.w = 0;
                 }
 
                 r = int64_t(rgb2.x);
@@ -2370,7 +2371,11 @@ bool DirectX::Internal::StoreScanline(
             {
                 if (sPtr >= ePtr) break;
                 XMVECTOR v = XMVectorSwizzle<2, 1, 0, 3>(*sPtr++);
+#if defined(_M_ARM) || defined(_M_ARM64) || defined(_M_HYBRID_X86_ARM64) || defined(_M_ARM64EC) || __arm__ || __aarch64__
+                v = XMVectorMultiplyAdd(v, s_Scale, g_XMOneHalf);
+#else
                 v = XMVectorMultiply(v, s_Scale);
+#endif
                 XMStoreUNibble4(dPtr++, v);
             }
             return true;
@@ -2446,8 +2451,11 @@ bool DirectX::Internal::StoreScanline(
             for (size_t icount = 0; icount < (size - sizeof(uint8_t) + 1); icount += sizeof(uint8_t))
             {
                 if (sPtr >= ePtr) break;
+#if defined(_M_ARM) || defined(_M_ARM64) || defined(_M_HYBRID_X86_ARM64) || defined(_M_ARM64EC) || __arm__ || __aarch64__
+                const XMVECTOR v = XMVectorMultiplyAdd(*sPtr++, s_Scale, g_XMOneHalf);
+#else
                 const XMVECTOR v = XMVectorMultiply(*sPtr++, s_Scale);
-
+#endif
                 XMUNIBBLE4 nibble;
                 XMStoreUNibble4(&nibble, v);
                 *dPtr = static_cast<uint8_t>(nibble.v);
@@ -3227,28 +3235,28 @@ void DirectX::Internal::ConvertScanline(
                 switch (flags & (TEX_FILTER_RGB_COPY_RED | TEX_FILTER_RGB_COPY_GREEN | TEX_FILTER_RGB_COPY_BLUE))
                 {
                 case TEX_FILTER_RGB_COPY_GREEN:
-                {
-                    XMVECTOR* ptr = pBuffer;
-                    for (size_t i = 0; i < count; ++i)
                     {
-                        const XMVECTOR v = *ptr;
-                        const XMVECTOR v1 = XMVectorSplatY(v);
-                        *ptr++ = XMVectorSelect(v, v1, g_XMSelect1000);
+                        XMVECTOR* ptr = pBuffer;
+                        for (size_t i = 0; i < count; ++i)
+                        {
+                            const XMVECTOR v = *ptr;
+                            const XMVECTOR v1 = XMVectorSplatY(v);
+                            *ptr++ = XMVectorSelect(v, v1, g_XMSelect1000);
+                        }
                     }
-                }
-                break;
+                    break;
 
                 case TEX_FILTER_RGB_COPY_BLUE:
-                {
-                    XMVECTOR* ptr = pBuffer;
-                    for (size_t i = 0; i < count; ++i)
                     {
-                        const XMVECTOR v = *ptr;
-                        const XMVECTOR v1 = XMVectorSplatZ(v);
-                        *ptr++ = XMVectorSelect(v, v1, g_XMSelect1000);
+                        XMVECTOR* ptr = pBuffer;
+                        for (size_t i = 0; i < count; ++i)
+                        {
+                            const XMVECTOR v = *ptr;
+                            const XMVECTOR v1 = XMVectorSplatZ(v);
+                            *ptr++ = XMVectorSelect(v, v1, g_XMSelect1000);
+                        }
                     }
-                }
-                break;
+                    break;
 
                 default:
                     if ((in->flags & CONVF_UNORM) && ((in->flags & CONVF_RGB_MASK) == (CONVF_R | CONVF_G | CONVF_B)))
@@ -3263,25 +3271,25 @@ void DirectX::Internal::ConvertScanline(
                         break;
                     }
 
-#if (__cplusplus >= 201703L)
+                #if (__cplusplus >= 201703L)
                     [[fallthrough]];
-#elif defined(__clang__)
+                #elif defined(__clang__)
                     [[clang::fallthrough]];
-#elif defined(_MSC_VER)
+                #elif defined(_MSC_VER)
                     __fallthrough;
-#endif
+                #endif
 
                 case TEX_FILTER_RGB_COPY_RED:
-                {
-                    XMVECTOR* ptr = pBuffer;
-                    for (size_t i = 0; i < count; ++i)
                     {
-                        const XMVECTOR v = *ptr;
-                        const XMVECTOR v1 = XMVectorSplatX(v);
-                        *ptr++ = XMVectorSelect(v, v1, g_XMSelect1000);
+                        XMVECTOR* ptr = pBuffer;
+                        for (size_t i = 0; i < count; ++i)
+                        {
+                            const XMVECTOR v = *ptr;
+                            const XMVECTOR v1 = XMVectorSplatX(v);
+                            *ptr++ = XMVectorSelect(v, v1, g_XMSelect1000);
+                        }
                     }
-                }
-                break;
+                    break;
                 }
 
                 // Finialize type conversion for depth (red channel)
@@ -3520,26 +3528,26 @@ void DirectX::Internal::ConvertScanline(
             switch (flags & (TEX_FILTER_RGB_COPY_RED | TEX_FILTER_RGB_COPY_GREEN | TEX_FILTER_RGB_COPY_BLUE))
             {
             case TEX_FILTER_RGB_COPY_GREEN:
-            {
-                XMVECTOR* ptr = pBuffer;
-                for (size_t i = 0; i < count; ++i)
                 {
-                    const XMVECTOR v = *ptr;
-                    *ptr++ = XMVectorSplatY(v);
+                    XMVECTOR* ptr = pBuffer;
+                    for (size_t i = 0; i < count; ++i)
+                    {
+                        const XMVECTOR v = *ptr;
+                        *ptr++ = XMVectorSplatY(v);
+                    }
                 }
-            }
-            break;
+                break;
 
             case TEX_FILTER_RGB_COPY_BLUE:
-            {
-                XMVECTOR* ptr = pBuffer;
-                for (size_t i = 0; i < count; ++i)
                 {
-                    const XMVECTOR v = *ptr;
-                    *ptr++ = XMVectorSplatZ(v);
+                    XMVECTOR* ptr = pBuffer;
+                    for (size_t i = 0; i < count; ++i)
+                    {
+                        const XMVECTOR v = *ptr;
+                        *ptr++ = XMVectorSplatZ(v);
+                    }
                 }
-            }
-            break;
+                break;
 
             default:
                 if ((in->flags & CONVF_UNORM) && ((in->flags & CONVF_RGB_MASK) == (CONVF_R | CONVF_G | CONVF_B)))
@@ -3553,24 +3561,24 @@ void DirectX::Internal::ConvertScanline(
                     break;
                 }
 
-#if (__cplusplus >= 201703L)
+            #if (__cplusplus >= 201703L)
                 [[fallthrough]];
-#elif defined(__clang__)
+            #elif defined(__clang__)
                 [[clang::fallthrough]];
-#elif defined(_MSC_VER)
+            #elif defined(_MSC_VER)
                 __fallthrough;
-#endif
+            #endif
 
             case TEX_FILTER_RGB_COPY_RED:
-            {
-                XMVECTOR* ptr = pBuffer;
-                for (size_t i = 0; i < count; ++i)
                 {
-                    const XMVECTOR v = *ptr;
-                    *ptr++ = XMVectorSplatX(v);
+                    XMVECTOR* ptr = pBuffer;
+                    for (size_t i = 0; i < count; ++i)
+                    {
+                        const XMVECTOR v = *ptr;
+                        *ptr++ = XMVectorSplatX(v);
+                    }
                 }
-            }
-            break;
+                break;
             }
         }
         else if (((in->flags & CONVF_RGBA_MASK) == CONVF_A) && !(out->flags & CONVF_A))
@@ -3616,28 +3624,28 @@ void DirectX::Internal::ConvertScanline(
                 switch (flags & (TEX_FILTER_RGB_COPY_RED | TEX_FILTER_RGB_COPY_GREEN | TEX_FILTER_RGB_COPY_BLUE))
                 {
                 case TEX_FILTER_RGB_COPY_GREEN:
-                {
-                    XMVECTOR* ptr = pBuffer;
-                    for (size_t i = 0; i < count; ++i)
                     {
-                        const XMVECTOR v = *ptr;
-                        const XMVECTOR v1 = XMVectorSplatY(v);
-                        *ptr++ = XMVectorSelect(v, v1, g_XMSelect1110);
+                        XMVECTOR* ptr = pBuffer;
+                        for (size_t i = 0; i < count; ++i)
+                        {
+                            const XMVECTOR v = *ptr;
+                            const XMVECTOR v1 = XMVectorSplatY(v);
+                            *ptr++ = XMVectorSelect(v, v1, g_XMSelect1110);
+                        }
                     }
-                }
-                break;
+                    break;
 
                 case TEX_FILTER_RGB_COPY_BLUE:
-                {
-                    XMVECTOR* ptr = pBuffer;
-                    for (size_t i = 0; i < count; ++i)
                     {
-                        const XMVECTOR v = *ptr;
-                        const XMVECTOR v1 = XMVectorSplatZ(v);
-                        *ptr++ = XMVectorSelect(v, v1, g_XMSelect1110);
+                        XMVECTOR* ptr = pBuffer;
+                        for (size_t i = 0; i < count; ++i)
+                        {
+                            const XMVECTOR v = *ptr;
+                            const XMVECTOR v1 = XMVectorSplatZ(v);
+                            *ptr++ = XMVectorSelect(v, v1, g_XMSelect1110);
+                        }
                     }
-                }
-                break;
+                    break;
 
                 default:
                     if (in->flags & CONVF_UNORM)
@@ -3652,13 +3660,13 @@ void DirectX::Internal::ConvertScanline(
                         break;
                     }
 
-#if (__cplusplus >= 201703L)
+                #if (__cplusplus >= 201703L)
                     [[fallthrough]];
-#elif defined(__clang__)
+                #elif defined(__clang__)
                     [[clang::fallthrough]];
-#elif defined(_MSC_VER)
+                #elif defined(_MSC_VER)
                     __fallthrough;
-#endif
+                #endif
 
                 case TEX_FILTER_RGB_COPY_RED:
                     // Leave data unchanged and the store will handle this...
@@ -3670,31 +3678,31 @@ void DirectX::Internal::ConvertScanline(
                 // RGB format -> RG format
                 switch (static_cast<int>(flags & (TEX_FILTER_RGB_COPY_RED | TEX_FILTER_RGB_COPY_GREEN | TEX_FILTER_RGB_COPY_BLUE)))
                 {
-                case static_cast<int>(TEX_FILTER_RGB_COPY_RED) | static_cast<int>(TEX_FILTER_RGB_COPY_BLUE):
-                {
-                    XMVECTOR* ptr = pBuffer;
-                    for (size_t i = 0; i < count; ++i)
+                case (static_cast<int>(TEX_FILTER_RGB_COPY_RED) | static_cast<int>(TEX_FILTER_RGB_COPY_BLUE)):
                     {
-                        const XMVECTOR v = *ptr;
-                        const XMVECTOR v1 = XMVectorSwizzle<0, 2, 0, 2>(v);
-                        *ptr++ = XMVectorSelect(v, v1, g_XMSelect1100);
+                        XMVECTOR* ptr = pBuffer;
+                        for (size_t i = 0; i < count; ++i)
+                        {
+                            const XMVECTOR v = *ptr;
+                            const XMVECTOR v1 = XMVectorSwizzle<0, 2, 0, 2>(v);
+                            *ptr++ = XMVectorSelect(v, v1, g_XMSelect1100);
+                        }
                     }
-                }
-                break;
+                    break;
 
-                case static_cast<int>(TEX_FILTER_RGB_COPY_GREEN) | static_cast<int>(TEX_FILTER_RGB_COPY_BLUE):
-                {
-                    XMVECTOR* ptr = pBuffer;
-                    for (size_t i = 0; i < count; ++i)
+                case (static_cast<int>(TEX_FILTER_RGB_COPY_GREEN) | static_cast<int>(TEX_FILTER_RGB_COPY_BLUE)):
                     {
-                        const XMVECTOR v = *ptr;
-                        const XMVECTOR v1 = XMVectorSwizzle<1, 2, 3, 0>(v);
-                        *ptr++ = XMVectorSelect(v, v1, g_XMSelect1100);
+                        XMVECTOR* ptr = pBuffer;
+                        for (size_t i = 0; i < count; ++i)
+                        {
+                            const XMVECTOR v = *ptr;
+                            const XMVECTOR v1 = XMVectorSwizzle<1, 2, 3, 0>(v);
+                            *ptr++ = XMVectorSelect(v, v1, g_XMSelect1100);
+                        }
                     }
-                }
-                break;
+                    break;
 
-                case static_cast<int>(TEX_FILTER_RGB_COPY_RED) | static_cast<int>(TEX_FILTER_RGB_COPY_GREEN):
+                case (static_cast<int>(TEX_FILTER_RGB_COPY_RED) | static_cast<int>(TEX_FILTER_RGB_COPY_GREEN)):
                 default:
                     // Leave data unchanged and the store will handle this...
                     break;
@@ -3733,15 +3741,15 @@ namespace
         -0.468750f,  0.031250f, -0.343750f, 0.156250f, -0.468750f, 0.031250f, -0.343750f, 0.156250f,
     };
 
-    const XMVECTORF32 g_Scale16pc   = { { { 65535.f, 65535.f, 65535.f, 65535.f } } };
-    const XMVECTORF32 g_Scale15pc   = { { { 32767.f, 32767.f, 32767.f, 32767.f } } };
-    const XMVECTORF32 g_Scale10pc   = { { {  1023.f,  1023.f,  1023.f,     3.f } } };
-    const XMVECTORF32 g_Scale9pc    = { { {   511.f,   511.f,   511.f,     3.f } } };
-    const XMVECTORF32 g_Scale8pc    = { { {   255.f,   255.f,   255.f,   255.f } } };
-    const XMVECTORF32 g_Scale7pc    = { { {   127.f,   127.f,   127.f,   127.f } } };
-    const XMVECTORF32 g_Scale565pc  = { { {    31.f,    63.f,    31.f,     1.f } } };
+    const XMVECTORF32 g_Scale16pc = { { { 65535.f, 65535.f, 65535.f, 65535.f } } };
+    const XMVECTORF32 g_Scale15pc = { { { 32767.f, 32767.f, 32767.f, 32767.f } } };
+    const XMVECTORF32 g_Scale10pc = { { {  1023.f,  1023.f,  1023.f,     3.f } } };
+    const XMVECTORF32 g_Scale9pc = { { {   511.f,   511.f,   511.f,     3.f } } };
+    const XMVECTORF32 g_Scale8pc = { { {   255.f,   255.f,   255.f,   255.f } } };
+    const XMVECTORF32 g_Scale7pc = { { {   127.f,   127.f,   127.f,   127.f } } };
+    const XMVECTORF32 g_Scale565pc = { { {    31.f,    63.f,    31.f,     1.f } } };
     const XMVECTORF32 g_Scale5551pc = { { {    31.f,    31.f,    31.f,     1.f } } };
-    const XMVECTORF32 g_Scale4pc    = { { {    15.f,    15.f,    15.f,    15.f } } };
+    const XMVECTORF32 g_Scale4pc = { { {    15.f,    15.f,    15.f,    15.f } } };
 
     const XMVECTORF32 g_ErrorWeight3 = { { { 3.f / 16.f, 3.f / 16.f, 3.f / 16.f, 3.f / 16.f } } };
     const XMVECTORF32 g_ErrorWeight5 = { { { 5.f / 16.f, 5.f / 16.f, 5.f / 16.f, 5.f / 16.f } } };
@@ -3997,7 +4005,7 @@ bool DirectX::Internal::StoreScanlineDither(
         if (size >= sizeof(XMUDEC4))
         {
             static const XMVECTORF32  Scale = { { { 510.0f, 510.0f, 510.0f, 3.0f } } };
-            static const XMVECTORF32  Bias  = { { { 384.0f, 384.0f, 384.0f, 0.0f } } };
+            static const XMVECTORF32  Bias = { { { 384.0f, 384.0f, 384.0f, 0.0f } } };
             static const XMVECTORF32  MinXR = { { { -0.7529f, -0.7529f, -0.7529f, 0.f } } };
             static const XMVECTORF32  MaxXR = { { { 1.2529f, 1.2529f, 1.2529f, 1.0f } } };
 
@@ -4018,8 +4026,8 @@ bool DirectX::Internal::StoreScanlineDither(
                     vError = XMVectorDivide(vError, Scale);
 
                     // Distribute error to next scanline and next pixel
-                    pDiffusionErrors[index - delta]     = XMVectorMultiplyAdd(g_ErrorWeight3, vError, pDiffusionErrors[index - delta]);
-                    pDiffusionErrors[index + 1]         = XMVectorMultiplyAdd(g_ErrorWeight5, vError, pDiffusionErrors[index + 1]);
+                    pDiffusionErrors[index - delta] = XMVectorMultiplyAdd(g_ErrorWeight3, vError, pDiffusionErrors[index - delta]);
+                    pDiffusionErrors[index + 1] = XMVectorMultiplyAdd(g_ErrorWeight5, vError, pDiffusionErrors[index + 1]);
                     pDiffusionErrors[index + 2 + delta] = XMVectorMultiplyAdd(g_ErrorWeight1, vError, pDiffusionErrors[index + 2 + delta]);
                     vError = XMVectorMultiply(vError, g_ErrorWeight7);
                 }
@@ -4075,8 +4083,8 @@ bool DirectX::Internal::StoreScanlineDither(
     case DXGI_FORMAT_D24_UNORM_S8_UINT:
         if (size >= sizeof(uint32_t))
         {
-            static const XMVECTORF32 Clamp  = { { { 1.f,  255.f, 0.f, 0.f } } };
-            static const XMVECTORF32 Scale  = { { { 16777215.f,   1.f, 0.f, 0.f } } };
+            static const XMVECTORF32 Clamp = { { { 1.f,  255.f, 0.f, 0.f } } };
+            static const XMVECTORF32 Scale = { { { 16777215.f,   1.f, 0.f, 0.f } } };
             static const XMVECTORF32 Scale2 = { { { 16777215.f, 255.f, 0.f, 0.f } } };
 
             uint32_t * __restrict dest = static_cast<uint32_t*>(pDestination);
@@ -4097,8 +4105,8 @@ bool DirectX::Internal::StoreScanlineDither(
                     vError = XMVectorDivide(vError, Scale);
 
                     // Distribute error to next scanline and next pixel
-                    pDiffusionErrors[index - delta]     = XMVectorMultiplyAdd(g_ErrorWeight3, vError, pDiffusionErrors[index - delta]);
-                    pDiffusionErrors[index + 1]         = XMVectorMultiplyAdd(g_ErrorWeight5, vError, pDiffusionErrors[index + 1]);
+                    pDiffusionErrors[index - delta] = XMVectorMultiplyAdd(g_ErrorWeight3, vError, pDiffusionErrors[index - delta]);
+                    pDiffusionErrors[index + 1] = XMVectorMultiplyAdd(g_ErrorWeight5, vError, pDiffusionErrors[index + 1]);
                     pDiffusionErrors[index + 2 + delta] = XMVectorMultiplyAdd(g_ErrorWeight1, vError, pDiffusionErrors[index + 2 + delta]);
                     vError = XMVectorMultiply(vError, g_ErrorWeight7);
                 }
@@ -4185,8 +4193,8 @@ bool DirectX::Internal::StoreScanlineDither(
                     vError = XMVectorDivide(vError, g_Scale565pc);
 
                     // Distribute error to next scanline and next pixel
-                    pDiffusionErrors[index - delta]     = XMVectorMultiplyAdd(g_ErrorWeight3, vError, pDiffusionErrors[index - delta]);
-                    pDiffusionErrors[index + 1]         = XMVectorMultiplyAdd(g_ErrorWeight5, vError, pDiffusionErrors[index + 1]);
+                    pDiffusionErrors[index - delta] = XMVectorMultiplyAdd(g_ErrorWeight3, vError, pDiffusionErrors[index - delta]);
+                    pDiffusionErrors[index + 1] = XMVectorMultiplyAdd(g_ErrorWeight5, vError, pDiffusionErrors[index + 1]);
                     pDiffusionErrors[index + 2 + delta] = XMVectorMultiplyAdd(g_ErrorWeight1, vError, pDiffusionErrors[index + 2 + delta]);
                     vError = XMVectorMultiply(vError, g_ErrorWeight7);
                 }
@@ -4234,8 +4242,8 @@ bool DirectX::Internal::StoreScanlineDither(
                     vError = XMVectorDivide(vError, g_Scale5551pc);
 
                     // Distribute error to next scanline and next pixel
-                    pDiffusionErrors[index - delta]     = XMVectorMultiplyAdd(g_ErrorWeight3, vError, pDiffusionErrors[index - delta]);
-                    pDiffusionErrors[index + 1]         = XMVectorMultiplyAdd(g_ErrorWeight5, vError, pDiffusionErrors[index + 1]);
+                    pDiffusionErrors[index - delta] = XMVectorMultiplyAdd(g_ErrorWeight3, vError, pDiffusionErrors[index - delta]);
+                    pDiffusionErrors[index + 1] = XMVectorMultiplyAdd(g_ErrorWeight5, vError, pDiffusionErrors[index + 1]);
                     pDiffusionErrors[index + 2 + delta] = XMVectorMultiplyAdd(g_ErrorWeight1, vError, pDiffusionErrors[index + 2 + delta]);
                     vError = XMVectorMultiply(vError, g_ErrorWeight7);
                 }
@@ -4289,8 +4297,8 @@ bool DirectX::Internal::StoreScanlineDither(
                     vError = XMVectorDivide(vError, g_Scale8pc);
 
                     // Distribute error to next scanline and next pixel
-                    pDiffusionErrors[index - delta]     = XMVectorMultiplyAdd(g_ErrorWeight3, vError, pDiffusionErrors[index - delta]);
-                    pDiffusionErrors[index + 1]         = XMVectorMultiplyAdd(g_ErrorWeight5, vError, pDiffusionErrors[index + 1]);
+                    pDiffusionErrors[index - delta] = XMVectorMultiplyAdd(g_ErrorWeight3, vError, pDiffusionErrors[index - delta]);
+                    pDiffusionErrors[index + 1] = XMVectorMultiplyAdd(g_ErrorWeight5, vError, pDiffusionErrors[index + 1]);
                     pDiffusionErrors[index + 2 + delta] = XMVectorMultiplyAdd(g_ErrorWeight1, vError, pDiffusionErrors[index + 2 + delta]);
                     vError = XMVectorMultiply(vError, g_ErrorWeight7);
                 }
@@ -4344,8 +4352,8 @@ bool DirectX::Internal::StoreScanlineDither(
                     vError = XMVectorDivide(vError, g_Scale4pc);
 
                     // Distribute error to next scanline and next pixel
-                    pDiffusionErrors[index - delta]     = XMVectorMultiplyAdd(g_ErrorWeight3, vError, pDiffusionErrors[index - delta]);
-                    pDiffusionErrors[index + 1]         = XMVectorMultiplyAdd(g_ErrorWeight5, vError, pDiffusionErrors[index + 1]);
+                    pDiffusionErrors[index - delta] = XMVectorMultiplyAdd(g_ErrorWeight3, vError, pDiffusionErrors[index - delta]);
+                    pDiffusionErrors[index + 1] = XMVectorMultiplyAdd(g_ErrorWeight5, vError, pDiffusionErrors[index + 1]);
                     pDiffusionErrors[index + 2 + delta] = XMVectorMultiplyAdd(g_ErrorWeight1, vError, pDiffusionErrors[index + 2 + delta]);
                     vError = XMVectorMultiply(vError, g_ErrorWeight7);
                 }
@@ -4392,14 +4400,14 @@ namespace
         _Out_ WICPixelFormatGUID& pfGUID,
         _Out_ WICPixelFormatGUID& targetGUID) noexcept
     {
-#ifndef WIN32
+    #ifndef _WIN32
         UNREFERENCED_PARAMETER(filter);
         UNREFERENCED_PARAMETER(sformat);
         UNREFERENCED_PARAMETER(tformat);
         UNREFERENCED_PARAMETER(pfGUID);
         UNREFERENCED_PARAMETER(targetGUID);
         return false;
-#else
+    #else
         memset(&pfGUID, 0, sizeof(GUID));
         memset(&targetGUID, 0, sizeof(GUID));
 
@@ -4434,7 +4442,7 @@ namespace
         }
 
         // Check for special cases
-#if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
+    #if (defined(_XBOX_ONE) && defined(_TITLE)) || defined(_GAMING_XBOX)
         if (sformat == DXGI_FORMAT_R16G16B16A16_FLOAT
             || sformat == DXGI_FORMAT_R16_FLOAT
             || tformat == DXGI_FORMAT_R16G16B16A16_FLOAT
@@ -4443,7 +4451,7 @@ namespace
             // Use non-WIC code paths as these conversions are not supported by Xbox version of WIC
             return false;
         }
-#endif
+    #endif
 
         switch (sformat)
         {
@@ -4541,7 +4549,7 @@ namespace
         }
 
         return true;
-#endif // WIN32
+    #endif // WIN32
     }
 
     //-------------------------------------------------------------------------------------
@@ -4555,7 +4563,7 @@ namespace
         _In_ float threshold,
         _In_ const Image& destImage)
     {
-#ifndef WIN32
+    #ifndef _WIN32
         UNREFERENCED_PARAMETER(srcImage);
         UNREFERENCED_PARAMETER(pfGUID);
         UNREFERENCED_PARAMETER(targetGUID);
@@ -4563,7 +4571,7 @@ namespace
         UNREFERENCED_PARAMETER(threshold);
         UNREFERENCED_PARAMETER(destImage);
         return E_NOTIMPL;
-#else
+    #else
         assert(srcImage.width == destImage.width);
         assert(srcImage.height == destImage.height);
 
@@ -4609,7 +4617,7 @@ namespace
             return hr;
 
         return S_OK;
-#endif // WIN32
+    #endif // WIN32
     }
 
     //-------------------------------------------------------------------------------------
@@ -4773,6 +4781,10 @@ namespace
             }\
         }
 
+#ifdef __clang__
+#pragma clang diagnostic ignored "-Wextra-semi-stmt"
+#endif
+
     HRESULT ConvertToSinglePlane_(_In_ const Image& srcImage, _In_ const Image& destImage) noexcept
     {
         assert(srcImage.width == destImage.width);
@@ -4787,21 +4799,33 @@ namespace
         {
         case DXGI_FORMAT_NV12:
             assert(destImage.format == DXGI_FORMAT_YUY2);
-            CONVERT_420_TO_422(uint8_t, XMUBYTEN4)
+            if ((srcImage.width % 2) != 0 || (srcImage.height % 2) != 0)
+                return E_INVALIDARG;
+
+            CONVERT_420_TO_422(uint8_t, XMUBYTEN4);
             return S_OK;
 
         case DXGI_FORMAT_P010:
             assert(destImage.format == DXGI_FORMAT_Y210);
-            CONVERT_420_TO_422(uint16_t, XMUSHORTN4)
+            if ((srcImage.width % 2) != 0 || (srcImage.height % 2) != 0)
+                return E_INVALIDARG;
+
+            CONVERT_420_TO_422(uint16_t, XMUSHORTN4);
             return S_OK;
 
         case DXGI_FORMAT_P016:
             assert(destImage.format == DXGI_FORMAT_Y216);
-            CONVERT_420_TO_422(uint16_t, XMUSHORTN4)
+            if ((srcImage.width % 2) != 0 || (srcImage.height % 2) != 0)
+                return E_INVALIDARG;
+
+            CONVERT_420_TO_422(uint16_t, XMUSHORTN4);
             return S_OK;
 
         case DXGI_FORMAT_NV11:
             assert(destImage.format == DXGI_FORMAT_YUY2);
+            if ((srcImage.width % 4) != 0)
+                return E_INVALIDARG;
+
             // Convert 4:1:1 to 4:2:2
             {
                 const size_t rowPitch = srcImage.rowPitch;
@@ -5007,62 +5031,62 @@ HRESULT DirectX::Convert(
         break;
 
     case TEX_DIMENSION_TEXTURE3D:
-    {
-        size_t index = 0;
-        size_t d = metadata.depth;
-        for (size_t level = 0; level < metadata.mipLevels; ++level)
         {
-            for (size_t slice = 0; slice < d; ++slice, ++index)
+            size_t index = 0;
+            size_t d = metadata.depth;
+            for (size_t level = 0; level < metadata.mipLevels; ++level)
             {
-                if (index >= nimages)
+                for (size_t slice = 0; slice < d; ++slice, ++index)
                 {
-                    result.Release();
-                    return E_FAIL;
+                    if (index >= nimages)
+                    {
+                        result.Release();
+                        return E_FAIL;
+                    }
+
+                    const Image& src = srcImages[index];
+                    if (src.format != metadata.format)
+                    {
+                        result.Release();
+                        return E_FAIL;
+                    }
+
+                    if ((src.width > UINT32_MAX) || (src.height > UINT32_MAX))
+                    {
+                        result.Release();
+                        return E_FAIL;
+                    }
+
+                    const Image& dst = dest[index];
+                    assert(dst.format == format);
+
+                    if (src.width != dst.width || src.height != dst.height)
+                    {
+                        result.Release();
+                        return E_FAIL;
+                    }
+
+                    if (usewic)
+                    {
+                        hr = ConvertUsingWIC(src, pfGUID, targetGUID, filter, threshold, dst);
+                    }
+                    else
+                    {
+                        hr = ConvertCustom(src, filter, dst, threshold, slice);
+                    }
+
+                    if (FAILED(hr))
+                    {
+                        result.Release();
+                        return hr;
+                    }
                 }
 
-                const Image& src = srcImages[index];
-                if (src.format != metadata.format)
-                {
-                    result.Release();
-                    return E_FAIL;
-                }
-
-                if ((src.width > UINT32_MAX) || (src.height > UINT32_MAX))
-                {
-                    result.Release();
-                    return E_FAIL;
-                }
-
-                const Image& dst = dest[index];
-                assert(dst.format == format);
-
-                if (src.width != dst.width || src.height != dst.height)
-                {
-                    result.Release();
-                    return E_FAIL;
-                }
-
-                if (usewic)
-                {
-                    hr = ConvertUsingWIC(src, pfGUID, targetGUID, filter, threshold, dst);
-                }
-                else
-                {
-                    hr = ConvertCustom(src, filter, dst, threshold, slice);
-                }
-
-                if (FAILED(hr))
-                {
-                    result.Release();
-                    return hr;
-                }
+                if (d > 1)
+                    d >>= 1;
             }
-
-            if (d > 1)
-                d >>= 1;
         }
-    }
-    break;
+        break;
 
     default:
         result.Release();
