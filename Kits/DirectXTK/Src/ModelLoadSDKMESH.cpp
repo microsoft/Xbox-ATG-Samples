@@ -59,12 +59,12 @@ namespace
     template<size_t sizeOfBuffer>
     inline void ASCIIToWChar(wchar_t (&buffer)[sizeOfBuffer], const char *ascii)
     {
-#ifdef WIN32
+    #ifdef _WIN32
         MultiByteToWideChar(CP_UTF8, 0, ascii, -1, buffer, sizeOfBuffer);
-#else
+    #else
         mbtowc(nullptr, nullptr, 0);
         mbtowc(buffer, ascii, sizeOfBuffer);
-#endif
+    #endif
     }
 
     void LoadMaterial(const DXUT::SDKMESH_MATERIAL& mh,
