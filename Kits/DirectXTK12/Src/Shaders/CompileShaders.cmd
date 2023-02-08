@@ -46,6 +46,7 @@ if not exist %XBOXDXC% goto needgxdk
 goto continue
 
 :continuedxil
+if defined DirectXShaderCompiler goto dxcviaenv
 set PCDXC="%WindowsSdkVerBinPath%x86\dxc.exe"
 if exist %PCDXC% goto continue
 set PCDXC="%WindowsSdkBinPath%%WindowsSDKVersion%\x86\dxc.exe"
@@ -53,6 +54,11 @@ if exist %PCDXC% goto continue
 
 set PCDXC=dxc.exe
 goto continue
+
+:dxcviaenv
+set PCDXC="%DirectXShaderCompiler%"
+if exist %PCDXC% goto continue
+goto needdxil
 
 :continuepc
 set PCOPTS=
@@ -277,62 +283,63 @@ if %error% == 0 (
     echo Shaders compiled ok
 ) else (
     echo There were shader compilation errors!
+    exit /b 1
 )
 
 endlocal
-exit /b
+exit /b 0
 
 :CompileShader
-set fxc=%PCFXC% %1.fx %FXCOPTS% /T%2_5_1 %PCOPTS% /E%3 "/Fh%CompileShadersOutput%\%1_%3.inc" "/Fd%CompileShadersOutput%\%1_%3.pdb" /Vn%1_%3
+set fxc=%PCFXC% "%1.fx" %FXCOPTS% /T%2_5_1 %PCOPTS% /E%3 "/Fh%CompileShadersOutput%\%1_%3.inc" "/Fd%CompileShadersOutput%\%1_%3.pdb" /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileComputeShader
-set fxc=%PCFXC% %1.hlsl %FXCOPTS% /Tcs_5_1 %PCOPTS% /E%2 "/Fh%CompileShadersOutput%\%1_%2.inc" "/Fd%CompileShadersOutput%\%1_%2.pdb" /Vn%1_%2
+set fxc=%PCFXC% "%1.hlsl" %FXCOPTS% /Tcs_5_1 %PCOPTS% /E%2 "/Fh%CompileShadersOutput%\%1_%2.inc" "/Fd%CompileShadersOutput%\%1_%2.pdb" /Vn%1_%2
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileShaderdxil
-set dxc=%PCDXC% %1.fx %FXCOPTS% /T%2_6_0 /E%3 "/Fh%CompileShadersOutput%\%1_%3.inc" "/Fd%CompileShadersOutput%\%1_%3.pdb" /Vn%1_%3
+set dxc=%PCDXC% "%1.fx" %FXCOPTS% /T%2_6_0 /E%3 "/Fh%CompileShadersOutput%\%1_%3.inc" "/Fd%CompileShadersOutput%\%1_%3.pdb" /Vn%1_%3
 echo.
 echo %dxc%
 %dxc% || set error=1
 exit /b
 
 :CompileComputeShaderdxil
-set dxc=%PCDXC% %1.hlsl %FXCOPTS% /Tcs_6_0 /E%2 "/Fh%CompileShadersOutput%\%1_%2.inc" "/Fd%CompileShadersOutput%\%1_%2.pdb" /Vn%1_%2
+set dxc=%PCDXC% "%1.hlsl" %FXCOPTS% /Tcs_6_0 /E%2 "/Fh%CompileShadersOutput%\%1_%2.inc" "/Fd%CompileShadersOutput%\%1_%2.pdb" /Vn%1_%2
 echo.
 echo %dxc%
 %dxc% || set error=1
 exit /b
 
 :CompileShaderxbox
-set fxc=%XBOXFXC% %1.fx %FXCOPTS% /T%2_5_1 %XBOXOPTS% /E%3 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb" /Vn%1_%3
+set fxc=%XBOXFXC% "%1.fx" %FXCOPTS% /T%2_5_1 %XBOXOPTS% /E%3 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb" /Vn%1_%3
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileComputeShaderxbox
-set fxc==%XBOXFXC% %1.hlsl %FXCOPTS% /Tcs_5_1 %XBOXOPTS% /E%2 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb" /Vn%1_%2
+set fxc==%XBOXFXC% "%1.hlsl" %FXCOPTS% /Tcs_5_1 %XBOXOPTS% /E%2 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb" /Vn%1_%2
 echo.
 echo %fxc%
 %fxc% || set error=1
 exit /b
 
 :CompileShadergxdk
-set dxc=%XBOXDXC% %1.fx %FXCOPTS% /T%2_6_0 /E%3 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb" /Vn%1_%3
+set dxc=%XBOXDXC% "%1.fx" %FXCOPTS% /T%2_6_0 /E%3 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%3.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%3.pdb" /Vn%1_%3
 echo.
 echo %dxc%
 %dxc% || set error=1
 exit /b
 
 :CompileComputeShadergxdk
-set dxc=%XBOXDXC% %1.hlsl %FXCOPTS% /Tcs_6_0 /E%2 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb" /Vn%1_%2
+set dxc=%XBOXDXC% "%1.hlsl" %FXCOPTS% /Tcs_6_0 /E%2 "/Fh%CompileShadersOutput%\%XBOXPREFIX%%1_%2.inc" "/Fd%CompileShadersOutput%\%XBOXPREFIX%%1_%2.pdb" /Vn%1_%2
 echo.
 echo %dxc%
 %dxc% || set error=1
@@ -341,9 +348,13 @@ exit /b
 :needxdk
 echo ERROR: CompileShaders xbox requires the Microsoft Xbox One XDK
 echo        (try re-running from the XDK Command Prompt)
-exit /b
+exit /b 1
 
 :needgxdk
 echo ERROR: CompileShaders gxdk requires the Microsoft Gaming SDK
-echo        (try re-running from the Gaming GXDK Command Prompt)
-exit /b
+echo        (try re-running from the Microsoft GDKX Gaming Command Prompt)
+exit /b 1
+
+:needdxil
+echo ERROR: CompileShaders dxil requires DXC.EXE
+exit /b 1

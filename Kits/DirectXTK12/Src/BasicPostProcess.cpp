@@ -48,6 +48,7 @@ namespace
     }
 }
 
+#pragma region Shaders
 // Include the precompiled shader code.
 namespace
 {
@@ -158,6 +159,7 @@ namespace
         std::mutex                  mMutex;
     };
 }
+#pragma endregion
 
 class BasicPostProcess::Impl : public AlignedNew<PostProcessConstants>
 {
