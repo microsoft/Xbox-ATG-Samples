@@ -80,7 +80,7 @@ float3 ST2084ToLinear(float3 ST2084)
 // Name: NormalizeHDRSceneValue
 // Desc: Per spec, the max nits for ST.2084 is 10,000 nits. We need to establish what the value of 1.0f means
 //       by normalizing the values using the defined nits for paper white. According to SDR specs, paper white
-//       is 80 nits, but that is paper white in a cinema with a dark envirnment, and is perceived as grey on
+//       is 80 nits, but that is paper white in a cinema with a dark environment, and is perceived as grey on
 //       a display in office and living room environments. This value should be tuned according to the nits
 //       that the consumer perceives as white in his living room, e.g. 200 nits. As refernce, PC monitors is
 //       normally in the range 200-300 nits, SDR TVs 150-250 nits
