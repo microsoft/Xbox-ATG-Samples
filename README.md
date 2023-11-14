@@ -15,7 +15,7 @@ This repo contains game development samples written by the Microsoft Xbox Advanc
 * ``PCSamples`` contains samples for the classic Win32 desktop PC platform
   * ``Graphics``
   * ``IntroGraphics``
-* ``XDKSamples`` contains samples the Xbox One platform using the Xbox One XDK
+* ``XDKSamples`` contains samples for the Xbox One platform using the Xbox One XDK
   * ``Audio``
   * ``IntroGraphics``
   * ``Graphics``
